@@ -126,7 +126,7 @@ class Log:
 import subprocess
 
 def find_komodo_exe():
-    base = r"C:\Users\casa\Downloads\komodo-14\komodo-14_224afb\Windows"
+    base = r"D:\Meus documentos\Downloads\komodo-14\komodo-14_224afb\Windows"
     candidates = [
         os.path.join(base, "komodo-14.1-64bit.exe"),
     ]
