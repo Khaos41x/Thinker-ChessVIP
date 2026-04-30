@@ -637,8 +637,15 @@
             $(".kb-num-input").val("0.00").css({"border-color": "#fff", "box-shadow": "0 0 8px rgba(255,255,255,0.6)", "color": "#fff"});
             $("#autoDelayDisplay").text("INSTANT");
           } else {
-            $(".kb-num-input").css({"border-color": "#333", "box-shadow": "none", "color": "#fff"});
-            $("#autoDelayDisplay").text(`${autoDelayMin.toFixed(2)}–${autoDelayMax.toFixed(2)}s`);
+            // Restaurar valores padrão ao voltar para Random/Avg
+            autoDelayMin = DEFAULT_MIN_DELAY;
+            autoDelayMax = DEFAULT_MAX_DELAY;
+            localStorage.setItem("autoMinDelay", DEFAULT_MIN_DELAY);
+            localStorage.setItem("autoMaxDelay", DEFAULT_MAX_DELAY);
+            $(".kb-num-input").val("").css({"border-color": "#333", "box-shadow": "none", "color": "#fff"});
+            $("#minDelayInput").val(DEFAULT_MIN_DELAY.toFixed(2)).css("color", "#fff");
+            $("#maxDelayInput").val(DEFAULT_MAX_DELAY.toFixed(2)).css("color", "#fff");
+            $("#autoDelayDisplay").text(`${DEFAULT_MIN_DELAY.toFixed(2)}–${DEFAULT_MAX_DELAY.toFixed(2)}s`);
           }
           
           window.krypbotUpdateUI();
