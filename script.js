@@ -638,14 +638,14 @@
             $("#autoDelayDisplay").text("INSTANT");
           } else {
             // Restaurar valores padrão ao voltar para Random/Avg
-            autoDelayMin = DEFAULT_MIN_DELAY;
-            autoDelayMax = DEFAULT_MAX_DELAY;
-            localStorage.setItem("autoMinDelay", DEFAULT_MIN_DELAY);
-            localStorage.setItem("autoMaxDelay", DEFAULT_MAX_DELAY);
+            autoDelayMin = 0.5;
+            autoDelayMax = 1.0;
+            localStorage.setItem("autoMinDelay", 0.5);
+            localStorage.setItem("autoMaxDelay", 1.0);
             $(".kb-num-input").val("").css({"border-color": "#333", "box-shadow": "none", "color": "#fff"});
-            $("#minDelayInput").val(DEFAULT_MIN_DELAY.toFixed(2)).css("color", "#fff");
-            $("#maxDelayInput").val(DEFAULT_MAX_DELAY.toFixed(2)).css("color", "#fff");
-            $("#autoDelayDisplay").text(`${DEFAULT_MIN_DELAY.toFixed(2)}–${DEFAULT_MAX_DELAY.toFixed(2)}s`);
+            $("#minDelayInput").val("0.50").css("color", "#fff");
+            $("#maxDelayInput").val("1.00").css("color", "#fff");
+            $("#autoDelayDisplay").text("0.50–1.00s");
           }
           
           window.krypbotUpdateUI();
