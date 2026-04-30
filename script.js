@@ -58,7 +58,7 @@
     autoDelayMax = DEFAULT_MAX_DELAY;
   if (autoDelayMin > autoDelayMax)
     [autoDelayMin, autoDelayMax] = [autoDelayMax, autoDelayMin];
-  if (autoDelayMode !== "random" && autoDelayMode !== "average")
+  if (autoDelayMode !== "random" && autoDelayMode !== "average" && autoDelayMode !== "max")
     autoDelayMode = DEFAULT_DELAY_MODE;
 
   let chessBot = {
@@ -88,6 +88,7 @@
     if (isNaN(max)) max = DEFAULT_MAX_DELAY;
     if (min > max) [min, max] = [max, min];
 
+    if (autoDelayMode === "max") return 0;
     if (autoDelayMode === "average") {
       return Number(((min + max) / 2).toFixed(2));
     } else {
@@ -501,7 +502,8 @@
           </div>
           <div style="display:flex; gap:15px; margin-top:8px;">
             <label class="kb-radio-label" style="font-size:13px"><input type="radio" name="delayMode" value="random"> Random</label>
-            <label class="kb-radio-label" style="font-size:13px"><input type="radio" name="delayMode" value="average"> Average</label>
+            <label class="kb-radio-label" style="font-size:13px"><input type="radio" name="delayMode" value="average"> Avg</label>
+            <label class="kb-radio-label" style="font-size:13px"><input type="radio" name="delayMode" value="max"> MAX</label>
           </div>
         </div>
 
@@ -557,9 +559,15 @@
             "checked",
             true,
           );
-          $("#autoDelayDisplay").text(
-            `${autoDelayMin.toFixed(2)}–${autoDelayMax.toFixed(2)}s`,
-          );
+          
+          if (autoDelayMode === "max") {
+            $(".kb-num-input").css({"border-color": "#fff", "box-shadow": "0 0 6px rgba(255,255,255,0.5)", "color": "#fff"});
+            $("#autoDelayDisplay").text("INSTANT");
+          } else {
+            $("#autoDelayDisplay").text(
+              `${autoDelayMin.toFixed(2)}–${autoDelayMax.toFixed(2)}s`,
+            );
+          }
 
           $("#kb-elo-val").text(chessBot.elo);
           $("#kb-color-picker").val(current_color);
@@ -620,6 +628,19 @@
         $("input[name='delayMode']").on("change", function () {
           autoDelayMode = $(this).val();
           localStorage.setItem("autoDelayMode", autoDelayMode);
+          
+          if (autoDelayMode === "max") {
+            autoDelayMin = 0;
+            autoDelayMax = 0;
+            localStorage.setItem("autoMinDelay", 0);
+            localStorage.setItem("autoMaxDelay", 0);
+            $(".kb-num-input").val("0.00").css({"border-color": "#fff", "box-shadow": "0 0 8px rgba(255,255,255,0.6)", "color": "#fff"});
+            $("#autoDelayDisplay").text("INSTANT");
+          } else {
+            $(".kb-num-input").css({"border-color": "#333", "box-shadow": "none", "color": "#fff"});
+            $("#autoDelayDisplay").text(`${autoDelayMin.toFixed(2)}–${autoDelayMax.toFixed(2)}s`);
+          }
+          
           window.krypbotUpdateUI();
         });
 
