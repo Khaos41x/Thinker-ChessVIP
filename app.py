@@ -6,6 +6,11 @@
 import sys
 import os
 import time
+import datetime
+import collections
+import threading
+import logging
+import subprocess
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -13,6 +18,7 @@ import chess
 import chess.engine
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_socketio import SocketIO
 
 app = Flask(__name__)
 CORS(app)
@@ -121,9 +127,11 @@ class Log:
 import subprocess
 
 def find_komodo_exe():
-    base = r"D:\Meus documentos\Downloads\komodo-14\komodo-14_224afb\Windows"
+    # Caminhos candidatos no C: e D: para maior robustez
     candidates = [
-        os.path.join(base, "komodo-14.1-64bit.exe"),
+        r"C:\Users\casa\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
+        r"C:\Users\casa\Downloads\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
+        r"D:\Meus documentos\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
     ]
     for f in candidates:
         if os.path.exists(f):
@@ -182,10 +190,29 @@ engine = None
 last_elo = None
 cache = {}
 
+import multiprocessing
+
+def get_thread_count():
+    try:
+        count = multiprocessing.cpu_count()
+        # Em máquinas de 2 núcleos, obrigatoriamente usamos apenas 1 para não travar o Windows/Flask
+        return max(1, count - 1)
+    except:
+        return 1
+
+# ... (dentro da inicialização da engine)
 print("Iniciando Komodo...")
 engine = chess.engine.SimpleEngine.popen_uci(ENGINE_PATH)
-engine.configure({"Threads": 2, "Hash": 128})
-print("Komodo ONLINE!")
+
+# Configuração de Estabilidade (Segura para PCs com 2 núcleos)
+threads = get_thread_count()
+engine.configure({
+    "Threads": threads,
+    "Hash": 128,
+    "Contempt": 0
+})
+
+print(f"Komodo ONLINE! (Modo Estabilidade - Threads: {threads}, Hash: 128MB)")
 
 def configure_elo(elo):
     global last_elo

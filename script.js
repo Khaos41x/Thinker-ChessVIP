@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC25
+// @name         TC46
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -7,6 +7,10 @@
 // @match        https://www.chess.com/play/computer*
 // @match        https://www.chess.com/play/*
 // @match        https://www.chess.com/game/*
+// @match        https://www.chess.com/puzzles/*
+// @match        https://www.chess.com/puzzle/*
+// @match        https://www.chess.com/puzzles/rated*
+// @match        https://www.chess.com/puzzles/rush*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @require      https://code.jquery.com/jquery-3.7.1.min.js
 // @grant        GM_xmlhttpRequest
@@ -19,6 +23,7 @@
 
   const SERVER_URL = "http://127.0.0.1:5050";
 
+  // --- CONFIGURAÇÕES PADRÃO (AUTO RUN DELAY) ---
   const DEFAULT_MIN_DELAY = 0.5,
     DEFAULT_MAX_DELAY = 2.0,
     DEFAULT_DELAY_MODE = "random";
@@ -32,21 +37,51 @@
     hint = false,
     moveCache = new Map(),
     auto_queue_observer = null,
-    auto_queue_clicking = false;
+    auto_queue_clicking = false,
+    gameMode = "play",
+    puzzleHint = false,
+    puzzleAutoMove = false,
+    puzzleFenCache = "",
+    puzzleMoveCache = new Map();
 
-  // Variáveis de estado do Auto Run Delay
-  let autoDelayMin = parseFloat(localStorage.getItem("autoMinDelay")) || DEFAULT_MIN_DELAY,
-    autoDelayMax = parseFloat(localStorage.getItem("autoMaxDelay")) || DEFAULT_MAX_DELAY,
+  // --- ESTADO DO AUTO RUN DELAY (PERSISTENTE) ---
+  let autoDelayMin =
+      parseFloat(localStorage.getItem("autoMinDelay")) || DEFAULT_MIN_DELAY,
+    autoDelayMax =
+      parseFloat(localStorage.getItem("autoMaxDelay")) || DEFAULT_MAX_DELAY,
     autoDelayMode = localStorage.getItem("autoDelayMode") || DEFAULT_DELAY_MODE;
+
+  // Validação inicial
+  if (isNaN(autoDelayMin) || autoDelayMin <= 0)
+    autoDelayMin = DEFAULT_MIN_DELAY;
+  if (isNaN(autoDelayMax) || autoDelayMax <= 0)
+    autoDelayMax = DEFAULT_MAX_DELAY;
+  if (autoDelayMin > autoDelayMax)
+    [autoDelayMin, autoDelayMax] = [autoDelayMax, autoDelayMin];
+  if (autoDelayMode !== "random" && autoDelayMode !== "average")
+    autoDelayMode = DEFAULT_DELAY_MODE;
 
   let chessBot = {
     elo: 3200,
     time: 0.02,
   };
 
-  const computeDelayValue = () => {
-    if (autoDelayMode === "max") return 0;
+  function log(msg) {
+    console.log("[KrypBot]", msg);
+  }
 
+  const detectGameMode = () => {
+    const url = window.location.href;
+    if (url.includes("/puzzle") || url.includes("/puzzles")) {
+      gameMode = "puzzle";
+    } else {
+      gameMode = "play";
+    }
+    return gameMode;
+  };
+
+  // --- LÓGICA DE CÁLCULO DE DELAY ---
+  const computeDelayValue = () => {
     let min = parseFloat(autoDelayMin);
     let max = parseFloat(autoDelayMax);
     if (isNaN(min)) min = DEFAULT_MIN_DELAY;
@@ -61,10 +96,85 @@
     }
   };
 
-  function log(msg) {
-    console.log("[KrypBot]", msg);
+  // --- LÓGICA DE AUTO QUEUE (INDEPENDENTE DE IDIOMA) ---
+  let auto_queue_checkInterval = null;
+
+  function findNewGameButton() {
+    const selectors = [
+      'button[data-control-view="play-again"]',
+      ".ui_v5-button-primary.ui_v5-button-full",
+      ".game-over-controls-button",
+      "button.suggestion-button",
+      ".rematch.button",
+      ".new-game-button",
+      ".play-again-button",
+    ];
+
+    let btn = null;
+    for (const sel of selectors) {
+      btn = document.querySelector(sel);
+      if (btn && btn.offsetParent !== null) break;
+    }
+
+    // Fallback: buscar por texto (apenas botões, não links de menu)
+    if (!btn || btn.offsetParent === null) {
+      const buttons = document.querySelectorAll("button");
+      for (const b of buttons) {
+        const text = b.innerText ? b.innerText.toLowerCase() : "";
+        const isVisible = b.offsetParent !== null;
+        const isGameButton =
+          !b.closest("nav") && !b.closest(".menu") && !b.closest("header");
+
+        if (
+          isVisible &&
+          isGameButton &&
+          (text.includes("new") ||
+            text.includes("jogar") ||
+            text.includes("play") ||
+            text.includes("partida") ||
+            text.includes("rematch") ||
+            text.includes("again"))
+        ) {
+          btn = b;
+          break;
+        }
+      }
+    }
+
+    return btn;
   }
+
+  function isInGame() {
+    return !!document.querySelector(
+      ".board-component, .game-component, [data-board], .board-layout-main",
+    );
+  }
+
+  function clickNewGame() {
+    if (!auto_queue || auto_queue_clicking) return;
+    if (!isInGame()) return;
+
+    const btn = findNewGameButton();
+    if (btn && btn.offsetParent !== null) {
+      auto_queue_clicking = true;
+      log("Auto Queue: Botão detectado. Iniciando em 3s...");
+      setTimeout(() => {
+        if (auto_queue) {
+          btn.click();
+          log("Auto Queue: Clique executado!");
+        }
+        auto_queue_clicking = false;
+      }, 3000);
+    }
+  }
+
   function handleAutoQueue() {
+    // Limpar interval anterior se existir
+    if (auto_queue_checkInterval) {
+      clearInterval(auto_queue_checkInterval);
+      auto_queue_checkInterval = null;
+    }
+
     if (!auto_queue) {
       if (auto_queue_observer) {
         auto_queue_observer.disconnect();
@@ -73,67 +183,31 @@
       return;
     }
 
-    if (auto_queue_observer) return;
-
-    const clickNewGame = () => {
-      if (auto_queue_clicking) return;
-
-      // Lista de seletores baseada na sua implementação de sucesso
-      const selectors = [
-        'button[data-control-view="play-again"]',
-        '.ui_v5-button-primary.ui_v5-button-full',
-        '.game-over-controls-button',
-        'button.suggestion-button',
-        '.rematch.button',
-        'a[href="/Hooks/create"]'
-      ];
-
-      let btn = null;
-      for (const sel of selectors) {
-        btn = document.querySelector(sel);
-        if (btn && btn.offsetParent !== null) break;
-      }
-
-      // Fallback por texto (como no seu exemplo)
-      if (!btn || btn.offsetParent === null) {
-        const buttons = document.querySelectorAll("button");
-        for (const b of buttons) {
-          const text = b.innerText ? b.innerText.toLowerCase() : "";
-          // Verifica se contém as palavras chave principais em PT/EN
-          if (text.includes("new") || text.includes("jogar") || text.includes("play") || text.includes("partida")) {
-            if (b.offsetParent !== null) {
-              btn = b;
-              break;
-            }
-          }
-        }
-      }
-
-      if (btn && btn.offsetParent !== null) {
-        auto_queue_clicking = true;
-        log("Auto Queue: Botão detectado. Iniciando em 3s...");
-        
-        setTimeout(() => {
-          if (auto_queue) {
-            btn.click();
-            log("Auto Queue: Clique executado!");
-          }
-          auto_queue_clicking = false;
-        }, 3000);
-      }
-    };
-
-    auto_queue_observer = new MutationObserver(() => clickNewGame());
-    auto_queue_observer.observe(document.body, { childList: true, subtree: true });
-    
-    // Tenta clicar imediatamente caso o botão já esteja lá
+    // Verificar imediatamente se o botão já está visível
     clickNewGame();
+
+    // Configurar MutationObserver para detectar novos botões
+    if (!auto_queue_observer) {
+      auto_queue_observer = new MutationObserver(() => clickNewGame());
+      auto_queue_observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+      });
+    }
+
+    // Verificação periódica adicional (a cada 2 segundos)
+    // Isso garante que mesmo sem mutação, se o botão aparecer, será detectado
+    auto_queue_checkInterval = setInterval(() => {
+      if (auto_queue && !auto_queue_clicking) {
+        clickNewGame();
+      }
+    }, 2000);
   }
 
   function cleanCache() {
     if (moveCache.size > 100) {
       const keys = Array.from(moveCache.keys());
-      keys.slice(0, 50).forEach(k => moveCache.delete(k));
+      keys.slice(0, 50).forEach((k) => moveCache.delete(k));
     }
   }
 
@@ -142,7 +216,12 @@
     const moves = board.game.getLegalMoves();
     for (let i = 0; i < moves.length; i++) {
       if (moves[i].from == from && moves[i].to == to) {
-        board.game.move({ ...moves[i], promotion: "q", animate: true, userGenerated: true });
+        board.game.move({
+          ...moves[i],
+          promotion: "q",
+          animate: true,
+          userGenerated: true,
+        });
         break;
       }
     }
@@ -163,7 +242,7 @@
       border: `4px solid ${current_color}`,
       background: "rgba(15, 10, 222, 0.4)",
       "border-radius": "50%",
-      "z-index": "10"
+      "z-index": "10",
     });
     $(board).append(elm);
     const jelm = $(elm);
@@ -201,34 +280,66 @@
           </svg>
         `);
       }
-    } catch (e) { log("Erro: " + e); }
+    } catch (e) {
+      log("Erro: " + e);
+    }
   };
 
   function request_move() {
-    if (!hint || !can_interval) return;
+    if (!can_interval) return;
+
+    detectGameMode();
+
+    const isPuzzleMode = gameMode === "puzzle";
+    const shouldRun = isPuzzleMode ? puzzleHint || puzzleAutoMove : hint;
+    if (!shouldRun) return;
 
     try {
       const board = $("chess-board")[0] || $("wc-chess-board")[0];
       if (!board || !board.game) return;
 
-      const turn = board.game.getTurn();
-      const side = board.game.getPlayingAs();
       fen = board.game.getFEN();
 
-      if (turn !== side) {
-        $(".myhigh").remove();
-        $(".myarrow").remove();
-        return;
+      if (!isPuzzleMode) {
+        const turn = board.game.getTurn();
+        let side = board.game.getPlayingAs();
+
+        // Detectar cor do jogador se getPlayingAs() retornar algo inválido
+        if (!side || side === null || side === undefined) {
+          const url = window.location.href;
+          if (url.includes("color=white") || url.includes("color=w"))
+            side = "w";
+          else if (url.includes("color=black") || url.includes("color=b"))
+            side = "b";
+
+          if (!side) side = turn;
+        }
+
+        if (turn !== side) {
+          $(".myhigh, .myarrow").remove();
+          return;
+        }
       }
 
       if (fen === checkfen) return;
 
-      // Check cache
-      const cacheKey = fen + "_" + chessBot.elo;
-      if (moveCache.has(cacheKey)) {
-        const cached = moveCache.get(cacheKey);
-        if (auto_move) {
-          auto_move_piece(cached.substring(0, 2), cached.substring(2, 4), board);
+      const puzzleElo = 3200;
+      const currentElo = isPuzzleMode ? puzzleElo : chessBot.elo;
+      const cacheKey = fen + "_" + currentElo;
+      const currentCache = isPuzzleMode ? puzzleMoveCache : moveCache;
+      const isAutoMove = isPuzzleMode ? puzzleAutoMove : auto_move;
+
+      if (currentCache.has(cacheKey)) {
+        const cached = currentCache.get(cacheKey);
+        chessBot.time = computeDelayValue();
+        if (isAutoMove) {
+          setTimeout(() => {
+            auto_move_piece(
+              cached.substring(0, 2),
+              cached.substring(2, 4),
+              board,
+            );
+          }, chessBot.time * 1000);
         } else {
           create_div(cached);
         }
@@ -238,15 +349,17 @@
       checkfen = fen;
       can_interval = false;
 
-      // GM_xmlhttpRequest - mais confiável
+      chessBot.time = computeDelayValue();
+      log(`Modo: ${gameMode} | Delay: ${chessBot.time}s | Elo: ${currentElo}`);
+
       GM_xmlhttpRequest({
         method: "POST",
         url: SERVER_URL + "/getmove",
         headers: { "Content-Type": "application/json" },
         data: JSON.stringify({
           fen: fen,
-          elo: chessBot.elo,
-          time: chessBot.time
+          elo: currentElo,
+          time: chessBot.time,
         }),
         onload: function (resp) {
           try {
@@ -254,15 +367,17 @@
             if (data && data.length > 0) {
               const move = data[0];
               log("Lance: " + move);
-              cleanCache();
-              moveCache.set(cacheKey, move);
+              if (!isPuzzleMode) cleanCache();
+              currentCache.set(cacheKey, move);
 
-              if (auto_move) {
-                const delay = computeDelayValue() * 1000;
-                log("Aguardando " + delay + "ms para executar jogada...");
+              if (isAutoMove) {
                 setTimeout(() => {
-                  auto_move_piece(move.substring(0, 2), move.substring(2, 4), board);
-                }, delay);
+                  auto_move_piece(
+                    move.substring(0, 2),
+                    move.substring(2, 4),
+                    board,
+                  );
+                }, chessBot.time * 1000);
               } else {
                 create_div(move);
               }
@@ -276,9 +391,8 @@
           log("Erro request");
           can_interval = true;
         },
-        timeout: 3000
+        timeout: 3000,
       });
-
     } catch (e) {
       log("Erro: " + e);
       can_interval = true;
@@ -307,7 +421,7 @@
         .kb-title { font-size: 22px; font-weight: 700; color: #00ff88; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 10px; }
         .kb-section { display: flex; flex-direction: column; gap: 8px; }
         .kb-section-label { font-size: 18px; font-weight: 600; color: #f0e68c; }
-        
+
         .kb-controls { display: flex; gap: 15px; }
         .kb-radio-label { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 15px; }
         .kb-radio-label input { accent-color: #00ff88; }
@@ -319,87 +433,83 @@
         .kb-footer { margin-top: 10px; padding-top: 15px; border-top: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
         .kb-status { font-size: 13px; color: #00ff88; font-weight: bold; }
         .kb-color-input { background: none; border: 1px solid #444; padding: 0; width: 40px; height: 25px; cursor: pointer; }
-        .kb-delay-input.max-active { border: 2px solid #fff !important; box-shadow: 0 0 6px rgba(255,255,255,0.5); }
-        .kb-delay-input.max-active::placeholder { color: #fff; opacity: 0.7; }
-        .kb-section-header { font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 1px; margin: 12px 0 8px 0; padding-bottom: 4px; border-bottom: 1px solid #333; }
-        .kb-section-header:first-of-type { margin-top: 0; }
-        .kb-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .kb-row-label { font-size: 14px; color: #ccc; }
-        .kb-row-value { display: flex; align-items: center; gap: 6px; }
-        .kb-row-input { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 4px 8px; border-radius: 4px; width: 60px; }
+
+        .kb-num-input { width: 70px; background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 6px; border-radius: 4px; font-size: 13px; }
+        .kb-delay-header { display: flex; justify-content: space-between; align-items: center; }
+        .kb-delay-display { font-size: 14px; color: #fff; font-weight: 500; }
       </style>
     `;
 
     const menuHtml = `
       <div id="krypbot-container">
         <div class="kb-title">KrypBot Control Panel</div>
-        
-        <div class="kb-section-header">Core Controls</div>
 
         <div class="kb-section">
-          <div class="kb-row">
-            <span class="kb-row-label">Bot Status</span>
-            <div class="kb-row-value">
-              <label class="kb-radio-label"><input type="radio" name="kb-bot-status" value="1"> On</label>
-              <label class="kb-radio-label"><input type="radio" name="kb-bot-status" value="0" checked> Off</label>
-            </div>
-          </div>
-          <div class="kb-row">
-            <span class="kb-row-label">Auto Moves</span>
-            <div class="kb-row-value">
-              <label class="kb-radio-label"><input type="radio" name="kb-auto-move" value="1"> On</label>
-              <label class="kb-radio-label"><input type="radio" name="kb-auto-move" value="0" checked> Off</label>
-            </div>
-          </div>
-          <div class="kb-row" style="margin-bottom: 0;">
-            <span class="kb-row-label">Auto Queue</span>
-            <div class="kb-row-value">
-              <label class="kb-radio-label"><input type="radio" name="kb-auto-queue" value="1"> On</label>
-              <label class="kb-radio-label"><input type="radio" name="kb-auto-queue" value="0" checked> Off</label>
-            </div>
+          <p class="kb-section-label">Bot Status</p>
+          <div class="kb-controls">
+            <label class="kb-radio-label"><input type="radio" name="kb-bot-status" value="1"> On</label>
+            <label class="kb-radio-label"><input type="radio" name="kb-bot-status" value="0" checked> Off</label>
           </div>
         </div>
 
-        <div class="kb-section-header">Bot Settings</div>
+        <div class="kb-section">
+          <p class="kb-section-label">Auto Moves</p>
+          <div class="kb-controls">
+            <label class="kb-radio-label"><input type="radio" name="kb-auto-move" value="1"> On</label>
+            <label class="kb-radio-label"><input type="radio" name="kb-auto-move" value="0" checked> Off</label>
+          </div>
+        </div>
 
         <div class="kb-section">
-          <div class="kb-row">
-            <span class="kb-row-label">Elo Level</span>
-            <div class="kb-row-value">
-              <span style="font-size:12px; color:#666;">800</span>
-              <input id="kb-elo-slider" class="kb-slider" type="range" min="800" max="3200" step="100" value="3200" style="width: 100px;">
-              <span id="kb-elo-val" class="kb-slider-val">3200</span>
-            </div>
+          <p class="kb-section-label">Auto Queue</p>
+          <div class="kb-controls">
+            <label class="kb-radio-label"><input type="radio" name="kb-auto-queue" value="1"> On</label>
+            <label class="kb-radio-label"><input type="radio" name="kb-auto-queue" value="0" checked> Off</label>
           </div>
-          <div class="kb-row">
-            <span class="kb-row-label">Delay Display</span>
-            <span id="autoDelayDisplay" style="font-size: 14px; color: #fff;">0.50–2.00s</span>
+        </div>
+
+        <div class="kb-section" id="puzzle-section" style="display: none;">
+          <p class="kb-section-label">Puzzle Mode <span style="font-size:11px; color:#888; font-weight:normal;">(Elo 3200)</span></p>
+          <div class="kb-controls">
+            <label class="kb-radio-label"><input type="radio" name="kb-puzzle-hint" value="1"> Hint</label>
+            <label class="kb-radio-label"><input type="radio" name="kb-puzzle-hint" value="0" checked> Off</label>
           </div>
-          <div class="kb-row">
-            <span class="kb-row-label">Delay Mode</span>
-            <div class="kb-row-value">
-              <label class="kb-radio-label" style="font-size: 12px;"><input type="radio" name="kb-delay-mode" value="random"> Random</label>
-              <label class="kb-radio-label" style="font-size: 12px;"><input type="radio" name="kb-delay-mode" value="average"> Avg</label>
-              <label class="kb-radio-label" style="font-size: 12px;"><input type="radio" name="kb-delay-mode" value="max"> MAX</label>
-            </div>
+          <div class="kb-controls" style="margin-top: 5px;">
+            <label class="kb-radio-label"><input type="radio" name="kb-puzzle-auto" value="1"> Auto</label>
+            <label class="kb-radio-label"><input type="radio" name="kb-puzzle-auto" value="0" checked> Off</label>
           </div>
-          <div class="kb-row">
-            <span class="kb-row-label">Delay Range</span>
-            <div class="kb-row-value">
-              <input type="number" id="kb-min-delay" class="kb-delay-input" min="0.01" step="0.01" value="0.50" style="width: 60px;">
-              <span style="color: #888; font-size: 12px;">to</span>
-              <input type="number" id="kb-max-delay" class="kb-delay-input" min="0.01" step="0.01" value="2.00" style="width: 60px;">
-            </div>
+        </div>
+
+        <div class="kb-section">
+          <p class="kb-section-label">Elo Level</p>
+          <div class="kb-slider-group">
+            <span style="font-size:12px">800</span>
+            <input id="kb-elo-slider" class="kb-slider" type="range" min="800" max="3200" step="100" value="3200">
+            <span id="kb-elo-val" class="kb-slider-val">3200</span>
           </div>
-          <div class="kb-row" style="margin-bottom: 0;">
-            <span class="kb-row-label">Arrow Color</span>
-            <div class="kb-row-value">
-              <input type="color" id="kb-color-picker" class="kb-color-input" value="#00ff88">
-            </div>
+        </div>
+
+        <div class="kb-section">
+          <div class="kb-delay-header">
+            <p class="kb-section-label" style="margin:0">Auto Run Delay</p>
+            <span id="autoDelayDisplay" class="kb-delay-display">0.50–2.00s</span>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center; margin-top:5px;">
+            <input type="number" id="minDelayInput" class="kb-num-input" min="0.01" step="0.01">
+            <span style="color:#888; font-size:12px">to</span>
+            <input type="number" id="maxDelayInput" class="kb-num-input" min="0.01" step="0.01">
+          </div>
+          <div style="display:flex; gap:15px; margin-top:8px;">
+            <label class="kb-radio-label" style="font-size:13px"><input type="radio" name="delayMode" value="random"> Random</label>
+            <label class="kb-radio-label" style="font-size:13px"><input type="radio" name="delayMode" value="average"> Average</label>
           </div>
         </div>
 
         <div class="kb-footer">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:12px; color:#888;">Color:</span>
+            <input type="color" id="kb-color-picker" class="kb-color-input" value="#00ff88">
+          </div>
           <div class="kb-status">SYSTEM ONLINE</div>
         </div>
       </div>
@@ -408,138 +518,179 @@
     $("head").append(css);
 
     const checkExist = setInterval(function () {
-      const mainDiv = $('#board-layout-main');
+      let mainDiv = $("#board-layout-main");
+      if (!mainDiv.length) mainDiv = $(".puzzle-layout");
+      if (!mainDiv.length) mainDiv = $(".puzzle-container");
+      if (!mainDiv.length) mainDiv = $(".chess-board-wrapper");
+      if (!mainDiv.length) mainDiv = $(".board-wrapper");
+      if (!mainDiv.length) mainDiv = $("[class*='puzzle-board']");
+
       if (mainDiv.length) {
         clearInterval(checkExist);
-        
-        mainDiv.append(menuHtml);
+        mainDiv.first().append(menuHtml);
 
-        function updateUI() {
-          $(`input[name="kb-bot-status"][value="${hint ? 1 : 0}"]`).prop('checked', true);
-          $(`input[name="kb-auto-move"][value="${auto_move ? 1 : 0}"]`).prop('checked', true);
-          $(`input[name="kb-auto-queue"][value="${auto_queue ? 1 : 0}"]`).prop('checked', true);
+        window.krypbotUpdateUI = function () {
+          detectGameMode();
+          $(`input[name="kb-bot-status"][value="${hint ? 1 : 0}"]`).prop(
+            "checked",
+            true,
+          );
+          $(`input[name="kb-auto-move"][value="${auto_move ? 1 : 0}"]`).prop(
+            "checked",
+            true,
+          );
+          $(`input[name="kb-auto-queue"][value="${auto_queue ? 1 : 0}"]`).prop(
+            "checked",
+            true,
+          );
+          $(`input[name="kb-puzzle-hint"][value="${puzzleHint ? 1 : 0}"]`).prop(
+            "checked",
+            true,
+          );
+          $(
+            `input[name="kb-puzzle-auto"][value="${puzzleAutoMove ? 1 : 0}"]`,
+          ).prop("checked", true);
+
+          $("#minDelayInput").val(autoDelayMin.toFixed(2));
+          $("#maxDelayInput").val(autoDelayMax.toFixed(2));
+          $(`input[name="delayMode"][value="${autoDelayMode}"]`).prop(
+            "checked",
+            true,
+          );
+          $("#autoDelayDisplay").text(
+            `${autoDelayMin.toFixed(2)}–${autoDelayMax.toFixed(2)}s`,
+          );
+
           $("#kb-elo-val").text(chessBot.elo);
-          $("#kb-time-val").text(chessBot.time + "s");
           $("#kb-color-picker").val(current_color);
-        }
 
-        $('input[name="kb-bot-status"]').on('change', function() {
-          hint = $(this).val() == "1";
-          if (!hint) $(".myhigh, .myarrow").remove();
-          updateUI();
-        });
-
-        $('input[name="kb-auto-move"]').on('change', function() {
-          auto_move = $(this).val() == "1";
-          updateUI();
-        });
-
-        $('input[name="kb-auto-queue"]').on('change', function() {
-          auto_queue = $(this).val() == "1";
-          handleAutoQueue();
-          updateUI();
-        });
-
-        $("#kb-elo-slider").on("input", function() {
-          chessBot.elo = parseInt($(this).val());
-          updateUI();
-        });
-
-        $("#kb-time-slider").on("input", function() {
-          chessBot.time = parseFloat($(this).val());
-          updateUI();
-        });
-
-        $("#kb-color-picker").on("input", function() {
-          current_color = $(this).val();
-          // Update existing arrows
-          $(".myarrow").each(function() {
-            $(this).find("line").attr("stroke", current_color);
-            $(this).find("polygon").attr("fill", current_color);
-            $(this).find("marker polygon").attr("fill", current_color);
-          });
-          // Update highlight borders
-          $(".myhigh").css("border-color", current_color);
-        });
-
-        const updateDelayDisplay = () => {
-          const min = parseFloat(autoDelayMin).toFixed(2);
-          const max = parseFloat(autoDelayMax).toFixed(2);
-          $("#autoDelayDisplay").text(`${min}–${max}s`);
+          // Show/hide puzzle section based on current mode
+          if (gameMode === "puzzle") {
+            $("#puzzle-section").show();
+          } else {
+            $("#puzzle-section").hide();
+          }
         };
 
-        $("#kb-min-delay").on("input", function() {
-          autoDelayMin = $(this).val();
+        $('input[name="kb-bot-status"]').on("change", function () {
+          hint = $(this).val() == "1";
+          if (!hint) $(".myhigh, .myarrow").remove();
+          window.krypbotUpdateUI();
+        });
+
+        $('input[name="kb-auto-move"]').on("change", function () {
+          auto_move = $(this).val() == "1";
+          window.krypbotUpdateUI();
+        });
+
+        $('input[name="kb-auto-queue"]').on("change", function () {
+          auto_queue = $(this).val() == "1";
+          handleAutoQueue();
+          window.krypbotUpdateUI();
+        });
+
+        $('input[name="kb-puzzle-hint"]').on("change", function () {
+          puzzleHint = $(this).val() == "1";
+          if (!puzzleHint) $(".myhigh, .myarrow").remove();
+          window.krypbotUpdateUI();
+        });
+
+        $('input[name="kb-puzzle-auto"]').on("change", function () {
+          puzzleAutoMove = $(this).val() == "1";
+          window.krypbotUpdateUI();
+        });
+
+        $("#minDelayInput, #maxDelayInput").on("input change", function () {
+          let min = parseFloat($("#minDelayInput").val()) || 0.1;
+          let max = parseFloat($("#maxDelayInput").val()) || 0.1;
+          if (min > max) {
+            autoDelayMin = max;
+            autoDelayMax = min;
+          } else {
+            autoDelayMin = min;
+            autoDelayMax = max;
+          }
           localStorage.setItem("autoMinDelay", autoDelayMin);
-          updateDelayDisplay();
-        });
-
-        $("#kb-max-delay").on("input", function() {
-          autoDelayMax = $(this).val();
           localStorage.setItem("autoMaxDelay", autoDelayMax);
-          updateDelayDisplay();
+          $("#autoDelayDisplay").text(
+            `${autoDelayMin.toFixed(2)}–${autoDelayMax.toFixed(2)}s`,
+          );
         });
 
-        $('input[name="kb-delay-mode"]').on("change", function() {
+        $("input[name='delayMode']").on("change", function () {
           autoDelayMode = $(this).val();
           localStorage.setItem("autoDelayMode", autoDelayMode);
-          updateDelayDisplay();
-          if (autoDelayMode === "max") {
-            $(".kb-delay-input").addClass("max-active").attr("placeholder", "INSTANT");
-            $("#autoDelayDisplay").text("INSTANT");
-          } else {
-            $(".kb-delay-input").removeClass("max-active").attr("placeholder", "");
-          }
+          window.krypbotUpdateUI();
         });
 
-        updateUI();
-        updateDelayDisplay();
+        $("#kb-elo-slider").on("input", function () {
+          chessBot.elo = parseInt($(this).val());
+          window.krypbotUpdateUI();
+        });
 
-        // Set initial values from variables
-        $("#kb-min-delay").val(autoDelayMin);
-        $("#kb-max-delay").val(autoDelayMax);
-        $(`input[name="kb-delay-mode"][value="${autoDelayMode}"]`).prop('checked', true);
-        if (autoDelayMode === "max") {
-          $(".kb-delay-input").addClass("max-active").attr("placeholder", "INSTANT");
-          $("#autoDelayDisplay").text("INSTANT");
-        }
+        $("#kb-color-picker").on("input", function () {
+          current_color = $(this).val();
+        });
+
+        // Monitor URL changes to detect puzzle/play mode
+        let lastUrl = window.location.href;
+        setInterval(() => {
+          if (window.location.href !== lastUrl) {
+            lastUrl = window.location.href;
+            detectGameMode();
+            window.krypbotUpdateUI();
+          }
+        }, 1000);
+
+        window.krypbotUpdateUI();
       }
     }, 500);
   }
 
   function removeAds() {
     const adSelectors = [
-      '.ad-container',
-      '.ad-unit',
-      '#ad-sidebar',
-      '.board-layout-ad',
-      '.sky-ad',
-      '.ads-container',
-      '.chess-ad-wrapper',
-      'iframe[id*="google_ads"]'
+      ".ad-container",
+      ".ad-unit",
+      "#ad-sidebar",
+      ".board-layout-ad",
+      ".sky-ad",
+      ".ads-container",
+      ".chess-ad-wrapper",
+      'iframe[id*="google_ads"]',
     ];
-    
-    // Immediate CSS hide
-    const style = document.createElement('style');
-    style.innerHTML = adSelectors.join(', ') + ' { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; }';
+    const style = document.createElement("style");
+    style.innerHTML =
+      adSelectors.join(", ") +
+      " { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; }";
     document.head.appendChild(style);
-
-    // Continuous removal for dynamic ads
     setInterval(() => {
-      adSelectors.forEach(selector => {
-        $(selector).remove();
-      });
-      // Specifically target the right sidebar ad area usually found on chess.com
-      $('.board-layout-ad').remove();
+      adSelectors.forEach((selector) => $(selector).remove());
+      $(".board-layout-ad").remove();
     }, 1000);
   }
 
   $(document).ready(() => {
     createMenu();
     removeAds();
+
+    // Monitor game mode changes and update UI
     setInterval(() => {
-      if (hint) request_move();
+      const newMode = detectGameMode();
+      if (window.krypbotLastMode !== newMode) {
+        window.krypbotLastMode = newMode;
+        log("Modo detectado: " + newMode);
+        if (typeof window.krypbotUpdateUI === "function")
+          window.krypbotUpdateUI();
+      }
+    }, 500);
+
+    setInterval(() => {
+      detectGameMode();
+      if (gameMode === "puzzle") {
+        if (puzzleHint || puzzleAutoMove) request_move();
+      } else {
+        if (hint) request_move();
+      }
     }, 100);
   });
-
 })();
