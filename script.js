@@ -262,6 +262,45 @@
     console.log("[KrypBot]", msg);
   }
 
+  function updateMySession(result) {
+    try {
+      if (result === 'W') { mySession.wins++; }
+      else if (result === 'L') { mySession.losses++; }
+      else { mySession.draws++; }
+
+      if (mySession.streakType === result) {
+        mySession.streak++;
+      } else {
+        mySession.streakType = result;
+        mySession.streak = 1;
+      }
+
+      renderMySession();
+    } catch (e) {
+      log('updateMySession erro: ' + e);
+    }
+  }
+
+  function renderMySession() {
+    try {
+      $('#oi-mysession').remove();
+      const target = document.querySelector('.player-component.bottom-player .user-tagline-username');
+      if (!target) return;
+
+      const { wins, losses, draws, streak, streakType } = mySession;
+      const emoji = streakType === 'W' ? '🔥' : streakType === 'L' ? '💀' : '➖';
+      const streakStr = streakType ? `${emoji}${streakType}${streak} · ` : '';
+
+      const html = `<span id="oi-mysession" style="font-size:11px;color:#e0e0e0;margin-left:8px;">
+      ${streakStr}<span style="color:#4caf50">${wins}</span>-<span style="color:#9e9e9e">${draws}</span>-<span style="color:#f44336">${losses}</span>
+    </span>`;
+
+      $(target).after(html);
+    } catch (e) {
+      log('renderMySession erro: ' + e);
+    }
+  }
+
   const detectGameMode = () => {
     const url = window.location.href;
     if (url.includes("/puzzle") || url.includes("/puzzles")) {
