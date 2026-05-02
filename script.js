@@ -215,6 +215,16 @@
             $(target).after('<span id="oi-zone1" style="font-size:11px;color:#666;margin-left:8px;">...</span>');
           }
 
+          $('#oi-zone2').remove();
+          if ($('#krypbot-container').length) {
+            $('#krypbot-container').after(`
+    <div id="oi-zone2" style="background:linear-gradient(135deg,#121212,#1f1f1f);color:#666;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,0.7);padding:16px 24px;font-family:'Roboto',sans-serif;margin-top:10px;font-size:12px;">
+      <div style="font-size:14px;font-weight:700;color:#00ff88;padding-bottom:8px;border-bottom:1px solid #333;">Opponent Intel</div>
+      <div style="margin-top:8px;">Carregando dados...</div>
+    </div>
+  `);
+          }
+
           const timeControl = OpponentIntel.getTimeControl();
           log('OpponentIntel: time control → ' + timeControl);
           OpponentIntel.fetchData(username, timeControl);
