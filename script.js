@@ -204,6 +204,17 @@
         if (username && username !== OpponentIntel.lastOpponent) {
           OpponentIntel.lastOpponent = username;
           log('OpponentIntel: novo oponente detectado → ' + username);
+
+          // Limpa zones anteriores
+          $('#oi-zone1').remove();
+          $('#oi-zone2').remove();
+
+          // Injeta loading na Zona 1
+          const target = document.querySelector('.player-component.top-player .user-tagline-username');
+          if (target) {
+            $(target).after('<span id="oi-zone1" style="font-size:11px;color:#666;margin-left:8px;">...</span>');
+          }
+
           const timeControl = OpponentIntel.getTimeControl();
           log('OpponentIntel: time control → ' + timeControl);
           OpponentIntel.fetchData(username, timeControl);
