@@ -898,6 +898,15 @@
             lastUrl = window.location.href;
             detectGameMode();
             window.krypbotUpdateUI();
+
+            // Tenta detectar resultado da última partida
+            const resultEl = document.querySelector('.game-result');
+            if (resultEl) {
+              const text = resultEl.textContent.trim().toLowerCase();
+              if (text.includes('win') || text.includes('won') || text.includes('vitória')) updateMySession('W');
+              else if (text.includes('draw') || text.includes('empate')) updateMySession('D');
+              else if (text.includes('loss') || text.includes('lost') || text.includes('derrota')) updateMySession('L');
+            }
           }
         }, 1000);
 
