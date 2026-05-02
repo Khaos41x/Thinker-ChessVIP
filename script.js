@@ -201,12 +201,34 @@
         if (username && username !== OpponentIntel.lastOpponent) {
           OpponentIntel.lastOpponent = username;
           log('OpponentIntel: novo oponente detectado → ' + username);
+          const timeControl = OpponentIntel.getTimeControl();
+          log('OpponentIntel: time control → ' + timeControl);
+          OpponentIntel.fetchData(username, timeControl);
         }
       };
 
       const observer = new MutationObserver(check);
       observer.observe(document.body, { childList: true, subtree: true });
       check(); // verifica imediatamente também
+    },
+    getTimeControl() {
+      try {
+        const el = document.querySelector('.time-selector-button-text');
+        if (el) {
+          const text = el.textContent.trim();
+          const minutes = parseFloat(text);
+          if (minutes < 3) return 'bullet';
+          if (minutes < 10) return 'blitz';
+          return 'rapid';
+        }
+        // Fallback pela URL
+        const url = window.location.href;
+        if (url.includes('1|') || url.includes('1/') || url.includes('2|')) return 'bullet';
+        if (url.includes('3|') || url.includes('5|')) return 'blitz';
+        return 'blitz'; // padrão
+      } catch (e) {
+        return 'blitz';
+      }
     },
     // métodos serão adicionados nos próximos commits
   };
