@@ -16,6 +16,7 @@
 // @grant        GM_xmlhttpRequest
 // @connect      localhost
 // @connect      127.0.0.1
+// @connect      api.chess.com
 // ==/UserScript==
 
 (function () {
@@ -153,37 +154,45 @@
               const archives = data.archives || [];
               if (archives.length === 0) return;
 
-              const fetchGames = (urls) => {
-                const results = [];
-                let done = 0;
-                urls.forEach(url => {
-                  GM_xmlhttpRequest({
-                    method: 'GET',
-                    url,
-                    timeout: 5000,
-                    onload: (r) => {
-                      try {
-                        const d = JSON.parse(r.responseText);
-                        if (d.games) results.push(...d.games);
-                      } catch (e) { }
-                      done++;
-                      if (done === urls.length) {
-                        const processed = OpponentIntel.processGames(results, username, timeControl);
-                        if (processed) {
-                          OpponentIntel.renderZone1(processed);
-                          OpponentIntel.renderZone2(processed);
-                        }
-                      }
-                    },
-                    onerror: () => { done++; }
-                  });
-                });
-              };
+              // Busca mês atual primeiro, depois decide se precisa do anterior
+              GM_xmlhttpRequest({
+                method: 'GET',
+                url: archives[archives.length - 1],
+                timeout: 5000,
+                onload: (r) => {
+                  try {
+                    const d = JSON.parse(r.responseText);
+                    const currentGames = d.games || [];
+                    const filteredCurrent = currentGames.filter(g => g.time_class === timeControl);
 
-              // Começa com o mês mais recente
-              const urlsToFetch = [archives[archives.length - 1]];
-              if (archives.length >= 2) urlsToFetch.push(archives[archives.length - 2]);
-              fetchGames(urlsToFetch);
+                    if (filteredCurrent.length >= 15 || archives.length < 2) {
+                      // Suficiente, processa só o mês atual
+                      const processed = OpponentIntel.processGames(currentGames, username, timeControl);
+                      if (processed) { OpponentIntel.renderZone1(processed); OpponentIntel.renderZone2(processed); }
+                    } else {
+                      // Busca mês anterior também
+                      GM_xmlhttpRequest({
+                        method: 'GET',
+                        url: archives[archives.length - 2],
+                        timeout: 5000,
+                        onload: (r2) => {
+                          try {
+                            const d2 = JSON.parse(r2.responseText);
+                            const allGames = [...(d2.games || []), ...currentGames];
+                            const processed = OpponentIntel.processGames(allGames, username, timeControl);
+                            if (processed) { OpponentIntel.renderZone1(processed); OpponentIntel.renderZone2(processed); }
+                          } catch (e) { }
+                        },
+                        onerror: () => {
+                          const processed = OpponentIntel.processGames(currentGames, username, timeControl);
+                          if (processed) { OpponentIntel.renderZone1(processed); OpponentIntel.renderZone2(processed); }
+                        }
+                      });
+                    }
+                  } catch (e) { log('OpponentIntel fallback erro: ' + e); }
+                },
+                onerror: () => { log('OpponentIntel: erro ao buscar jogos'); }
+              });
 
             } catch (e) { log('OpponentIntel.fetchData parse erro: ' + e); }
           },
@@ -191,6 +200,61 @@
         });
       } catch (e) {
         log('OpponentIntel.fetchData erro: ' + e);
+      }
+    },
+    renderZone1(data) {
+      try {
+        $('#oi-zone1').remove();
+        const target = document.querySelector('.player-component.top-player .user-tagline-username');
+        if (!target) return;
+
+        const { wld, streak, winRateByColor } = data;
+        const streakEmoji = streak.type === 'W' ? '🔥' : streak.type === 'L' ? '💀' : '➖';
+        const wr = winRateByColor;
+
+        const html = `<span id="oi-zone1" style="font-size:11px;color:#e0e0e0;margin-left:8px;display:inline-flex;gap:8px;align-items:center;">
+      <span><span style="color:#4caf50">${wld.w}</span>-<span style="color:#9e9e9e">${wld.d}</span>-<span style="color:#f44336">${wld.l}</span></span>
+      <span>${streakEmoji}${streak.type}${streak.count}</span>
+      ${wr.white !== null ? `<span>⬜${wr.white}% ⬛${wr.black !== null ? wr.black : '?'}%</span>` : ''}
+    </span>`;
+
+        $(target).after(html);
+      } catch (e) {
+        log('OpponentIntel.renderZone1 erro: ' + e);
+      }
+    },
+    renderZone2(data) {
+      try {
+        $('#oi-zone2').remove();
+        if (!$('#krypbot-container').length) return;
+
+        const { avgAccuracy, topOpeningWhite, topOpeningBlack, last5, byHour } = data;
+
+        const resultIcon = r => r === 'W' ? '✅' : r === 'L' ? '❌' : '➖';
+
+        const last5Html = last5.map(g =>
+          `<div style="margin:3px 0;">${resultIcon(g.result)} ${g.opening || 'Unknown'}${g.accuracy !== null ? ` · ${g.accuracy}%` : ''}</div>`
+        ).join('');
+
+        const hourHtml = [
+          byHour.morning.total ? `☀️ ${byHour.morning.wr}% (${byHour.morning.total}g)` : null,
+          byHour.afternoon.total ? `🌤️ ${byHour.afternoon.wr}% (${byHour.afternoon.total}g)` : null,
+          byHour.night.total ? `🌙 ${byHour.night.wr}% (${byHour.night.total}g)` : null
+        ].filter(Boolean).join(' · ');
+
+        const html = `
+      <div id="oi-zone2" style="background:linear-gradient(135deg,#121212,#1f1f1f);color:#f0e68c;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,0.7);padding:16px 24px;font-family:'Roboto',sans-serif;margin-top:10px;font-size:12px;display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:14px;font-weight:700;color:#00ff88;padding-bottom:8px;border-bottom:1px solid #333;">Opponent Intel</div>
+        ${avgAccuracy !== null ? `<div>Precisão média: <span style="color:#fff">${avgAccuracy}%</span></div>` : ''}
+        ${topOpeningWhite ? `<div>⬜ ${topOpeningWhite}</div>` : ''}
+        ${topOpeningBlack ? `<div>⬛ ${topOpeningBlack}</div>` : ''}
+        ${hourHtml ? `<div style="color:#aaa">${hourHtml}</div>` : ''}
+        ${last5Html ? `<div style="border-top:1px solid #222;padding-top:8px;color:#e0e0e0;">${last5Html}</div>` : ''}
+      </div>`;
+
+        $('#krypbot-container').after(html);
+      } catch (e) {
+        log('OpponentIntel.renderZone2 erro: ' + e);
       }
     },
     startObserver() {
@@ -253,8 +317,7 @@
       } catch (e) {
         return 'blitz';
       }
-    },
-    // métodos serão adicionados nos próximos commits
+    }
   };
 
   // --- ESTADO DO AUTO RUN DELAY (PERSISTENTE) ---
@@ -949,41 +1012,6 @@
     ];
     const style = document.createElement("style");
     style.innerHTML =
-      adSelectors.join(", ") +
-      " { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; }";
-    document.head.appendChild(style);
-    setInterval(() => {
-      adSelectors.forEach((selector) => $(selector).remove());
-      $(".board-layout-ad").remove();
-    }, 1000);
-  }
-
-  $(document).ready(() => {
-    createMenu();
-    removeAds();
-
-    // Monitor game mode changes and update UI
-    setInterval(() => {
-      const newMode = detectGameMode();
-      if (window.krypbotLastMode !== newMode) {
-        window.krypbotLastMode = newMode;
-        log("Modo detectado: " + newMode);
-        if (typeof window.krypbotUpdateUI === "function")
-          window.krypbotUpdateUI();
-      }
-    }, 500);
-
-    setInterval(() => {
-      detectGameMode();
-      if (gameMode === "puzzle") {
-        if (puzzleHint || puzzleAutoMove) request_move();
-      } else {
-        if (hint) request_move();
-      }
-    }, 100);
-  });
-})();
- style.innerHTML =
       adSelectors.join(", ") +
       " { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; }";
     document.head.appendChild(style);
