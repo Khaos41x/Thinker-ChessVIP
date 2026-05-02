@@ -190,6 +190,24 @@
         log('OpponentIntel.fetchData erro: ' + e);
       }
     },
+    startObserver() {
+      const getOpponentUsername = () => {
+        const el = document.querySelector('.player-component.top-player .user-tagline-username');
+        return el ? el.textContent.trim() : null;
+      };
+
+      const check = () => {
+        const username = getOpponentUsername();
+        if (username && username !== OpponentIntel.lastOpponent) {
+          OpponentIntel.lastOpponent = username;
+          log('OpponentIntel: novo oponente detectado → ' + username);
+        }
+      };
+
+      const observer = new MutationObserver(check);
+      observer.observe(document.body, { childList: true, subtree: true });
+      check(); // verifica imediatamente também
+    },
     // métodos serão adicionados nos próximos commits
   };
 
