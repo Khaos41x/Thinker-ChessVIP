@@ -44,6 +44,13 @@
     puzzleFenCache = "",
     puzzleMoveCache = new Map();
 
+  let mySession = { wins: 0, losses: 0, draws: 0, streak: 0, streakType: null };
+
+  const OpponentIntel = {
+    lastOpponent: null,
+    // métodos serão adicionados nos próximos commits
+  };
+
   // --- ESTADO DO AUTO RUN DELAY (PERSISTENTE) ---
   let autoDelayMin =
       parseFloat(localStorage.getItem("autoMinDelay")) || DEFAULT_MIN_DELAY,
