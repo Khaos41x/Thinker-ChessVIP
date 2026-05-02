@@ -169,7 +169,7 @@
                       done++;
                       if (done === urls.length) {
                         const processed = OpponentIntel.processGames(results, username, timeControl);
-                        if (processed) log('OpponentIntel dados: ' + JSON.stringify(processed));
+                        if (processed) OpponentIntel.renderZone1(processed);
                       }
                     },
                     onerror: () => { done++; }
@@ -877,6 +877,41 @@
     ];
     const style = document.createElement("style");
     style.innerHTML =
+      adSelectors.join(", ") +
+      " { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; }";
+    document.head.appendChild(style);
+    setInterval(() => {
+      adSelectors.forEach((selector) => $(selector).remove());
+      $(".board-layout-ad").remove();
+    }, 1000);
+  }
+
+  $(document).ready(() => {
+    createMenu();
+    removeAds();
+
+    // Monitor game mode changes and update UI
+    setInterval(() => {
+      const newMode = detectGameMode();
+      if (window.krypbotLastMode !== newMode) {
+        window.krypbotLastMode = newMode;
+        log("Modo detectado: " + newMode);
+        if (typeof window.krypbotUpdateUI === "function")
+          window.krypbotUpdateUI();
+      }
+    }, 500);
+
+    setInterval(() => {
+      detectGameMode();
+      if (gameMode === "puzzle") {
+        if (puzzleHint || puzzleAutoMove) request_move();
+      } else {
+        if (hint) request_move();
+      }
+    }, 100);
+  });
+})();
+ style.innerHTML =
       adSelectors.join(", ") +
       " { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; }";
     document.head.appendChild(style);
