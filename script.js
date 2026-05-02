@@ -169,7 +169,10 @@
                       done++;
                       if (done === urls.length) {
                         const processed = OpponentIntel.processGames(results, username, timeControl);
-                        if (processed) OpponentIntel.renderZone1(processed);
+                        if (processed) {
+                          OpponentIntel.renderZone1(processed);
+                          OpponentIntel.renderZone2(processed);
+                        }
                       }
                     },
                     onerror: () => { done++; }
