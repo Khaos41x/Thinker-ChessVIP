@@ -48,6 +48,93 @@
 
   const OpponentIntel = {
     lastOpponent: null,
+    processGames(games, username, timeControl) {
+      try {
+        const filtered = games.filter(g => g.time_class === timeControl);
+        if (filtered.length === 0) return null;
+
+        const last20 = filtered.slice(-20);
+        const last10 = filtered.slice(-10);
+
+        const processed = last20.map(game => {
+          const isWhite = game.white.username.toLowerCase() === username.toLowerCase();
+          const playerData = isWhite ? game.white : game.black;
+          const drawResults = ['agreed', 'repetition', 'stalemate', 'insufficient', '50move', 'timevsinsufficient'];
+          const result = playerData.result === 'win' ? 'W' : drawResults.includes(playerData.result) ? 'D' : 'L';
+          const openingMatch = game.pgn ? game.pgn.match(/\[Opening "(.+?)"\]/) : null;
+          return {
+            result,
+            color: isWhite ? 'white' : 'black',
+            accuracy: typeof playerData.accuracy === 'number' ? playerData.accuracy : null,
+            opening: openingMatch ? openingMatch[1] : null,
+            timestamp: game.end_time
+          };
+        });
+
+        const last10p = processed.slice(-10);
+
+        // W/L/D
+        const wld = {
+          w: last10p.filter(g => g.result === 'W').length,
+          d: last10p.filter(g => g.result === 'D').length,
+          l: last10p.filter(g => g.result === 'L').length
+        };
+
+        // Streak
+        let streakCount = 0;
+        const streakType = processed[processed.length - 1].result;
+        for (let i = processed.length - 1; i >= 0; i--) {
+          if (processed[i].result === streakType) streakCount++;
+          else break;
+        }
+
+        // Win rate por cor
+        const asWhite = processed.filter(g => g.color === 'white');
+        const asBlack = processed.filter(g => g.color === 'black');
+        const winRateByColor = {
+          white: asWhite.length ? Math.round(asWhite.filter(g => g.result === 'W').length / asWhite.length * 100) : null,
+          black: asBlack.length ? Math.round(asBlack.filter(g => g.result === 'W').length / asBlack.length * 100) : null
+        };
+
+        // Precisão média
+        const withAcc = last10p.filter(g => g.accuracy !== null);
+        const avgAccuracy = withAcc.length ? parseFloat((withAcc.reduce((s, g) => s + g.accuracy, 0) / withAcc.length).toFixed(1)) : null;
+
+        // Opening mais jogada por cor
+        const topOpening = (color) => {
+          const map = {};
+          processed.filter(g => g.color === color && g.opening).forEach(g => { map[g.opening] = (map[g.opening] || 0) + 1; });
+          return Object.keys(map).sort((a, b) => map[b] - map[a])[0] || null;
+        };
+
+        // Últimas 5
+        const last5 = processed.slice(-5).reverse().map(g => ({
+          result: g.result,
+          opening: g.opening,
+          accuracy: g.accuracy
+        }));
+
+        // Por horário
+        const byHour = (start, end) => {
+          const range = processed.filter(g => { const h = new Date(g.timestamp * 1000).getHours(); return h >= start && h < end; });
+          return { total: range.length, wr: range.length ? Math.round(range.filter(g => g.result === 'W').length / range.length * 100) : null };
+        };
+
+        return {
+          wld,
+          streak: { type: streakType, count: streakCount },
+          winRateByColor,
+          avgAccuracy,
+          topOpeningWhite: topOpening('white'),
+          topOpeningBlack: topOpening('black'),
+          last5,
+          byHour: { morning: byHour(6, 12), afternoon: byHour(12, 18), night: byHour(18, 24) }
+        };
+      } catch (e) {
+        log('OpponentIntel.processGames erro: ' + e);
+        return null;
+      }
+    },
     // métodos serão adicionados nos próximos commits
   };
 
