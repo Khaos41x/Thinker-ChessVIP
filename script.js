@@ -135,6 +135,61 @@
         return null;
       }
     },
+    fetchData(username, timeControl) {
+      try {
+        let statsReceived = false;
+        let archiveUrl = null;
+
+        const baseUrl = `https://api.chess.com/pub/player/${username}`;
+
+        // Chamada de archives
+        GM_xmlhttpRequest({
+          method: 'GET',
+          url: `${baseUrl}/games/archives`,
+          timeout: 5000,
+          onload: (resp) => {
+            try {
+              const data = JSON.parse(resp.responseText);
+              const archives = data.archives || [];
+              if (archives.length === 0) return;
+
+              const fetchGames = (urls) => {
+                const results = [];
+                let done = 0;
+                urls.forEach(url => {
+                  GM_xmlhttpRequest({
+                    method: 'GET',
+                    url,
+                    timeout: 5000,
+                    onload: (r) => {
+                      try {
+                        const d = JSON.parse(r.responseText);
+                        if (d.games) results.push(...d.games);
+                      } catch (e) { }
+                      done++;
+                      if (done === urls.length) {
+                        const processed = OpponentIntel.processGames(results, username, timeControl);
+                        if (processed) log('OpponentIntel dados: ' + JSON.stringify(processed));
+                      }
+                    },
+                    onerror: () => { done++; }
+                  });
+                });
+              };
+
+              // Começa com o mês mais recente
+              const urlsToFetch = [archives[archives.length - 1]];
+              if (archives.length >= 2) urlsToFetch.push(archives[archives.length - 2]);
+              fetchGames(urlsToFetch);
+
+            } catch (e) { log('OpponentIntel.fetchData parse erro: ' + e); }
+          },
+          onerror: () => { log('OpponentIntel.fetchData erro de rede'); }
+        });
+      } catch (e) {
+        log('OpponentIntel.fetchData erro: ' + e);
+      }
+    },
     // métodos serão adicionados nos próximos commits
   };
 
