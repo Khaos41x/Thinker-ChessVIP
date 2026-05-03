@@ -206,9 +206,9 @@
     renderZone1(data) {
       try {
         $('#oi-zone1').remove();
-        log('renderZone1: target encontrado? ' + !!document.querySelectorAll('a.user-username.username')[1]);
+        const target = OpponentIntel._getOpponentElement ? OpponentIntel._getOpponentElement() : null;
+        log('renderZone1: target encontrado? ' + !!target);
         log('renderZone1: data recebida → ' + JSON.stringify(data.wld));
-        const target = document.querySelectorAll('a.user-username.username')[1];
         if (!target) return;
 
         const { wld, streak, winRateByColor } = data;
@@ -262,46 +262,78 @@
       }
     },
     startObserver() {
-      const getOpponentUsername = () => {
-        const all = document.querySelectorAll('a.user-username.username');
-        if (all.length >= 1) return all[0].textContent.trim();
+      // Pega o username do jogador logado pelo link de perfil no nav
+      const getMyOwnUsername = () => {
+        // Chess.com tem o username do usuário logado no nav
+        const navLink = document.querySelector('a[href*="/member/"]');
+        if (navLink) {
+          const match = navLink.href.match(/\/member\/([^/?]+)/i);
+          if (match) return match[1].toLowerCase();
+        }
+        // Fallback: botão de perfil
+        const profileBtn = document.querySelector('.user-username-component');
+        if (profileBtn) return profileBtn.textContent.trim().toLowerCase();
         return null;
       };
 
-      const getMyUsername = () => {
+      const getOpponentUsername = () => {
+        const myUsername = getMyOwnUsername();
         const all = document.querySelectorAll('a.user-username.username');
-        if (all.length >= 2) return all[1].textContent.trim();
+        for (const el of all) {
+          const name = el.textContent.trim();
+          if (name && (!myUsername || name.toLowerCase() !== myUsername)) {
+            return name;
+          }
+        }
+        return null;
+      };
+
+      const getMyUsernameElement = () => {
+        const myUsername = getMyOwnUsername();
+        if (!myUsername) return null;
+        const all = document.querySelectorAll('a.user-username.username');
+        for (const el of all) {
+          if (el.textContent.trim().toLowerCase() === myUsername) return el;
+        }
+        return null;
+      };
+
+      const getOpponentElement = () => {
+        const myUsername = getMyOwnUsername();
+        const all = document.querySelectorAll('a.user-username.username');
+        for (const el of all) {
+          const name = el.textContent.trim();
+          if (name && (!myUsername || name.toLowerCase() !== myUsername)) return el;
+        }
         return null;
       };
 
       const check = () => {
         const username = getOpponentUsername();
-        log('OpponentIntel: check disparado. Username encontrado: ' + username + ' | lastOpponent: ' + OpponentIntel.lastOpponent);
+        log('OpponentIntel: check. Oponente: ' + username + ' | last: ' + OpponentIntel.lastOpponent);
         if (username && username !== OpponentIntel.lastOpponent) {
           OpponentIntel.lastOpponent = username;
-          log('OpponentIntel: novo oponente detectado → ' + username);
+          log('OpponentIntel: novo oponente → ' + username);
 
-          // Desconecta antes de mexer no DOM pra evitar loop
           observer.disconnect();
 
           $('#oi-zone1').remove();
           $('#oi-zone2').remove();
 
-          const target = document.querySelectorAll('a.user-username.username')[0];
+          const target = getOpponentElement();
           if (target) {
             $(target).after('<span id="oi-zone1" style="font-size:11px;color:#666;margin-left:8px;">...</span>');
           }
 
           if ($('#krypbot-container').length) {
             $('#krypbot-container').after(`
-        <div id="oi-zone2" style="background:linear-gradient(135deg,#121212,#1f1f1f);color:#666;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,0.7);padding:16px 24px;font-family:'Roboto',sans-serif;margin-top:10px;font-size:12px;">
-          <div style="font-size:14px;font-weight:700;color:#00ff88;padding-bottom:8px;border-bottom:1px solid #333;">Opponent Intel</div>
-          <div style="margin-top:8px;">Carregando dados...</div>
-        </div>
-      `);
+          <div id="oi-zone2" style="background:linear-gradient(135deg,#121212,#1f1f1f);color:#666;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,0.7);padding:16px 24px;font-family:'Roboto',sans-serif;margin-top:10px;font-size:12px;">
+            <div style="font-size:14px;font-weight:700;color:#00ff88;padding-bottom:8px;border-bottom:1px solid #333;">Opponent Intel</div>
+            <div style="margin-top:8px;">Carregando dados...</div>
+          </div>
+        `);
           }
 
-          // Reconecta depois das injeções
           observer.observe(document.body, { childList: true, subtree: true });
 
           const timeControl = OpponentIntel.getTimeControl();
@@ -310,9 +342,13 @@
         }
       };
 
+      // Guarda referência pro renderZone1 usar
+      OpponentIntel._getOpponentElement = getOpponentElement;
+      OpponentIntel._getMyUsernameElement = getMyUsernameElement;
+
       const observer = new MutationObserver(check);
       observer.observe(document.body, { childList: true, subtree: true });
-      check(); // verifica imediatamente também
+      check();
     },
     getTimeControl() {
       try {
@@ -383,7 +419,7 @@
   function renderMySession() {
     try {
       $('#oi-mysession').remove();
-      const target = document.querySelectorAll('a.user-username.username')[0];
+      const target = OpponentIntel._getMyUsernameElement ? OpponentIntel._getMyUsernameElement() : null;
 
       if (!target) return;
 
