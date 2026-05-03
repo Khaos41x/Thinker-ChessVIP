@@ -204,7 +204,7 @@
     renderZone1(data) {
       try {
         $('#oi-zone1').remove();
-        const target = document.querySelector('.player-component.top-player .user-tagline-username');
+        const target = document.querySelectorAll('a.user-username.username')[0];
         if (!target) return;
 
         const { wld, streak, winRateByColor } = data;
@@ -258,25 +258,14 @@
     },
     startObserver() {
       const getOpponentUsername = () => {
-        // Testa múltiplos seletores e loga qual existe
-        const selectors = [
-          '.player-component.top-player .user-tagline-username',
-          '.player-component.top-player [class*="username"]',
-          '[class*="top-player"] [class*="username"]',
-          '.board-player-default.top-player [class*="username"]',
-          '[data-qa="top-player"] [class*="username"]',
-        ];
+        const all = document.querySelectorAll('a.user-username.username');
+        if (all.length >= 1) return all[0].textContent.trim();
+        return null;
+      };
 
-        for (const sel of selectors) {
-          const el = document.querySelector(sel);
-          if (el && el.textContent.trim()) {
-            log('OpponentIntel: seletor funcionou → ' + sel + ' → ' + el.textContent.trim());
-            return el.textContent.trim();
-          }
-        }
-
-        log('OpponentIntel: nenhum seletor encontrou o username. Elementos top-player presentes: ' +
-          document.querySelectorAll('[class*="top-player"]').length);
+      const getMyUsername = () => {
+        const all = document.querySelectorAll('a.user-username.username');
+        if (all.length >= 2) return all[1].textContent.trim();
         return null;
       };
 
@@ -293,7 +282,7 @@
           $('#oi-zone1').remove();
           $('#oi-zone2').remove();
 
-          const target = document.querySelector('.player-component.top-player .user-tagline-username');
+          const target = document.querySelectorAll('a.user-username.username')[0];
           if (target) {
             $(target).after('<span id="oi-zone1" style="font-size:11px;color:#666;margin-left:8px;">...</span>');
           }
@@ -389,7 +378,8 @@
   function renderMySession() {
     try {
       $('#oi-mysession').remove();
-      const target = document.querySelector('.player-component.bottom-player .user-tagline-username');
+      const target = document.querySelectorAll('a.user-username.username')[1];
+
       if (!target) return;
 
       const { wins, losses, draws, streak, streakType } = mySession;
