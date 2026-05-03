@@ -354,10 +354,10 @@
         const html = `<span id="oi-zone1" style="font-size:11px;color:#e0e0e0;margin-left:8px;display:inline-flex;gap:8px;align-items:center;">
       <span><span style="color:#4caf50">${wld.w}</span>-<span style="color:#9e9e9e">${wld.d}</span>-<span style="color:#f44336">${wld.l}</span></span>
       <span>${streakEmoji}${streak.type}${streak.count}</span>
-      ${wr.white !== null ? `<span>⬜${wr.white}% ⬛${wr.black !== null ? wr.black : "?"}%</span>` : ""}
+      ${wr.white !== null ? `<span style="color:#fff">B:${wr.white}%</span> <span style="color:#aaa">P:${wr.black !== null ? wr.black : "?"}%</span>` : ""}
     </span>`;
 
-        $(target).after(html);
+        $(target).parent().append(html);
       } catch (e) {
         log("OpponentIntel.renderZone1 erro: " + e);
       }
@@ -401,8 +401,8 @@
       <div id="oi-zone2" style="background:linear-gradient(135deg,#121212,#1f1f1f);color:#f0e68c;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,0.7);padding:16px 24px;font-family:'Roboto',sans-serif;margin-top:10px;font-size:12px;display:flex;flex-direction:column;gap:10px;">
         <div style="font-size:14px;font-weight:700;color:#00ff88;padding-bottom:8px;border-bottom:1px solid #333;">Opponent Intel</div>
         ${avgAccuracy !== null ? `<div>Precisão média: <span style="color:#fff">${avgAccuracy}%</span></div>` : ""}
-        ${topOpeningWhite ? `<div>⬜ ${topOpeningWhite}</div>` : ""}
-        ${topOpeningBlack ? `<div>⬛ ${topOpeningBlack}</div>` : ""}
+        ${topOpeningWhite ? `<div><span style="color:#fff">Brancas:</span> ${topOpeningWhite}</div>` : ""}
+        ${topOpeningBlack ? `<div><span style="color:#aaa">Pretas:</span> ${topOpeningBlack}</div>` : ""}
         ${hourHtml ? `<div style="color:#aaa">${hourHtml}</div>` : ""}
         ${last5Html ? `<div style="border-top:1px solid #222;padding-top:8px;color:#e0e0e0;">${last5Html}</div>` : ""}
       </div>`;
