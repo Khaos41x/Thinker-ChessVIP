@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC46
+// @name         TC63
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -51,25 +51,48 @@
     lastOpponent: null,
     processGames(games, username, timeControl) {
       try {
-        const filtered = games.filter(g => g.time_class === timeControl);
+        const filtered = games.filter((g) => g.time_class === timeControl);
         if (filtered.length === 0) return null;
 
         const last20 = filtered.slice(-20);
         const last10 = filtered.slice(-10);
 
-        const processed = last20.map(game => {
-          const isWhite = game.white.username.toLowerCase() === username.toLowerCase();
+        const processed = last20.map((game) => {
+          const isWhite =
+            game.white.username.toLowerCase() === username.toLowerCase();
           const playerData = isWhite ? game.white : game.black;
-          const drawResults = ['agreed', 'repetition', 'stalemate', 'insufficient', '50move', 'timevsinsufficient'];
-          const result = playerData.result === 'win' ? 'W' : drawResults.includes(playerData.result) ? 'D' : 'L';
-          const openingMatch = game.pgn ? (game.pgn.match(/\[Opening "(.+?)"\]/) || game.pgn.match(/\[ECOUrl "https?:\/\/www\.chess\.com\/openings\/([^"]+)"\]/)) : null;
-          const opening = openingMatch ? openingMatch[1].replace(/-/g, ' ') : null;
+          const drawResults = [
+            "agreed",
+            "repetition",
+            "stalemate",
+            "insufficient",
+            "50move",
+            "timevsinsufficient",
+          ];
+          const result =
+            playerData.result === "win"
+              ? "W"
+              : drawResults.includes(playerData.result)
+                ? "D"
+                : "L";
+          const openingMatch = game.pgn
+            ? game.pgn.match(/\[Opening "(.+?)"\]/) ||
+              game.pgn.match(
+                /\[ECOUrl "https?:\/\/www\.chess\.com\/openings\/([^"]+)"\]/,
+              )
+            : null;
+          const opening = openingMatch
+            ? openingMatch[1].replace(/-/g, " ")
+            : null;
           return {
             result,
-            color: isWhite ? 'white' : 'black',
-            accuracy: typeof playerData.accuracy === 'number' ? playerData.accuracy : null,
+            color: isWhite ? "white" : "black",
+            accuracy:
+              typeof playerData.accuracy === "number"
+                ? playerData.accuracy
+                : null,
             opening,
-            timestamp: game.end_time
+            timestamp: game.end_time,
           };
         });
 
@@ -77,9 +100,9 @@
 
         // W/L/D
         const wld = {
-          w: last10p.filter(g => g.result === 'W').length,
-          d: last10p.filter(g => g.result === 'D').length,
-          l: last10p.filter(g => g.result === 'L').length
+          w: last10p.filter((g) => g.result === "W").length,
+          d: last10p.filter((g) => g.result === "D").length,
+          l: last10p.filter((g) => g.result === "L").length,
         };
 
         // Streak
@@ -91,35 +114,72 @@
         }
 
         // Win rate por cor
-        const asWhite = processed.filter(g => g.color === 'white');
-        const asBlack = processed.filter(g => g.color === 'black');
+        const asWhite = processed.filter((g) => g.color === "white");
+        const asBlack = processed.filter((g) => g.color === "black");
         const winRateByColor = {
-          white: asWhite.length ? Math.round(asWhite.filter(g => g.result === 'W').length / asWhite.length * 100) : null,
-          black: asBlack.length ? Math.round(asBlack.filter(g => g.result === 'W').length / asBlack.length * 100) : null
+          white: asWhite.length
+            ? Math.round(
+                (asWhite.filter((g) => g.result === "W").length /
+                  asWhite.length) *
+                  100,
+              )
+            : null,
+          black: asBlack.length
+            ? Math.round(
+                (asBlack.filter((g) => g.result === "W").length /
+                  asBlack.length) *
+                  100,
+              )
+            : null,
         };
 
         // Precisão média
-        const withAcc = last10p.filter(g => g.accuracy !== null);
-        const avgAccuracy = withAcc.length ? parseFloat((withAcc.reduce((s, g) => s + g.accuracy, 0) / withAcc.length).toFixed(1)) : null;
+        const withAcc = last10p.filter((g) => g.accuracy !== null);
+        const avgAccuracy = withAcc.length
+          ? parseFloat(
+              (
+                withAcc.reduce((s, g) => s + g.accuracy, 0) / withAcc.length
+              ).toFixed(1),
+            )
+          : null;
 
         // Opening mais jogada por cor
         const topOpening = (color) => {
           const map = {};
-          processed.filter(g => g.color === color && g.opening).forEach(g => { map[g.opening] = (map[g.opening] || 0) + 1; });
+          processed
+            .filter((g) => g.color === color && g.opening)
+            .forEach((g) => {
+              map[g.opening] = (map[g.opening] || 0) + 1;
+            });
           return Object.keys(map).sort((a, b) => map[b] - map[a])[0] || null;
         };
 
         // Últimas 5
-        const last5 = processed.slice(-5).reverse().map(g => ({
-          result: g.result,
-          opening: g.opening,
-          accuracy: g.accuracy
-        }));
+        const last5 = processed
+          .slice(-5)
+          .reverse()
+          .map((g) => ({
+            result: g.result,
+            opening: g.opening,
+            accuracy: g.accuracy,
+          }));
 
         // Por horário
         const byHour = (start, end) => {
-          const range = processed.filter(g => { const h = new Date(g.timestamp * 1000).getHours(); return h >= start && h < end; });
-          return { total: range.length, wr: range.length ? Math.round(range.filter(g => g.result === 'W').length / range.length * 100) : null };
+          const range = processed.filter((g) => {
+            const h = new Date(g.timestamp * 1000).getHours();
+            return h >= start && h < end;
+          });
+          return {
+            total: range.length,
+            wr: range.length
+              ? Math.round(
+                  (range.filter((g) => g.result === "W").length /
+                    range.length) *
+                    100,
+                )
+              : null,
+          };
         };
 
         return {
@@ -127,161 +187,229 @@
           streak: { type: streakType, count: streakCount },
           winRateByColor,
           avgAccuracy,
-          topOpeningWhite: topOpening('white'),
-          topOpeningBlack: topOpening('black'),
+          topOpeningWhite: topOpening("white"),
+          topOpeningBlack: topOpening("black"),
           last5,
-          byHour: { morning: byHour(6, 12), afternoon: byHour(12, 18), night: byHour(18, 24) }
+          byHour: {
+            morning: byHour(6, 12),
+            afternoon: byHour(12, 18),
+            night: byHour(18, 24),
+          },
         };
       } catch (e) {
-        log('OpponentIntel.processGames erro: ' + e);
+        log("OpponentIntel.processGames erro: " + e);
         return null;
       }
     },
     fetchData(username, timeControl) {
       try {
-        const cacheKey = username + '_' + timeControl;
+        const cacheKey = username + "_" + timeControl;
         const cached = OpponentIntel._cache && OpponentIntel._cache[cacheKey];
-        if (cached && (Date.now() - cached.ts) < 300000) {
-          log('OpponentIntel: usando cache para ' + username);
+        if (cached && Date.now() - cached.ts < 300000) {
+          log("OpponentIntel: usando cache para " + username);
           OpponentIntel.renderZone1(cached.data);
           OpponentIntel.renderZone2(cached.data);
           return;
         }
         if (!OpponentIntel._cache) OpponentIntel._cache = {};
 
-        log('fetchData: chamado para ' + username + ' tc:' + timeControl);
-        log('OpponentIntel: fetchData iniciado para ' + username + ' | timeControl: ' + timeControl);
+        log("fetchData: chamado para " + username + " tc:" + timeControl);
+        log(
+          "OpponentIntel: fetchData iniciado para " +
+            username +
+            " | timeControl: " +
+            timeControl,
+        );
         const baseUrl = `https://api.chess.com/pub/player/${username}`;
 
         // Chamada de archives
         GM_xmlhttpRequest({
-          method: 'GET',
+          method: "GET",
           url: `${baseUrl}/games/archives`,
           timeout: 5000,
           onload: (resp) => {
             try {
               const data = JSON.parse(resp.responseText);
-              log('fetchData: archives recebidos, total meses: ' + (data.archives ? data.archives.length : 0));
-              log('OpponentIntel: archives recebidos → ' + JSON.stringify(data.archives ? data.archives.length + ' meses' : 'vazio'));
+              log(
+                "fetchData: archives recebidos, total meses: " +
+                  (data.archives ? data.archives.length : 0),
+              );
+              log(
+                "OpponentIntel: archives recebidos → " +
+                  JSON.stringify(
+                    data.archives ? data.archives.length + " meses" : "vazio",
+                  ),
+              );
               const archives = data.archives || [];
               if (archives.length === 0) return;
 
               // Busca mês atual primeiro, depois decide se precisa do anterior
               GM_xmlhttpRequest({
-                method: 'GET',
+                method: "GET",
                 url: archives[archives.length - 1],
                 timeout: 5000,
                 onload: (r) => {
                   try {
                     const d = JSON.parse(r.responseText);
                     const currentGames = d.games || [];
-                    const filteredCurrent = currentGames.filter(g => g.time_class === timeControl);
+                    const filteredCurrent = currentGames.filter(
+                      (g) => g.time_class === timeControl,
+                    );
 
                     if (filteredCurrent.length >= 15 || archives.length < 2) {
                       // Suficiente, processa só o mês atual
-                      const processed = OpponentIntel.processGames(currentGames, username, timeControl);
+                      const processed = OpponentIntel.processGames(
+                        currentGames,
+                        username,
+                        timeControl,
+                      );
                       if (processed) {
-                        OpponentIntel._cache[cacheKey] = { data: processed, ts: Date.now() };
+                        OpponentIntel._cache[cacheKey] = {
+                          data: processed,
+                          ts: Date.now(),
+                        };
                         OpponentIntel.renderZone1(processed);
                         OpponentIntel.renderZone2(processed);
                       }
                     } else {
                       // Busca mês anterior também
                       GM_xmlhttpRequest({
-                        method: 'GET',
+                        method: "GET",
                         url: archives[archives.length - 2],
                         timeout: 5000,
                         onload: (r2) => {
                           try {
                             const d2 = JSON.parse(r2.responseText);
-                            const allGames = [...(d2.games || []), ...currentGames];
-                            const processed = OpponentIntel.processGames(allGames, username, timeControl);
+                            const allGames = [
+                              ...(d2.games || []),
+                              ...currentGames,
+                            ];
+                            const processed = OpponentIntel.processGames(
+                              allGames,
+                              username,
+                              timeControl,
+                            );
                             if (processed) {
-                              OpponentIntel._cache[cacheKey] = { data: processed, ts: Date.now() };
+                              OpponentIntel._cache[cacheKey] = {
+                                data: processed,
+                                ts: Date.now(),
+                              };
                               OpponentIntel.renderZone1(processed);
                               OpponentIntel.renderZone2(processed);
                             }
-                          } catch (e) { }
+                          } catch (e) {}
                         },
                         onerror: () => {
-                          const processed = OpponentIntel.processGames(currentGames, username, timeControl);
+                          const processed = OpponentIntel.processGames(
+                            currentGames,
+                            username,
+                            timeControl,
+                          );
                           if (processed) {
-                            OpponentIntel._cache[cacheKey] = { data: processed, ts: Date.now() };
+                            OpponentIntel._cache[cacheKey] = {
+                              data: processed,
+                              ts: Date.now(),
+                            };
                             OpponentIntel.renderZone1(processed);
                             OpponentIntel.renderZone2(processed);
                           }
-                        }
+                        },
                       });
                     }
-                  } catch (e) { log('OpponentIntel fallback erro: ' + e); }
+                  } catch (e) {
+                    log("OpponentIntel fallback erro: " + e);
+                  }
                 },
-                onerror: () => { log('OpponentIntel: erro ao buscar jogos'); }
+                onerror: () => {
+                  log("OpponentIntel: erro ao buscar jogos");
+                },
               });
-
-            } catch (e) { log('OpponentIntel.fetchData parse erro: ' + e); }
+            } catch (e) {
+              log("OpponentIntel.fetchData parse erro: " + e);
+            }
           },
-          onerror: () => { log('OpponentIntel.fetchData erro de rede'); }
+          onerror: () => {
+            log("OpponentIntel.fetchData erro de rede");
+          },
         });
       } catch (e) {
-        log('OpponentIntel.fetchData erro: ' + e);
+        log("OpponentIntel.fetchData erro: " + e);
       }
     },
     renderZone1(data) {
       try {
-        $('#oi-zone1').remove();
-        const target = OpponentIntel._getOpponentElement ? OpponentIntel._getOpponentElement() : null;
-        log('renderZone1: target encontrado? ' + !!target);
-        log('renderZone1: data recebida → ' + JSON.stringify(data.wld));
+        $("#oi-zone1").remove();
+        const target = OpponentIntel._getOpponentElement
+          ? OpponentIntel._getOpponentElement()
+          : null;
+        log("renderZone1: target encontrado? " + !!target);
+        log("renderZone1: data recebida → " + JSON.stringify(data.wld));
         if (!target) return;
 
         const { wld, streak, winRateByColor } = data;
-        const streakEmoji = streak.type === 'W' ? '🔥' : streak.type === 'L' ? '💀' : '➖';
+        const streakEmoji =
+          streak.type === "W" ? "🔥" : streak.type === "L" ? "💀" : "➖";
         const wr = winRateByColor;
 
         const html = `<span id="oi-zone1" style="font-size:11px;color:#e0e0e0;margin-left:8px;display:inline-flex;gap:8px;align-items:center;">
       <span><span style="color:#4caf50">${wld.w}</span>-<span style="color:#9e9e9e">${wld.d}</span>-<span style="color:#f44336">${wld.l}</span></span>
       <span>${streakEmoji}${streak.type}${streak.count}</span>
-      ${wr.white !== null ? `<span>⬜${wr.white}% ⬛${wr.black !== null ? wr.black : '?'}%</span>` : ''}
+      ${wr.white !== null ? `<span>⬜${wr.white}% ⬛${wr.black !== null ? wr.black : "?"}%</span>` : ""}
     </span>`;
 
         $(target).after(html);
       } catch (e) {
-        log('OpponentIntel.renderZone1 erro: ' + e);
+        log("OpponentIntel.renderZone1 erro: " + e);
       }
     },
     renderZone2(data) {
       try {
-        $('#oi-zone2').remove();
-        log('renderZone2: #krypbot-container existe? ' + !!$('#krypbot-container').length);
-        if (!$('#krypbot-container').length) return;
+        $("#oi-zone2").remove();
+        log(
+          "renderZone2: #krypbot-container existe? " +
+            !!$("#krypbot-container").length,
+        );
+        if (!$("#krypbot-container").length) return;
 
-        const { avgAccuracy, topOpeningWhite, topOpeningBlack, last5, byHour } = data;
+        const { avgAccuracy, topOpeningWhite, topOpeningBlack, last5, byHour } =
+          data;
 
-        const resultIcon = r => r === 'W' ? '✅' : r === 'L' ? '❌' : '➖';
+        const resultIcon = (r) => (r === "W" ? "✅" : r === "L" ? "❌" : "➖");
 
-        const last5Html = last5.map(g =>
-          `<div style="margin:3px 0;">${resultIcon(g.result)} ${g.opening || 'Unknown'}${g.accuracy !== null ? ` · ${g.accuracy}%` : ''}</div>`
-        ).join('');
+        const last5Html = last5
+          .map(
+            (g) =>
+              `<div style="margin:3px 0;">${resultIcon(g.result)} ${g.opening || "Unknown"}${g.accuracy !== null ? ` · ${g.accuracy}%` : ""}</div>`,
+          )
+          .join("");
 
         const hourHtml = [
-          byHour.morning.total ? `☀️ ${byHour.morning.wr}% (${byHour.morning.total}g)` : null,
-          byHour.afternoon.total ? `🌤️ ${byHour.afternoon.wr}% (${byHour.afternoon.total}g)` : null,
-          byHour.night.total ? `🌙 ${byHour.night.wr}% (${byHour.night.total}g)` : null
-        ].filter(Boolean).join(' · ');
+          byHour.morning.total
+            ? `☀️ ${byHour.morning.wr}% (${byHour.morning.total}g)`
+            : null,
+          byHour.afternoon.total
+            ? `🌤️ ${byHour.afternoon.wr}% (${byHour.afternoon.total}g)`
+            : null,
+          byHour.night.total
+            ? `🌙 ${byHour.night.wr}% (${byHour.night.total}g)`
+            : null,
+        ]
+          .filter(Boolean)
+          .join(" · ");
 
         const html = `
       <div id="oi-zone2" style="background:linear-gradient(135deg,#121212,#1f1f1f);color:#f0e68c;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,0.7);padding:16px 24px;font-family:'Roboto',sans-serif;margin-top:10px;font-size:12px;display:flex;flex-direction:column;gap:10px;">
         <div style="font-size:14px;font-weight:700;color:#00ff88;padding-bottom:8px;border-bottom:1px solid #333;">Opponent Intel</div>
-        ${avgAccuracy !== null ? `<div>Precisão média: <span style="color:#fff">${avgAccuracy}%</span></div>` : ''}
-        ${topOpeningWhite ? `<div>⬜ ${topOpeningWhite}</div>` : ''}
-        ${topOpeningBlack ? `<div>⬛ ${topOpeningBlack}</div>` : ''}
-        ${hourHtml ? `<div style="color:#aaa">${hourHtml}</div>` : ''}
-        ${last5Html ? `<div style="border-top:1px solid #222;padding-top:8px;color:#e0e0e0;">${last5Html}</div>` : ''}
+        ${avgAccuracy !== null ? `<div>Precisão média: <span style="color:#fff">${avgAccuracy}%</span></div>` : ""}
+        ${topOpeningWhite ? `<div>⬜ ${topOpeningWhite}</div>` : ""}
+        ${topOpeningBlack ? `<div>⬛ ${topOpeningBlack}</div>` : ""}
+        ${hourHtml ? `<div style="color:#aaa">${hourHtml}</div>` : ""}
+        ${last5Html ? `<div style="border-top:1px solid #222;padding-top:8px;color:#e0e0e0;">${last5Html}</div>` : ""}
       </div>`;
 
-        $('#krypbot-container').after(html);
+        $("#krypbot-container").after(html);
       } catch (e) {
-        log('OpponentIntel.renderZone2 erro: ' + e);
+        log("OpponentIntel.renderZone2 erro: " + e);
       }
     },
     startObserver() {
@@ -294,14 +422,14 @@
           if (match) return match[1].toLowerCase();
         }
         // Fallback: botão de perfil
-        const profileBtn = document.querySelector('.user-username-component');
+        const profileBtn = document.querySelector(".user-username-component");
         if (profileBtn) return profileBtn.textContent.trim().toLowerCase();
         return null;
       };
 
       const getOpponentUsername = () => {
         const myUsername = getMyOwnUsername();
-        const all = document.querySelectorAll('a.user-username.username');
+        const all = document.querySelectorAll("a.user-username.username");
         for (const el of all) {
           const name = el.textContent.trim();
           if (name && (!myUsername || name.toLowerCase() !== myUsername)) {
@@ -314,7 +442,7 @@
       const getMyUsernameElement = () => {
         const myUsername = getMyOwnUsername();
         if (!myUsername) return null;
-        const all = document.querySelectorAll('a.user-username.username');
+        const all = document.querySelectorAll("a.user-username.username");
         for (const el of all) {
           if (el.textContent.trim().toLowerCase() === myUsername) return el;
         }
@@ -323,37 +451,41 @@
 
       const getOpponentElement = () => {
         const myUsername = getMyOwnUsername();
-        const all = document.querySelectorAll('a.user-username.username');
+        const all = document.querySelectorAll("a.user-username.username");
         for (const el of all) {
           const name = el.textContent.trim();
-          if (name && (!myUsername || name.toLowerCase() !== myUsername)) return el;
+          if (name && (!myUsername || name.toLowerCase() !== myUsername))
+            return el;
         }
         return null;
       };
 
       const check = () => {
-        // Se já tem uma partida ativa com esse oponente, não faz nada
-        if (OpponentIntel.lastOpponent && window.location.href.includes('/game/')) {
-          return;
-        }
         const username = getOpponentUsername();
-        log('OpponentIntel: check. Oponente: ' + username + ' | last: ' + OpponentIntel.lastOpponent);
+        log(
+          "OpponentIntel: check. Oponente: " +
+            username +
+            " | last: " +
+            OpponentIntel.lastOpponent,
+        );
         if (username && username !== OpponentIntel.lastOpponent) {
           OpponentIntel.lastOpponent = username;
-          log('OpponentIntel: novo oponente → ' + username);
+          log("OpponentIntel: novo oponente → " + username);
 
           observer.disconnect();
 
-          $('#oi-zone1').remove();
-          $('#oi-zone2').remove();
+          $("#oi-zone1").remove();
+          $("#oi-zone2").remove();
 
           const target = getOpponentElement();
           if (target) {
-            $(target).after('<span id="oi-zone1" style="font-size:11px;color:#666;margin-left:8px;">...</span>');
+            $(target).after(
+              '<span id="oi-zone1" style="font-size:11px;color:#666;margin-left:8px;">...</span>',
+            );
           }
 
-          if ($('#krypbot-container').length) {
-            $('#krypbot-container').after(`
+          if ($("#krypbot-container").length) {
+            $("#krypbot-container").after(`
           <div id="oi-zone2" style="background:linear-gradient(135deg,#121212,#1f1f1f);color:#666;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,0.7);padding:16px 24px;font-family:'Roboto',sans-serif;margin-top:10px;font-size:12px;">
             <div style="font-size:14px;font-weight:700;color:#00ff88;padding-bottom:8px;border-bottom:1px solid #333;">Opponent Intel</div>
             <div style="margin-top:8px;">Carregando dados...</div>
@@ -364,7 +496,7 @@
           observer.observe(document.body, { childList: true, subtree: true });
 
           const timeControl = OpponentIntel.getTimeControl();
-          log('OpponentIntel: time control → ' + timeControl);
+          log("OpponentIntel: time control → " + timeControl);
           OpponentIntel.fetchData(username, timeControl);
         }
       };
@@ -379,23 +511,24 @@
     },
     getTimeControl() {
       try {
-        const el = document.querySelector('.time-selector-button-text');
+        const el = document.querySelector(".time-selector-button-text");
         if (el) {
           const text = el.textContent.trim();
           const minutes = parseFloat(text);
-          if (minutes < 3) return 'bullet';
-          if (minutes < 10) return 'blitz';
-          return 'rapid';
+          if (minutes < 3) return "bullet";
+          if (minutes < 10) return "blitz";
+          return "rapid";
         }
         // Fallback pela URL
         const url = window.location.href;
-        if (url.includes('1|') || url.includes('1/') || url.includes('2|')) return 'bullet';
-        if (url.includes('3|') || url.includes('5|')) return 'blitz';
-        return 'blitz'; // padrão
+        if (url.includes("1|") || url.includes("1/") || url.includes("2|"))
+          return "bullet";
+        if (url.includes("3|") || url.includes("5|")) return "blitz";
+        return "blitz"; // padrão
       } catch (e) {
-        return 'blitz';
+        return "blitz";
       }
-    }
+    },
   };
 
   // --- ESTADO DO AUTO RUN DELAY (PERSISTENTE) ---
@@ -412,7 +545,11 @@
     autoDelayMax = DEFAULT_MAX_DELAY;
   if (autoDelayMin > autoDelayMax)
     [autoDelayMin, autoDelayMax] = [autoDelayMax, autoDelayMin];
-  if (autoDelayMode !== "random" && autoDelayMode !== "average" && autoDelayMode !== "max")
+  if (
+    autoDelayMode !== "random" &&
+    autoDelayMode !== "average" &&
+    autoDelayMode !== "max"
+  )
     autoDelayMode = DEFAULT_DELAY_MODE;
 
   let chessBot = {
@@ -426,9 +563,13 @@
 
   function updateMySession(result) {
     try {
-      if (result === 'W') { mySession.wins++; }
-      else if (result === 'L') { mySession.losses++; }
-      else { mySession.draws++; }
+      if (result === "W") {
+        mySession.wins++;
+      } else if (result === "L") {
+        mySession.losses++;
+      } else {
+        mySession.draws++;
+      }
 
       if (mySession.streakType === result) {
         mySession.streak++;
@@ -439,20 +580,23 @@
 
       renderMySession();
     } catch (e) {
-      log('updateMySession erro: ' + e);
+      log("updateMySession erro: " + e);
     }
   }
 
   function renderMySession() {
     try {
-      $('#oi-mysession').remove();
-      const target = OpponentIntel._getMyUsernameElement ? OpponentIntel._getMyUsernameElement() : null;
+      $("#oi-mysession").remove();
+      const target = OpponentIntel._getMyUsernameElement
+        ? OpponentIntel._getMyUsernameElement()
+        : null;
 
       if (!target) return;
 
       const { wins, losses, draws, streak, streakType } = mySession;
-      const emoji = streakType === 'W' ? '🔥' : streakType === 'L' ? '💀' : '➖';
-      const streakStr = streakType ? `${emoji}${streakType}${streak} · ` : '';
+      const emoji =
+        streakType === "W" ? "🔥" : streakType === "L" ? "💀" : "➖";
+      const streakStr = streakType ? `${emoji}${streakType}${streak} · ` : "";
 
       const html = `<span id="oi-mysession" style="font-size:11px;color:#e0e0e0;margin-left:8px;">
       ${streakStr}<span style="color:#4caf50">${wins}</span>-<span style="color:#9e9e9e">${draws}</span>-<span style="color:#f44336">${losses}</span>
@@ -460,7 +604,7 @@
 
       $(target).after(html);
     } catch (e) {
-      log('renderMySession erro: ' + e);
+      log("renderMySession erro: " + e);
     }
   }
 
@@ -954,9 +1098,13 @@
             "checked",
             true,
           );
-          
+
           if (autoDelayMode === "max") {
-            $(".kb-num-input").css({"border-color": "#fff", "box-shadow": "0 0 6px rgba(255,255,255,0.5)", "color": "#fff"});
+            $(".kb-num-input").css({
+              "border-color": "#fff",
+              "box-shadow": "0 0 6px rgba(255,255,255,0.5)",
+              color: "#fff",
+            });
             $("#autoDelayDisplay").text("INSTANT");
           } else {
             $("#autoDelayDisplay").text(
@@ -1023,13 +1171,19 @@
         $("input[name='delayMode']").on("change", function () {
           autoDelayMode = $(this).val();
           localStorage.setItem("autoDelayMode", autoDelayMode);
-          
+
           if (autoDelayMode === "max") {
             autoDelayMin = 0;
             autoDelayMax = 0;
             localStorage.setItem("autoMinDelay", 0);
             localStorage.setItem("autoMaxDelay", 0);
-            $(".kb-num-input").val("0.00").css({"border-color": "#fff", "box-shadow": "0 0 8px rgba(255,255,255,0.6)", "color": "#fff"});
+            $(".kb-num-input")
+              .val("0.00")
+              .css({
+                "border-color": "#fff",
+                "box-shadow": "0 0 8px rgba(255,255,255,0.6)",
+                color: "#fff",
+              });
             $("#autoDelayDisplay").text("INSTANT");
           } else {
             // Restaurar valores padrão ao voltar para Random/Avg
@@ -1037,12 +1191,18 @@
             autoDelayMax = 1.0;
             localStorage.setItem("autoMinDelay", 0.5);
             localStorage.setItem("autoMaxDelay", 1.0);
-            $(".kb-num-input").val("").css({"border-color": "#333", "box-shadow": "none", "color": "#fff"});
+            $(".kb-num-input")
+              .val("")
+              .css({
+                "border-color": "#333",
+                "box-shadow": "none",
+                color: "#fff",
+              });
             $("#minDelayInput").val("0.50").css("color", "#fff");
             $("#maxDelayInput").val("1.00").css("color", "#fff");
             $("#autoDelayDisplay").text("0.50–1.00s");
           }
-          
+
           window.krypbotUpdateUI();
         });
 
@@ -1060,16 +1220,28 @@
         setInterval(() => {
           if (window.location.href !== lastUrl) {
             lastUrl = window.location.href;
+            OpponentIntel.lastOpponent = null;
             detectGameMode();
             window.krypbotUpdateUI();
 
             // Tenta detectar resultado da última partida
-            const resultEl = document.querySelector('.game-result');
+            const resultEl = document.querySelector(".game-result");
             if (resultEl) {
               const text = resultEl.textContent.trim().toLowerCase();
-              if (text.includes('win') || text.includes('won') || text.includes('vitória')) updateMySession('W');
-              else if (text.includes('draw') || text.includes('empate')) updateMySession('D');
-              else if (text.includes('loss') || text.includes('lost') || text.includes('derrota')) updateMySession('L');
+              if (
+                text.includes("win") ||
+                text.includes("won") ||
+                text.includes("vitória")
+              )
+                updateMySession("W");
+              else if (text.includes("draw") || text.includes("empate"))
+                updateMySession("D");
+              else if (
+                text.includes("loss") ||
+                text.includes("lost") ||
+                text.includes("derrota")
+              )
+                updateMySession("L");
             }
           }
         }, 1000);
