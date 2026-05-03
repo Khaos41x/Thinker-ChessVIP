@@ -62,12 +62,13 @@
           const playerData = isWhite ? game.white : game.black;
           const drawResults = ['agreed', 'repetition', 'stalemate', 'insufficient', '50move', 'timevsinsufficient'];
           const result = playerData.result === 'win' ? 'W' : drawResults.includes(playerData.result) ? 'D' : 'L';
-          const openingMatch = game.pgn ? game.pgn.match(/\[Opening "(.+?)"\]/) : null;
+          const openingMatch = game.pgn ? (game.pgn.match(/\[Opening "(.+?)"\]/) || game.pgn.match(/\[ECOUrl "https?:\/\/www\.chess\.com\/openings\/([^"]+)"\]/)) : null;
+          const opening = openingMatch ? openingMatch[1].replace(/-/g, ' ') : null;
           return {
             result,
             color: isWhite ? 'white' : 'black',
             accuracy: typeof playerData.accuracy === 'number' ? playerData.accuracy : null,
-            opening: openingMatch ? openingMatch[1] : null,
+            opening,
             timestamp: game.end_time
           };
         });
@@ -138,6 +139,16 @@
     },
     fetchData(username, timeControl) {
       try {
+        const cacheKey = username + '_' + timeControl;
+        const cached = OpponentIntel._cache && OpponentIntel._cache[cacheKey];
+        if (cached && (Date.now() - cached.ts) < 300000) {
+          log('OpponentIntel: usando cache para ' + username);
+          OpponentIntel.renderZone1(cached.data);
+          OpponentIntel.renderZone2(cached.data);
+          return;
+        }
+        if (!OpponentIntel._cache) OpponentIntel._cache = {};
+
         log('fetchData: chamado para ' + username + ' tc:' + timeControl);
         log('OpponentIntel: fetchData iniciado para ' + username + ' | timeControl: ' + timeControl);
         const baseUrl = `https://api.chess.com/pub/player/${username}`;
@@ -169,7 +180,11 @@
                     if (filteredCurrent.length >= 15 || archives.length < 2) {
                       // Suficiente, processa só o mês atual
                       const processed = OpponentIntel.processGames(currentGames, username, timeControl);
-                      if (processed) { OpponentIntel.renderZone1(processed); OpponentIntel.renderZone2(processed); }
+                      if (processed) {
+                        OpponentIntel._cache[cacheKey] = { data: processed, ts: Date.now() };
+                        OpponentIntel.renderZone1(processed);
+                        OpponentIntel.renderZone2(processed);
+                      }
                     } else {
                       // Busca mês anterior também
                       GM_xmlhttpRequest({
@@ -181,12 +196,20 @@
                             const d2 = JSON.parse(r2.responseText);
                             const allGames = [...(d2.games || []), ...currentGames];
                             const processed = OpponentIntel.processGames(allGames, username, timeControl);
-                            if (processed) { OpponentIntel.renderZone1(processed); OpponentIntel.renderZone2(processed); }
+                            if (processed) {
+                              OpponentIntel._cache[cacheKey] = { data: processed, ts: Date.now() };
+                              OpponentIntel.renderZone1(processed);
+                              OpponentIntel.renderZone2(processed);
+                            }
                           } catch (e) { }
                         },
                         onerror: () => {
                           const processed = OpponentIntel.processGames(currentGames, username, timeControl);
-                          if (processed) { OpponentIntel.renderZone1(processed); OpponentIntel.renderZone2(processed); }
+                          if (processed) {
+                            OpponentIntel._cache[cacheKey] = { data: processed, ts: Date.now() };
+                            OpponentIntel.renderZone1(processed);
+                            OpponentIntel.renderZone2(processed);
+                          }
                         }
                       });
                     }
@@ -309,6 +332,10 @@
       };
 
       const check = () => {
+        // Se já tem uma partida ativa com esse oponente, não faz nada
+        if (OpponentIntel.lastOpponent && window.location.href.includes('/game/')) {
+          return;
+        }
         const username = getOpponentUsername();
         log('OpponentIntel: check. Oponente: ' + username + ' | last: ' + OpponentIntel.lastOpponent);
         if (username && username !== OpponentIntel.lastOpponent) {
