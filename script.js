@@ -138,6 +138,7 @@
     },
     fetchData(username, timeControl) {
       try {
+        log('OpponentIntel: fetchData iniciado para ' + username + ' | timeControl: ' + timeControl);
         const baseUrl = `https://api.chess.com/pub/player/${username}`;
 
         // Chamada de archives
@@ -148,6 +149,7 @@
           onload: (resp) => {
             try {
               const data = JSON.parse(resp.responseText);
+              log('OpponentIntel: archives recebidos → ' + JSON.stringify(data.archives ? data.archives.length + ' meses' : 'vazio'));
               const archives = data.archives || [];
               if (archives.length === 0) return;
 
@@ -256,12 +258,31 @@
     },
     startObserver() {
       const getOpponentUsername = () => {
-        const el = document.querySelector('.player-component.top-player .user-tagline-username');
-        return el ? el.textContent.trim() : null;
+        // Testa múltiplos seletores e loga qual existe
+        const selectors = [
+          '.player-component.top-player .user-tagline-username',
+          '.player-component.top-player [class*="username"]',
+          '[class*="top-player"] [class*="username"]',
+          '.board-player-default.top-player [class*="username"]',
+          '[data-qa="top-player"] [class*="username"]',
+        ];
+
+        for (const sel of selectors) {
+          const el = document.querySelector(sel);
+          if (el && el.textContent.trim()) {
+            log('OpponentIntel: seletor funcionou → ' + sel + ' → ' + el.textContent.trim());
+            return el.textContent.trim();
+          }
+        }
+
+        log('OpponentIntel: nenhum seletor encontrou o username. Elementos top-player presentes: ' +
+          document.querySelectorAll('[class*="top-player"]').length);
+        return null;
       };
 
       const check = () => {
         const username = getOpponentUsername();
+        log('OpponentIntel: check disparado. Username encontrado: ' + username + ' | lastOpponent: ' + OpponentIntel.lastOpponent);
         if (username && username !== OpponentIntel.lastOpponent) {
           OpponentIntel.lastOpponent = username;
           log('OpponentIntel: novo oponente detectado → ' + username);
