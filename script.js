@@ -138,6 +138,7 @@
     },
     fetchData(username, timeControl) {
       try {
+        log('fetchData: chamado para ' + username + ' tc:' + timeControl);
         log('OpponentIntel: fetchData iniciado para ' + username + ' | timeControl: ' + timeControl);
         const baseUrl = `https://api.chess.com/pub/player/${username}`;
 
@@ -149,6 +150,7 @@
           onload: (resp) => {
             try {
               const data = JSON.parse(resp.responseText);
+              log('fetchData: archives recebidos, total meses: ' + (data.archives ? data.archives.length : 0));
               log('OpponentIntel: archives recebidos → ' + JSON.stringify(data.archives ? data.archives.length + ' meses' : 'vazio'));
               const archives = data.archives || [];
               if (archives.length === 0) return;
@@ -204,7 +206,9 @@
     renderZone1(data) {
       try {
         $('#oi-zone1').remove();
-        const target = document.querySelectorAll('a.user-username.username')[0];
+        log('renderZone1: target encontrado? ' + !!document.querySelectorAll('a.user-username.username')[1]);
+        log('renderZone1: data recebida → ' + JSON.stringify(data.wld));
+        const target = document.querySelectorAll('a.user-username.username')[1];
         if (!target) return;
 
         const { wld, streak, winRateByColor } = data;
@@ -225,6 +229,7 @@
     renderZone2(data) {
       try {
         $('#oi-zone2').remove();
+        log('renderZone2: #krypbot-container existe? ' + !!$('#krypbot-container').length);
         if (!$('#krypbot-container').length) return;
 
         const { avgAccuracy, topOpeningWhite, topOpeningBlack, last5, byHour } = data;
@@ -378,7 +383,7 @@
   function renderMySession() {
     try {
       $('#oi-mysession').remove();
-      const target = document.querySelectorAll('a.user-username.username')[1];
+      const target = document.querySelectorAll('a.user-username.username')[0];
 
       if (!target) return;
 
