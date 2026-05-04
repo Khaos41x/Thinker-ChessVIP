@@ -270,6 +270,9 @@
                         };
                         OpponentIntel.renderZone1(processed);
                         OpponentIntel.renderZone2(processed);
+                      } else {
+                        $('#oi-zone2').html('<div style="padding:16px; color:#666; font-size:12px;">Sem dados suficientes para este oponente neste time control.</div>');
+                        $('#oi-zone1').html('<span style="color:#666; font-size:11px; margin-left:8px;">sem dados</span>');
                       }
                     } else {
                       // Busca mês anterior também
@@ -296,6 +299,9 @@
                               };
                               OpponentIntel.renderZone1(processed);
                               OpponentIntel.renderZone2(processed);
+                            } else {
+                              $('#oi-zone2').html('<div style="padding:16px; color:#666; font-size:12px;">Sem dados suficientes para este oponente neste time control.</div>');
+                              $('#oi-zone1').html('<span style="color:#666; font-size:11px; margin-left:8px;">sem dados</span>');
                             }
                           } catch (e) {}
                         },
@@ -312,7 +318,14 @@
                             };
                             OpponentIntel.renderZone1(processed);
                             OpponentIntel.renderZone2(processed);
+                          } else {
+                            $('#oi-zone2').html('<div style="padding:16px; color:#666; font-size:12px;">Sem dados suficientes para este oponente neste time control.</div>');
+                            $('#oi-zone1').html('<span style="color:#666; font-size:11px; margin-left:8px;">sem dados</span>');
                           }
+                        },
+                        ontimeout: () => {
+                          log('OpponentIntel: timeout');
+                          $('#oi-zone2').html('<div style="padding:16px; color:#666; font-size:12px;">Tempo esgotado ao buscar dados.</div>');
                         },
                       });
                     }
