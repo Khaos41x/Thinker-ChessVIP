@@ -346,16 +346,18 @@
         log("renderZone1: data recebida → " + JSON.stringify(data.wld));
         if (!target) return;
 
-        const { wld, streak, winRateByColor } = data;
+        const { wld, streak } = data;
         const streakEmoji =
           streak.type === "W" ? "🔥" : streak.type === "L" ? "💀" : "➖";
-        const wr = winRateByColor;
 
-        const html = `<span id="oi-zone1" style="font-size:11px;color:#e0e0e0;margin-left:8px;display:inline-flex;gap:8px;align-items:center;">
-      <span><span style="color:#4caf50">${wld.w}</span>-<span style="color:#9e9e9e">${wld.d}</span>-<span style="color:#f44336">${wld.l}</span></span>
-      <span>${streakEmoji}${streak.type}${streak.count}</span>
-      ${wr.white !== null ? `<span style="color:#fff">B:${wr.white}%</span> <span style="color:#aaa">P:${wr.black !== null ? wr.black : "?"}%</span>` : ""}
-    </span>`;
+        const html = `<span id="oi-zone1" style="font-size:11px; margin-left:10px; display:inline-flex; gap:6px; align-items:center; vertical-align:middle;">
+          <span style="color:#4caf50; font-weight:700;">${wld.w}V</span>
+          <span style="color:#888;">·</span>
+          <span style="color:#f44336; font-weight:700;">${wld.l}D</span>
+          <span style="color:#888;">·</span>
+          <span style="color:#9e9e9e;">${wld.d}E</span>
+          <span style="color:#888; margin-left:4px;">${streakEmoji}${streak.count}</span>
+        </span>`;
 
         $(target).parent().append(html);
       } catch (e) {
@@ -364,50 +366,165 @@
     },
     renderZone2(data) {
       try {
-        $("#oi-zone2").remove();
+        const cleanOpeningName = (name) => {
+          if (!name) return "";
+          // Remove notações tipo "2.e5 c5", "3.Nc3 d5", etc.
+          return name
+            .replace(/\s+\d+\..+$/, "")
+            .replace(/-/g, " ")
+            .trim();
+        };
+
         log(
           "renderZone2: #krypbot-container existe? " +
             !!$("#krypbot-container").length,
         );
         if (!$("#krypbot-container").length) return;
 
-        const { avgAccuracy, topOpeningWhite, topOpeningBlack, last5, byHour } =
-          data;
-
-        const resultIcon = (r) => (r === "W" ? "✅" : r === "L" ? "❌" : "➖");
-
-        const last5Html = last5
-          .map(
-            (g) =>
-              `<div style="margin:3px 0;">${resultIcon(g.result)} ${g.opening || "Unknown"}${g.accuracy !== null ? ` · ${g.accuracy}%` : ""}</div>`,
-          )
-          .join("");
-
-        const hourHtml = [
-          byHour.morning.total
-            ? `☀️ ${byHour.morning.wr}% (${byHour.morning.total}g)`
-            : null,
-          byHour.afternoon.total
-            ? `🌤️ ${byHour.afternoon.wr}% (${byHour.afternoon.total}g)`
-            : null,
-          byHour.night.total
-            ? `🌙 ${byHour.night.wr}% (${byHour.night.total}g)`
-            : null,
-        ]
-          .filter(Boolean)
-          .join(" · ");
+        const {
+          avgAccuracy,
+          topOpeningWhite,
+          topOpeningBlack,
+          last5,
+          byHour,
+          winRateByColor,
+        } = data;
 
         const html = `
-      <div id="oi-zone2" style="background:linear-gradient(135deg,#121212,#1f1f1f);color:#f0e68c;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,0.7);padding:16px 24px;font-family:'Roboto',sans-serif;margin-top:10px;font-size:12px;display:flex;flex-direction:column;gap:10px;">
-        <div style="font-size:14px;font-weight:700;color:#00ff88;padding-bottom:8px;border-bottom:1px solid #333;">Opponent Intel</div>
-        ${avgAccuracy !== null ? `<div>Precisão média: <span style="color:#fff">${avgAccuracy}%</span></div>` : ""}
-        ${topOpeningWhite ? `<div><span style="color:#fff">Brancas:</span> ${topOpeningWhite}</div>` : ""}
-        ${topOpeningBlack ? `<div><span style="color:#aaa">Pretas:</span> ${topOpeningBlack}</div>` : ""}
-        ${hourHtml ? `<div style="color:#aaa">${hourHtml}</div>` : ""}
-        ${last5Html ? `<div style="border-top:1px solid #222;padding-top:8px;color:#e0e0e0;">${last5Html}</div>` : ""}
+      <div id="oi-zone2" style="width:320px; flex-shrink:0; background:linear-gradient(135deg,#121212,#1e1e1e); border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.7); padding:18px 20px; font-family:'Roboto',sans-serif; font-size:12px; color:#e0e0e0; display:flex; flex-direction:column; gap:14px;">
+        <!-- Título -->
+        <div style="font-size:13px; font-weight:700; color:#00ff88; border-bottom:1px solid #2a2a2a; padding-bottom:10px; letter-spacing:0.5px;">
+          SCOUT DO OPONENTE
+        </div>
+
+        <!-- Win rate por cor - só aparece se tiver dados -->
+        ${
+          winRateByColor.white !== null
+            ? `
+        <div style="display:flex; gap:8px;">
+          <div style="flex:1; background:#1a1a1a; border-radius:8px; padding:10px; text-align:center;">
+            <div style="font-size:10px; color:#888; margin-bottom:4px;">JOGANDO DE BRANCAS</div>
+            <div style="font-size:20px; font-weight:700; color:#fff;">${winRateByColor.white}%</div>
+            <div style="font-size:10px; color:#888;">de vitória</div>
+          </div>
+          <div style="flex:1; background:#1a1a1a; border-radius:8px; padding:10px; text-align:center;">
+            <div style="font-size:10px; color:#888; margin-bottom:4px;">JOGANDO DE PRETAS</div>
+            <div style="font-size:20px; font-weight:700; color:#fff;">${winRateByColor.black !== null ? winRateByColor.black : "?"}%</div>
+            <div style="font-size:10px; color:#888;">de vitória</div>
+          </div>
+        </div>`
+            : ""
+        }
+
+        <!-- Abertura favorita - sem notação, só o nome limpo -->
+        ${
+          topOpeningWhite || topOpeningBlack
+            ? `
+        <div style="background:#1a1a1a; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px;">
+          <div style="font-size:10px; color:#888; margin-bottom:2px;">ABRE NORMALMENTE COM</div>
+          ${
+            topOpeningWhite
+              ? `<div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#ccc;">Brancas</span>
+            <span style="color:#fff; font-weight:600; text-align:right; max-width:200px;">${cleanOpeningName(topOpeningWhite)}</span>
+          </div>`
+              : ""
+          }
+          ${
+            topOpeningBlack
+              ? `<div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#ccc;">Pretas</span>
+            <span style="color:#fff; font-weight:600; text-align:right; max-width:200px;">${cleanOpeningName(topOpeningBlack)}</span>
+          </div>`
+              : ""
+          }
+        </div>`
+            : ""
+        }
+
+        <!-- Precisão média -->
+        ${
+          avgAccuracy !== null
+            ? `
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#1a1a1a; border-radius:8px; padding:10px;">
+          <span style="color:#888; font-size:11px;">Precisão média</span>
+          <span style="color:#00ff88; font-weight:700; font-size:16px;">${avgAccuracy}%</span>
+        </div>`
+            : ""
+        }
+
+        <!-- Performance por horário - linguagem humana -->
+        ${
+          byHour.morning.total || byHour.afternoon.total || byHour.night.total
+            ? `
+        <div style="background:#1a1a1a; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px;">
+          <div style="font-size:10px; color:#888; margin-bottom:2px;">MELHOR HORÁRIO PARA ENFRENTAR</div>
+          ${
+            byHour.morning.total
+              ? `<div style="display:flex; justify-content:space-between;">
+            <span style="color:#ccc;">Manhã</span>
+            <span style="color:${byHour.morning.wr >= 60 ? "#f44336" : byHour.morning.wr <= 40 ? "#4caf50" : "#fff"}; font-weight:600;">
+              ${byHour.morning.wr}% de vitória em ${byHour.morning.total} partida${byHour.morning.total > 1 ? "s" : ""}
+            </span>
+          </div>`
+              : ""
+          }
+          ${
+            byHour.afternoon.total
+              ? `<div style="display:flex; justify-content:space-between;">
+            <span style="color:#ccc;">Tarde</span>
+            <span style="color:${byHour.afternoon.wr >= 60 ? "#f44336" : byHour.afternoon.wr <= 40 ? "#4caf50" : "#fff"}; font-weight:600;">
+              ${byHour.afternoon.wr}% de vitória em ${byHour.afternoon.total} partida${byHour.afternoon.total > 1 ? "s" : ""}
+            </span>
+          </div>`
+              : ""
+          }
+          ${
+            byHour.night.total
+              ? `<div style="display:flex; justify-content:space-between;">
+            <span style="color:#ccc;">Noite</span>
+            <span style="color:${byHour.night.wr >= 60 ? "#f44336" : byHour.night.wr <= 40 ? "#4caf50" : "#fff"}; font-weight:600;">
+              ${byHour.night.wr}% de vitória em ${byHour.night.total} partida${byHour.night.total > 1 ? "s" : ""}
+            </span>
+          </div>`
+              : ""
+          }
+        </div>`
+            : ""
+        }
+
+        <!-- Últimas 5 partidas -->
+        ${
+          last5.length
+            ? `
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <div style="font-size:10px; color:#888; margin-bottom:2px;">ÚLTIMAS PARTIDAS</div>
+          ${last5
+            .map(
+              (g) => `
+            <div style="display:flex; align-items:center; gap:8px; padding:6px 8px; background:#1a1a1a; border-radius:6px; border-left:3px solid ${g.result === "W" ? "#4caf50" : g.result === "L" ? "#f44336" : "#9e9e9e"};">
+              <span style="font-size:10px; font-weight:700; color:${g.result === "W" ? "#4caf50" : g.result === "L" ? "#f44336" : "#9e9e9e"}; width:20px;">
+                ${g.result === "W" ? "VIT" : g.result === "L" ? "DER" : "EMP"}
+              </span>
+              <span style="color:#ccc; flex:1; font-size:11px;">${g.opening ? cleanOpeningName(g.opening) : "Abertura desconhecida"}</span>
+              ${g.accuracy !== null ? `<span style="color:#666; font-size:10px;">${g.accuracy}%</span>` : ""}
+            </div>
+          `,
+            )
+            .join("")}
+        </div>`
+            : ""
+        }
       </div>`;
 
-        $("#krypbot-container").after(html);
+        // Cria wrapper flex se não existir
+        if (!$("#oi-wrapper").length) {
+          $("#krypbot-container").wrap(
+            '<div id="oi-wrapper" style="display:flex; gap:16px; align-items:flex-start;"></div>',
+          );
+        }
+        $("#oi-zone2").remove();
+        $("#oi-wrapper").append(html);
       } catch (e) {
         log("OpponentIntel.renderZone2 erro: " + e);
       }
@@ -485,14 +602,20 @@
           }
 
           if ($("#krypbot-container").length) {
-            $("#krypbot-container").after(`
-          <div id="oi-zone2" style="background:linear-gradient(135deg,#121212,#1f1f1f);color:#666;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,0.7);padding:16px 24px;font-family:'Roboto',sans-serif;margin-top:10px;font-size:12px;">
-            <div style="font-size:14px;font-weight:700;color:#00ff88;padding-bottom:8px;border-bottom:1px solid #333;">Opponent Intel</div>
+            // Cria wrapper flex se não existir
+            if (!$("#oi-wrapper").length) {
+              $("#krypbot-container").wrap(
+                '<div id="oi-wrapper" style="display:flex; gap:16px; align-items:flex-start;"></div>',
+              );
+            }
+            $("#oi-zone2").remove();
+            $("#oi-wrapper").append(`
+          <div id="oi-zone2" style="width:320px; flex-shrink:0; background:linear-gradient(135deg,#121212,#1f1f1f); color:#666; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.7); padding:18px 20px; font-family:'Roboto',sans-serif; font-size:12px; display:flex; flex-direction:column; gap:14px;">
+            <div style="font-size:13px; font-weight:700; color:#00ff88; border-bottom:1px solid #2a2a2a; padding-bottom:10px; letter-spacing:0.5px;">SCOUT DO OPONENTE</div>
             <div style="margin-top:8px;">Carregando dados...</div>
           </div>
-        `);
+          `);
           }
-
           observer.observe(document.body, { childList: true, subtree: true });
 
           const timeControl = OpponentIntel.getTimeControl();
