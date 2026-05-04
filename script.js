@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC63
+// @name         TC70
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -271,8 +271,12 @@
                         OpponentIntel.renderZone1(processed);
                         OpponentIntel.renderZone2(processed);
                       } else {
-                        $('#oi-zone2').html('<div style="padding:16px; color:#666; font-size:12px;">Sem dados suficientes para este oponente neste time control.</div>');
-                        $('#oi-zone1').html('<span style="color:#666; font-size:11px; margin-left:8px;">sem dados</span>');
+                        $("#oi-zone2").html(
+                          '<div style="padding:16px; color:#666; font-size:12px;">Sem dados suficientes para este oponente neste time control.</div>',
+                        );
+                        $("#oi-zone1").html(
+                          '<span style="color:#666; font-size:11px; margin-left:8px;">sem dados</span>',
+                        );
                       }
                     } else {
                       // Busca mês anterior também
@@ -300,8 +304,12 @@
                               OpponentIntel.renderZone1(processed);
                               OpponentIntel.renderZone2(processed);
                             } else {
-                              $('#oi-zone2').html('<div style="padding:16px; color:#666; font-size:12px;">Sem dados suficientes para este oponente neste time control.</div>');
-                              $('#oi-zone1').html('<span style="color:#666; font-size:11px; margin-left:8px;">sem dados</span>');
+                              $("#oi-zone2").html(
+                                '<div style="padding:16px; color:#666; font-size:12px;">Sem dados suficientes para este oponente neste time control.</div>',
+                              );
+                              $("#oi-zone1").html(
+                                '<span style="color:#666; font-size:11px; margin-left:8px;">sem dados</span>',
+                              );
                             }
                           } catch (e) {}
                         },
@@ -319,17 +327,25 @@
                             OpponentIntel.renderZone1(processed);
                             OpponentIntel.renderZone2(processed);
                           } else {
-                            $('#oi-zone2').html('<div style="padding:16px; color:#666; font-size:12px;">Sem dados suficientes para este oponente neste time control.</div>');
-                            $('#oi-zone1').html('<span style="color:#666; font-size:11px; margin-left:8px;">sem dados</span>');
+                            $("#oi-zone2").html(
+                              '<div style="padding:16px; color:#666; font-size:12px;">Sem dados suficientes para este oponente neste time control.</div>',
+                            );
+                            $("#oi-zone1").html(
+                              '<span style="color:#666; font-size:11px; margin-left:8px;">sem dados</span>',
+                            );
                           }
                         },
                         ontimeout: () => {
-                          log('OpponentIntel: timeout');
-                          $('#oi-zone2').html('<div style="padding:16px; color:#666; font-size:12px;">Tempo esgotado ao buscar dados.</div>');
+                          log("OpponentIntel: timeout");
+                          $("#oi-zone2").html(
+                            '<div style="padding:16px; color:#666; font-size:12px;">Tempo esgotado ao buscar dados.</div>',
+                          );
                         },
                         ontimeout: () => {
-                          log('OpponentIntel: timeout');
-                          $('#oi-zone2').html('<div style="padding:16px; color:#666; font-size:12px;">Tempo esgotado ao buscar dados.</div>');
+                          log("OpponentIntel: timeout");
+                          $("#oi-zone2").html(
+                            '<div style="padding:16px; color:#666; font-size:12px;">Tempo esgotado ao buscar dados.</div>',
+                          );
                         },
                       });
                     }
@@ -411,7 +427,7 @@
         } = data;
 
         const html = `
-      <div id="oi-zone2" style="width:320px; flex-shrink:0; background:linear-gradient(135deg,#121212,#1e1e1e); border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.7); padding:18px 20px; font-family:'Roboto',sans-serif; font-size:12px; color:#e0e0e0; display:flex; flex-direction:column; gap:14px; margin-top:47px;">
+      <div id="oi-zone2" style="width:320px; flex-shrink:0; background:linear-gradient(135deg,#121212,#1e1e1e); border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.7); padding:18px 20px; font-family:'Roboto',sans-serif; font-size:12px; color:#e0e0e0; display:flex; flex-direction:column; gap:14px; margin-top:20px;">
         <!-- Título -->
         <div style="font-size:13px; font-weight:700; color:#00ff88; border-bottom:1px solid #2a2a2a; padding-bottom:10px; letter-spacing:0.5px;">
           SCOUT DO OPONENTE
@@ -629,7 +645,7 @@
             }
             $("#oi-zone2").remove();
             $("#oi-wrapper").append(`
-    <div id="oi-zone2" style="width:320px; flex-shrink:0; background:linear-gradient(135deg,#121212,#1f1f1f); color:#666; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.7); padding:18px 20px; font-family:'Roboto',sans-serif; font-size:12px; display:flex; flex-direction:column; gap:14px; margin-top:47px;">
+    <div id="oi-zone2" style="width:320px; flex-shrink:0; background:linear-gradient(135deg,#121212,#1f1f1f); color:#666; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.7); padding:18px 20px; font-family:'Roboto',sans-serif; font-size:12px; display:flex; flex-direction:column; gap:14px; margin-top:20px;">
       <div style="font-size:13px; font-weight:700; color:#00ff88; border-bottom:1px solid #2a2a2a; padding-bottom:10px; letter-spacing:0.5px;">SCOUT DO OPONENTE</div>
       <div style="margin-top:8px; color:#666;">Carregando dados...</div>
     </div>
@@ -1319,13 +1335,11 @@
             autoDelayMax = 0;
             localStorage.setItem("autoMinDelay", 0);
             localStorage.setItem("autoMaxDelay", 0);
-            $(".kb-num-input")
-              .val("0.00")
-              .css({
-                "border-color": "#fff",
-                "box-shadow": "0 0 8px rgba(255,255,255,0.6)",
-                color: "#fff",
-              });
+            $(".kb-num-input").val("0.00").css({
+              "border-color": "#fff",
+              "box-shadow": "0 0 8px rgba(255,255,255,0.6)",
+              color: "#fff",
+            });
             $("#autoDelayDisplay").text("INSTANT");
           } else {
             // Restaurar valores padrão ao voltar para Random/Avg
@@ -1333,13 +1347,11 @@
             autoDelayMax = 1.0;
             localStorage.setItem("autoMinDelay", 0.5);
             localStorage.setItem("autoMaxDelay", 1.0);
-            $(".kb-num-input")
-              .val("")
-              .css({
-                "border-color": "#333",
-                "box-shadow": "none",
-                color: "#fff",
-              });
+            $(".kb-num-input").val("").css({
+              "border-color": "#333",
+              "box-shadow": "none",
+              color: "#fff",
+            });
             $("#minDelayInput").val("0.50").css("color", "#fff");
             $("#maxDelayInput").val("1.00").css("color", "#fff");
             $("#autoDelayDisplay").text("0.50–1.00s");
