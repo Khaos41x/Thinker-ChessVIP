@@ -524,7 +524,7 @@
         $("#oi-zone2").remove();
         if (!$("#oi-wrapper").length) {
           $("#krypbot-container").wrap(
-            '<div id="oi-wrapper" style="display:flex; flex-direction:row; gap:16px; align-items:flex-start; flex-wrap:wrap;"></div>',
+            '<div id="oi-wrapper" style="display:flex; flex-direction:row; gap:16px; align-items:stretch; flex-wrap:wrap;"></div>',
           );
         }
         $("#oi-wrapper").append(html);
@@ -607,7 +607,7 @@
           if ($("#krypbot-container").length) {
             if (!$("#oi-wrapper").length) {
               $("#krypbot-container").wrap(
-                '<div id="oi-wrapper" style="display:flex; flex-direction:row; gap:16px; align-items:flex-start; flex-wrap:wrap;"></div>',
+                '<div id="oi-wrapper" style="display:flex; flex-direction:row; gap:16px; align-items:stretch; flex-wrap:wrap;"></div>',
               );
             }
             $("#oi-zone2").remove();
