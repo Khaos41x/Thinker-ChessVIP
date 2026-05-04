@@ -226,7 +226,7 @@
         GM_xmlhttpRequest({
           method: "GET",
           url: `${baseUrl}/games/archives`,
-          timeout: 5000,
+          timeout: 12000,
           onload: (resp) => {
             try {
               const data = JSON.parse(resp.responseText);
@@ -247,7 +247,7 @@
               GM_xmlhttpRequest({
                 method: "GET",
                 url: archives[archives.length - 1],
-                timeout: 5000,
+                timeout: 12000,
                 onload: (r) => {
                   try {
                     const d = JSON.parse(r.responseText);
@@ -276,7 +276,7 @@
                       GM_xmlhttpRequest({
                         method: "GET",
                         url: archives[archives.length - 2],
-                        timeout: 5000,
+                        timeout: 12000,
                         onload: (r2) => {
                           try {
                             const d2 = JSON.parse(r2.responseText);
@@ -328,8 +328,11 @@
               log("OpponentIntel.fetchData parse erro: " + e);
             }
           },
-          onerror: () => {
-            log("OpponentIntel.fetchData erro de rede");
+          onerror: (err) => {
+            log("OpponentIntel.fetchData erro de rede: " + JSON.stringify(err));
+          },
+          ontimeout: () => {
+            log("OpponentIntel.fetchData TIMEOUT na chamada de archives");
           },
         });
       } catch (e) {
@@ -518,12 +521,12 @@
       </div>`;
 
         // Cria wrapper flex se não existir
+        $("#oi-zone2").remove();
         if (!$("#oi-wrapper").length) {
           $("#krypbot-container").wrap(
-            '<div id="oi-wrapper" style="display:flex; gap:16px; align-items:flex-start;"></div>',
+            '<div id="oi-wrapper" style="display:flex; flex-direction:row; gap:16px; align-items:flex-start; flex-wrap:wrap;"></div>',
           );
         }
-        $("#oi-zone2").remove();
         $("#oi-wrapper").append(html);
       } catch (e) {
         log("OpponentIntel.renderZone2 erro: " + e);
@@ -602,19 +605,18 @@
           }
 
           if ($("#krypbot-container").length) {
-            // Cria wrapper flex se não existir
             if (!$("#oi-wrapper").length) {
               $("#krypbot-container").wrap(
-                '<div id="oi-wrapper" style="display:flex; gap:16px; align-items:flex-start;"></div>',
+                '<div id="oi-wrapper" style="display:flex; flex-direction:row; gap:16px; align-items:flex-start; flex-wrap:wrap;"></div>',
               );
             }
             $("#oi-zone2").remove();
             $("#oi-wrapper").append(`
-          <div id="oi-zone2" style="width:320px; flex-shrink:0; background:linear-gradient(135deg,#121212,#1f1f1f); color:#666; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.7); padding:18px 20px; font-family:'Roboto',sans-serif; font-size:12px; display:flex; flex-direction:column; gap:14px;">
-            <div style="font-size:13px; font-weight:700; color:#00ff88; border-bottom:1px solid #2a2a2a; padding-bottom:10px; letter-spacing:0.5px;">SCOUT DO OPONENTE</div>
-            <div style="margin-top:8px;">Carregando dados...</div>
-          </div>
-          `);
+    <div id="oi-zone2" style="width:320px; flex-shrink:0; background:linear-gradient(135deg,#121212,#1f1f1f); color:#666; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.7); padding:18px 20px; font-family:'Roboto',sans-serif; font-size:12px; display:flex; flex-direction:column; gap:14px;">
+      <div style="font-size:13px; font-weight:700; color:#00ff88; border-bottom:1px solid #2a2a2a; padding-bottom:10px; letter-spacing:0.5px;">SCOUT DO OPONENTE</div>
+      <div style="margin-top:8px; color:#666;">Carregando dados...</div>
+    </div>
+  `);
           }
           observer.observe(document.body, { childList: true, subtree: true });
 
