@@ -127,11 +127,9 @@ class Log:
 import subprocess
 
 def find_komodo_exe():
-    # Caminhos candidatos no C: e D: para maior robustez
     candidates = [
-        r"C:\Users\casa\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
-        r"C:\Users\casa\Downloads\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
-        r"D:\Meus documentos\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
+        r"C:\Users\GG\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
+        r"C:\Users\GG\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit-bmi2.exe",
     ]
     for f in candidates:
         if os.path.exists(f):
