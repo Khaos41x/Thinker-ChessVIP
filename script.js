@@ -66,6 +66,12 @@
     time: 0.02,
   };
 
+  // --- ESTADO DO AUTO ADJUST RATING ---
+  let playerUsername = null;
+  let playerRating = null;
+  let playerStats = null;
+  let ratingRefreshInterval = null;
+
   function log(msg) {
     console.log("[KrypBot]", msg);
   }
@@ -78,6 +84,147 @@
       gameMode = "play";
     }
     return gameMode;
+  };
+
+  const detectPlayerUsername = () => {
+    try {
+      const url = window.location.href;
+      const urlParams = new URLSearchParams(url.split("?")[1] || "");
+      const colorParam = urlParams.get("color");
+      
+      const usernameSelectors = [
+        '.player-name[data-username]',
+        '.game-player .player-name a',
+        '.player a[href*="/player/"]',
+        '.board-layout-player .player-name',
+        'a.username-link',
+        '[class*="playerName"]',
+        '.player-card .title',
+        '.profile-large-name',
+      ];
+      
+      for (const sel of usernameSelectors) {
+        const el = document.querySelector(sel);
+        if (el) {
+          const username = el.getAttribute("data-username") || el.textContent?.trim();
+          if (username && username.length > 2) {
+            return username.toLowerCase().replace(/[^a-z0-9_]/g, "");
+          }
+        }
+      }
+      
+      const links = document.querySelectorAll('a[href*="/player/"]');
+      for (const link of links) {
+        const href = link.getAttribute("href") || "";
+        const match = href.match(/\/player\/([^\/\?]+)/);
+        if (match) {
+          const name = match[1].toLowerCase();
+          if (name.length < 3) continue;
+          
+          if (colorParam) {
+            const isWhitePlayer = colorParam === "white" || colorParam === "w";
+            const parent = link.closest(".white, .black, .PlayerWhite, .PlayerBlack");
+            if (parent) {
+              const isWhiteContainer = parent.className.toLowerCase().includes("white");
+              if ((isWhitePlayer && isWhiteContainer) || (!isWhitePlayer && !isWhiteContainer)) {
+                return name;
+              }
+            }
+          }
+          return name;
+        }
+      }
+      
+      const chessboard = document.querySelector("chess-board, wc-chess-board");
+      if (chessboard && chessboard.__vue__) {
+        const vue = chessboard.__vue__;
+        if (vue.game && vue.game.getPlayingAs) {
+          const turn = vue.game.getPlayingAs();
+          if (vue[turn]) {
+            return vue[turn].username?.toLowerCase().replace(/[^a-z0-9_]/g, "") || null;
+          }
+        }
+      }
+      
+      const pageComponents = document.querySelectorAll('[data-component]');
+      for (const comp of pageComponents) {
+        if (comp.__vue__ && comp.__vue__.user) {
+          const uname = comp.__vue__.user.username;
+          if (uname && uname.length > 2) {
+            return uname.toLowerCase().replace(/[^a-z0-9_]/g, "");
+          }
+        }
+      }
+    } catch (e) {
+      log("Erro ao detectar username: " + e);
+    }
+    return null;
+  };
+
+  const fetchPlayerRating = () => {
+    if (!playerUsername) return;
+    
+    GM_xmlhttpRequest({
+      method: "GET",
+      url: `${SERVER_URL}/rating/${playerUsername}`,
+      onload: function (resp) {
+        try {
+          const data = JSON.parse(resp.responseText);
+          if (data && !data.error) {
+            playerRating = data.rating;
+            playerStats = data;
+            updateRatingDisplay();
+          }
+        } catch (e) {
+          log("Erro ao buscar rating: " + e);
+        }
+      },
+      onerror: function () {
+        log("Erro na requisição de rating");
+      },
+      timeout: 5000,
+    });
+  };
+
+  const updateRatingDisplay = () => {
+    const ratingEl = $("#kb-rating-display");
+    if (ratingEl.length && playerRating !== null) {
+      const gamesPlayed = playerStats?.games_played || 0;
+      const wins = playerStats?.wins || 0;
+      const losses = playerStats?.losses || 0;
+      const draws = playerStats?.draws || 0;
+      const winRate = playerStats?.win_rate || 0;
+      const isProvisional = playerStats?.is_provisional || false;
+      
+      const record = `${wins}W/${losses}L/${draws}D`;
+      const provisionalTag = isProvisional ? '<span style="color:#ffaa00; font-size:10px;"> PROVISIONAL</span>' : '';
+      
+      ratingEl.html(`
+        <div style="display:flex; flex-direction:column; gap:2px;">
+          <div>
+            <span style="color:#fff; font-size:14px;">${playerUsername}</span>
+            <span style="color:#00ff88; font-size:16px; font-weight:bold; margin-left:6px;">${playerRating}</span>
+            ${provisionalTag}
+          </div>
+          <div style="color:#888; font-size:10px;">
+            ${gamesPlayed > 0 ? `${record} | WR: ${winRate}%` : 'No games yet'}
+          </div>
+        </div>
+      `);
+    }
+  };
+
+  const startRatingRefresh = () => {
+    if (ratingRefreshInterval) clearInterval(ratingRefreshInterval);
+    fetchPlayerRating();
+    ratingRefreshInterval = setInterval(fetchPlayerRating, 15000);
+  };
+
+  const stopRatingRefresh = () => {
+    if (ratingRefreshInterval) {
+      clearInterval(ratingRefreshInterval);
+      ratingRefreshInterval = null;
+    }
   };
 
   // --- LÓGICA DE CÁLCULO DE DELAY ---
@@ -438,12 +585,23 @@
         .kb-num-input { width: 70px; background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 6px; border-radius: 4px; font-size: 13px; }
         .kb-delay-header { display: flex; justify-content: space-between; align-items: center; }
         .kb-delay-display { font-size: 14px; color: #fff; font-weight: 500; }
+
+        .kb-rating-section { background: rgba(0,255,136,0.05); border: 1px solid #333; border-radius: 8px; padding: 10px 12px; }
+        .kb-rating-display { font-size: 13px; display: flex; align-items: center; justify-content: space-between; }
+        .kb-rating-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
       </style>
     `;
 
     const menuHtml = `
       <div id="krypbot-container">
         <div class="kb-title">KrypBot Control Panel</div>
+
+        <div class="kb-section kb-rating-section">
+          <span class="kb-rating-label">Auto Adjust Rating</span>
+          <div id="kb-rating-display" class="kb-rating-display">
+            <span style="color:#888; font-size:12px;">Detecting player...</span>
+          </div>
+        </div>
 
         <div class="kb-section">
           <p class="kb-section-label">Bot Status</p>
@@ -667,10 +825,24 @@
             lastUrl = window.location.href;
             detectGameMode();
             window.krypbotUpdateUI();
+
+            playerUsername = detectPlayerUsername();
+            if (playerUsername) {
+              startRatingRefresh();
+            } else {
+              $("#kb-rating-display").html('<span style="color:#ffaa00; font-size:12px;">Username not detected</span>');
+            }
           }
         }, 1000);
 
         window.krypbotUpdateUI();
+
+        playerUsername = detectPlayerUsername();
+        if (playerUsername) {
+          startRatingRefresh();
+        } else {
+          $("#kb-rating-display").html('<span style="color:#ffaa00; font-size:12px;">Username not detected</span>');
+        }
       }
     }, 500);
   }
@@ -709,6 +881,14 @@
         log("Modo detectado: " + newMode);
         if (typeof window.krypbotUpdateUI === "function")
           window.krypbotUpdateUI();
+      }
+      
+      if (gameMode === "play" && !playerUsername) {
+        const detected = detectPlayerUsername();
+        if (detected) {
+          playerUsername = detected;
+          startRatingRefresh();
+        }
       }
     }, 500);
 
