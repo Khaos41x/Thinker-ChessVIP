@@ -127,7 +127,6 @@ class Log:
 import subprocess
 
 def find_komodo_exe():
-    # Caminhos candidatos no C: e D: para maior robustez
     candidates = [
         r"C:\Users\casa\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
         r"C:\Users\casa\Downloads\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
@@ -187,40 +186,40 @@ class LRUCache:
 
 analysis_cache = LRUCache()
 engine = None
-last_elo = None
 cache = {}
+
+def get_target_depth(elo):
+    if elo <= 600:
+        return 3
+    if elo <= 1200:
+        return 8
+    if elo <= 1800:
+        return 12
+    if elo <= 2400:
+        return 16
+    if elo <= 3000:
+        return 20
+    return 24
 
 import multiprocessing
 
-def get_thread_count():
-    try:
-        count = multiprocessing.cpu_count()
-        # Em máquinas de 2 núcleos, obrigatoriamente usamos apenas 1 para não travar o Windows/Flask
-        return max(1, count - 1)
-    except:
-        return 1
+cpu_count = multiprocessing.cpu_count()
 
-# ... (dentro da inicialização da engine)
-print("Iniciando Komodo...")
+print("Iniciando Komodo 14.1...")
 engine = chess.engine.SimpleEngine.popen_uci(ENGINE_PATH)
 
-# Configuração de Estabilidade (Segura para PCs com 2 núcleos)
-threads = get_thread_count()
 engine.configure({
-    "Threads": threads,
-    "Hash": 128,
-    "Contempt": 0
+    "Threads": cpu_count,
+    "Hash": 256,
+    "Skill": 20,
 })
 
-print(f"Komodo ONLINE! (Modo Estabilidade - Threads: {threads}, Hash: 128MB)")
+print(f"Komodo ONLINE! (Threads: {cpu_count}, Hash: 256MB, Skill: 20)")
 
-def configure_elo(elo):
-    global last_elo
-    if last_elo == elo:
-        return
-    skill = min(20, max(0, int((elo - 800) / 120)))
-    engine.configure({"Skill": skill})
-    last_elo = elo
+print("Warmup da engine...")
+warmup_board = chess.Board()
+engine.play(warmup_board, chess.engine.Limit(depth=10))
+print("Warmup completo!")
 
 # Opening Book
 OPENING_BOOK = {
@@ -254,12 +253,11 @@ def getmove():
     data = request.json or {}
     fen = data.get("fen", "")
     elo = int(data.get("elo", 3200))
-    time_limit = float(data.get("time", 0.03))
+    time_limit = float(data.get("time", 0.1))
     
     if not fen:
         return jsonify([])
     
-    # Cache
     cache_key = f"{fen}_{elo}"
     if cache_key in cache:
         return jsonify([cache[cache_key]])
@@ -267,15 +265,13 @@ def getmove():
     try:
         board = chess.Board(fen)
         
-        # Book
         book_move = get_book(fen)
         if book_move:
             cache[cache_key] = book_move
             return jsonify([book_move])
         
-        # Engine
-        configure_elo(elo)
-        limit = chess.engine.Limit(time=time_limit)
+        target_depth = get_target_depth(elo)
+        limit = chess.engine.Limit(depth=target_depth)
         result = engine.play(board, limit)
         
         if result.move:
