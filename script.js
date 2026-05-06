@@ -22,7 +22,7 @@
 (function () {
   "use strict";
 
-  const SERVER_URL = "http://127.0.0.1:5050";
+  const SERVER_URL = "https://outcome-infinite-travesti-compare.trycloudflare.com";
 
   // --- CONFIGURAÇÕES PADRÃO (AUTO RUN DELAY) ---
   const DEFAULT_MIN_DELAY = 0.5,
