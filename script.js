@@ -696,6 +696,14 @@
       parseFloat(localStorage.getItem("autoMaxDelay")) || DEFAULT_MAX_DELAY,
     autoDelayMode = localStorage.getItem("autoDelayMode") || DEFAULT_DELAY_MODE;
 
+  // Forçar modo Random como padrão
+  if (!localStorage.getItem("autoDelayMode")) {
+    autoDelayMode = "random";
+    localStorage.setItem("autoDelayMode", "random");
+    localStorage.setItem("autoMinDelay", 0.5);
+    localStorage.setItem("autoMaxDelay", 2.0);
+  }
+
   // Validação inicial
   if (isNaN(autoDelayMin) || autoDelayMin <= 0)
     autoDelayMin = DEFAULT_MIN_DELAY;
