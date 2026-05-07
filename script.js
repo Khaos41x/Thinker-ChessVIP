@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC72
+// @name         TC84
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -17,12 +17,15 @@
 // @connect      localhost
 // @connect      127.0.0.1
 // @connect      api.chess.com
+// @connect      referenced-everything-border-possess.trycloudflare.com
+// @connect      *.trycloudflare.com
 // ==/UserScript==
 
 (function () {
   "use strict";
 
-  const SERVER_URL = "https://outcome-infinite-travesti-compare.trycloudflare.com";
+  const SERVER_URL =
+    "https://referenced-everything-border-possess.trycloudflare.com";
 
   // --- CONFIGURAÇÕES PADRÃO (AUTO RUN DELAY) ---
   const DEFAULT_MIN_DELAY = 0.5,
@@ -845,7 +848,7 @@
 
   function isInGame() {
     return !!document.querySelector(
-      ".board-component, .game-component, [data-board], .board-layout-main",
+      ".board-component, .game-component, [data-board], .board-layout-main, .chess-board, .board, wc-board, [class*='board']",
     );
   }
 
@@ -856,14 +859,12 @@
     const btn = findNewGameButton();
     if (btn && btn.offsetParent !== null) {
       auto_queue_clicking = true;
-      log("Auto Queue: Botão detectado. Iniciando em 3s...");
-      setTimeout(() => {
-        if (auto_queue) {
-          btn.click();
-          log("Auto Queue: Clique executado!");
-        }
-        auto_queue_clicking = false;
-      }, 3000);
+      log("Auto Queue: Botão detectado. Clicando instantaneamente...");
+      if (auto_queue) {
+        btn.click();
+        log("Auto Queue: Clique executado!");
+      }
+      auto_queue_clicking = false;
     }
   }
 
@@ -911,11 +912,13 @@
   }
 
   const auto_move_piece = function (from, to, board) {
-    if (!board || !board.game) return;
-    const moves = board.game.getLegalMoves();
+    if (!board) return;
+    const game = board.game || (board.gameManager && board.gameManager.game);
+    if (!game) return;
+    const moves = game.getLegalMoves();
     for (let i = 0; i < moves.length; i++) {
       if (moves[i].from == from && moves[i].to == to) {
-        board.game.move({
+        game.move({
           ...moves[i],
           promotion: "q",
           animate: true,
@@ -932,7 +935,13 @@
   };
 
   const create_elm = (num) => {
-    const board = $("chess-board")[0] || $("wc-chess-board")[0];
+    const board =
+      $("chess-board")[0] ||
+      $("wc-chess-board")[0] ||
+      $(".board")[0] ||
+      $(".chess-board")[0] ||
+      $("[class*='board-component']")[0] ||
+      $("wc-board")[0];
     if (!board) return [0, 0];
     const elm = document.createElement("div");
     elm.setAttribute("class", `highlight square-${num} myhigh`);
@@ -954,7 +963,14 @@
 
   const create_div = (str1) => {
     try {
-      const target = $("chess-board")[0] || $("wc-chess-board")[0];
+      const target =
+        $("chess-board")[0] ||
+        $("wc-chess-board")[0] ||
+        $(".board")[0] ||
+        $(".chess-board")[0] ||
+        $("[class*='board-component']")[0] ||
+        $("wc-board")[0];
+      
       if (!target) return;
       $(".myhigh").remove();
       $(".myarrow").remove();
@@ -994,14 +1010,53 @@
     if (!shouldRun) return;
 
     try {
-      const board = $("chess-board")[0] || $("wc-chess-board")[0];
-      if (!board || !board.game) return;
+      const board =
+        $("chess-board")[0] ||
+        $("wc-chess-board")[0] ||
+        $(".board")[0] ||
+        $(".chess-board")[0] ||
+        $("[class*='board-component']")[0] ||
+        $("wc-board")[0];
 
-      fen = board.game.getFEN();
+      let game = null;
+      if (board) {
+        if (board.game) game = board.game;
+        else if (board.gameManager && board.gameManager.game)
+          game = board.gameManager.game;
+        else {
+          const keys = Object.keys(board).filter(
+            (k) =>
+              k.toLowerCase().includes("game") ||
+              k.toLowerCase().includes("chess"),
+          );
+          for (const k of keys) {
+            if (board[k] && board[k].getFEN) {
+              game = board[k];
+              break;
+            }
+          }
+          if (!game) {
+            for (const k in board) {
+              try {
+                if (board[k] && typeof board[k].getFEN === "function") {
+                  game = board[k];
+                  break;
+                }
+              } catch (e) {}
+            }
+          }
+        }
+      }
+
+      if (!board || !game) {
+        return;
+      }
+
+      fen = game.getFEN();
 
       if (!isPuzzleMode) {
-        const turn = board.game.getTurn();
-        let side = board.game.getPlayingAs();
+        const turn = game ? game.getTurn() : null;
+        let side = game ? game.getPlayingAs() : null;
 
         // Detectar cor do jogador se getPlayingAs() retornar algo inválido
         if (!side || side === null || side === undefined) {
@@ -1050,6 +1105,7 @@
 
       chessBot.time = computeDelayValue();
       log(`Modo: ${gameMode} | Delay: ${chessBot.time}s | Elo: ${currentElo}`);
+      log("Enviando request para " + SERVER_URL + "/getmove");
 
       GM_xmlhttpRequest({
         method: "POST",
@@ -1086,11 +1142,24 @@
           }
           can_interval = true;
         },
-        onerror: function () {
-          log("Erro request");
+        onerror: function (resp) {
+          log(
+            "Erro request: status=" +
+              (resp ? resp.status : "0") +
+              ", statusText=" +
+              (resp ? resp.statusText : "nenhum") +
+              ", response=" +
+              (resp && resp.responseText
+                ? resp.responseText.substring(0, 50)
+                : "vazio"),
+          );
           can_interval = true;
         },
-        timeout: 3000,
+        ontimeout: function () {
+          log("Timeout: servidor nao respondeu em 5s");
+          can_interval = true;
+        },
+        timeout: 5000,
       });
     } catch (e) {
       log("Erro: " + e);
@@ -1224,6 +1293,9 @@
       if (!mainDiv.length) mainDiv = $(".chess-board-wrapper");
       if (!mainDiv.length) mainDiv = $(".board-wrapper");
       if (!mainDiv.length) mainDiv = $("[class*='puzzle-board']");
+      if (!mainDiv.length) mainDiv = $(".board");
+      if (!mainDiv.length) mainDiv = $(".chess-board");
+      if (!mainDiv.length) mainDiv = $("[class*='board-component']");
 
       if (mainDiv.length) {
         clearInterval(checkExist);
