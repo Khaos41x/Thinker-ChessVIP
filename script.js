@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC46
+// @name         TC84
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -16,12 +16,16 @@
 // @grant        GM_xmlhttpRequest
 // @connect      localhost
 // @connect      127.0.0.1
+// @connect      api.chess.com
+// @connect      referenced-everything-border-possess.trycloudflare.com
+// @connect      *.trycloudflare.com
 // ==/UserScript==
 
 (function () {
   "use strict";
 
-  const SERVER_URL = "http://127.0.0.1:5050";
+  const SERVER_URL =
+    "https://referenced-everything-border-possess.trycloudflare.com";
 
   // --- CONFIGURAÇÕES PADRÃO (AUTO RUN DELAY) ---
   const DEFAULT_MIN_DELAY = 0.5,
@@ -44,12 +48,664 @@
     puzzleFenCache = "",
     puzzleMoveCache = new Map();
 
+  let mySession = { wins: 0, losses: 0, draws: 0, streak: 0, streakType: null };
+
+  const OpponentIntel = {
+    lastOpponent: null,
+    processGames(games, username, timeControl) {
+      try {
+        const filtered = games.filter((g) => g.time_class === timeControl);
+        if (filtered.length === 0) return null;
+
+        const last20 = filtered.slice(-20);
+        const last10 = filtered.slice(-10);
+
+        const processed = last20.map((game) => {
+          const isWhite =
+            game.white.username.toLowerCase() === username.toLowerCase();
+          const playerData = isWhite ? game.white : game.black;
+          const drawResults = [
+            "agreed",
+            "repetition",
+            "stalemate",
+            "insufficient",
+            "50move",
+            "timevsinsufficient",
+          ];
+          const result =
+            playerData.result === "win"
+              ? "W"
+              : drawResults.includes(playerData.result)
+                ? "D"
+                : "L";
+          const openingMatch = game.pgn
+            ? game.pgn.match(/\[Opening "(.+?)"\]/) ||
+              game.pgn.match(
+                /\[ECOUrl "https?:\/\/www\.chess\.com\/openings\/([^"]+)"\]/,
+              )
+            : null;
+          const opening = openingMatch
+            ? openingMatch[1].replace(/-/g, " ")
+            : null;
+          return {
+            result,
+            color: isWhite ? "white" : "black",
+            accuracy:
+              typeof playerData.accuracy === "number"
+                ? playerData.accuracy
+                : null,
+            opening,
+            timestamp: game.end_time,
+          };
+        });
+
+        const last10p = processed.slice(-10);
+
+        // W/L/D
+        const wld = {
+          w: last10p.filter((g) => g.result === "W").length,
+          d: last10p.filter((g) => g.result === "D").length,
+          l: last10p.filter((g) => g.result === "L").length,
+        };
+
+        // Streak
+        let streakCount = 0;
+        const streakType = processed[processed.length - 1].result;
+        for (let i = processed.length - 1; i >= 0; i--) {
+          if (processed[i].result === streakType) streakCount++;
+          else break;
+        }
+
+        // Win rate por cor
+        const asWhite = processed.filter((g) => g.color === "white");
+        const asBlack = processed.filter((g) => g.color === "black");
+        const winRateByColor = {
+          white: asWhite.length
+            ? Math.round(
+                (asWhite.filter((g) => g.result === "W").length /
+                  asWhite.length) *
+                  100,
+              )
+            : null,
+          black: asBlack.length
+            ? Math.round(
+                (asBlack.filter((g) => g.result === "W").length /
+                  asBlack.length) *
+                  100,
+              )
+            : null,
+        };
+
+        // Precisão média
+        const withAcc = last10p.filter((g) => g.accuracy !== null);
+        const avgAccuracy = withAcc.length
+          ? parseFloat(
+              (
+                withAcc.reduce((s, g) => s + g.accuracy, 0) / withAcc.length
+              ).toFixed(1),
+            )
+          : null;
+
+        // Opening mais jogada por cor
+        const topOpening = (color) => {
+          const map = {};
+          processed
+            .filter((g) => g.color === color && g.opening)
+            .forEach((g) => {
+              map[g.opening] = (map[g.opening] || 0) + 1;
+            });
+          return Object.keys(map).sort((a, b) => map[b] - map[a])[0] || null;
+        };
+
+        // Últimas 5
+        const last5 = processed
+          .slice(-5)
+          .reverse()
+          .map((g) => ({
+            result: g.result,
+            opening: g.opening,
+            accuracy: g.accuracy,
+          }));
+
+        // Por horário
+        const byHour = (start, end) => {
+          const range = processed.filter((g) => {
+            const h = new Date(g.timestamp * 1000).getHours();
+            return h >= start && h < end;
+          });
+          return {
+            total: range.length,
+            wr: range.length
+              ? Math.round(
+                  (range.filter((g) => g.result === "W").length /
+                    range.length) *
+                    100,
+                )
+              : null,
+          };
+        };
+
+        return {
+          wld,
+          streak: { type: streakType, count: streakCount },
+          winRateByColor,
+          avgAccuracy,
+          topOpeningWhite: topOpening("white"),
+          topOpeningBlack: topOpening("black"),
+          last5,
+          byHour: {
+            morning: byHour(6, 12),
+            afternoon: byHour(12, 18),
+            night: byHour(18, 24),
+          },
+        };
+      } catch (e) {
+        log("OpponentIntel.processGames erro: " + e);
+        return null;
+      }
+    },
+    fetchData(username, timeControl) {
+      try {
+        const cacheKey = username + "_" + timeControl;
+        const cached = OpponentIntel._cache && OpponentIntel._cache[cacheKey];
+        if (cached && Date.now() - cached.ts < 300000) {
+          log("OpponentIntel: usando cache para " + username);
+          OpponentIntel.renderZone1(cached.data);
+          OpponentIntel.renderZone2(cached.data);
+          return;
+        }
+        if (!OpponentIntel._cache) OpponentIntel._cache = {};
+
+        log("fetchData: chamado para " + username + " tc:" + timeControl);
+        log(
+          "OpponentIntel: fetchData iniciado para " +
+            username +
+            " | timeControl: " +
+            timeControl,
+        );
+        const baseUrl = `https://api.chess.com/pub/player/${username}`;
+
+        // Chamada de archives
+        GM_xmlhttpRequest({
+          method: "GET",
+          url: `${baseUrl}/games/archives`,
+          timeout: 12000,
+          onload: (resp) => {
+            try {
+              const data = JSON.parse(resp.responseText);
+              log(
+                "fetchData: archives recebidos, total meses: " +
+                  (data.archives ? data.archives.length : 0),
+              );
+              log(
+                "OpponentIntel: archives recebidos → " +
+                  JSON.stringify(
+                    data.archives ? data.archives.length + " meses" : "vazio",
+                  ),
+              );
+              const archives = data.archives || [];
+              if (archives.length === 0) return;
+
+              // Busca mês atual primeiro, depois decide se precisa do anterior
+              GM_xmlhttpRequest({
+                method: "GET",
+                url: archives[archives.length - 1],
+                timeout: 12000,
+                onload: (r) => {
+                  try {
+                    const d = JSON.parse(r.responseText);
+                    const currentGames = d.games || [];
+                    const filteredCurrent = currentGames.filter(
+                      (g) => g.time_class === timeControl,
+                    );
+
+                    if (filteredCurrent.length >= 15 || archives.length < 2) {
+                      // Suficiente, processa só o mês atual
+                      const processed = OpponentIntel.processGames(
+                        currentGames,
+                        username,
+                        timeControl,
+                      );
+                      if (processed) {
+                        OpponentIntel._cache[cacheKey] = {
+                          data: processed,
+                          ts: Date.now(),
+                        };
+                        OpponentIntel.renderZone1(processed);
+                        OpponentIntel.renderZone2(processed);
+                      } else {
+                        $("#oi-zone2").html(
+                          '<div style="padding:16px; color:#666; font-size:12px;">Sem dados suficientes para este oponente neste time control.</div>',
+                        );
+                        $("#oi-zone1").html(
+                          '<span style="color:#666; font-size:11px; margin-left:8px;">sem dados</span>',
+                        );
+                      }
+                    } else {
+                      // Busca mês anterior também
+                      GM_xmlhttpRequest({
+                        method: "GET",
+                        url: archives[archives.length - 2],
+                        timeout: 12000,
+                        onload: (r2) => {
+                          try {
+                            const d2 = JSON.parse(r2.responseText);
+                            const allGames = [
+                              ...(d2.games || []),
+                              ...currentGames,
+                            ];
+                            const processed = OpponentIntel.processGames(
+                              allGames,
+                              username,
+                              timeControl,
+                            );
+                            if (processed) {
+                              OpponentIntel._cache[cacheKey] = {
+                                data: processed,
+                                ts: Date.now(),
+                              };
+                              OpponentIntel.renderZone1(processed);
+                              OpponentIntel.renderZone2(processed);
+                            } else {
+                              $("#oi-zone2").html(
+                                '<div style="padding:16px; color:#666; font-size:12px;">Sem dados suficientes para este oponente neste time control.</div>',
+                              );
+                              $("#oi-zone1").html(
+                                '<span style="color:#666; font-size:11px; margin-left:8px;">sem dados</span>',
+                              );
+                            }
+                          } catch (e) {}
+                        },
+                        onerror: () => {
+                          const processed = OpponentIntel.processGames(
+                            currentGames,
+                            username,
+                            timeControl,
+                          );
+                          if (processed) {
+                            OpponentIntel._cache[cacheKey] = {
+                              data: processed,
+                              ts: Date.now(),
+                            };
+                            OpponentIntel.renderZone1(processed);
+                            OpponentIntel.renderZone2(processed);
+                          } else {
+                            $("#oi-zone2").html(
+                              '<div style="padding:16px; color:#666; font-size:12px;">Sem dados suficientes para este oponente neste time control.</div>',
+                            );
+                            $("#oi-zone1").html(
+                              '<span style="color:#666; font-size:11px; margin-left:8px;">sem dados</span>',
+                            );
+                          }
+                        },
+                        ontimeout: () => {
+                          log("OpponentIntel: timeout");
+                          $("#oi-zone2").html(
+                            '<div style="padding:16px; color:#666; font-size:12px;">Tempo esgotado ao buscar dados.</div>',
+                          );
+                        },
+                        ontimeout: () => {
+                          log("OpponentIntel: timeout");
+                          $("#oi-zone2").html(
+                            '<div style="padding:16px; color:#666; font-size:12px;">Tempo esgotado ao buscar dados.</div>',
+                          );
+                        },
+                      });
+                    }
+                  } catch (e) {
+                    log("OpponentIntel fallback erro: " + e);
+                  }
+                },
+                onerror: () => {
+                  log("OpponentIntel: erro ao buscar jogos");
+                },
+              });
+            } catch (e) {
+              log("OpponentIntel.fetchData parse erro: " + e);
+            }
+          },
+          onerror: (err) => {
+            log("OpponentIntel.fetchData erro de rede: " + JSON.stringify(err));
+          },
+          ontimeout: () => {
+            log("OpponentIntel.fetchData TIMEOUT na chamada de archives");
+          },
+        });
+      } catch (e) {
+        log("OpponentIntel.fetchData erro: " + e);
+      }
+    },
+    renderZone1(data) {
+      try {
+        $("#oi-zone1").remove();
+        const target = OpponentIntel._getOpponentElement
+          ? OpponentIntel._getOpponentElement()
+          : null;
+        log("renderZone1: target encontrado? " + !!target);
+        log("renderZone1: data recebida → " + JSON.stringify(data.wld));
+        if (!target) return;
+
+        const { wld, streak } = data;
+        const streakEmoji =
+          streak.type === "W" ? "🔥" : streak.type === "L" ? "💀" : "➖";
+
+        const html = `<span id="oi-zone1" style="font-size:11px; margin-left:10px; display:inline-flex; gap:6px; align-items:center; vertical-align:middle;">
+          <span style="color:#4caf50; font-weight:700;">${wld.w}V</span>
+          <span style="color:#888;">·</span>
+          <span style="color:#f44336; font-weight:700;">${wld.l}D</span>
+          <span style="color:#888;">·</span>
+          <span style="color:#9e9e9e;">${wld.d}E</span>
+          <span style="color:#888; margin-left:4px;">${streakEmoji}${streak.count}</span>
+        </span>`;
+
+        $(target).parent().append(html);
+      } catch (e) {
+        log("OpponentIntel.renderZone1 erro: " + e);
+      }
+    },
+    renderZone2(data) {
+      try {
+        const cleanOpeningName = (name) => {
+          if (!name) return "";
+          // Remove notações tipo "2.e5 c5", "3.Nc3 d5", etc.
+          return name
+            .replace(/\s+\d+\..+$/, "")
+            .replace(/-/g, " ")
+            .trim();
+        };
+
+        log(
+          "renderZone2: #krypbot-container existe? " +
+            !!$("#krypbot-container").length,
+        );
+        if (!$("#krypbot-container").length) return;
+
+        const {
+          avgAccuracy,
+          topOpeningWhite,
+          topOpeningBlack,
+          last5,
+          byHour,
+          winRateByColor,
+        } = data;
+
+        const html = `
+      <div id="oi-zone2" style="width:320px; flex-shrink:0; background:linear-gradient(135deg,#121212,#1e1e1e); border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.7); padding:18px 20px; font-family:'Roboto',sans-serif; font-size:12px; color:#e0e0e0; display:flex; flex-direction:column; gap:14px; margin-top:47px;">
+        <!-- Título -->
+        <div style="font-size:13px; font-weight:700; color:#00ff88; border-bottom:1px solid #2a2a2a; padding-bottom:10px; letter-spacing:0.5px;">
+          SCOUT DO OPONENTE
+        </div>
+
+        <!-- Win rate por cor - só aparece se tiver dados -->
+        ${
+          winRateByColor.white !== null
+            ? `
+        <div style="display:flex; gap:8px;">
+          <div style="flex:1; background:#1a1a1a; border-radius:8px; padding:10px; text-align:center;">
+            <div style="font-size:10px; color:#888; margin-bottom:4px;">JOGANDO DE BRANCAS</div>
+            <div style="font-size:20px; font-weight:700; color:#fff;">${winRateByColor.white}%</div>
+            <div style="font-size:10px; color:#888;">de vitória</div>
+          </div>
+          <div style="flex:1; background:#1a1a1a; border-radius:8px; padding:10px; text-align:center;">
+            <div style="font-size:10px; color:#888; margin-bottom:4px;">JOGANDO DE PRETAS</div>
+            <div style="font-size:20px; font-weight:700; color:#fff;">${winRateByColor.black !== null ? winRateByColor.black : "?"}%</div>
+            <div style="font-size:10px; color:#888;">de vitória</div>
+          </div>
+        </div>`
+            : ""
+        }
+
+        <!-- Abertura favorita - sem notação, só o nome limpo -->
+        ${
+          topOpeningWhite || topOpeningBlack
+            ? `
+        <div style="background:#1a1a1a; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px;">
+          <div style="font-size:10px; color:#888; margin-bottom:2px;">ABRE NORMALMENTE COM</div>
+          ${
+            topOpeningWhite
+              ? `<div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#ccc;">Brancas</span>
+            <span style="color:#fff; font-weight:600; text-align:right; max-width:200px;">${cleanOpeningName(topOpeningWhite)}</span>
+          </div>`
+              : ""
+          }
+          ${
+            topOpeningBlack
+              ? `<div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#ccc;">Pretas</span>
+            <span style="color:#fff; font-weight:600; text-align:right; max-width:200px;">${cleanOpeningName(topOpeningBlack)}</span>
+          </div>`
+              : ""
+          }
+        </div>`
+            : ""
+        }
+
+        <!-- Precisão média -->
+        ${
+          avgAccuracy !== null
+            ? `
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#1a1a1a; border-radius:8px; padding:10px;">
+          <span style="color:#888; font-size:11px;">Precisão média</span>
+          <span style="color:#00ff88; font-weight:700; font-size:16px;">${avgAccuracy}%</span>
+        </div>`
+            : ""
+        }
+
+        <!-- Performance por horário - linguagem humana -->
+        ${
+          byHour.morning.total || byHour.afternoon.total || byHour.night.total
+            ? `
+        <div style="background:#1a1a1a; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px;">
+          <div style="font-size:10px; color:#888; margin-bottom:2px;">MELHOR HORÁRIO PARA ENFRENTAR</div>
+          ${
+            byHour.morning.total
+              ? `<div style="display:flex; justify-content:space-between;">
+            <span style="color:#ccc;">Manhã</span>
+            <span style="color:${byHour.morning.wr >= 60 ? "#f44336" : byHour.morning.wr <= 40 ? "#4caf50" : "#fff"}; font-weight:600;">
+              ${byHour.morning.wr}% de vitória em ${byHour.morning.total} partida${byHour.morning.total > 1 ? "s" : ""}
+            </span>
+          </div>`
+              : ""
+          }
+          ${
+            byHour.afternoon.total
+              ? `<div style="display:flex; justify-content:space-between;">
+            <span style="color:#ccc;">Tarde</span>
+            <span style="color:${byHour.afternoon.wr >= 60 ? "#f44336" : byHour.afternoon.wr <= 40 ? "#4caf50" : "#fff"}; font-weight:600;">
+              ${byHour.afternoon.wr}% de vitória em ${byHour.afternoon.total} partida${byHour.afternoon.total > 1 ? "s" : ""}
+            </span>
+          </div>`
+              : ""
+          }
+          ${
+            byHour.night.total
+              ? `<div style="display:flex; justify-content:space-between;">
+            <span style="color:#ccc;">Noite</span>
+            <span style="color:${byHour.night.wr >= 60 ? "#f44336" : byHour.night.wr <= 40 ? "#4caf50" : "#fff"}; font-weight:600;">
+              ${byHour.night.wr}% de vitória em ${byHour.night.total} partida${byHour.night.total > 1 ? "s" : ""}
+            </span>
+          </div>`
+              : ""
+          }
+        </div>`
+            : ""
+        }
+
+        <!-- Últimas 5 partidas -->
+        ${
+          last5.length
+            ? `
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <div style="font-size:10px; color:#888; margin-bottom:2px;">ÚLTIMAS PARTIDAS</div>
+          ${last5
+            .map(
+              (g) => `
+            <div style="display:flex; align-items:center; gap:8px; padding:6px 8px; background:#1a1a1a; border-radius:6px; border-left:3px solid ${g.result === "W" ? "#4caf50" : g.result === "L" ? "#f44336" : "#9e9e9e"};">
+              <span style="font-size:10px; font-weight:700; color:${g.result === "W" ? "#4caf50" : g.result === "L" ? "#f44336" : "#9e9e9e"}; width:20px;">
+                ${g.result === "W" ? "VIT" : g.result === "L" ? "DER" : "EMP"}
+              </span>
+              <span style="color:#ccc; flex:1; font-size:11px;">${g.opening ? cleanOpeningName(g.opening) : "Abertura desconhecida"}</span>
+              ${g.accuracy !== null ? `<span style="color:#666; font-size:10px;">${g.accuracy}%</span>` : ""}
+            </div>
+          `,
+            )
+            .join("")}
+        </div>`
+            : ""
+        }
+      </div>`;
+
+        // Cria wrapper flex se não existir
+        $("#oi-zone2").remove();
+        if (!$("#oi-wrapper").length) {
+          $("#krypbot-container").wrap(
+            '<div id="oi-wrapper" style="display:flex; flex-direction:row; gap:16px; align-items:stretch; flex-wrap:wrap;"></div>',
+          );
+        }
+        $("#oi-wrapper").append(html);
+      } catch (e) {
+        log("OpponentIntel.renderZone2 erro: " + e);
+      }
+    },
+    startObserver() {
+      // Pega o username do jogador logado pelo link de perfil no nav
+      const getMyOwnUsername = () => {
+        // Chess.com tem o username do usuário logado no nav
+        const navLink = document.querySelector('a[href*="/member/"]');
+        if (navLink) {
+          const match = navLink.href.match(/\/member\/([^/?]+)/i);
+          if (match) return match[1].toLowerCase();
+        }
+        // Fallback: botão de perfil
+        const profileBtn = document.querySelector(".user-username-component");
+        if (profileBtn) return profileBtn.textContent.trim().toLowerCase();
+        return null;
+      };
+
+      const getOpponentUsername = () => {
+        const myUsername = getMyOwnUsername();
+        const all = document.querySelectorAll("a.user-username.username");
+        for (const el of all) {
+          const name = el.textContent.trim();
+          if (name && (!myUsername || name.toLowerCase() !== myUsername)) {
+            return name;
+          }
+        }
+        return null;
+      };
+
+      const getMyUsernameElement = () => {
+        const myUsername = getMyOwnUsername();
+        if (!myUsername) return null;
+        const all = document.querySelectorAll("a.user-username.username");
+        for (const el of all) {
+          if (el.textContent.trim().toLowerCase() === myUsername) return el;
+        }
+        return null;
+      };
+
+      const getOpponentElement = () => {
+        const myUsername = getMyOwnUsername();
+        const all = document.querySelectorAll("a.user-username.username");
+        for (const el of all) {
+          const name = el.textContent.trim();
+          if (name && (!myUsername || name.toLowerCase() !== myUsername))
+            return el;
+        }
+        return null;
+      };
+
+      const check = () => {
+        const username = getOpponentUsername();
+        log(
+          "OpponentIntel: check. Oponente: " +
+            username +
+            " | last: " +
+            OpponentIntel.lastOpponent,
+        );
+        if (username && username !== OpponentIntel.lastOpponent) {
+          OpponentIntel.lastOpponent = username;
+          log("OpponentIntel: novo oponente → " + username);
+
+          observer.disconnect();
+
+          $("#oi-zone1").remove();
+          $("#oi-zone2").remove();
+
+          const target = getOpponentElement();
+          if (target) {
+            $(target).after(
+              '<span id="oi-zone1" style="font-size:11px;color:#666;margin-left:8px;">...</span>',
+            );
+          }
+
+          if ($("#krypbot-container").length) {
+            if (!$("#oi-wrapper").length) {
+              $("#krypbot-container").wrap(
+                '<div id="oi-wrapper" style="display:flex; flex-direction:row; gap:16px; align-items:stretch; flex-wrap:wrap;"></div>',
+              );
+            }
+            $("#oi-zone2").remove();
+            $("#oi-wrapper").append(`
+    <div id="oi-zone2" style="width:320px; flex-shrink:0; background:linear-gradient(135deg,#121212,#1f1f1f); color:#666; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.7); padding:18px 20px; font-family:'Roboto',sans-serif; font-size:12px; display:flex; flex-direction:column; gap:14px; margin-top:47px;">
+      <div style="font-size:13px; font-weight:700; color:#00ff88; border-bottom:1px solid #2a2a2a; padding-bottom:10px; letter-spacing:0.5px;">SCOUT DO OPONENTE</div>
+      <div style="margin-top:8px; color:#666;">Carregando dados...</div>
+    </div>
+  `);
+          }
+          observer.observe(document.body, { childList: true, subtree: true });
+
+          const timeControl = OpponentIntel.getTimeControl();
+          log("OpponentIntel: time control → " + timeControl);
+          OpponentIntel.fetchData(username, timeControl);
+        }
+      };
+
+      // Guarda referência pro renderZone1 usar
+      OpponentIntel._getOpponentElement = getOpponentElement;
+      OpponentIntel._getMyUsernameElement = getMyUsernameElement;
+
+      const observer = new MutationObserver(check);
+      observer.observe(document.body, { childList: true, subtree: true });
+      check();
+    },
+    getTimeControl() {
+      try {
+        const el = document.querySelector(".time-selector-button-text");
+        if (el) {
+          const text = el.textContent.trim();
+          const minutes = parseFloat(text);
+          if (minutes < 3) return "bullet";
+          if (minutes < 10) return "blitz";
+          return "rapid";
+        }
+        // Fallback pela URL
+        const url = window.location.href;
+        if (url.includes("1|") || url.includes("1/") || url.includes("2|"))
+          return "bullet";
+        if (url.includes("3|") || url.includes("5|")) return "blitz";
+        return "blitz"; // padrão
+      } catch (e) {
+        return "blitz";
+      }
+    },
+  };
+
   // --- ESTADO DO AUTO RUN DELAY (PERSISTENTE) ---
   let autoDelayMin =
       parseFloat(localStorage.getItem("autoMinDelay")) || DEFAULT_MIN_DELAY,
     autoDelayMax =
       parseFloat(localStorage.getItem("autoMaxDelay")) || DEFAULT_MAX_DELAY,
     autoDelayMode = localStorage.getItem("autoDelayMode") || DEFAULT_DELAY_MODE;
+
+  // Sempre forçar modo Random como padrão
+  autoDelayMode = "random";
+  autoDelayMin = 0.5;
+  autoDelayMax = 2.0;
+  localStorage.setItem("autoDelayMode", "random");
+  localStorage.setItem("autoMinDelay", 0.5);
+  localStorage.setItem("autoMaxDelay", 2.0);
 
   // Validação inicial
   if (isNaN(autoDelayMin) || autoDelayMin <= 0)
@@ -58,22 +714,61 @@
     autoDelayMax = DEFAULT_MAX_DELAY;
   if (autoDelayMin > autoDelayMax)
     [autoDelayMin, autoDelayMax] = [autoDelayMax, autoDelayMin];
-  if (autoDelayMode !== "random" && autoDelayMode !== "average" && autoDelayMode !== "max")
-    autoDelayMode = DEFAULT_DELAY_MODE;
 
   let chessBot = {
     elo: 3200,
     time: 0.02,
   };
 
-  // --- ESTADO DO AUTO ADJUST RATING ---
-  let playerUsername = null;
-  let playerRating = null;
-  let playerStats = null;
-  let ratingRefreshInterval = null;
-
   function log(msg) {
     console.log("[KrypBot]", msg);
+  }
+
+  function updateMySession(result) {
+    try {
+      if (result === "W") {
+        mySession.wins++;
+      } else if (result === "L") {
+        mySession.losses++;
+      } else {
+        mySession.draws++;
+      }
+
+      if (mySession.streakType === result) {
+        mySession.streak++;
+      } else {
+        mySession.streakType = result;
+        mySession.streak = 1;
+      }
+
+      renderMySession();
+    } catch (e) {
+      log("updateMySession erro: " + e);
+    }
+  }
+
+  function renderMySession() {
+    try {
+      $("#oi-mysession").remove();
+      const target = OpponentIntel._getMyUsernameElement
+        ? OpponentIntel._getMyUsernameElement()
+        : null;
+
+      if (!target) return;
+
+      const { wins, losses, draws, streak, streakType } = mySession;
+      const emoji =
+        streakType === "W" ? "🔥" : streakType === "L" ? "💀" : "➖";
+      const streakStr = streakType ? `${emoji}${streakType}${streak} · ` : "";
+
+      const html = `<span id="oi-mysession" style="font-size:11px;color:#e0e0e0;margin-left:8px;">
+      ${streakStr}<span style="color:#4caf50">${wins}</span>-<span style="color:#9e9e9e">${draws}</span>-<span style="color:#f44336">${losses}</span>
+    </span>`;
+
+      $(target).after(html);
+    } catch (e) {
+      log("renderMySession erro: " + e);
+    }
   }
 
   const detectGameMode = () => {
@@ -84,147 +779,6 @@
       gameMode = "play";
     }
     return gameMode;
-  };
-
-  const detectPlayerUsername = () => {
-    try {
-      const url = window.location.href;
-      const urlParams = new URLSearchParams(url.split("?")[1] || "");
-      const colorParam = urlParams.get("color");
-      
-      const usernameSelectors = [
-        '.player-name[data-username]',
-        '.game-player .player-name a',
-        '.player a[href*="/player/"]',
-        '.board-layout-player .player-name',
-        'a.username-link',
-        '[class*="playerName"]',
-        '.player-card .title',
-        '.profile-large-name',
-      ];
-      
-      for (const sel of usernameSelectors) {
-        const el = document.querySelector(sel);
-        if (el) {
-          const username = el.getAttribute("data-username") || el.textContent?.trim();
-          if (username && username.length > 2) {
-            return username.toLowerCase().replace(/[^a-z0-9_]/g, "");
-          }
-        }
-      }
-      
-      const links = document.querySelectorAll('a[href*="/player/"]');
-      for (const link of links) {
-        const href = link.getAttribute("href") || "";
-        const match = href.match(/\/player\/([^\/\?]+)/);
-        if (match) {
-          const name = match[1].toLowerCase();
-          if (name.length < 3) continue;
-          
-          if (colorParam) {
-            const isWhitePlayer = colorParam === "white" || colorParam === "w";
-            const parent = link.closest(".white, .black, .PlayerWhite, .PlayerBlack");
-            if (parent) {
-              const isWhiteContainer = parent.className.toLowerCase().includes("white");
-              if ((isWhitePlayer && isWhiteContainer) || (!isWhitePlayer && !isWhiteContainer)) {
-                return name;
-              }
-            }
-          }
-          return name;
-        }
-      }
-      
-      const chessboard = document.querySelector("chess-board, wc-chess-board");
-      if (chessboard && chessboard.__vue__) {
-        const vue = chessboard.__vue__;
-        if (vue.game && vue.game.getPlayingAs) {
-          const turn = vue.game.getPlayingAs();
-          if (vue[turn]) {
-            return vue[turn].username?.toLowerCase().replace(/[^a-z0-9_]/g, "") || null;
-          }
-        }
-      }
-      
-      const pageComponents = document.querySelectorAll('[data-component]');
-      for (const comp of pageComponents) {
-        if (comp.__vue__ && comp.__vue__.user) {
-          const uname = comp.__vue__.user.username;
-          if (uname && uname.length > 2) {
-            return uname.toLowerCase().replace(/[^a-z0-9_]/g, "");
-          }
-        }
-      }
-    } catch (e) {
-      log("Erro ao detectar username: " + e);
-    }
-    return null;
-  };
-
-  const fetchPlayerRating = () => {
-    if (!playerUsername) return;
-    
-    GM_xmlhttpRequest({
-      method: "GET",
-      url: `${SERVER_URL}/rating/${playerUsername}`,
-      onload: function (resp) {
-        try {
-          const data = JSON.parse(resp.responseText);
-          if (data && !data.error) {
-            playerRating = data.rating;
-            playerStats = data;
-            updateRatingDisplay();
-          }
-        } catch (e) {
-          log("Erro ao buscar rating: " + e);
-        }
-      },
-      onerror: function () {
-        log("Erro na requisição de rating");
-      },
-      timeout: 5000,
-    });
-  };
-
-  const updateRatingDisplay = () => {
-    const ratingEl = $("#kb-rating-display");
-    if (ratingEl.length && playerRating !== null) {
-      const gamesPlayed = playerStats?.games_played || 0;
-      const wins = playerStats?.wins || 0;
-      const losses = playerStats?.losses || 0;
-      const draws = playerStats?.draws || 0;
-      const winRate = playerStats?.win_rate || 0;
-      const isProvisional = playerStats?.is_provisional || false;
-      
-      const record = `${wins}W/${losses}L/${draws}D`;
-      const provisionalTag = isProvisional ? '<span style="color:#ffaa00; font-size:10px;"> PROVISIONAL</span>' : '';
-      
-      ratingEl.html(`
-        <div style="display:flex; flex-direction:column; gap:2px;">
-          <div>
-            <span style="color:#fff; font-size:14px;">${playerUsername}</span>
-            <span style="color:#00ff88; font-size:16px; font-weight:bold; margin-left:6px;">${playerRating}</span>
-            ${provisionalTag}
-          </div>
-          <div style="color:#888; font-size:10px;">
-            ${gamesPlayed > 0 ? `${record} | WR: ${winRate}%` : 'No games yet'}
-          </div>
-        </div>
-      `);
-    }
-  };
-
-  const startRatingRefresh = () => {
-    if (ratingRefreshInterval) clearInterval(ratingRefreshInterval);
-    fetchPlayerRating();
-    ratingRefreshInterval = setInterval(fetchPlayerRating, 15000);
-  };
-
-  const stopRatingRefresh = () => {
-    if (ratingRefreshInterval) {
-      clearInterval(ratingRefreshInterval);
-      ratingRefreshInterval = null;
-    }
   };
 
   // --- LÓGICA DE CÁLCULO DE DELAY ---
@@ -294,7 +848,7 @@
 
   function isInGame() {
     return !!document.querySelector(
-      ".board-component, .game-component, [data-board], .board-layout-main",
+      ".board-component, .game-component, [data-board], .board-layout-main, .chess-board, .board, wc-board, [class*='board']",
     );
   }
 
@@ -305,14 +859,12 @@
     const btn = findNewGameButton();
     if (btn && btn.offsetParent !== null) {
       auto_queue_clicking = true;
-      log("Auto Queue: Botão detectado. Iniciando em 3s...");
-      setTimeout(() => {
-        if (auto_queue) {
-          btn.click();
-          log("Auto Queue: Clique executado!");
-        }
-        auto_queue_clicking = false;
-      }, 3000);
+      log("Auto Queue: Botão detectado. Clicando instantaneamente...");
+      if (auto_queue) {
+        btn.click();
+        log("Auto Queue: Clique executado!");
+      }
+      auto_queue_clicking = false;
     }
   }
 
@@ -360,11 +912,13 @@
   }
 
   const auto_move_piece = function (from, to, board) {
-    if (!board || !board.game) return;
-    const moves = board.game.getLegalMoves();
+    if (!board) return;
+    const game = board.game || (board.gameManager && board.gameManager.game);
+    if (!game) return;
+    const moves = game.getLegalMoves();
     for (let i = 0; i < moves.length; i++) {
       if (moves[i].from == from && moves[i].to == to) {
-        board.game.move({
+        game.move({
           ...moves[i],
           promotion: "q",
           animate: true,
@@ -381,7 +935,13 @@
   };
 
   const create_elm = (num) => {
-    const board = $("chess-board")[0] || $("wc-chess-board")[0];
+    const board =
+      $("chess-board")[0] ||
+      $("wc-chess-board")[0] ||
+      $(".board")[0] ||
+      $(".chess-board")[0] ||
+      $("[class*='board-component']")[0] ||
+      $("wc-board")[0];
     if (!board) return [0, 0];
     const elm = document.createElement("div");
     elm.setAttribute("class", `highlight square-${num} myhigh`);
@@ -403,7 +963,14 @@
 
   const create_div = (str1) => {
     try {
-      const target = $("chess-board")[0] || $("wc-chess-board")[0];
+      const target =
+        $("chess-board")[0] ||
+        $("wc-chess-board")[0] ||
+        $(".board")[0] ||
+        $(".chess-board")[0] ||
+        $("[class*='board-component']")[0] ||
+        $("wc-board")[0];
+      
       if (!target) return;
       $(".myhigh").remove();
       $(".myarrow").remove();
@@ -443,14 +1010,53 @@
     if (!shouldRun) return;
 
     try {
-      const board = $("chess-board")[0] || $("wc-chess-board")[0];
-      if (!board || !board.game) return;
+      const board =
+        $("chess-board")[0] ||
+        $("wc-chess-board")[0] ||
+        $(".board")[0] ||
+        $(".chess-board")[0] ||
+        $("[class*='board-component']")[0] ||
+        $("wc-board")[0];
 
-      fen = board.game.getFEN();
+      let game = null;
+      if (board) {
+        if (board.game) game = board.game;
+        else if (board.gameManager && board.gameManager.game)
+          game = board.gameManager.game;
+        else {
+          const keys = Object.keys(board).filter(
+            (k) =>
+              k.toLowerCase().includes("game") ||
+              k.toLowerCase().includes("chess"),
+          );
+          for (const k of keys) {
+            if (board[k] && board[k].getFEN) {
+              game = board[k];
+              break;
+            }
+          }
+          if (!game) {
+            for (const k in board) {
+              try {
+                if (board[k] && typeof board[k].getFEN === "function") {
+                  game = board[k];
+                  break;
+                }
+              } catch (e) {}
+            }
+          }
+        }
+      }
+
+      if (!board || !game) {
+        return;
+      }
+
+      fen = game.getFEN();
 
       if (!isPuzzleMode) {
-        const turn = board.game.getTurn();
-        let side = board.game.getPlayingAs();
+        const turn = game ? game.getTurn() : null;
+        let side = game ? game.getPlayingAs() : null;
 
         // Detectar cor do jogador se getPlayingAs() retornar algo inválido
         if (!side || side === null || side === undefined) {
@@ -499,6 +1105,7 @@
 
       chessBot.time = computeDelayValue();
       log(`Modo: ${gameMode} | Delay: ${chessBot.time}s | Elo: ${currentElo}`);
+      log("Enviando request para " + SERVER_URL + "/getmove");
 
       GM_xmlhttpRequest({
         method: "POST",
@@ -535,11 +1142,24 @@
           }
           can_interval = true;
         },
-        onerror: function () {
-          log("Erro request");
+        onerror: function (resp) {
+          log(
+            "Erro request: status=" +
+              (resp ? resp.status : "0") +
+              ", statusText=" +
+              (resp ? resp.statusText : "nenhum") +
+              ", response=" +
+              (resp && resp.responseText
+                ? resp.responseText.substring(0, 50)
+                : "vazio"),
+          );
           can_interval = true;
         },
-        timeout: 3000,
+        ontimeout: function () {
+          log("Timeout: servidor nao respondeu em 5s");
+          can_interval = true;
+        },
+        timeout: 5000,
       });
     } catch (e) {
       log("Erro: " + e);
@@ -585,23 +1205,12 @@
         .kb-num-input { width: 70px; background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 6px; border-radius: 4px; font-size: 13px; }
         .kb-delay-header { display: flex; justify-content: space-between; align-items: center; }
         .kb-delay-display { font-size: 14px; color: #fff; font-weight: 500; }
-
-        .kb-rating-section { background: rgba(0,255,136,0.05); border: 1px solid #333; border-radius: 8px; padding: 10px 12px; }
-        .kb-rating-display { font-size: 13px; display: flex; align-items: center; justify-content: space-between; }
-        .kb-rating-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
       </style>
     `;
 
     const menuHtml = `
       <div id="krypbot-container">
         <div class="kb-title">KrypBot Control Panel</div>
-
-        <div class="kb-section kb-rating-section">
-          <span class="kb-rating-label">Auto Adjust Rating</span>
-          <div id="kb-rating-display" class="kb-rating-display">
-            <span style="color:#888; font-size:12px;">Detecting player...</span>
-          </div>
-        </div>
 
         <div class="kb-section">
           <p class="kb-section-label">Bot Status</p>
@@ -684,10 +1293,14 @@
       if (!mainDiv.length) mainDiv = $(".chess-board-wrapper");
       if (!mainDiv.length) mainDiv = $(".board-wrapper");
       if (!mainDiv.length) mainDiv = $("[class*='puzzle-board']");
+      if (!mainDiv.length) mainDiv = $(".board");
+      if (!mainDiv.length) mainDiv = $(".chess-board");
+      if (!mainDiv.length) mainDiv = $("[class*='board-component']");
 
       if (mainDiv.length) {
         clearInterval(checkExist);
         mainDiv.first().append(menuHtml);
+        OpponentIntel.startObserver();
 
         window.krypbotUpdateUI = function () {
           detectGameMode();
@@ -717,9 +1330,13 @@
             "checked",
             true,
           );
-          
+
           if (autoDelayMode === "max") {
-            $(".kb-num-input").css({"border-color": "#fff", "box-shadow": "0 0 6px rgba(255,255,255,0.5)", "color": "#fff"});
+            $(".kb-num-input").css({
+              "border-color": "#fff",
+              "box-shadow": "0 0 6px rgba(255,255,255,0.5)",
+              color: "#fff",
+            });
             $("#autoDelayDisplay").text("INSTANT");
           } else {
             $("#autoDelayDisplay").text(
@@ -786,13 +1403,17 @@
         $("input[name='delayMode']").on("change", function () {
           autoDelayMode = $(this).val();
           localStorage.setItem("autoDelayMode", autoDelayMode);
-          
+
           if (autoDelayMode === "max") {
             autoDelayMin = 0;
             autoDelayMax = 0;
             localStorage.setItem("autoMinDelay", 0);
             localStorage.setItem("autoMaxDelay", 0);
-            $(".kb-num-input").val("0.00").css({"border-color": "#fff", "box-shadow": "0 0 8px rgba(255,255,255,0.6)", "color": "#fff"});
+            $(".kb-num-input").val("0.00").css({
+              "border-color": "#fff",
+              "box-shadow": "0 0 8px rgba(255,255,255,0.6)",
+              color: "#fff",
+            });
             $("#autoDelayDisplay").text("INSTANT");
           } else {
             // Restaurar valores padrão ao voltar para Random/Avg
@@ -800,12 +1421,16 @@
             autoDelayMax = 1.0;
             localStorage.setItem("autoMinDelay", 0.5);
             localStorage.setItem("autoMaxDelay", 1.0);
-            $(".kb-num-input").val("").css({"border-color": "#333", "box-shadow": "none", "color": "#fff"});
+            $(".kb-num-input").val("").css({
+              "border-color": "#333",
+              "box-shadow": "none",
+              color: "#fff",
+            });
             $("#minDelayInput").val("0.50").css("color", "#fff");
             $("#maxDelayInput").val("1.00").css("color", "#fff");
             $("#autoDelayDisplay").text("0.50–1.00s");
           }
-          
+
           window.krypbotUpdateUI();
         });
 
@@ -823,26 +1448,33 @@
         setInterval(() => {
           if (window.location.href !== lastUrl) {
             lastUrl = window.location.href;
+            OpponentIntel.lastOpponent = null;
             detectGameMode();
             window.krypbotUpdateUI();
 
-            playerUsername = detectPlayerUsername();
-            if (playerUsername) {
-              startRatingRefresh();
-            } else {
-              $("#kb-rating-display").html('<span style="color:#ffaa00; font-size:12px;">Username not detected</span>');
+            // Tenta detectar resultado da última partida
+            const resultEl = document.querySelector(".game-result");
+            if (resultEl) {
+              const text = resultEl.textContent.trim().toLowerCase();
+              if (
+                text.includes("win") ||
+                text.includes("won") ||
+                text.includes("vitória")
+              )
+                updateMySession("W");
+              else if (text.includes("draw") || text.includes("empate"))
+                updateMySession("D");
+              else if (
+                text.includes("loss") ||
+                text.includes("lost") ||
+                text.includes("derrota")
+              )
+                updateMySession("L");
             }
           }
         }, 1000);
 
         window.krypbotUpdateUI();
-
-        playerUsername = detectPlayerUsername();
-        if (playerUsername) {
-          startRatingRefresh();
-        } else {
-          $("#kb-rating-display").html('<span style="color:#ffaa00; font-size:12px;">Username not detected</span>');
-        }
       }
     }, 500);
   }
@@ -881,14 +1513,6 @@
         log("Modo detectado: " + newMode);
         if (typeof window.krypbotUpdateUI === "function")
           window.krypbotUpdateUI();
-      }
-      
-      if (gameMode === "play" && !playerUsername) {
-        const detected = detectPlayerUsername();
-        if (detected) {
-          playerUsername = detected;
-          startRatingRefresh();
-        }
       }
     }, 500);
 
