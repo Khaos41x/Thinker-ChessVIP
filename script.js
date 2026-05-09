@@ -133,6 +133,70 @@
     updateBaseElo(newBase) {
       this._baseElo = newBase;
     }
+
+    setOpponentRating(opponentRating) {
+      if (!this._enabled) return;
+      this._currentDifficulty = Math.min(opponentRating + 200, AUTO_ADJUST_MAX_ELO);
+      this._saveDifficulty();
+    }
+
+    resetToBase() {
+      this._currentDifficulty = this._baseElo;
+      this._saveDifficulty();
+    }
+  }
+
+  function getOpponentRating() {
+    const screenMiddle = window.innerHeight / 2;
+    
+    const players = document.querySelectorAll(
+      ".player-component, .board-layout-player, .user-tagline-component, .user-tagline, [class*='player']"
+    );
+    
+    let opponentEl = null;
+    let minTop = Infinity;
+    
+    players.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top > screenMiddle) return;
+      if (rect.top >= 0 && rect.top < minTop && rect.bottom > 0) {
+        minTop = rect.top;
+        opponentEl = el;
+      }
+    });
+    
+    if (!opponentEl) {
+      const allLinks = document.querySelectorAll("a[href*='/member/']");
+      for (const link of allLinks) {
+        const rect = link.getBoundingClientRect();
+        if (rect.top > screenMiddle || rect.top < 0) continue;
+        const text = link.innerText;
+        const match = text.match(/\((\d{3,4})\)/);
+        if (match) {
+          return parseInt(match[1], 10);
+        }
+      }
+      return null;
+    }
+    
+    const rawText = opponentEl.innerText || "";
+    const regex = /(?<!\w)\(?(\d{3,4})\)?(?!:)/g;
+    const matches = [...rawText.matchAll(regex)];
+    
+    let foundElo = null;
+    for (const m of matches) {
+      if (m[0].includes("(")) {
+        foundElo = parseInt(m[1]);
+        break;
+      }
+    }
+    
+    if (!foundElo && matches.length > 0) {
+      const candidates = matches.map(m => parseInt(m[1])).filter(n => n >= 400 && n < 3200);
+      if (candidates.length > 0) foundElo = candidates[0];
+    }
+    
+    return foundElo;
   }
 
   let can_interval = true,
@@ -730,6 +794,16 @@
         if (username && username !== OpponentIntel.lastOpponent) {
           OpponentIntel.lastOpponent = username;
           log("OpponentIntel: novo oponente → " + username);
+
+          if (autoAdjust.isEnabled()) {
+            setTimeout(() => {
+              const oppRating = getOpponentRating();
+              if (oppRating) {
+                autoAdjust.setOpponentRating(oppRating);
+                window.krypbotUpdateUI();
+              }
+            }, 500);
+          }
 
           observer.disconnect();
 
@@ -1456,7 +1530,9 @@
             );
           }
 
-          $("#kb-elo-val").text(autoAdjust.isEnabled() ? autoAdjust.getCurrentDifficulty() : chessBot.elo);
+          const displayElo = autoAdjust.isEnabled() ? autoAdjust.getCurrentDifficulty() : chessBot.elo;
+          $("#kb-elo-val").text(displayElo);
+          $("#kb-elo-slider").val(displayElo);
           $("#kb-color-picker").val(current_color);
 
           // Show/hide puzzle section based on current mode
@@ -1572,6 +1648,9 @@
           if (window.location.href !== lastUrl) {
             lastUrl = window.location.href;
             OpponentIntel.lastOpponent = null;
+            if (autoAdjust.isEnabled()) {
+              autoAdjust.resetToBase();
+            }
             detectGameMode();
             window.krypbotUpdateUI();
 
