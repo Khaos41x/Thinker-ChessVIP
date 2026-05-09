@@ -32,6 +32,112 @@
     DEFAULT_MAX_DELAY = 2.0,
     DEFAULT_DELAY_MODE = "random";
 
+  // --- CONFIGURAÇÕES DO AUTO ADJUST RATING ---
+  const AUTO_ADJUST_N = 5,
+    AUTO_ADJUST_MIN_ELO = 800,
+    AUTO_ADJUST_MAX_ELO = 3200,
+    AUTO_ADJUST_STEP = 100;
+
+  class AutoAdjustRating {
+    constructor(baseElo, storage = localStorage) {
+      this._storage = storage;
+      this._enabled = this._storage.getItem("kb-auto-adjust") === "true";
+      this._baseElo = baseElo;
+      this._currentDifficulty = this._enabled
+        ? this._loadDifficulty()
+        : baseElo;
+      this._history = this._loadHistory();
+    }
+
+    _loadHistory() {
+      try {
+        const data = JSON.parse(
+          this._storage.getItem("kb-auto-adjust-history"),
+        );
+        return Array.isArray(data) ? data : [];
+      } catch {
+        return [];
+      }
+    }
+
+    _saveHistory() {
+      this._storage.setItem(
+        "kb-auto-adjust-history",
+        JSON.stringify(this._history),
+      );
+    }
+
+    _loadDifficulty() {
+      const val = parseInt(this._storage.getItem("kb-auto-adjust-elo"), 10);
+      return !isNaN(val) &&
+        val >= AUTO_ADJUST_MIN_ELO &&
+        val <= AUTO_ADJUST_MAX_ELO
+        ? val
+        : this._baseElo;
+    }
+
+    _saveDifficulty() {
+      this._storage.setItem(
+        "kb-auto-adjust-elo",
+        this._currentDifficulty.toString(),
+      );
+    }
+
+    enable() {
+      this._enabled = true;
+      this._currentDifficulty = this._baseElo;
+      this._history = [];
+      this._saveHistory();
+      this._saveDifficulty();
+      this._storage.setItem("kb-auto-adjust", "true");
+    }
+
+    disable() {
+      this._enabled = false;
+      this._storage.setItem("kb-auto-adjust", "false");
+    }
+
+    isEnabled() {
+      return this._enabled;
+    }
+
+    recordResult(result) {
+      if (!this._enabled) return;
+      if (result !== "W" && result !== "L") return;
+      this._history.push(result);
+      if (this._history.length > AUTO_ADJUST_N) {
+        this._history.shift();
+      }
+      this._saveHistory();
+      this._adjustDifficulty();
+    }
+
+    _adjustDifficulty() {
+      if (this._history.length < AUTO_ADJUST_N) return;
+      const wins = this._history.filter((r) => r === "W").length;
+      if (wins > AUTO_ADJUST_N / 2) {
+        this._currentDifficulty = Math.min(
+          this._currentDifficulty + AUTO_ADJUST_STEP,
+          AUTO_ADJUST_MAX_ELO,
+        );
+      } else if (AUTO_ADJUST_N - wins > AUTO_ADJUST_N / 2) {
+        this._currentDifficulty = Math.max(
+          this._currentDifficulty - AUTO_ADJUST_STEP,
+          AUTO_ADJUST_MIN_ELO,
+        );
+      }
+      this._saveDifficulty();
+    }
+
+    getCurrentDifficulty() {
+      return this._currentDifficulty;
+    }
+
+    updateBaseElo(newBase) {
+      this._baseElo = newBase;
+    }
+  }
+
   let can_interval = true,
     auto_move = false,
     auto_queue = false,
@@ -720,6 +826,8 @@
     time: 0.02,
   };
 
+  let autoAdjust = new AutoAdjustRating(chessBot.elo);
+
   function log(msg) {
     console.log("[KrypBot]", msg);
   }
@@ -1078,7 +1186,7 @@
       if (fen === checkfen) return;
 
       const puzzleElo = 3200;
-      const currentElo = isPuzzleMode ? puzzleElo : chessBot.elo;
+      const currentElo = isPuzzleMode ? puzzleElo : (autoAdjust.isEnabled() ? autoAdjust.getCurrentDifficulty() : chessBot.elo);
       const cacheKey = fen + "_" + currentElo;
       const currentCache = isPuzzleMode ? puzzleMoveCache : moveCache;
       const isAutoMove = isPuzzleMode ? puzzleAutoMove : auto_move;
@@ -1274,6 +1382,14 @@
           </div>
         </div>
 
+        <div class="kb-section">
+          <p class="kb-section-label">Auto Adjust Rating</p>
+          <div class="kb-controls">
+            <label class="kb-radio-label"><input type="radio" name="kb-auto-adjust" value="1"> On</label>
+            <label class="kb-radio-label"><input type="radio" name="kb-auto-adjust" value="0" checked> Off</label>
+          </div>
+        </div>
+
         <div class="kb-footer">
           <div style="display:flex; align-items:center; gap:10px;">
             <span style="font-size:12px; color:#888;">Color:</span>
@@ -1323,6 +1439,7 @@
           $(
             `input[name="kb-puzzle-auto"][value="${puzzleAutoMove ? 1 : 0}"]`,
           ).prop("checked", true);
+          $(`input[name="kb-auto-adjust"][value="${autoAdjust.isEnabled() ? 1 : 0}"]`).prop("checked", true);
 
           $("#minDelayInput").val(autoDelayMin.toFixed(2));
           $("#maxDelayInput").val(autoDelayMax.toFixed(2));
@@ -1344,7 +1461,7 @@
             );
           }
 
-          $("#kb-elo-val").text(chessBot.elo);
+          $("#kb-elo-val").text(autoAdjust.isEnabled() ? autoAdjust.getCurrentDifficulty() : chessBot.elo);
           $("#kb-color-picker").val(current_color);
 
           // Show/hide puzzle section based on current mode
@@ -1380,6 +1497,16 @@
 
         $('input[name="kb-puzzle-auto"]').on("change", function () {
           puzzleAutoMove = $(this).val() == "1";
+          window.krypbotUpdateUI();
+        });
+
+        $('input[name="kb-auto-adjust"]').on("change", function () {
+          if ($(this).val() == "1") {
+            autoAdjust.updateBaseElo(chessBot.elo);
+            autoAdjust.enable();
+          } else {
+            autoAdjust.disable();
+          }
           window.krypbotUpdateUI();
         });
 
@@ -1436,6 +1563,7 @@
 
         $("#kb-elo-slider").on("input", function () {
           chessBot.elo = parseInt($(this).val());
+          autoAdjust.updateBaseElo(chessBot.elo);
           window.krypbotUpdateUI();
         });
 
@@ -1460,16 +1588,19 @@
                 text.includes("win") ||
                 text.includes("won") ||
                 text.includes("vitória")
-              )
+              ) {
                 updateMySession("W");
-              else if (text.includes("draw") || text.includes("empate"))
+                if (gameMode === "play") autoAdjust.recordResult("W");
+              } else if (text.includes("draw") || text.includes("empate")) {
                 updateMySession("D");
-              else if (
+              } else if (
                 text.includes("loss") ||
                 text.includes("lost") ||
                 text.includes("derrota")
-              )
+              ) {
                 updateMySession("L");
+                if (gameMode === "play") autoAdjust.recordResult("L");
+              }
             }
           }
         }, 1000);
