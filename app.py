@@ -128,9 +128,8 @@ import subprocess
 
 def find_komodo_exe():
     candidates = [
-        r"C:\Users\casa\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
-        r"C:\Users\casa\Downloads\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
-        r"D:\Meus documentos\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
+        r"C:\Users\GG\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
+        r"C:\Users\GG\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit-bmi2.exe",
     ]
     for f in candidates:
         if os.path.exists(f):
@@ -283,6 +282,68 @@ def getmove():
     except Exception as e:
         print(f"Erro: {e}")
         return jsonify([])
+
+import rating
+import database
+
+@app.route("/record-match", methods=["POST"])
+def record_match():
+    data = request.json or {}
+    white = data.get("white", "").strip().lower()
+    black = data.get("black", "").strip().lower()
+    result = data.get("result", "")
+
+    if not white or not black:
+        return jsonify({"error": "white and black usernames are required"}), 400
+
+    if result not in ("white_win", "black_win", "draw"):
+        return jsonify({"error": "result must be 'white_win', 'black_win', or 'draw'"}), 400
+
+    if white == black:
+        return jsonify({"error": "white and black must be different players"}), 400
+
+    try:
+        outcome = rating.calculate_ratings(white, black, result)
+        Log.chess("Match recorded", data={
+            "white": white, "black": black,
+            "result": result,
+            "white_change": outcome['white']['change'],
+            "black_change": outcome['black']['change'],
+        })
+        return jsonify(outcome)
+    except Exception as e:
+        Log.error("Failed to record match", data={"error": str(e)})
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/rating/<username>", methods=["GET"])
+def get_rating(username):
+    try:
+        summary = rating.get_rating_summary(username)
+        return jsonify(summary)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/ratings", methods=["GET"])
+def get_all_ratings():
+    try:
+        order = request.args.get("order", "rating")
+        players = database.get_all_players(order_by=order)
+        return jsonify([dict(p) for p in players])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/history/<username>", methods=["GET"])
+def get_history(username):
+    try:
+        limit = int(request.args.get("limit", 50))
+        history = database.get_match_history(username, limit=limit)
+        return jsonify([dict(h) for h in history])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route("/health", methods=["GET"])
 def health():

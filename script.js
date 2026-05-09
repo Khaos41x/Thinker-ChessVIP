@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC72
+// @name         TC84
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -17,17 +17,126 @@
 // @connect      localhost
 // @connect      127.0.0.1
 // @connect      api.chess.com
+// @connect      referenced-everything-border-possess.trycloudflare.com
+// @connect      *.trycloudflare.com
 // ==/UserScript==
 
 (function () {
   "use strict";
 
-  const SERVER_URL = "http://127.0.0.1:5050";
+  const SERVER_URL =
+    "https://referenced-everything-border-possess.trycloudflare.com";
 
   // --- CONFIGURAÇÕES PADRÃO (AUTO RUN DELAY) ---
   const DEFAULT_MIN_DELAY = 0.5,
     DEFAULT_MAX_DELAY = 2.0,
     DEFAULT_DELAY_MODE = "random";
+
+  // --- CONFIGURAÇÕES DO AUTO ADJUST RATING ---
+  const AUTO_ADJUST_N = 5,
+    AUTO_ADJUST_MIN_ELO = 800,
+    AUTO_ADJUST_MAX_ELO = 3200,
+    AUTO_ADJUST_STEP = 100;
+
+  class AutoAdjustRating {
+    constructor(baseElo, storage = localStorage) {
+      this._storage = storage;
+      this._enabled = this._storage.getItem("kb-auto-adjust") === "true";
+      this._baseElo = baseElo;
+      this._currentDifficulty = this._enabled
+        ? this._loadDifficulty()
+        : baseElo;
+      this._history = this._loadHistory();
+    }
+
+    _loadHistory() {
+      try {
+        const data = JSON.parse(
+          this._storage.getItem("kb-auto-adjust-history"),
+        );
+        return Array.isArray(data) ? data : [];
+      } catch {
+        return [];
+      }
+    }
+
+    _saveHistory() {
+      this._storage.setItem(
+        "kb-auto-adjust-history",
+        JSON.stringify(this._history),
+      );
+    }
+
+    _loadDifficulty() {
+      const val = parseInt(this._storage.getItem("kb-auto-adjust-elo"), 10);
+      return !isNaN(val) &&
+        val >= AUTO_ADJUST_MIN_ELO &&
+        val <= AUTO_ADJUST_MAX_ELO
+        ? val
+        : this._baseElo;
+    }
+
+    _saveDifficulty() {
+      this._storage.setItem(
+        "kb-auto-adjust-elo",
+        this._currentDifficulty.toString(),
+      );
+    }
+
+    enable() {
+      this._enabled = true;
+      this._currentDifficulty = this._baseElo;
+      this._history = [];
+      this._saveHistory();
+      this._saveDifficulty();
+      this._storage.setItem("kb-auto-adjust", "true");
+    }
+
+    disable() {
+      this._enabled = false;
+      this._storage.setItem("kb-auto-adjust", "false");
+    }
+
+    isEnabled() {
+      return this._enabled;
+    }
+
+    recordResult(result) {
+      if (!this._enabled) return;
+      if (result !== "W" && result !== "L") return;
+      this._history.push(result);
+      if (this._history.length > AUTO_ADJUST_N) {
+        this._history.shift();
+      }
+      this._saveHistory();
+      this._adjustDifficulty();
+    }
+
+    _adjustDifficulty() {
+      if (this._history.length < AUTO_ADJUST_N) return;
+      const wins = this._history.filter((r) => r === "W").length;
+      if (wins > AUTO_ADJUST_N / 2) {
+        this._currentDifficulty = Math.min(
+          this._currentDifficulty + AUTO_ADJUST_STEP,
+          AUTO_ADJUST_MAX_ELO,
+        );
+      } else if (AUTO_ADJUST_N - wins > AUTO_ADJUST_N / 2) {
+        this._currentDifficulty = Math.max(
+          this._currentDifficulty - AUTO_ADJUST_STEP,
+          AUTO_ADJUST_MIN_ELO,
+        );
+      }
+      this._saveDifficulty();
+    }
+
+    getCurrentDifficulty() {
+      return this._currentDifficulty;
+    }
+
+    updateBaseElo(newBase) {
+      this._baseElo = newBase;
+    }
+  }
 
   let can_interval = true,
     auto_move = false,
@@ -717,6 +826,8 @@
     time: 0.02,
   };
 
+  let autoAdjust = new AutoAdjustRating(chessBot.elo);
+
   function log(msg) {
     console.log("[KrypBot]", msg);
   }
@@ -845,7 +956,7 @@
 
   function isInGame() {
     return !!document.querySelector(
-      ".board-component, .game-component, [data-board], .board-layout-main",
+      ".board-component, .game-component, [data-board], .board-layout-main, .chess-board, .board, wc-board, [class*='board']",
     );
   }
 
@@ -856,14 +967,12 @@
     const btn = findNewGameButton();
     if (btn && btn.offsetParent !== null) {
       auto_queue_clicking = true;
-      log("Auto Queue: Botão detectado. Iniciando em 3s...");
-      setTimeout(() => {
-        if (auto_queue) {
-          btn.click();
-          log("Auto Queue: Clique executado!");
-        }
-        auto_queue_clicking = false;
-      }, 3000);
+      log("Auto Queue: Botão detectado. Clicando instantaneamente...");
+      if (auto_queue) {
+        btn.click();
+        log("Auto Queue: Clique executado!");
+      }
+      auto_queue_clicking = false;
     }
   }
 
@@ -911,11 +1020,13 @@
   }
 
   const auto_move_piece = function (from, to, board) {
-    if (!board || !board.game) return;
-    const moves = board.game.getLegalMoves();
+    if (!board) return;
+    const game = board.game || (board.gameManager && board.gameManager.game);
+    if (!game) return;
+    const moves = game.getLegalMoves();
     for (let i = 0; i < moves.length; i++) {
       if (moves[i].from == from && moves[i].to == to) {
-        board.game.move({
+        game.move({
           ...moves[i],
           promotion: "q",
           animate: true,
@@ -932,7 +1043,13 @@
   };
 
   const create_elm = (num) => {
-    const board = $("chess-board")[0] || $("wc-chess-board")[0];
+    const board =
+      $("chess-board")[0] ||
+      $("wc-chess-board")[0] ||
+      $(".board")[0] ||
+      $(".chess-board")[0] ||
+      $("[class*='board-component']")[0] ||
+      $("wc-board")[0];
     if (!board) return [0, 0];
     const elm = document.createElement("div");
     elm.setAttribute("class", `highlight square-${num} myhigh`);
@@ -954,7 +1071,14 @@
 
   const create_div = (str1) => {
     try {
-      const target = $("chess-board")[0] || $("wc-chess-board")[0];
+      const target =
+        $("chess-board")[0] ||
+        $("wc-chess-board")[0] ||
+        $(".board")[0] ||
+        $(".chess-board")[0] ||
+        $("[class*='board-component']")[0] ||
+        $("wc-board")[0];
+      
       if (!target) return;
       $(".myhigh").remove();
       $(".myarrow").remove();
@@ -994,14 +1118,53 @@
     if (!shouldRun) return;
 
     try {
-      const board = $("chess-board")[0] || $("wc-chess-board")[0];
-      if (!board || !board.game) return;
+      const board =
+        $("chess-board")[0] ||
+        $("wc-chess-board")[0] ||
+        $(".board")[0] ||
+        $(".chess-board")[0] ||
+        $("[class*='board-component']")[0] ||
+        $("wc-board")[0];
 
-      fen = board.game.getFEN();
+      let game = null;
+      if (board) {
+        if (board.game) game = board.game;
+        else if (board.gameManager && board.gameManager.game)
+          game = board.gameManager.game;
+        else {
+          const keys = Object.keys(board).filter(
+            (k) =>
+              k.toLowerCase().includes("game") ||
+              k.toLowerCase().includes("chess"),
+          );
+          for (const k of keys) {
+            if (board[k] && board[k].getFEN) {
+              game = board[k];
+              break;
+            }
+          }
+          if (!game) {
+            for (const k in board) {
+              try {
+                if (board[k] && typeof board[k].getFEN === "function") {
+                  game = board[k];
+                  break;
+                }
+              } catch (e) {}
+            }
+          }
+        }
+      }
+
+      if (!board || !game) {
+        return;
+      }
+
+      fen = game.getFEN();
 
       if (!isPuzzleMode) {
-        const turn = board.game.getTurn();
-        let side = board.game.getPlayingAs();
+        const turn = game ? game.getTurn() : null;
+        let side = game ? game.getPlayingAs() : null;
 
         // Detectar cor do jogador se getPlayingAs() retornar algo inválido
         if (!side || side === null || side === undefined) {
@@ -1023,7 +1186,7 @@
       if (fen === checkfen) return;
 
       const puzzleElo = 3200;
-      const currentElo = isPuzzleMode ? puzzleElo : chessBot.elo;
+      const currentElo = isPuzzleMode ? puzzleElo : (autoAdjust.isEnabled() ? autoAdjust.getCurrentDifficulty() : chessBot.elo);
       const cacheKey = fen + "_" + currentElo;
       const currentCache = isPuzzleMode ? puzzleMoveCache : moveCache;
       const isAutoMove = isPuzzleMode ? puzzleAutoMove : auto_move;
@@ -1050,6 +1213,7 @@
 
       chessBot.time = computeDelayValue();
       log(`Modo: ${gameMode} | Delay: ${chessBot.time}s | Elo: ${currentElo}`);
+      log("Enviando request para " + SERVER_URL + "/getmove");
 
       GM_xmlhttpRequest({
         method: "POST",
@@ -1086,11 +1250,24 @@
           }
           can_interval = true;
         },
-        onerror: function () {
-          log("Erro request");
+        onerror: function (resp) {
+          log(
+            "Erro request: status=" +
+              (resp ? resp.status : "0") +
+              ", statusText=" +
+              (resp ? resp.statusText : "nenhum") +
+              ", response=" +
+              (resp && resp.responseText
+                ? resp.responseText.substring(0, 50)
+                : "vazio"),
+          );
           can_interval = true;
         },
-        timeout: 3000,
+        ontimeout: function () {
+          log("Timeout: servidor nao respondeu em 5s");
+          can_interval = true;
+        },
+        timeout: 5000,
       });
     } catch (e) {
       log("Erro: " + e);
@@ -1205,6 +1382,14 @@
           </div>
         </div>
 
+        <div class="kb-section">
+          <p class="kb-section-label">Auto Adjust Rating</p>
+          <div class="kb-controls">
+            <label class="kb-radio-label"><input type="radio" name="kb-auto-adjust" value="1"> On</label>
+            <label class="kb-radio-label"><input type="radio" name="kb-auto-adjust" value="0" checked> Off</label>
+          </div>
+        </div>
+
         <div class="kb-footer">
           <div style="display:flex; align-items:center; gap:10px;">
             <span style="font-size:12px; color:#888;">Color:</span>
@@ -1224,6 +1409,9 @@
       if (!mainDiv.length) mainDiv = $(".chess-board-wrapper");
       if (!mainDiv.length) mainDiv = $(".board-wrapper");
       if (!mainDiv.length) mainDiv = $("[class*='puzzle-board']");
+      if (!mainDiv.length) mainDiv = $(".board");
+      if (!mainDiv.length) mainDiv = $(".chess-board");
+      if (!mainDiv.length) mainDiv = $("[class*='board-component']");
 
       if (mainDiv.length) {
         clearInterval(checkExist);
@@ -1251,6 +1439,7 @@
           $(
             `input[name="kb-puzzle-auto"][value="${puzzleAutoMove ? 1 : 0}"]`,
           ).prop("checked", true);
+          $(`input[name="kb-auto-adjust"][value="${autoAdjust.isEnabled() ? 1 : 0}"]`).prop("checked", true);
 
           $("#minDelayInput").val(autoDelayMin.toFixed(2));
           $("#maxDelayInput").val(autoDelayMax.toFixed(2));
@@ -1272,7 +1461,7 @@
             );
           }
 
-          $("#kb-elo-val").text(chessBot.elo);
+          $("#kb-elo-val").text(autoAdjust.isEnabled() ? autoAdjust.getCurrentDifficulty() : chessBot.elo);
           $("#kb-color-picker").val(current_color);
 
           // Show/hide puzzle section based on current mode
@@ -1308,6 +1497,16 @@
 
         $('input[name="kb-puzzle-auto"]').on("change", function () {
           puzzleAutoMove = $(this).val() == "1";
+          window.krypbotUpdateUI();
+        });
+
+        $('input[name="kb-auto-adjust"]').on("change", function () {
+          if ($(this).val() == "1") {
+            autoAdjust.updateBaseElo(chessBot.elo);
+            autoAdjust.enable();
+          } else {
+            autoAdjust.disable();
+          }
           window.krypbotUpdateUI();
         });
 
@@ -1364,6 +1563,7 @@
 
         $("#kb-elo-slider").on("input", function () {
           chessBot.elo = parseInt($(this).val());
+          autoAdjust.updateBaseElo(chessBot.elo);
           window.krypbotUpdateUI();
         });
 
@@ -1388,16 +1588,19 @@
                 text.includes("win") ||
                 text.includes("won") ||
                 text.includes("vitória")
-              )
+              ) {
                 updateMySession("W");
-              else if (text.includes("draw") || text.includes("empate"))
+                if (gameMode === "play") autoAdjust.recordResult("W");
+              } else if (text.includes("draw") || text.includes("empate")) {
                 updateMySession("D");
-              else if (
+              } else if (
                 text.includes("loss") ||
                 text.includes("lost") ||
                 text.includes("derrota")
-              )
+              ) {
                 updateMySession("L");
+                if (gameMode === "play") autoAdjust.recordResult("L");
+              }
             }
           }
         }, 1000);
