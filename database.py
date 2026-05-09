@@ -85,6 +85,55 @@ def init_db():
     except:
         pass
     
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS players (
+            username TEXT PRIMARY KEY,
+            rating INTEGER DEFAULT 1200,
+            games_played INTEGER DEFAULT 0,
+            wins INTEGER DEFAULT 0,
+            losses INTEGER DEFAULT 0,
+            draws INTEGER DEFAULT 0,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+        )
+    ''')
+    
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS matches (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            player_white TEXT NOT NULL,
+            player_black TEXT NOT NULL,
+            result TEXT NOT NULL,
+            player_white_rating_before INTEGER NOT NULL,
+            player_black_rating_before INTEGER NOT NULL,
+            player_white_rating_after INTEGER NOT NULL,
+            player_black_rating_after INTEGER NOT NULL,
+            played_at TEXT NOT NULL,
+            FOREIGN KEY (player_white) REFERENCES players(username),
+            FOREIGN KEY (player_black) REFERENCES players(username)
+        )
+    ''')
+    
+    try:
+        conn.execute('CREATE INDEX IF NOT EXISTS idx_matches_white ON matches(player_white)')
+    except:
+        pass
+    
+    try:
+        conn.execute('CREATE INDEX IF NOT EXISTS idx_matches_black ON matches(player_black)')
+    except:
+        pass
+    
+    try:
+        conn.execute('CREATE INDEX IF NOT EXISTS idx_matches_played_at ON matches(played_at)')
+    except:
+        pass
+    
+    try:
+        conn.execute('CREATE INDEX IF NOT EXISTS idx_players_rating ON players(rating)')
+    except:
+        pass
+    
     conn.commit()
     conn.close()
 
@@ -350,6 +399,147 @@ def is_license_valid(license_key):
     try:
         row = conn.execute('SELECT is_active FROM licenses WHERE key = ?', (license_key,)).fetchone()
         return row is not None and row['is_active'] == 1
+    finally:
+        conn.close()
+
+
+# =============================================================================
+# FUNÇÕES DE PLAYER / RATING
+# =============================================================================
+
+def get_or_create_player(username):
+    """Busca jogador; se não existir, cria com rating 1200."""
+    username = username.strip().lower()
+    conn = get_db_connection()
+    try:
+        player = conn.execute('SELECT * FROM players WHERE username = ?', (username,)).fetchone()
+        if player:
+            return dict(player)
+        now = datetime.datetime.now().isoformat()
+        conn.execute('''
+            INSERT INTO players (username, rating, games_played, wins, losses, draws, created_at, updated_at)
+            VALUES (?, 1200, 0, 0, 0, 0, ?, ?)
+        ''', (username, now, now))
+        conn.commit()
+        return conn.execute('SELECT * FROM players WHERE username = ?', (username,)).fetchone()
+    except Exception as e:
+        print(f"[DB ERROR] get_or_create_player: {e}")
+        return None
+    finally:
+        conn.close()
+
+
+def get_player(username):
+    """Busca jogador pelo username."""
+    username = username.strip().lower()
+    conn = get_db_connection()
+    try:
+        row = conn.execute('SELECT * FROM players WHERE username = ?', (username,)).fetchone()
+        return dict(row) if row else None
+    finally:
+        conn.close()
+
+
+def update_player_rating(username, new_rating, games_played, wins, losses, draws):
+    """Atualiza rating e estatísticas do jogador."""
+    username = username.strip().lower()
+    conn = get_db_connection()
+    try:
+        now = datetime.datetime.now().isoformat()
+        conn.execute('''
+            UPDATE players
+            SET rating = ?, games_played = ?, wins = ?, losses = ?, draws = ?, updated_at = ?
+            WHERE username = ?
+        ''', (new_rating, games_played, wins, losses, draws, now, username))
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"[DB ERROR] update_player_rating: {e}")
+        return False
+    finally:
+        conn.close()
+
+
+def record_match(player_white, player_black, result,
+                 white_rating_before, black_rating_before,
+                 white_rating_after, black_rating_after):
+    """Registra uma partida no histórico."""
+    player_white = player_white.strip().lower()
+    player_black = player_black.strip().lower()
+    conn = get_db_connection()
+    try:
+        now = datetime.datetime.now().isoformat()
+        conn.execute('''
+            INSERT INTO matches (player_white, player_black, result,
+                                 player_white_rating_before, player_black_rating_before,
+                                 player_white_rating_after, player_black_rating_after, played_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (player_white, player_black, result,
+              white_rating_before, black_rating_before,
+              white_rating_after, black_rating_after, now))
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"[DB ERROR] record_match: {e}")
+        return False
+    finally:
+        conn.close()
+
+
+def get_match_history(username, limit=50):
+    """Retorna histórico de partidas de um jogador."""
+    username = username.strip().lower()
+    conn = get_db_connection()
+    try:
+        return conn.execute('''
+            SELECT * FROM matches
+            WHERE player_white = ? OR player_black = ?
+            ORDER BY played_at DESC
+            LIMIT ?
+        ''', (username, username, limit)).fetchall()
+    finally:
+        conn.close()
+
+
+def get_last_n_results(username, n=10):
+    """Retorna os últimos n resultados do jogador como lista de strings: 'W', 'L', 'D'."""
+    username = username.strip().lower()
+    conn = get_db_connection()
+    try:
+        rows = conn.execute('''
+            SELECT player_white, result FROM matches
+            WHERE player_white = ? OR player_black = ?
+            ORDER BY played_at DESC
+            LIMIT ?
+        ''', (username, username, n)).fetchall()
+
+        results = []
+        for row in rows:
+            if row['player_white'] == username:
+                if row['result'] == 'white_win':
+                    results.append('W')
+                elif row['result'] == 'black_win':
+                    results.append('L')
+                else:
+                    results.append('D')
+            else:
+                if row['result'] == 'black_win':
+                    results.append('W')
+                elif row['result'] == 'white_win':
+                    results.append('L')
+                else:
+                    results.append('D')
+        return results
+    finally:
+        conn.close()
+
+
+def get_all_players(order_by='rating'):
+    """Retorna todos os jogadores ordenados por rating."""
+    conn = get_db_connection()
+    try:
+        col = 'rating DESC' if order_by == 'rating' else 'games_played DESC'
+        return conn.execute(f'SELECT * FROM players ORDER BY {col}').fetchall()
     finally:
         conn.close()
 
