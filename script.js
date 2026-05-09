@@ -38,12 +38,10 @@
   class AutoAdjustRating {
     constructor(baseElo, storage = localStorage) {
       this._storage = storage;
-      this._enabled = this._storage.getItem("kb-auto-adjust") === "true";
+      this._enabled = false;
       this._baseElo = baseElo;
-      this._currentDifficulty = this._enabled
-        ? this._loadDifficulty()
-        : baseElo;
-      this._history = this._loadHistory();
+      this._currentDifficulty = baseElo;
+      this._history = [];
     }
 
     _loadHistory() {
