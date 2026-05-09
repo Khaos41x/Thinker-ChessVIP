@@ -17,15 +17,12 @@
 // @connect      localhost
 // @connect      127.0.0.1
 // @connect      api.chess.com
-// @connect      referenced-everything-border-possess.trycloudflare.com
-// @connect      *.trycloudflare.com
 // ==/UserScript==
 
 (function () {
   "use strict";
 
-  const SERVER_URL =
-    "https://referenced-everything-border-possess.trycloudflare.com";
+  const SERVER_URL = "http://127.0.0.1:5050";
 
   // --- CONFIGURAÇÕES PADRÃO (AUTO RUN DELAY) ---
   const DEFAULT_MIN_DELAY = 0.5,
