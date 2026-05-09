@@ -868,34 +868,32 @@
   }
 
   function handleAutoQueue() {
-    // Limpar interval anterior se existir
     if (auto_queue_checkInterval) {
       clearInterval(auto_queue_checkInterval);
       auto_queue_checkInterval = null;
     }
 
+    if (auto_queue_observer) {
+      auto_queue_observer.disconnect();
+      auto_queue_observer = null;
+    }
+
     if (!auto_queue) {
-      if (auto_queue_observer) {
-        auto_queue_observer.disconnect();
-        auto_queue_observer = null;
-      }
       return;
     }
 
-    // Verificar imediatamente se o botão já está visível
     clickNewGame();
 
-    // Configurar MutationObserver para detectar novos botões
-    if (!auto_queue_observer) {
-      auto_queue_observer = new MutationObserver(() => clickNewGame());
-      auto_queue_observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-      });
-    }
+    auto_queue_observer = new MutationObserver(() => {
+      if (auto_queue && !auto_queue_clicking) {
+        clickNewGame();
+      }
+    });
+    auto_queue_observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
 
-    // Verificação periódica adicional (a cada 2 segundos)
-    // Isso garante que mesmo sem mutação, se o botão aparecer, será detectado
     auto_queue_checkInterval = setInterval(() => {
       if (auto_queue && !auto_queue_clicking) {
         clickNewGame();
