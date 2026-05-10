@@ -226,6 +226,9 @@ ponder_stop_event = threading.Event()
 ponder_analysis = None
 ponder_lock = threading.Lock()
 
+def get_base_fen(fen):
+    return " ".join(fen.split(" ")[:4])
+
 def ponder_task(fen, elo):
     global ponder_analysis
     try:
@@ -245,7 +248,7 @@ def ponder_task(fen, elo):
                     tmp_board.push(opp_move)
                     future_fen = tmp_board.fen()
                     
-                    cache_key = f"{future_fen}_{elo}"
+                    cache_key = f"{get_base_fen(future_fen)}_{elo}"
                     cache[cache_key] = our_resp.uci()
     except Exception as e:
         pass
@@ -289,10 +292,21 @@ def index():
 @app.route("/getmove", methods=["POST"])
 @app.route("/getMove", methods=["POST"])
 def getmove():
-    data = request.json or {}
+    start_time = time.perf_counter()
+    try:
+        data = request.get_json(force=True, silent=True)
+        if not data:
+            import json
+            data = json.loads(request.data)
+    except:
+        data = {}
+        
     fen = data.get("fen", "")
     elo = int(data.get("elo", 3200))
     time_limit = float(data.get("time", 0.1))
+    
+    if fen:
+        print(f"\n[REQUEST] FEN: {fen[:30]}... | Elo: {elo} | Time: {time_limit}s", flush=True)
     
     if not fen:
         return jsonify([])
@@ -307,8 +321,10 @@ def getmove():
     if ponder_thread and ponder_thread.is_alive():
         ponder_thread.join(timeout=0.01)
     
-    cache_key = f"{fen}_{elo}"
+    cache_key = f"{get_base_fen(fen)}_{elo}"
     if cache_key in cache:
+        elapsed = (time.perf_counter() - start_time) * 1000
+        print(f"[CACHE HIT] Jogada: {cache[cache_key]} | Latência Interna: {elapsed:.2f}ms", flush=True)
         return jsonify([cache[cache_key]])
     
     try:
@@ -317,6 +333,8 @@ def getmove():
         book_move = get_book(fen)
         if book_move:
             cache[cache_key] = book_move
+            elapsed = (time.perf_counter() - start_time) * 1000
+            print(f"[OPENING BOOK] Jogada: {book_move} | Latência Interna: {elapsed:.2f}ms", flush=True)
             return jsonify([book_move])
         
         target_depth = get_target_depth(elo)
@@ -340,6 +358,8 @@ def getmove():
             ponder_thread = threading.Thread(target=ponder_task, args=(next_board.fen(), elo))
             ponder_thread.start()
             
+            elapsed = (time.perf_counter() - start_time) * 1000
+            print(f"[ENGINE LIMIT] Jogada: {move} | Latência Interna: {elapsed:.2f}ms", flush=True)
             return jsonify([move])
         
         return jsonify([])

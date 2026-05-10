@@ -1180,6 +1180,32 @@
     }
   };
 
+  let cached_board = null;
+  let cached_game = null;
+  function get_cached_game() {
+    if (cached_game && typeof cached_game.getFEN === "function" && document.body.contains(cached_board)) {
+        return {board: cached_board, game: cached_game};
+    }
+    cached_board = $("chess-board")[0] || $("wc-chess-board")[0] || $(".board")[0] || $(".chess-board")[0] || $("[class*='board-component']")[0] || $("wc-board")[0];
+    cached_game = null;
+    if (cached_board) {
+        if (cached_board.game) cached_game = cached_board.game;
+        else if (cached_board.gameManager && cached_board.gameManager.game) cached_game = cached_board.gameManager.game;
+        else {
+          const keys = Object.keys(cached_board).filter((k) => k.toLowerCase().includes("game") || k.toLowerCase().includes("chess"));
+          for (const k of keys) {
+            if (cached_board[k] && cached_board[k].getFEN) { cached_game = cached_board[k]; break; }
+          }
+          if (!cached_game) {
+            for (const k in cached_board) {
+              try { if (cached_board[k] && typeof cached_board[k].getFEN === "function") { cached_game = cached_board[k]; break; } } catch (e) {}
+            }
+          }
+        }
+    }
+    return {board: cached_board, game: cached_game};
+  }
+
   function request_move() {
     if (!can_interval) return;
 
@@ -1188,43 +1214,7 @@
     if (!shouldRun) return;
 
     try {
-      const board =
-        $("chess-board")[0] ||
-        $("wc-chess-board")[0] ||
-        $(".board")[0] ||
-        $(".chess-board")[0] ||
-        $("[class*='board-component']")[0] ||
-        $("wc-board")[0];
-
-      let game = null;
-      if (board) {
-        if (board.game) game = board.game;
-        else if (board.gameManager && board.gameManager.game)
-          game = board.gameManager.game;
-        else {
-          const keys = Object.keys(board).filter(
-            (k) =>
-              k.toLowerCase().includes("game") ||
-              k.toLowerCase().includes("chess"),
-          );
-          for (const k of keys) {
-            if (board[k] && board[k].getFEN) {
-              game = board[k];
-              break;
-            }
-          }
-          if (!game) {
-            for (const k in board) {
-              try {
-                if (board[k] && typeof board[k].getFEN === "function") {
-                  game = board[k];
-                  break;
-                }
-              } catch (e) {}
-            }
-          }
-        }
-      }
+      const {board, game} = get_cached_game();
 
       if (!board || !game) {
         return;
@@ -1317,11 +1307,7 @@
 
               if (isAutoMove) {
                 if (chessBot.time <= 0) {
-                  auto_move_piece(
-                    move.substring(0, 2),
-                    move.substring(2, 4),
-                    board,
-                  );
+                  auto_move_piece(move.substring(0, 2), move.substring(2, 4), board);
                 } else {
                   setTimeout(() => {
                     auto_move_piece(
@@ -1341,16 +1327,7 @@
           can_interval = true;
         },
         onerror: function (resp) {
-          log(
-            "Erro request: status=" +
-              (resp ? resp.status : "0") +
-              ", statusText=" +
-              (resp ? resp.statusText : "nenhum") +
-              ", response=" +
-              (resp && resp.responseText
-                ? resp.responseText.substring(0, 50)
-                : "vazio"),
-          );
+          log("Erro request: " + (resp ? resp.status : "unknown"));
           can_interval = true;
         },
         ontimeout: function () {
@@ -1370,124 +1347,256 @@
 
     const css = `
       <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
         #krypbot-container {
-          background: linear-gradient(135deg, #121212, #1f1f1f);
-          color: #f0e68c;
-          border-radius: 14px;
-          box-shadow: 0 6px 20px rgba(0,0,0,0.7);
-          padding: 25px 35px;
-          max-width: 400px;
           margin: 30px 0;
-          font-family: 'Roboto', sans-serif;
+          max-width: 400px;
+          clear: both;
+          background: rgba(18, 18, 22, 0.75);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 20px;
+          color: #fff;
+          padding: 22px;
+          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+          font-family: 'Inter', sans-serif;
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
           display: flex;
           flex-direction: column;
-          gap: 18px;
-          clear: both;
+          gap: 15px;
         }
-        .kb-title { font-size: 22px; font-weight: 700; color: #00ff88; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .kb-section { display: flex; flex-direction: column; gap: 8px; }
-        .kb-section-label { font-size: 18px; font-weight: 600; color: #f0e68c; }
 
-        .kb-controls { display: flex; gap: 15px; }
-        .kb-radio-label { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 15px; }
-        .kb-radio-label input { accent-color: #00ff88; }
+        #krypbot-container.minimized {
+          width: 60px;
+          height: 60px;
+          padding: 0;
+          border-radius: 30px;
+          cursor: pointer;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background: rgba(0, 255, 136, 0.15);
+          border-color: rgba(0, 255, 136, 0.3);
+        }
+        
+        #krypbot-container.minimized:hover {
+          background: rgba(0, 255, 136, 0.25);
+          box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+        }
 
-        .kb-slider-group { display: flex; align-items: center; gap: 15px; }
-        .kb-slider { flex-grow: 1; accent-color: #00ff88; cursor: pointer; }
-        .kb-slider-val { font-size: 14px; min-width: 45px; color: #fff; }
+        #krypbot-container.minimized > *:not(.kb-logo) {
+          display: none !important;
+        }
 
-        .kb-footer { margin-top: 10px; padding-top: 15px; border-top: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
-        .kb-status { font-size: 13px; color: #00ff88; font-weight: bold; }
-        .kb-color-input { background: none; border: 1px solid #444; padding: 0; width: 40px; height: 25px; cursor: pointer; }
+        .kb-logo {
+          display: none;
+          font-size: 26px;
+          font-weight: 800;
+          color: #00ff88;
+          text-shadow: 0 0 12px rgba(0, 255, 136, 0.6);
+        }
+        
+        #krypbot-container.minimized .kb-logo {
+          display: block;
+        }
 
-        .kb-num-input { width: 70px; background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 6px; border-radius: 4px; font-size: 13px; }
-        .kb-delay-header { display: flex; justify-content: space-between; align-items: center; }
-        .kb-delay-display { font-size: 14px; color: #fff; font-weight: 500; }
+        .kb-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+          padding-bottom: 15px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .kb-title { 
+          font-size: 22px; 
+          font-weight: 800; 
+          background: linear-gradient(90deg, #00ff88, #00b8ff);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          margin: 0;
+        }
+        
+        .kb-minimize-btn {
+          background: rgba(255, 255, 255, 0.08);
+          border: none;
+          color: #fff;
+          width: 30px;
+          height: 30px;
+          border-radius: 15px;
+          cursor: pointer;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          transition: background 0.2s;
+        }
+        .kb-minimize-btn:hover { background: rgba(255, 255, 255, 0.15); }
+
+        .kb-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .kb-section-col { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+        .kb-section-label { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.9); margin: 0; }
+
+        .kb-radio-group { 
+          display: flex; 
+          background: rgba(0, 0, 0, 0.3); 
+          border-radius: 20px; 
+          padding: 3px; 
+          border: 1px solid rgba(255,255,255,0.05);
+        }
+        .kb-radio-group input[type="radio"] { display: none; }
+        .kb-radio-group label {
+          padding: 5px 14px;
+          font-size: 12px;
+          font-weight: 600;
+          border-radius: 16px;
+          cursor: pointer;
+          color: rgba(255,255,255,0.5);
+          transition: all 0.3s;
+          margin: 0;
+        }
+        .kb-radio-group input[type="radio"]:checked + label {
+          background: linear-gradient(135deg, #00ff88, #00cc6a);
+          color: #000;
+          box-shadow: 0 2px 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .kb-slider-group { display: flex; align-items: center; gap: 12px; }
+        .kb-slider { 
+          flex-grow: 1; 
+          accent-color: #00ff88; 
+          cursor: pointer;
+          height: 4px;
+          background: rgba(255,255,255,0.1);
+          border-radius: 2px;
+          outline: none;
+        }
+        .kb-slider-val { font-size: 13px; font-weight: 600; min-width: 40px; color: #00ff88; text-align: right; }
+
+        .kb-footer { 
+          margin-top: 15px; 
+          padding-top: 15px; 
+          border-top: 1px solid rgba(255,255,255,0.06); 
+          display: flex; justify-content: space-between; align-items: center; 
+        }
+        .kb-status { font-size: 12px; color: #00ff88; font-weight: 700; letter-spacing: 0.5px; }
+        .kb-color-input { 
+          background: none; border: 1px solid rgba(255,255,255,0.1); 
+          border-radius: 4px; padding: 0; width: 28px; height: 28px; cursor: pointer; 
+        }
+
+        .kb-num-input { 
+          width: 60px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); 
+          color: #fff; padding: 6px; border-radius: 6px; font-size: 12px; font-family: 'Inter', sans-serif;
+        }
+        .kb-num-input:focus { outline: none; border-color: #00ff88; }
+        .kb-delay-display { font-size: 13px; color: #00ff88; font-weight: 600; }
       </style>
     `;
 
     const menuHtml = `
       <div id="krypbot-container">
-        <div class="kb-title">KrypBot Control Panel</div>
+        <div class="kb-logo">K</div>
+        
+        <div class="kb-header">
+          <h2 class="kb-title">Thinker Chess</h2>
+          <button class="kb-minimize-btn" id="kb-minimize-toggle">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </button>
+        </div>
 
         <div class="kb-section">
           <p class="kb-section-label">Bot Status</p>
-          <div class="kb-controls">
-            <label class="kb-radio-label"><input type="radio" name="kb-bot-status" value="1"> On</label>
-            <label class="kb-radio-label"><input type="radio" name="kb-bot-status" value="0" checked> Off</label>
+          <div class="kb-radio-group">
+            <input type="radio" id="st-on" name="kb-bot-status" value="1"><label for="st-on">ON</label>
+            <input type="radio" id="st-off" name="kb-bot-status" value="0" checked><label for="st-off">OFF</label>
           </div>
         </div>
 
         <div class="kb-section">
           <p class="kb-section-label">Auto Moves</p>
-          <div class="kb-controls">
-            <label class="kb-radio-label"><input type="radio" name="kb-auto-move" value="1"> On</label>
-            <label class="kb-radio-label"><input type="radio" name="kb-auto-move" value="0" checked> Off</label>
+          <div class="kb-radio-group">
+            <input type="radio" id="am-on" name="kb-auto-move" value="1"><label for="am-on">ON</label>
+            <input type="radio" id="am-off" name="kb-auto-move" value="0" checked><label for="am-off">OFF</label>
           </div>
         </div>
 
         <div class="kb-section">
           <p class="kb-section-label">Auto Queue</p>
-          <div class="kb-controls">
-            <label class="kb-radio-label"><input type="radio" name="kb-auto-queue" value="1"> On</label>
-            <label class="kb-radio-label"><input type="radio" name="kb-auto-queue" value="0" checked> Off</label>
+          <div class="kb-radio-group">
+            <input type="radio" id="aq-on" name="kb-auto-queue" value="1"><label for="aq-on">ON</label>
+            <input type="radio" id="aq-off" name="kb-auto-queue" value="0" checked><label for="aq-off">OFF</label>
           </div>
         </div>
 
         <div class="kb-section">
           <p class="kb-section-label">Auto Adjust Rating</p>
-          <div class="kb-controls">
-            <label class="kb-radio-label"><input type="radio" name="kb-auto-adjust" value="1"> On</label>
-            <label class="kb-radio-label"><input type="radio" name="kb-auto-adjust" value="0" checked> Off</label>
+          <div class="kb-radio-group">
+            <input type="radio" id="aa-on" name="kb-auto-adjust" value="1"><label for="aa-on">ON</label>
+            <input type="radio" id="aa-off" name="kb-auto-adjust" value="0" checked><label for="aa-off">OFF</label>
           </div>
         </div>
 
-        <div class="kb-section" id="puzzle-section" style="display: none;">
-          <p class="kb-section-label">Puzzle Mode <span style="font-size:11px; color:#888; font-weight:normal;">(Elo 3200)</span></p>
-          <div class="kb-controls">
-            <label class="kb-radio-label"><input type="radio" name="kb-puzzle-hint" value="1"> Hint</label>
-            <label class="kb-radio-label"><input type="radio" name="kb-puzzle-hint" value="0" checked> Off</label>
+        <div class="kb-section-col" id="puzzle-section" style="display: none;">
+          <p class="kb-section-label">Puzzle Mode <span style="font-size:11px; color:rgba(255,255,255,0.4); font-weight:normal;">(Elo 3200)</span></p>
+          <div class="kb-section" style="margin:0">
+            <p style="font-size:12px; margin:0; color:rgba(255,255,255,0.6)">Hint Lines</p>
+            <div class="kb-radio-group">
+              <input type="radio" id="ph-on" name="kb-puzzle-hint" value="1"><label for="ph-on">ON</label>
+              <input type="radio" id="ph-off" name="kb-puzzle-hint" value="0" checked><label for="ph-off">OFF</label>
+            </div>
           </div>
-          <div class="kb-controls" style="margin-top: 5px;">
-            <label class="kb-radio-label"><input type="radio" name="kb-puzzle-auto" value="1"> Auto</label>
-            <label class="kb-radio-label"><input type="radio" name="kb-puzzle-auto" value="0" checked> Off</label>
+          <div class="kb-section" style="margin:0">
+            <p style="font-size:12px; margin:0; color:rgba(255,255,255,0.6)">Auto Solve</p>
+            <div class="kb-radio-group">
+              <input type="radio" id="pa-on" name="kb-puzzle-auto" value="1"><label for="pa-on">ON</label>
+              <input type="radio" id="pa-off" name="kb-puzzle-auto" value="0" checked><label for="pa-off">OFF</label>
+            </div>
           </div>
         </div>
 
-        <div class="kb-section">
-          <p class="kb-section-label">Elo Level</p>
+        <div class="kb-section-col">
+          <p class="kb-section-label">Elo Level Engine</p>
           <div class="kb-slider-group">
-            <span style="font-size:12px">800</span>
+            <span style="font-size:11px; color:rgba(255,255,255,0.4)">800</span>
             <input id="kb-elo-slider" class="kb-slider" type="range" min="800" max="3200" step="100" value="3200">
             <span id="kb-elo-val" class="kb-slider-val">3200</span>
           </div>
         </div>
 
-        <div class="kb-section">
-          <div class="kb-delay-header">
-            <p class="kb-section-label" style="margin:0">Auto Run Delay</p>
+        <div class="kb-section-col">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <p class="kb-section-label">Auto Run Delay</p>
             <span id="autoDelayDisplay" class="kb-delay-display">0.50–2.00s</span>
           </div>
-          <div style="display:flex; gap:10px; align-items:center; margin-top:5px;">
-            <input type="number" id="minDelayInput" class="kb-num-input" min="0.01" step="0.01">
-            <span style="color:#888; font-size:12px">to</span>
-            <input type="number" id="maxDelayInput" class="kb-num-input" min="0.01" step="0.01">
-          </div>
-          <div style="display:flex; gap:15px; margin-top:8px;">
-            <label class="kb-radio-label" style="font-size:13px"><input type="radio" name="delayMode" value="random"> Random</label>
-            <label class="kb-radio-label" style="font-size:13px"><input type="radio" name="delayMode" value="average"> Avg</label>
-            <label class="kb-radio-label" style="font-size:13px"><input type="radio" name="delayMode" value="max"> MAX</label>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+            <div style="display:flex; gap:8px; align-items:center;">
+              <input type="number" id="minDelayInput" class="kb-num-input" min="0.01" step="0.01">
+              <span style="color:rgba(255,255,255,0.4); font-size:11px">to</span>
+              <input type="number" id="maxDelayInput" class="kb-num-input" min="0.01" step="0.01">
+            </div>
+            <div class="kb-radio-group">
+              <input type="radio" id="dm-rand" name="delayMode" value="random"><label for="dm-rand">RND</label>
+              <input type="radio" id="dm-max" name="delayMode" value="max"><label for="dm-max" style="color:#00b8ff">MAX</label>
+            </div>
           </div>
         </div>
-
 
         <div class="kb-footer">
           <div style="display:flex; align-items:center; gap:10px;">
-            <span style="font-size:12px; color:#888;">Color:</span>
+            <span style="font-size:12px; color:rgba(255,255,255,0.5);">Theme Color</span>
             <input type="color" id="kb-color-picker" class="kb-color-input" value="#00ff88">
           </div>
-          <div class="kb-status">SYSTEM ONLINE</div>
+          <div class="kb-status">• ONLINE</div>
         </div>
+      </div>
+      
+      <!-- Thinker Chess Banner -->
+      <div id="thinker-chess-banner" style="position: fixed; right: 20px; top: 80px; width: 150px; text-align: center; z-index: 999999; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+        <img src="https://i.imgur.com/your-image-url.png" alt="Thinker Chess" style="width: 100%; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        <span style="color: #fff; font-family: 'Inter', sans-serif; font-weight: 800; font-size: 16px; letter-spacing: 1px; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">Thinker Chess</span>
       </div>
     `;
 
@@ -1508,6 +1617,17 @@
         clearInterval(checkExist);
         mainDiv.first().append(menuHtml);
         OpponentIntel.startObserver();
+
+        // Add Minimize Logic
+        $("#kb-minimize-toggle").on("click", function (e) {
+          e.stopPropagation();
+          $("#krypbot-container").addClass("minimized");
+        });
+        $("#krypbot-container").on("click", function (e) {
+          if ($(this).hasClass("minimized")) {
+            $(this).removeClass("minimized");
+          }
+        });
 
         window.krypbotUpdateUI = function () {
           detectGameMode();
