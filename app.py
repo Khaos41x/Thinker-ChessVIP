@@ -128,8 +128,9 @@ import subprocess
 
 def find_komodo_exe():
     candidates = [
-        r"C:\Users\GG\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
-        r"C:\Users\GG\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit-bmi2.exe",
+        r"C:\Users\casa\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
+        r"C:\Users\casa\Downloads\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
+        r"C:\Users\casa\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit-bmi2.exe"
     ]
     for f in candidates:
         if os.path.exists(f):
@@ -206,12 +207,51 @@ cpu_count = multiprocessing.cpu_count()
 
 print("Iniciando Komodo 14.1...")
 engine = chess.engine.SimpleEngine.popen_uci(ENGINE_PATH)
+ponder_engine = chess.engine.SimpleEngine.popen_uci(ENGINE_PATH)
 
 engine.configure({
     "Threads": cpu_count,
     "Hash": 256,
     "Skill": 20,
 })
+
+ponder_engine.configure({
+    "Threads": max(1, cpu_count - 1),
+    "Hash": 256,
+    "Skill": 20,
+})
+
+ponder_thread = None
+ponder_stop_event = threading.Event()
+ponder_analysis = None
+ponder_lock = threading.Lock()
+
+def ponder_task(fen, elo):
+    global ponder_analysis
+    try:
+        board = chess.Board(fen)
+        limit = chess.engine.Limit(time=10.0)
+        with ponder_engine.analysis(board, limit) as analysis:
+            with ponder_lock:
+                ponder_analysis = analysis
+            for info in analysis:
+                if ponder_stop_event.is_set():
+                    break
+                if "pv" in info and len(info["pv"]) >= 2:
+                    opp_move = info["pv"][0]
+                    our_resp = info["pv"][1]
+                    
+                    tmp_board = board.copy()
+                    tmp_board.push(opp_move)
+                    future_fen = tmp_board.fen()
+                    
+                    cache_key = f"{future_fen}_{elo}"
+                    cache[cache_key] = our_resp.uci()
+    except Exception as e:
+        pass
+    finally:
+        with ponder_lock:
+            ponder_analysis = None
 
 print(f"Komodo ONLINE! (Threads: {cpu_count}, Hash: 256MB, Skill: 20)")
 
@@ -257,6 +297,16 @@ def getmove():
     if not fen:
         return jsonify([])
     
+    global ponder_thread, ponder_stop_event, ponder_analysis
+    
+    ponder_stop_event.set()
+    with ponder_lock:
+        if ponder_analysis:
+            ponder_analysis.stop()
+            
+    if ponder_thread and ponder_thread.is_alive():
+        ponder_thread.join(timeout=0.01)
+    
     cache_key = f"{fen}_{elo}"
     if cache_key in cache:
         return jsonify([cache[cache_key]])
@@ -270,12 +320,26 @@ def getmove():
             return jsonify([book_move])
         
         target_depth = get_target_depth(elo)
-        limit = chess.engine.Limit(depth=target_depth)
+        
+        if time_limit == 0:
+            limit = chess.engine.Limit(time=0.01)
+        else:
+            limit = chess.engine.Limit(depth=target_depth)
+            
         result = engine.play(board, limit)
         
         if result.move:
             move = result.move.uci()
             cache[cache_key] = move
+            
+            # Initiate pondering for the opponent's turn
+            next_board = board.copy()
+            next_board.push(result.move)
+            
+            ponder_stop_event.clear()
+            ponder_thread = threading.Thread(target=ponder_task, args=(next_board.fen(), elo))
+            ponder_thread.start()
+            
             return jsonify([move])
         
         return jsonify([])

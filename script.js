@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC84
+// @name         TC102
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -134,7 +134,10 @@
 
     setOpponentRating(opponentRating) {
       if (!this._enabled) return;
-      this._currentDifficulty = Math.min(opponentRating + 200, AUTO_ADJUST_MAX_ELO);
+      this._currentDifficulty = Math.min(
+        opponentRating + 200,
+        AUTO_ADJUST_MAX_ELO,
+      );
       this._saveDifficulty();
     }
 
@@ -146,14 +149,14 @@
 
   function getOpponentRating() {
     const screenMiddle = window.innerHeight / 2;
-    
+
     const players = document.querySelectorAll(
-      ".player-component, .board-layout-player, .user-tagline-component, .user-tagline, [class*='player']"
+      ".player-component, .board-layout-player, .user-tagline-component, .user-tagline, [class*='player']",
     );
-    
+
     let opponentEl = null;
     let minTop = Infinity;
-    
+
     players.forEach((el) => {
       const rect = el.getBoundingClientRect();
       if (rect.top > screenMiddle) return;
@@ -162,7 +165,7 @@
         opponentEl = el;
       }
     });
-    
+
     if (!opponentEl) {
       const allLinks = document.querySelectorAll("a[href*='/member/']");
       for (const link of allLinks) {
@@ -176,11 +179,11 @@
       }
       return null;
     }
-    
+
     const rawText = opponentEl.innerText || "";
     const regex = /(?<!\w)\(?(\d{3,4})\)?(?!:)/g;
     const matches = [...rawText.matchAll(regex)];
-    
+
     let foundElo = null;
     for (const m of matches) {
       if (m[0].includes("(")) {
@@ -188,12 +191,14 @@
         break;
       }
     }
-    
+
     if (!foundElo && matches.length > 0) {
-      const candidates = matches.map(m => parseInt(m[1])).filter(n => n >= 400 && n < 3200);
+      const candidates = matches
+        .map((m) => parseInt(m[1]))
+        .filter((n) => n >= 400 && n < 3200);
       if (candidates.length > 0) foundElo = candidates[0];
     }
-    
+
     return foundElo;
   }
 
@@ -1096,7 +1101,7 @@
         game.move({
           ...moves[i],
           promotion: "q",
-          animate: true,
+          animate: false,
           userGenerated: true,
         });
         break;
@@ -1145,7 +1150,7 @@
         $(".chess-board")[0] ||
         $("[class*='board-component']")[0] ||
         $("wc-board")[0];
-      
+
       if (!target) return;
       $(".myhigh").remove();
       $(".myarrow").remove();
@@ -1177,8 +1182,6 @@
 
   function request_move() {
     if (!can_interval) return;
-
-    detectGameMode();
 
     const isPuzzleMode = gameMode === "puzzle";
     const shouldRun = isPuzzleMode ? puzzleHint || puzzleAutoMove : hint;
@@ -1253,7 +1256,11 @@
       if (fen === checkfen) return;
 
       const puzzleElo = 3200;
-      const currentElo = isPuzzleMode ? puzzleElo : (autoAdjust.isEnabled() ? autoAdjust.getCurrentDifficulty() : chessBot.elo);
+      const currentElo = isPuzzleMode
+        ? puzzleElo
+        : autoAdjust.isEnabled()
+          ? autoAdjust.getCurrentDifficulty()
+          : chessBot.elo;
       const cacheKey = fen + "_" + currentElo;
       const currentCache = isPuzzleMode ? puzzleMoveCache : moveCache;
       const isAutoMove = isPuzzleMode ? puzzleAutoMove : auto_move;
@@ -1262,13 +1269,21 @@
         const cached = currentCache.get(cacheKey);
         chessBot.time = computeDelayValue();
         if (isAutoMove) {
-          setTimeout(() => {
+          if (chessBot.time <= 0) {
             auto_move_piece(
               cached.substring(0, 2),
               cached.substring(2, 4),
               board,
             );
-          }, chessBot.time * 1000);
+          } else {
+            setTimeout(() => {
+              auto_move_piece(
+                cached.substring(0, 2),
+                cached.substring(2, 4),
+                board,
+              );
+            }, chessBot.time * 1000);
+          }
         } else {
           create_div(cached);
         }
@@ -1301,13 +1316,21 @@
               currentCache.set(cacheKey, move);
 
               if (isAutoMove) {
-                setTimeout(() => {
+                if (chessBot.time <= 0) {
                   auto_move_piece(
                     move.substring(0, 2),
                     move.substring(2, 4),
                     board,
                   );
-                }, chessBot.time * 1000);
+                } else {
+                  setTimeout(() => {
+                    auto_move_piece(
+                      move.substring(0, 2),
+                      move.substring(2, 4),
+                      board,
+                    );
+                  }, chessBot.time * 1000);
+                }
               } else {
                 create_div(move);
               }
@@ -1411,6 +1434,14 @@
           </div>
         </div>
 
+        <div class="kb-section">
+          <p class="kb-section-label">Auto Adjust Rating</p>
+          <div class="kb-controls">
+            <label class="kb-radio-label"><input type="radio" name="kb-auto-adjust" value="1"> On</label>
+            <label class="kb-radio-label"><input type="radio" name="kb-auto-adjust" value="0" checked> Off</label>
+          </div>
+        </div>
+
         <div class="kb-section" id="puzzle-section" style="display: none;">
           <p class="kb-section-label">Puzzle Mode <span style="font-size:11px; color:#888; font-weight:normal;">(Elo 3200)</span></p>
           <div class="kb-controls">
@@ -1449,13 +1480,6 @@
           </div>
         </div>
 
-        <div class="kb-section">
-          <p class="kb-section-label">Auto Adjust Rating</p>
-          <div class="kb-controls">
-            <label class="kb-radio-label"><input type="radio" name="kb-auto-adjust" value="1"> On</label>
-            <label class="kb-radio-label"><input type="radio" name="kb-auto-adjust" value="0" checked> Off</label>
-          </div>
-        </div>
 
         <div class="kb-footer">
           <div style="display:flex; align-items:center; gap:10px;">
@@ -1506,7 +1530,9 @@
           $(
             `input[name="kb-puzzle-auto"][value="${puzzleAutoMove ? 1 : 0}"]`,
           ).prop("checked", true);
-          $(`input[name="kb-auto-adjust"][value="${autoAdjust.isEnabled() ? 1 : 0}"]`).prop("checked", true);
+          $(
+            `input[name="kb-auto-adjust"][value="${autoAdjust.isEnabled() ? 1 : 0}"]`,
+          ).prop("checked", true);
 
           $("#minDelayInput").val(autoDelayMin.toFixed(2));
           $("#maxDelayInput").val(autoDelayMax.toFixed(2));
@@ -1528,7 +1554,9 @@
             );
           }
 
-          const displayElo = autoAdjust.isEnabled() ? autoAdjust.getCurrentDifficulty() : chessBot.elo;
+          const displayElo = autoAdjust.isEnabled()
+            ? autoAdjust.getCurrentDifficulty()
+            : chessBot.elo;
           $("#kb-elo-val").text(displayElo);
           $("#kb-elo-slider").val(displayElo);
           $("#kb-color-picker").val(current_color);
@@ -1720,12 +1748,11 @@
     }, 500);
 
     setInterval(() => {
-      detectGameMode();
       if (gameMode === "puzzle") {
         if (puzzleHint || puzzleAutoMove) request_move();
       } else {
         if (hint) request_move();
       }
-    }, 100);
+    }, 10);
   });
 })();
