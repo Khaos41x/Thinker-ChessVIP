@@ -1569,7 +1569,7 @@
         <div class="kb-section-col">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <p class="kb-section-label">Auto Run Delay</p>
-            <span id="autoDelayDisplay" class="kb-delay-display">0.50â€“2.00s</span>
+            <span id="autoDelayDisplay" class="kb-delay-display">0.50 - 2.00s</span>
           </div>
           <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
             <div style="display:flex; gap:8px; align-items:center;">
@@ -1589,7 +1589,7 @@
             <span style="font-size:12px; color:rgba(255,255,255,0.5);">Theme Color</span>
             <input type="color" id="kb-color-picker" class="kb-color-input" value="#00ff88">
           </div>
-          <div class="kb-status">â€¢ ONLINE</div>
+          <div &bull; ONLINE</div>
         </div>
       </div>
       
@@ -1622,17 +1622,12 @@
           const banner = document.getElementById('thinker-chess-banner');
           if (sidebar && banner) {
             const rect = sidebar.getBoundingClientRect();
-            const availableSpace = window.innerWidth - rect.right;
-            if (availableSpace > rect.width * 0.8) { 
-                banner.style.right = 'auto';
-                banner.style.left = (rect.right + 15) + 'px';
-                banner.style.top = rect.top + 'px';
-                banner.style.height = rect.height + 'px';
-                banner.style.width = rect.width + 'px';
-                banner.style.display = 'flex';
-            } else {
-                banner.style.display = 'none';
-            }
+            banner.style.right = 'auto';
+            banner.style.left = (rect.right + 15) + 'px';
+            banner.style.top = rect.top + 'px';
+            banner.style.height = rect.height + 'px';
+            banner.style.width = '280px';
+            banner.style.display = 'flex';
           }
         }, 500);
 
