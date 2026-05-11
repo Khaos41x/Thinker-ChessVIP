@@ -865,7 +865,7 @@
         if (url.includes("1|") || url.includes("1/") || url.includes("2|"))
           return "bullet";
         if (url.includes("3|") || url.includes("5|")) return "blitz";
-        return "blitz"; // padrÃ£o
+        return "blitz"; // padrão
       } catch (e) {
         return "blitz";
       }
@@ -879,7 +879,7 @@
       parseFloat(localStorage.getItem("autoMaxDelay")) || DEFAULT_MAX_DELAY,
     autoDelayMode = localStorage.getItem("autoDelayMode") || DEFAULT_DELAY_MODE;
 
-  // Sempre forÃ§ar modo Random como padrÃ£o
+  // Sempre forÃ§ar modo Random como padrão
   autoDelayMode = "random";
   autoDelayMin = 0.5;
   autoDelayMax = 2.0;
@@ -1696,7 +1696,7 @@
             $("#autoDelayDisplay").text("INSTANT");
           } else {
             $("#autoDelayDisplay").text(
-              `${autoDelayMin.toFixed(2)}â€“${autoDelayMax.toFixed(2)}s`,
+              `${autoDelayMin.toFixed(2)} - ${autoDelayMax.toFixed(2)}s`,
             );
           }
 
@@ -1766,7 +1766,7 @@
           localStorage.setItem("autoMinDelay", autoDelayMin);
           localStorage.setItem("autoMaxDelay", autoDelayMax);
           $("#autoDelayDisplay").text(
-            `${autoDelayMin.toFixed(2)}â€“${autoDelayMax.toFixed(2)}s`,
+            `${autoDelayMin.toFixed(2)} - ${autoDelayMax.toFixed(2)}s`,
           );
         });
 
@@ -1786,7 +1786,7 @@
             });
             $("#autoDelayDisplay").text("INSTANT");
           } else {
-            // Restaurar valores padrÃ£o ao voltar para Random/Avg
+            // Restaurar valores padrão ao voltar para Random/Avg
             autoDelayMin = 0.5;
             autoDelayMax = 1.0;
             localStorage.setItem("autoMinDelay", 0.5);
@@ -1798,7 +1798,7 @@
             });
             $("#minDelayInput").val("0.50").css("color", "#fff");
             $("#maxDelayInput").val("1.00").css("color", "#fff");
-            $("#autoDelayDisplay").text("0.50â€“1.00s");
+            $("#autoDelayDisplay").text("0.50 - 1.00s");
           }
 
           window.krypbotUpdateUI();
