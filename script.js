@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC122
+// @name         TC123
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -1664,12 +1664,13 @@
             banner.style.top = rect.top + window.scrollY + "px";
             banner.style.height = rect.height + "px";
 
-            let exactWidth = window.innerWidth - rect.right - 25;
+            // Subtract an extra pixel or use document.documentElement.clientWidth
+            let exactWidth = document.documentElement.clientWidth - (rect.right + 13) - 2;
             if (exactWidth < 80) exactWidth = 80;
 
             banner.style.width = exactWidth + "px";
             banner.style.display = "flex";
-            document.body.style.overflowX = "";
+            document.body.style.overflowX = "hidden";
           }
           requestAnimationFrame(updateBannerPosition);
         }
