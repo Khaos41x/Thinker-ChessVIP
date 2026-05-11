@@ -600,7 +600,7 @@
         } = data;
 
         const html = `
-      <div id="oi-zone2" style="width:320px; flex-shrink:0; background:linear-gradient(135deg,#121212,#1e1e1e); border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.7); padding:18px 20px; font-family:'Roboto',sans-serif; font-size:12px; color:#e0e0e0; display:flex; flex-direction:column; gap:14px; margin-top:47px;">
+      <div id="oi-zone2" style="width:320px; flex-shrink:0; background:linear-gradient(135deg,#121212,#1e1e1e); border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.7); padding:18px 20px; font-family:'Roboto',sans-serif; font-size:12px; color:#e0e0e0; display:flex; flex-direction:column; gap:14px; margin-top:0;">
         <!-- TÃ­tulo -->
         <div style="font-size:13px; font-weight:700; color:#00ff88; border-bottom:1px solid #2a2a2a; padding-bottom:10px; letter-spacing:0.5px;">
           SCOUT DO OPONENTE
@@ -828,7 +828,7 @@
             }
             $("#oi-zone2").remove();
             $("#oi-wrapper").append(`
-    <div id="oi-zone2" style="width:320px; flex-shrink:0; background:linear-gradient(135deg,#121212,#1f1f1f); color:#666; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.7); padding:18px 20px; font-family:'Roboto',sans-serif; font-size:12px; display:flex; flex-direction:column; gap:14px; margin-top:47px;">
+    <div id="oi-zone2" style="width:320px; flex-shrink:0; background:linear-gradient(135deg,#121212,#1f1f1f); color:#666; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.7); padding:18px 20px; font-family:'Roboto',sans-serif; font-size:12px; display:flex; flex-direction:column; gap:14px; margin-top:0;">
       <div style="font-size:13px; font-weight:700; color:#00ff88; border-bottom:1px solid #2a2a2a; padding-bottom:10px; letter-spacing:0.5px;">SCOUT DO OPONENTE</div>
       <div style="margin-top:8px; color:#666;">Carregando dados...</div>
     </div>
