@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC121
+// @name         TC122
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -1660,7 +1660,7 @@
           if (sidebar && banner) {
             const rect = sidebar.getBoundingClientRect();
             banner.style.right = "auto";
-            banner.style.left = rect.right + window.scrollX + 15 + "px";
+            banner.style.left = rect.right + window.scrollX + 13 + "px";
             banner.style.top = rect.top + window.scrollY + "px";
             banner.style.height = rect.height + "px";
 
