@@ -337,7 +337,7 @@
             accuracy: g.accuracy,
           }));
 
-        // Por horÃ¡rio
+        // Por horário
         const byHour = (start, end) => {
           const range = processed.filter((g) => {
             const h = new Date(g.timestamp * 1000).getHours();
@@ -601,7 +601,7 @@
 
         const html = `
       <div id="oi-zone2" style="width:320px; flex-shrink:0; background:linear-gradient(135deg,#121212,#1e1e1e); border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.7); padding:18px 20px; font-family:'Roboto',sans-serif; font-size:12px; color:#e0e0e0; display:flex; flex-direction:column; gap:14px; margin:30px 0;">
-        <!-- TÃ­tulo -->
+        <!-- Título -->
         <div style="font-size:13px; font-weight:700; color:#00ff88; border-bottom:1px solid #2a2a2a; padding-bottom:10px; letter-spacing:0.5px;">
           SCOUT DO OPONENTE
         </div>
@@ -614,12 +614,12 @@
           <div style="flex:1; background:#1a1a1a; border-radius:8px; padding:10px; text-align:center;">
             <div style="font-size:10px; color:#888; margin-bottom:4px;">JOGANDO DE BRANCAS</div>
             <div style="font-size:20px; font-weight:700; color:#fff;">${winRateByColor.white}%</div>
-            <div style="font-size:10px; color:#888;">de vitÃ³ria</div>
+            <div style="font-size:10px; color:#888;">de vitória</div>
           </div>
           <div style="flex:1; background:#1a1a1a; border-radius:8px; padding:10px; text-align:center;">
             <div style="font-size:10px; color:#888; margin-bottom:4px;">JOGANDO DE PRETAS</div>
             <div style="font-size:20px; font-weight:700; color:#fff;">${winRateByColor.black !== null ? winRateByColor.black : "?"}%</div>
-            <div style="font-size:10px; color:#888;">de vitÃ³ria</div>
+            <div style="font-size:10px; color:#888;">de vitória</div>
           </div>
         </div>`
             : ""
@@ -662,7 +662,7 @@
             : ""
         }
 
-        <!-- Performance por horÃ¡rio - linguagem humana -->
+        <!-- Performance por horário - linguagem humana -->
         ${
           byHour.morning.total || byHour.afternoon.total || byHour.night.total
             ? `
@@ -671,9 +671,9 @@
           ${
             byHour.morning.total
               ? `<div style="display:flex; justify-content:space-between;">
-            <span style="color:#ccc;">ManhÃ£</span>
+            <span style="color:#ccc;">Manhã</span>
             <span style="color:${byHour.morning.wr >= 60 ? "#f44336" : byHour.morning.wr <= 40 ? "#4caf50" : "#fff"}; font-weight:600;">
-              ${byHour.morning.wr}% de vitÃ³ria em ${byHour.morning.total} partida${byHour.morning.total > 1 ? "s" : ""}
+              ${byHour.morning.wr}% de vitória em ${byHour.morning.total} partida${byHour.morning.total > 1 ? "s" : ""}
             </span>
           </div>`
               : ""
@@ -683,7 +683,7 @@
               ? `<div style="display:flex; justify-content:space-between;">
             <span style="color:#ccc;">Tarde</span>
             <span style="color:${byHour.afternoon.wr >= 60 ? "#f44336" : byHour.afternoon.wr <= 40 ? "#4caf50" : "#fff"}; font-weight:600;">
-              ${byHour.afternoon.wr}% de vitÃ³ria em ${byHour.afternoon.total} partida${byHour.afternoon.total > 1 ? "s" : ""}
+              ${byHour.afternoon.wr}% de vitória em ${byHour.afternoon.total} partida${byHour.afternoon.total > 1 ? "s" : ""}
             </span>
           </div>`
               : ""
@@ -693,7 +693,7 @@
               ? `<div style="display:flex; justify-content:space-between;">
             <span style="color:#ccc;">Noite</span>
             <span style="color:${byHour.night.wr >= 60 ? "#f44336" : byHour.night.wr <= 40 ? "#4caf50" : "#fff"}; font-weight:600;">
-              ${byHour.night.wr}% de vitÃ³ria em ${byHour.night.total} partida${byHour.night.total > 1 ? "s" : ""}
+              ${byHour.night.wr}% de vitória em ${byHour.night.total} partida${byHour.night.total > 1 ? "s" : ""}
             </span>
           </div>`
               : ""
@@ -707,7 +707,7 @@
           last5.length
             ? `
         <div style="display:flex; flex-direction:column; gap:4px;">
-          <div style="font-size:10px; color:#888; margin-bottom:2px;">ÃšLTIMAS PARTIDAS</div>
+          <div style="font-size:10px; color:#888; margin-bottom:2px;">ÚLTIMAS PARTIDAS</div>
           ${last5
             .map(
               (g) => `
@@ -1867,7 +1867,7 @@
               if (
                 text.includes("win") ||
                 text.includes("won") ||
-                text.includes("vitÃ³ria")
+                text.includes("vitória")
               ) {
                 updateMySession("W");
                 if (gameMode === "play") autoAdjust.recordResult("W");
