@@ -201,6 +201,15 @@ def get_target_depth(elo):
         return 20
     return 24
 
+def get_skill_level(elo):
+    """
+    Mapeia Elo (800 a 3200) para Skill (0 a 25) do Komodo 14
+    Skill 0 -> ~1000 Elo
+    Skill 25 -> ~3400+ Elo
+    """
+    skill = int((elo - 800) / 100)
+    return max(0, min(25, skill))
+
 import multiprocessing
 
 cpu_count = multiprocessing.cpu_count()
@@ -234,6 +243,11 @@ def ponder_task(fen, elo):
     try:
         board = chess.Board(fen)
         limit = chess.engine.Limit(time=10.0)
+        
+        # Ajusta o nível de Skill no Pondering
+        skill_level = get_skill_level(elo)
+        ponder_engine.configure({"Skill": skill_level})
+        
         with ponder_engine.analysis(board, limit) as analysis:
             with ponder_lock:
                 ponder_analysis = analysis
@@ -338,6 +352,10 @@ def getmove():
             return jsonify([book_move])
         
         target_depth = get_target_depth(elo)
+        skill_level = get_skill_level(elo)
+        
+        # Aplica o nerf da Engine baseado no Elo real exigido
+        engine.configure({"Skill": skill_level})
         
         if time_limit == 0:
             limit = chess.engine.Limit(time=0.01)
