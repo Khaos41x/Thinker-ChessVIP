@@ -1116,15 +1116,8 @@
     return data.indexOf(elm) + 1;
   };
 
-  const create_elm = (num) => {
-    const board =
-      $("chess-board")[0] ||
-      $("wc-chess-board")[0] ||
-      $(".board")[0] ||
-      $(".chess-board")[0] ||
-      $("[class*='board-component']")[0] ||
-      $("wc-board")[0];
-    if (!board) return [0, 0];
+  const create_elm = (num, board) => {
+    if (!board) return;
     const elm = document.createElement("div");
     elm.setAttribute("class", `highlight square-${num} myhigh`);
     $(elm).css({
@@ -1135,17 +1128,11 @@
       "z-index": "10",
     });
     $(board).append(elm);
-    const jelm = $(elm);
-    const x = jelm.position().left;
-    const y = jelm.position().top;
-    const w = jelm.outerWidth();
-    const h = jelm.outerHeight();
-    return [(x + w + x) / 2, (y + h + y) / 2];
   };
 
   const create_div = (str1) => {
     try {
-      const target =
+      const target = cached_board ||
         $("chess-board")[0] ||
         $("wc-chess-board")[0] ||
         $(".board")[0] ||
@@ -1160,23 +1147,34 @@
       if (!str1 || str1.length < 4) return;
 
       const a = get_number(str1[0]);
+      const row1 = parseInt(str1[1]);
       const b = get_number(str1[2]);
-      const first_elm = create_elm(a + str1[1]);
-      const last_element = create_elm(b + str1[3]);
+      const row2 = parseInt(str1[3]);
 
-      if (first_elm[0] > 0) {
-        $(target).append(`
-          <svg width="100%" height="100%" class='myarrow' style="position: absolute; top: 0; left: 0; pointer-events: none; z-index: 11;">
-            <defs>
-              <marker id="arrowhead" markerWidth="12" markerHeight="10" refX="10" refY="3.5" orient="auto">
-                <polygon points="0 0, 10 3.5, 0 7" fill="${current_color}" />
-              </marker>
-            </defs>
-            <line x1="${first_elm[0]}" y1="${first_elm[1]}" x2="${last_element[0]}" y2="${last_element[1]}"
-                  stroke="${current_color}" stroke-width="4" marker-end="url(#arrowhead)" />
-          </svg>
-        `);
-      }
+      create_elm(a + str1[1], target);
+      create_elm(b + str1[3], target);
+
+      const isFlipped = $(target).hasClass("flipped") || $(target).attr("orientation") === "black";
+      const getCoord = (col, row) => {
+        const x = isFlipped ? (8 - col) * 12.5 + 6.25 : (col - 1) * 12.5 + 6.25;
+        const y = isFlipped ? (row - 1) * 12.5 + 6.25 : (8 - row) * 12.5 + 6.25;
+        return [x, y];
+      };
+
+      const [x1, y1] = getCoord(a, row1);
+      const [x2, y2] = getCoord(b, row2);
+
+      $(target).append(`
+        <svg viewBox="0 0 100 100" class='myarrow' style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 11;">
+          <defs>
+            <marker id="arrowhead" markerWidth="3.5" markerHeight="3.5" refX="2.5" refY="1.75" orient="auto">
+              <polygon points="0 0, 3.5 1.75, 0 3.5" fill="${current_color}" />
+            </marker>
+          </defs>
+          <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
+                stroke="${current_color}" stroke-width="1.3" marker-end="url(#arrowhead)" />
+        </svg>
+      `);
     } catch (e) {
       log("Erro: " + e);
     }
@@ -1287,6 +1285,7 @@
         const cached = currentCache.get(cacheKey);
         chessBot.time = computeDelayValue();
         if (isAutoMove) {
+          $(".myhigh, .myarrow").remove();
           if (chessBot.time <= 0) {
             auto_move_piece(
               cached.substring(0, 2),
@@ -1334,6 +1333,7 @@
               currentCache.set(cacheKey, move);
 
               if (isAutoMove) {
+                $(".myhigh, .myarrow").remove();
                 if (chessBot.time <= 0) {
                   auto_move_piece(
                     move.substring(0, 2),
