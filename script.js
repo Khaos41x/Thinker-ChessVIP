@@ -577,9 +577,9 @@
       try {
         const cleanOpeningName = (name) => {
           if (!name) return "";
-          // Remove notaÃ§Ãµes tipo "2.e5 c5", "3.Nc3 d5", etc.
+          // Remove notações tipo "...3.Nf3" ou "2.e5 c5"
           return name
-            .replace(/\s+\d+\..+$/, "")
+            .replace(/(?:\.\.\.|\s+)\d+\..*$/, "")
             .replace(/-/g, " ")
             .trim();
         };
@@ -610,16 +610,16 @@
         ${
           winRateByColor.white !== null
             ? `
-        <div style="display:flex; gap:8px;">
-          <div style="flex:1; background:#1a1a1a; border-radius:8px; padding:10px; text-align:center;">
-            <div style="font-size:10px; color:#888; margin-bottom:4px;">JOGANDO DE BRANCAS</div>
-            <div style="font-size:20px; font-weight:700; color:#fff;">${winRateByColor.white}%</div>
-            <div style="font-size:10px; color:#888;">de vitória</div>
+        <div style="display:flex; gap:10px;">
+          <div style="flex:1; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px; text-align:center;">
+            <div style="font-size:10px; color:#888; margin-bottom:6px; letter-spacing:0.5px;">JOGANDO DE BRANCAS</div>
+            <div style="font-size:22px; font-weight:800; color:#fff;">${winRateByColor.white}%</div>
+            <div style="font-size:10px; color:#666; margin-top:2px;">de vitória</div>
           </div>
-          <div style="flex:1; background:#1a1a1a; border-radius:8px; padding:10px; text-align:center;">
-            <div style="font-size:10px; color:#888; margin-bottom:4px;">JOGANDO DE PRETAS</div>
-            <div style="font-size:20px; font-weight:700; color:#fff;">${winRateByColor.black !== null ? winRateByColor.black : "?"}%</div>
-            <div style="font-size:10px; color:#888;">de vitória</div>
+          <div style="flex:1; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px; text-align:center;">
+            <div style="font-size:10px; color:#888; margin-bottom:6px; letter-spacing:0.5px;">JOGANDO DE PRETAS</div>
+            <div style="font-size:22px; font-weight:800; color:#fff;">${winRateByColor.black !== null ? winRateByColor.black : "?"}%</div>
+            <div style="font-size:10px; color:#666; margin-top:2px;">de vitória</div>
           </div>
         </div>`
             : ""
@@ -629,21 +629,21 @@
         ${
           topOpeningWhite || topOpeningBlack
             ? `
-        <div style="background:#1a1a1a; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px;">
-          <div style="font-size:10px; color:#888; margin-bottom:2px;">ABRE NORMALMENTE COM</div>
+        <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px;">
+          <div style="font-size:10px; color:#888; margin-bottom:4px; letter-spacing:0.5px;">ABRE NORMALMENTE COM</div>
           ${
             topOpeningWhite
-              ? `<div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="color:#ccc;">Brancas</span>
-            <span style="color:#fff; font-weight:600; text-align:right; max-width:200px;">${cleanOpeningName(topOpeningWhite)}</span>
+              ? `<div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <span style="color:#aaa; font-size:11px; margin-top:2px;">Brancas</span>
+            <span style="color:#fff; font-weight:600; text-align:right; max-width:180px; font-size:11px; line-height:1.4;">${cleanOpeningName(topOpeningWhite)}</span>
           </div>`
               : ""
           }
           ${
             topOpeningBlack
-              ? `<div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="color:#ccc;">Pretas</span>
-            <span style="color:#fff; font-weight:600; text-align:right; max-width:200px;">${cleanOpeningName(topOpeningBlack)}</span>
+              ? `<div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <span style="color:#aaa; font-size:11px; margin-top:2px;">Pretas</span>
+            <span style="color:#fff; font-weight:600; text-align:right; max-width:180px; font-size:11px; line-height:1.4;">${cleanOpeningName(topOpeningBlack)}</span>
           </div>`
               : ""
           }
@@ -655,9 +655,9 @@
         ${
           avgAccuracy !== null
             ? `
-        <div style="display:flex; justify-content:space-between; align-items:center; background:#1a1a1a; border-radius:8px; padding:10px;">
-          <span style="color:#888; font-size:11px;">PrecisÃ£o mÃ©dia</span>
-          <span style="color:#00ff88; font-weight:700; font-size:16px;">${avgAccuracy}%</span>
+        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px;">
+          <span style="color:#888; font-size:11px; letter-spacing:0.5px;">PRECISÃO MÉDIA</span>
+          <span style="color:#00ff88; font-weight:800; font-size:18px;">${avgAccuracy}%</span>
         </div>`
             : ""
         }
@@ -666,34 +666,34 @@
         ${
           byHour.morning.total || byHour.afternoon.total || byHour.night.total
             ? `
-        <div style="background:#1a1a1a; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px;">
-          <div style="font-size:10px; color:#888; margin-bottom:2px;">MELHOR HORÃRIO PARA ENFRENTAR</div>
+        <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px;">
+          <div style="font-size:10px; color:#888; margin-bottom:4px; letter-spacing:0.5px;">MELHOR HORÁRIO PARA ENFRENTAR</div>
           ${
             byHour.morning.total
-              ? `<div style="display:flex; justify-content:space-between;">
-            <span style="color:#ccc;">Manhã</span>
-            <span style="color:${byHour.morning.wr >= 60 ? "#f44336" : byHour.morning.wr <= 40 ? "#4caf50" : "#fff"}; font-weight:600;">
-              ${byHour.morning.wr}% de vitória em ${byHour.morning.total} partida${byHour.morning.total > 1 ? "s" : ""}
+              ? `<div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#aaa; font-size:11px;">Manhã</span>
+            <span style="color:${byHour.morning.wr >= 60 ? "#f44336" : byHour.morning.wr <= 40 ? "#00ff88" : "#fff"}; font-weight:700; font-size:11px;">
+              ${byHour.morning.wr}% <span style="font-weight:400; color:#888; font-size:10px;">em ${byHour.morning.total} partida${byHour.morning.total > 1 ? "s" : ""}</span>
             </span>
           </div>`
               : ""
           }
           ${
             byHour.afternoon.total
-              ? `<div style="display:flex; justify-content:space-between;">
-            <span style="color:#ccc;">Tarde</span>
-            <span style="color:${byHour.afternoon.wr >= 60 ? "#f44336" : byHour.afternoon.wr <= 40 ? "#4caf50" : "#fff"}; font-weight:600;">
-              ${byHour.afternoon.wr}% de vitória em ${byHour.afternoon.total} partida${byHour.afternoon.total > 1 ? "s" : ""}
+              ? `<div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#aaa; font-size:11px;">Tarde</span>
+            <span style="color:${byHour.afternoon.wr >= 60 ? "#f44336" : byHour.afternoon.wr <= 40 ? "#00ff88" : "#fff"}; font-weight:700; font-size:11px;">
+              ${byHour.afternoon.wr}% <span style="font-weight:400; color:#888; font-size:10px;">em ${byHour.afternoon.total} partida${byHour.afternoon.total > 1 ? "s" : ""}</span>
             </span>
           </div>`
               : ""
           }
           ${
             byHour.night.total
-              ? `<div style="display:flex; justify-content:space-between;">
-            <span style="color:#ccc;">Noite</span>
-            <span style="color:${byHour.night.wr >= 60 ? "#f44336" : byHour.night.wr <= 40 ? "#4caf50" : "#fff"}; font-weight:600;">
-              ${byHour.night.wr}% de vitória em ${byHour.night.total} partida${byHour.night.total > 1 ? "s" : ""}
+              ? `<div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#aaa; font-size:11px;">Noite</span>
+            <span style="color:${byHour.night.wr >= 60 ? "#f44336" : byHour.night.wr <= 40 ? "#00ff88" : "#fff"}; font-weight:700; font-size:11px;">
+              ${byHour.night.wr}% <span style="font-weight:400; color:#888; font-size:10px;">em ${byHour.night.total} partida${byHour.night.total > 1 ? "s" : ""}</span>
             </span>
           </div>`
               : ""
@@ -706,17 +706,17 @@
         ${
           last5.length
             ? `
-        <div style="display:flex; flex-direction:column; gap:4px;">
-          <div style="font-size:10px; color:#888; margin-bottom:2px;">ÚLTIMAS PARTIDAS</div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="font-size:10px; color:#888; margin-bottom:2px; letter-spacing:0.5px;">ÚLTIMAS PARTIDAS</div>
           ${last5
             .map(
               (g) => `
-            <div style="display:flex; align-items:center; gap:8px; padding:6px 8px; background:#1a1a1a; border-radius:6px; border-left:3px solid ${g.result === "W" ? "#4caf50" : g.result === "L" ? "#f44336" : "#9e9e9e"};">
-              <span style="font-size:10px; font-weight:700; color:${g.result === "W" ? "#4caf50" : g.result === "L" ? "#f44336" : "#9e9e9e"}; width:20px;">
+            <div style="display:flex; align-items:center; gap:10px; padding:8px 10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:10px;">
+              <div style="background:${g.result === "W" ? "rgba(0,255,136,0.15)" : g.result === "L" ? "rgba(244,67,54,0.15)" : "rgba(158,158,158,0.15)"}; color:${g.result === "W" ? "#00ff88" : g.result === "L" ? "#f44336" : "#9e9e9e"}; padding:3px 6px; border-radius:6px; font-weight:800; font-size:9px; letter-spacing:0.5px; width:28px; text-align:center;">
                 ${g.result === "W" ? "VIT" : g.result === "L" ? "DER" : "EMP"}
-              </span>
-              <span style="color:#ccc; flex:1; font-size:11px;">${g.opening ? cleanOpeningName(g.opening) : "Abertura desconhecida"}</span>
-              ${g.accuracy !== null ? `<span style="color:#666; font-size:10px;">${g.accuracy}%</span>` : ""}
+              </div>
+              <span style="color:#ccc; flex:1; font-size:11px; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${g.opening ? cleanOpeningName(g.opening) : "Abertura desconhecida"}">${g.opening ? cleanOpeningName(g.opening) : "Abertura desconhecida"}</span>
+              ${g.accuracy !== null ? `<span style="color:#888; font-size:11px; font-weight:600;">${g.accuracy}%</span>` : ""}
             </div>
           `,
             )
