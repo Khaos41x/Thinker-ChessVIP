@@ -189,17 +189,19 @@ engine = None
 cache = {}
 
 def get_target_depth(elo):
-    if elo <= 600:
-        return 3
+    if elo <= 800:
+        return 2
     if elo <= 1200:
+        return 4
+    if elo <= 1600:
+        return 6
+    if elo <= 2000:
         return 8
-    if elo <= 1800:
-        return 12
     if elo <= 2400:
-        return 16
-    if elo <= 3000:
-        return 20
-    return 24
+        return 10
+    if elo <= 2800:
+        return 14
+    return 20
 
 def get_skill_level(elo):
     """
@@ -207,7 +209,7 @@ def get_skill_level(elo):
     Skill 0 -> ~1000 Elo
     Skill 25 -> ~3400+ Elo
     """
-    skill = int((elo - 800) / 100)
+    skill = int((elo - 800) / 120)
     return max(0, min(25, skill))
 
 import multiprocessing
@@ -242,7 +244,8 @@ def ponder_task(fen, elo):
     global ponder_analysis
     try:
         board = chess.Board(fen)
-        limit = chess.engine.Limit(time=10.0)
+        target_depth = get_target_depth(elo)
+        limit = chess.engine.Limit(time=10.0, depth=target_depth)
         
         # Ajusta o nível de Skill no Pondering
         skill_level = get_skill_level(elo)
