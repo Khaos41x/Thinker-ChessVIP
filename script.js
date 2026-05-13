@@ -1036,19 +1036,22 @@
     );
   }
 
+  let auto_queue_cooldown = false;
+
   function clickNewGame() {
-    if (!auto_queue || auto_queue_clicking) return;
+    if (!auto_queue || auto_queue_cooldown) return;
     if (!isInGame()) return;
 
     const btn = findNewGameButton();
     if (btn && btn.offsetParent !== null) {
-      auto_queue_clicking = true;
-      log("Auto Queue: BotÃ£o detectado. Clicando instantaneamente...");
-      if (auto_queue) {
-        btn.click();
-        log("Auto Queue: Clique executado!");
-      }
-      auto_queue_clicking = false;
+      auto_queue_cooldown = true;
+      log("Auto Queue: Botão de nova partida detectado. Clicando...");
+      btn.click();
+      log("Auto Queue: Clique executado! Aguardando 4s de cooldown.");
+      
+      setTimeout(() => {
+        auto_queue_cooldown = false;
+      }, 4000);
     }
   }
 
@@ -1070,7 +1073,7 @@
     clickNewGame();
 
     auto_queue_observer = new MutationObserver(() => {
-      if (auto_queue && !auto_queue_clicking) {
+      if (auto_queue && !auto_queue_cooldown) {
         clickNewGame();
       }
     });
@@ -1080,7 +1083,7 @@
     });
 
     auto_queue_checkInterval = setInterval(() => {
-      if (auto_queue && !auto_queue_clicking) {
+      if (auto_queue && !auto_queue_cooldown) {
         clickNewGame();
       }
     }, 2000);
