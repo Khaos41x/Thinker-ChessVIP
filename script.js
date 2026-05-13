@@ -205,7 +205,7 @@
   let can_interval = true,
     auto_move = false,
     auto_queue = false,
-    current_color = "#000000",
+    current_color = (typeof GM_getValue !== "undefined" ? GM_getValue("kb_color") : null) || localStorage.getItem("kb_color") || "#10B981",
     fen,
     checkfen,
     hint = false,
@@ -994,6 +994,10 @@
       ".rematch.button",
       ".new-game-button",
       ".play-again-button",
+      '[data-cy="new-game-button"]',
+      '[data-cy="play-again-button"]',
+      'a.ui_v5-button-component[href*="/play/online"]',
+      'a[data-test-element="new-game-button"]'
     ];
 
     let btn = null;
@@ -1004,12 +1008,11 @@
 
     // Fallback: buscar por texto (apenas botÃµes, nÃ£o links de menu)
     if (!btn || btn.offsetParent === null) {
-      const buttons = document.querySelectorAll("button");
+      const buttons = document.querySelectorAll("button, a[href*='/play']");
       for (const b of buttons) {
         const text = b.innerText ? b.innerText.toLowerCase() : "";
         const isVisible = b.offsetParent !== null;
-        const isGameButton =
-          !b.closest("nav") && !b.closest(".menu") && !b.closest("header");
+        const isGameButton = !b.closest("nav") && !b.closest(".menu");
 
         if (
           isVisible &&
@@ -1017,6 +1020,7 @@
           (text.includes("new") ||
             text.includes("jogar") ||
             text.includes("play") ||
+            text.includes("nova partida") ||
             text.includes("partida") ||
             text.includes("rematch") ||
             text.includes("again"))
@@ -1124,11 +1128,13 @@
     const elm = document.createElement("div");
     elm.setAttribute("class", `highlight square-${num} myhigh`);
     $(elm).css({
-      opacity: "0.6",
-      border: `4px solid ${current_color}`,
-      background: "rgba(15, 10, 222, 0.4)",
-      "border-radius": "50%",
+      opacity: "0.85",
+      border: `3px solid ${current_color}`,
+      background: `${current_color}26`,
+      "border-radius": "25%",
+      "box-shadow": `0 4px 12px ${current_color}33`,
       "z-index": "10",
+      transition: "all 0.3s ease"
     });
     $(board).append(elm);
   };
@@ -1167,15 +1173,16 @@
       const [x1, y1] = getCoord(a, row1);
       const [x2, y2] = getCoord(b, row2);
 
+      const markerId = "arrowhead-" + a + row1 + b + row2 + Math.floor(Math.random()*1000);
       $(target).append(`
-        <svg viewBox="0 0 100 100" class='myarrow' style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 11;">
+        <svg viewBox="0 0 100 100" class='myarrow' style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 11; filter: drop-shadow(0 4px 8px ${current_color}66); transition: all 0.3s ease;">
           <defs>
-            <marker id="arrowhead" markerWidth="3.5" markerHeight="3.5" refX="2.5" refY="1.75" orient="auto">
-              <polygon points="0 0, 3.5 1.75, 0 3.5" fill="${current_color}" />
+            <marker id="${markerId}" markerWidth="4" markerHeight="4" refX="2.6" refY="2" orient="auto">
+              <path d="M0,0.5 L3,2 L0,3.5 L0.5,2 Z" fill="${current_color}" style="transition: fill 0.3s ease" />
             </marker>
           </defs>
           <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
-                stroke="${current_color}" stroke-width="1.3" marker-end="url(#arrowhead)" />
+                stroke="${current_color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#${markerId})" style="transition: stroke 0.3s ease" />
         </svg>
       `);
     } catch (e) {
@@ -1851,6 +1858,20 @@
 
         $("#kb-color-picker").on("input", function () {
           current_color = $(this).val();
+          localStorage.setItem("kb_color", current_color);
+          if (typeof GM_setValue !== "undefined") {
+            GM_setValue("kb_color", current_color);
+          }
+          
+          $(".myarrow").css("filter", `drop-shadow(0 4px 8px ${current_color}66)`);
+          $(".myarrow path").attr("fill", current_color);
+          $(".myarrow line").attr("stroke", current_color);
+          
+          $(".myhigh").css({
+            "border-color": current_color,
+            "background-color": current_color + "26",
+            "box-shadow": `0 4px 12px ${current_color}33`
+          });
         });
 
         // Monitor URL changes to detect puzzle/play mode
