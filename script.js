@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC125
+// @name         TC128
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -600,10 +600,10 @@
         } = data;
 
         const html = `
-      <div id="oi-zone2" style="width:320px; flex-shrink:0; background:linear-gradient(135deg,#121212,#1e1e1e); border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.7); padding:18px 20px; font-family:'Roboto',sans-serif; font-size:12px; color:#e0e0e0; display:flex; flex-direction:column; gap:14px; margin:30px 0;">
+      <div id="oi-zone2" style="width:320px; flex-shrink:0; background:rgba(18, 18, 22, 0.75); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:20px; box-shadow:0 16px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1); padding:22px; font-family:'Inter',sans-serif; font-size:12px; color:#fff; display:flex; flex-direction:column; gap:15px; margin:30px 0; transition:all 0.4s cubic-bezier(0.16, 1, 0.3, 1);">
         <!-- Título -->
-        <div style="font-size:13px; font-weight:700; color:#00ff88; border-bottom:1px solid #2a2a2a; padding-bottom:10px; letter-spacing:0.5px;">
-          SCOUT DO OPONENTE
+        <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.06);">
+          <h2 style="font-size:18px; font-weight:800; background:linear-gradient(90deg,#00ff88,#00b8ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin:0; text-transform:uppercase; letter-spacing:0.5px;">SCOUT DO OPONENTE</h2>
         </div>
 
         <!-- Win rate por cor - sÃ³ aparece se tiver dados -->
@@ -828,8 +828,10 @@
             }
             $("#oi-zone2").remove();
             $("#oi-wrapper").append(`
-    <div id="oi-zone2" style="width:320px; flex-shrink:0; background:linear-gradient(135deg,#121212,#1f1f1f); color:#666; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.7); padding:18px 20px; font-family:'Roboto',sans-serif; font-size:12px; display:flex; flex-direction:column; gap:14px; margin:30px 0;">
-      <div style="font-size:13px; font-weight:700; color:#00ff88; border-bottom:1px solid #2a2a2a; padding-bottom:10px; letter-spacing:0.5px;">SCOUT DO OPONENTE</div>
+    <div id="oi-zone2" style="width:320px; flex-shrink:0; background:rgba(18, 18, 22, 0.75); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:20px; box-shadow:0 16px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1); padding:22px; font-family:'Inter',sans-serif; font-size:12px; color:#fff; display:flex; flex-direction:column; gap:15px; margin:30px 0; transition:all 0.4s cubic-bezier(0.16, 1, 0.3, 1);">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.06);">
+        <h2 style="font-size:18px; font-weight:800; background:linear-gradient(90deg,#00ff88,#00b8ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin:0; text-transform:uppercase; letter-spacing:0.5px;">SCOUT DO OPONENTE</h2>
+      </div>
       <div style="margin-top:8px; color:#666;">Carregando dados...</div>
     </div>
   `);
