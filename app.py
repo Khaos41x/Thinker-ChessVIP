@@ -201,14 +201,16 @@ def get_target_depth(elo):
         return 10
     if elo <= 2800:
         return 14
-    return 20
+    if elo <= 3100:
+        return 18
+    return 24
 
 def get_skill_level(elo):
     """
     Mapeia Elo (800 a 3200) para Skill (0 a 25) do Komodo 14
-    Skill 0 -> ~1000 Elo
-    Skill 25 -> ~3400+ Elo
     """
+    if elo >= 3200:
+        return 25
     skill = int((elo - 800) / 120)
     return max(0, min(25, skill))
 
@@ -357,13 +359,11 @@ def getmove():
         target_depth = get_target_depth(elo)
         skill_level = get_skill_level(elo)
         
-        # Aplica o nerf da Engine baseado no Elo real exigido
+        # Aplica o nível de Skill. Se for 3200, ele vai usar o máximo (25)
         engine.configure({"Skill": skill_level})
         
-        if time_limit == 0:
-            limit = chess.engine.Limit(time=0.01)
-        else:
-            limit = chess.engine.Limit(depth=target_depth)
+        # Força o target_depth para garantir a força do lance, ignorando o gargalo de 0.01s do Instant
+        limit = chess.engine.Limit(depth=target_depth)
             
         result = engine.play(board, limit)
         
