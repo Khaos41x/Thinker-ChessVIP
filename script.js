@@ -227,7 +227,11 @@
     lastOpponent: null,
     processGames(games, username, timeControl) {
       try {
-        const filtered = games.filter((g) => g.time_class === timeControl);
+        let filtered = games.filter((g) => g.time_class === timeControl);
+        if (filtered.length === 0) {
+          // Se não houver jogos no time control detectado, usa todos os jogos disponíveis como fallback
+          filtered = games;
+        }
         if (filtered.length === 0) return null;
 
         // Processamos TODOS os jogos disponíveis no mês para estatísticas globais precisas
@@ -405,7 +409,7 @@
                         OpponentIntel.renderZone2(processed);
                       } else {
                         $("#oi-zone2").html(
-                          '<div style="padding:16px; color:#666; font-size:12px;">Sem dados suficientes para este oponente neste time control.</div>',
+                          '<div style="padding:16px; color:#666; font-size:12px;">Sem dados de partidas disponíveis para este oponente.</div>',
                         );
                         $("#oi-zone1").html(
                           '<span style="color:#666; font-size:11px; margin-left:8px;">sem dados</span>',
@@ -438,7 +442,7 @@
                               OpponentIntel.renderZone2(processed);
                             } else {
                               $("#oi-zone2").html(
-                                '<div style="padding:16px; color:#666; font-size:12px;">Sem dados suficientes para este oponente neste time control.</div>',
+                                '<div style="padding:16px; color:#666; font-size:12px;">Sem dados de partidas disponíveis para este oponente.</div>',
                               );
                               $("#oi-zone1").html(
                                 '<span style="color:#666; font-size:11px; margin-left:8px;">sem dados</span>',
@@ -461,7 +465,7 @@
                             OpponentIntel.renderZone2(processed);
                           } else {
                             $("#oi-zone2").html(
-                              '<div style="padding:16px; color:#666; font-size:12px;">Sem dados suficientes para este oponente neste time control.</div>',
+                              '<div style="padding:16px; color:#666; font-size:12px;">Sem dados de partidas disponíveis para este oponente.</div>',
                             );
                             $("#oi-zone1").html(
                               '<span style="color:#666; font-size:11px; margin-left:8px;">sem dados</span>',
