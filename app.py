@@ -359,11 +359,13 @@ def getmove():
         target_depth = get_target_depth(elo)
         skill_level = get_skill_level(elo)
         
-        # Aplica o nível de Skill. Se for 3200, ele vai usar o máximo (25)
+        # Aplica o nível de Skill. Se for 3200, ele vai usar o máximo (25).
+        # A força (Elo) é controlada EXCLUSIVAMENTE pelo parâmetro Skill do Komodo.
         engine.configure({"Skill": skill_level})
         
-        # Força o target_depth para garantir a força do lance, ignorando o gargalo de 0.01s do Instant
-        limit = chess.engine.Limit(depth=target_depth)
+        # Limite de TEMPO ESTRITO (0.2s). NÃO passamos 'depth' para evitar
+        # que a engine ignore o tempo e trave por 25 segundos no primeiro lance.
+        limit = chess.engine.Limit(time=0.2)
             
         result = engine.play(board, limit)
         

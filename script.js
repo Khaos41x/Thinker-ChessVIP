@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC128
+// @name         TC135
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -987,15 +987,15 @@
 
   function findNewGameButton() {
     const selectors = [
+      'button[data-cy="game-over-play-again-button"]',
       'button[data-control-view="play-again"]',
       ".ui_v5-button-primary.ui_v5-button-full",
       ".game-over-controls-button",
-      "button.suggestion-button",
-      ".rematch.button",
       ".new-game-button",
       ".play-again-button",
       '[data-cy="new-game-button"]',
       '[data-cy="play-again-button"]',
+      '.game-over-buttons-component > button:nth-child(1)',
       'a.ui_v5-button-component[href*="/play/online"]',
       'a[data-test-element="new-game-button"]'
     ];
@@ -1006,7 +1006,6 @@
       if (btn && btn.offsetParent !== null) break;
     }
 
-    // Fallback: buscar por texto (apenas botÃµes, nÃ£o links de menu)
     if (!btn || btn.offsetParent === null) {
       const buttons = document.querySelectorAll("button, a[href*='/play']");
       for (const b of buttons) {
@@ -1014,19 +1013,20 @@
         const isVisible = b.offsetParent !== null;
         const isGameButton = !b.closest("nav") && !b.closest(".menu");
 
-        if (
-          isVisible &&
-          isGameButton &&
-          (text.includes("new") ||
-            text.includes("jogar") ||
-            text.includes("play") ||
-            text.includes("nova partida") ||
-            text.includes("partida") ||
-            text.includes("rematch") ||
-            text.includes("again"))
-        ) {
-          btn = b;
-          break;
+        if (isVisible && isGameButton) {
+          if (
+            (text.includes("new") ||
+              text.includes("nova ") ||
+              text.includes("novo ") ||
+              text.includes("jogar") ||
+              text.includes("play") ||
+              text.includes("partida")) &&
+            !text.includes("rematch") &&
+            !text.includes("revanche")
+          ) {
+            btn = b;
+            break;
+          }
         }
       }
     }
@@ -1052,7 +1052,7 @@
       log("Auto Queue: Botão de nova partida detectado. Clicando...");
       btn.click();
       log("Auto Queue: Clique executado! Aguardando 4s de cooldown.");
-      
+
       setTimeout(() => {
         auto_queue_cooldown = false;
       }, 4000);
@@ -1862,11 +1862,11 @@
           if (typeof GM_setValue !== "undefined") {
             GM_setValue("kb_color", current_color);
           }
-          
+
           $(".myarrow").css("filter", `drop-shadow(0 4px 8px ${current_color}66)`);
           $(".myarrow path").attr("fill", current_color);
           $(".myarrow line").attr("stroke", current_color);
-          
+
           $(".myhigh").css({
             "border-color": current_color,
             "background-color": current_color + "26",
