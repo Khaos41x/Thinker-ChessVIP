@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC135
+// @name         TC138
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -205,7 +205,10 @@
   let can_interval = true,
     auto_move = false,
     auto_queue = false,
-    current_color = (typeof GM_getValue !== "undefined" ? GM_getValue("kb_color") : null) || localStorage.getItem("kb_color") || "#10B981",
+    current_color =
+      (typeof GM_getValue !== "undefined" ? GM_getValue("kb_color") : null) ||
+      localStorage.getItem("kb_color") ||
+      "#10B981",
     fen,
     checkfen,
     hint = false,
@@ -546,32 +549,7 @@
       }
     },
     renderZone1(data) {
-      try {
-        $("#oi-zone1").remove();
-        const target = OpponentIntel._getOpponentElement
-          ? OpponentIntel._getOpponentElement()
-          : null;
-        log("renderZone1: target encontrado? " + !!target);
-        log("renderZone1: data recebida â†’ " + JSON.stringify(data.wld));
-        if (!target) return;
-
-        const { wld, streak } = data;
-        const streakEmoji =
-          streak.type === "W" ? "ðŸ”¥" : streak.type === "L" ? "ðŸ’€" : "âž–";
-
-        const html = `<span id="oi-zone1" style="font-size:11px; margin-left:10px; display:inline-flex; gap:6px; align-items:center; vertical-align:middle;">
-          <span style="color:#4caf50; font-weight:700;">${wld.w}V</span>
-          <span style="color:#888;">Â·</span>
-          <span style="color:#f44336; font-weight:700;">${wld.l}D</span>
-          <span style="color:#888;">Â·</span>
-          <span style="color:#9e9e9e;">${wld.d}E</span>
-          <span style="color:#888; margin-left:4px;">${streakEmoji}${streak.count}</span>
-        </span>`;
-
-        $(target).parent().append(html);
-      } catch (e) {
-        log("OpponentIntel.renderZone1 erro: " + e);
-      }
+      return;
     },
     renderZone2(data) {
       try {
@@ -995,9 +973,9 @@
       ".play-again-button",
       '[data-cy="new-game-button"]',
       '[data-cy="play-again-button"]',
-      '.game-over-buttons-component > button:nth-child(1)',
+      ".game-over-buttons-component > button:nth-child(1)",
       'a.ui_v5-button-component[href*="/play/online"]',
-      'a[data-test-element="new-game-button"]'
+      'a[data-test-element="new-game-button"]',
     ];
 
     let btn = null;
@@ -1134,14 +1112,15 @@
       "border-radius": "25%",
       "box-shadow": `0 4px 12px ${current_color}33`,
       "z-index": "10",
-      transition: "all 0.3s ease"
+      transition: "all 0.3s ease",
     });
     $(board).append(elm);
   };
 
   const create_div = (str1) => {
     try {
-      const target = cached_board ||
+      const target =
+        cached_board ||
         $("chess-board")[0] ||
         $("wc-chess-board")[0] ||
         $(".board")[0] ||
@@ -1163,7 +1142,9 @@
       create_elm(a + str1[1], target);
       create_elm(b + str1[3], target);
 
-      const isFlipped = $(target).hasClass("flipped") || $(target).attr("orientation") === "black";
+      const isFlipped =
+        $(target).hasClass("flipped") ||
+        $(target).attr("orientation") === "black";
       const getCoord = (col, row) => {
         const x = isFlipped ? (8 - col) * 12.5 + 6.25 : (col - 1) * 12.5 + 6.25;
         const y = isFlipped ? (row - 1) * 12.5 + 6.25 : (8 - row) * 12.5 + 6.25;
@@ -1173,7 +1154,8 @@
       const [x1, y1] = getCoord(a, row1);
       const [x2, y2] = getCoord(b, row2);
 
-      const markerId = "arrowhead-" + a + row1 + b + row2 + Math.floor(Math.random()*1000);
+      const markerId =
+        "arrowhead-" + a + row1 + b + row2 + Math.floor(Math.random() * 1000);
       $(target).append(`
         <svg viewBox="0 0 100 100" class='myarrow' style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 11; filter: drop-shadow(0 4px 8px ${current_color}66); transition: all 0.3s ease;">
           <defs>
@@ -1863,14 +1845,17 @@
             GM_setValue("kb_color", current_color);
           }
 
-          $(".myarrow").css("filter", `drop-shadow(0 4px 8px ${current_color}66)`);
+          $(".myarrow").css(
+            "filter",
+            `drop-shadow(0 4px 8px ${current_color}66)`,
+          );
           $(".myarrow path").attr("fill", current_color);
           $(".myarrow line").attr("stroke", current_color);
 
           $(".myhigh").css({
             "border-color": current_color,
             "background-color": current_color + "26",
-            "box-shadow": `0 4px 12px ${current_color}33`
+            "box-shadow": `0 4px 12px ${current_color}33`,
           });
         });
 
