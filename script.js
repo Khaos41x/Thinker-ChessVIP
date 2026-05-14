@@ -680,21 +680,25 @@
     startObserver() {
       // Pega o username do jogador logado pelo link de perfil no nav
       const getMyOwnUsername = () => {
-        // Chess.com tem o username do usuÃ¡rio logado no nav
-        const navLink = document.querySelector('a[href*="/member/"]');
-        if (navLink) {
-          const match = navLink.href.match(/\/member\/([^/?]+)/i);
-          if (match) return match[1].toLowerCase();
-        }
-        // Fallback: botÃ£o de perfil
-        const profileBtn = document.querySelector(".user-username-component");
-        if (profileBtn) return profileBtn.textContent.trim().toLowerCase();
+        // O jogador de baixo na board é SEMPRE o usuário local no Chess.com
+        const bottomEl = document.querySelector(".player-bottom-component .user-username-component, .player-component.player-bottom .user-username-component, .player-component.player-bottom .user-tagline-username");
+        if (bottomEl) return bottomEl.textContent.trim().toLowerCase();
+        
+        // Fallback: perfil na barra lateral (usualmente #nav-user-tagline-username)
+        const navEl = document.querySelector("#nav-user-tagline-username");
+        if (navEl) return navEl.textContent.trim().toLowerCase();
+
         return null;
       };
 
       const getOpponentUsername = () => {
+        // O jogador de cima na board é SEMPRE o oponente no Chess.com
+        const topEl = document.querySelector(".player-top-component .user-username-component, .player-component.player-top .user-username-component, .player-component.player-top .user-tagline-username");
+        if (topEl) return topEl.textContent.trim();
+
+        // Fallback antigo
         const myUsername = getMyOwnUsername();
-        const all = document.querySelectorAll("a.user-username.username");
+        const all = document.querySelectorAll("a.user-username.username, a.user-username-component");
         for (const el of all) {
           const name = el.textContent.trim();
           if (name && (!myUsername || name.toLowerCase() !== myUsername)) {
@@ -705,9 +709,12 @@
       };
 
       const getMyUsernameElement = () => {
+        const bottomEl = document.querySelector(".player-bottom-component .user-username-component, .player-component.player-bottom .user-username-component, .player-component.player-bottom .user-tagline-username");
+        if (bottomEl) return bottomEl;
+        
         const myUsername = getMyOwnUsername();
         if (!myUsername) return null;
-        const all = document.querySelectorAll("a.user-username.username");
+        const all = document.querySelectorAll("a.user-username.username, a.user-username-component");
         for (const el of all) {
           if (el.textContent.trim().toLowerCase() === myUsername) return el;
         }
@@ -715,8 +722,11 @@
       };
 
       const getOpponentElement = () => {
+        const topEl = document.querySelector(".player-top-component .user-username-component, .player-component.player-top .user-username-component, .player-component.player-top .user-tagline-username");
+        if (topEl) return topEl;
+
         const myUsername = getMyOwnUsername();
-        const all = document.querySelectorAll("a.user-username.username");
+        const all = document.querySelectorAll("a.user-username.username, a.user-username-component");
         for (const el of all) {
           const name = el.textContent.trim();
           if (name && (!myUsername || name.toLowerCase() !== myUsername))
