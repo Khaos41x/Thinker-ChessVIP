@@ -230,51 +230,30 @@
         const filtered = games.filter((g) => g.time_class === timeControl);
         if (filtered.length === 0) return null;
 
-        const last20 = filtered.slice(-20);
-        const last10 = filtered.slice(-10);
-
-        const processed = last20.map((game) => {
-          const isWhite =
-            game.white.username.toLowerCase() === username.toLowerCase();
+        // Processamos TODOS os jogos disponíveis no mês para estatísticas globais precisas
+        const processedAll = filtered.map((game) => {
+          const isWhite = game.white.username.toLowerCase() === username.toLowerCase();
           const playerData = isWhite ? game.white : game.black;
-          const drawResults = [
-            "agreed",
-            "repetition",
-            "stalemate",
-            "insufficient",
-            "50move",
-            "timevsinsufficient",
-          ];
-          const result =
-            playerData.result === "win"
-              ? "W"
-              : drawResults.includes(playerData.result)
-                ? "D"
-                : "L";
+          const drawResults = ["agreed", "repetition", "stalemate", "insufficient", "50move", "timevsinsufficient"];
+          const result = playerData.result === "win" ? "W" : drawResults.includes(playerData.result) ? "D" : "L";
+          
           const openingMatch = game.pgn
-            ? game.pgn.match(/\[Opening "(.+?)"\]/) ||
-              game.pgn.match(
-                /\[ECOUrl "https?:\/\/www\.chess\.com\/openings\/([^"]+)"\]/,
-              )
+            ? game.pgn.match(/\[Opening "(.+?)"\]/) || game.pgn.match(/\[ECOUrl "https?:\/\/www\.chess\.com\/openings\/([^"]+)"\]/)
             : null;
-          const opening = openingMatch
-            ? openingMatch[1].replace(/-/g, " ")
-            : null;
+          const opening = openingMatch ? openingMatch[1].replace(/-/g, " ") : null;
+          
           return {
             result,
             color: isWhite ? "white" : "black",
-            accuracy:
-              typeof playerData.accuracy === "number"
-                ? playerData.accuracy
-                : null,
+            accuracy: typeof playerData.accuracy === "number" ? playerData.accuracy : null,
             opening,
             timestamp: game.end_time,
           };
         });
 
-        const last10p = processed.slice(-10);
+        const last10p = processedAll.slice(-10);
 
-        // W/L/D
+        // W/L/D (Apenas histórico recente, para não confundir o usuário com milhares de vitórias)
         const wld = {
           w: last10p.filter((g) => g.result === "W").length,
           d: last10p.filter((g) => g.result === "D").length,
@@ -283,46 +262,30 @@
 
         // Streak
         let streakCount = 0;
-        const streakType = processed[processed.length - 1].result;
-        for (let i = processed.length - 1; i >= 0; i--) {
-          if (processed[i].result === streakType) streakCount++;
+        const streakType = processedAll[processedAll.length - 1].result;
+        for (let i = processedAll.length - 1; i >= 0; i--) {
+          if (processedAll[i].result === streakType) streakCount++;
           else break;
         }
 
-        // Win rate por cor
-        const asWhite = processed.filter((g) => g.color === "white");
-        const asBlack = processed.filter((g) => g.color === "black");
+        // Win rate por cor (Estatística global)
+        const asWhite = processedAll.filter((g) => g.color === "white");
+        const asBlack = processedAll.filter((g) => g.color === "black");
         const winRateByColor = {
-          white: asWhite.length
-            ? Math.round(
-                (asWhite.filter((g) => g.result === "W").length /
-                  asWhite.length) *
-                  100,
-              )
-            : null,
-          black: asBlack.length
-            ? Math.round(
-                (asBlack.filter((g) => g.result === "W").length /
-                  asBlack.length) *
-                  100,
-              )
-            : null,
+          white: asWhite.length ? Math.round((asWhite.filter((g) => g.result === "W").length / asWhite.length) * 100) : null,
+          black: asBlack.length ? Math.round((asBlack.filter((g) => g.result === "W").length / asBlack.length) * 100) : null,
         };
 
-        // PrecisÃ£o mÃ©dia
-        const withAcc = last10p.filter((g) => g.accuracy !== null);
+        // Precisão média (Estatística global)
+        const withAcc = processedAll.filter((g) => g.accuracy !== null);
         const avgAccuracy = withAcc.length
-          ? parseFloat(
-              (
-                withAcc.reduce((s, g) => s + g.accuracy, 0) / withAcc.length
-              ).toFixed(1),
-            )
+          ? parseFloat((withAcc.reduce((s, g) => s + g.accuracy, 0) / withAcc.length).toFixed(1))
           : null;
 
         // Opening mais jogada por cor
         const topOpening = (color) => {
           const map = {};
-          processed
+          processedAll
             .filter((g) => g.color === color && g.opening)
             .forEach((g) => {
               map[g.opening] = (map[g.opening] || 0) + 1;
@@ -330,8 +293,8 @@
           return Object.keys(map).sort((a, b) => map[b] - map[a])[0] || null;
         };
 
-        // Ãšltimas 5
-        const last5 = processed
+        // Últimas 5
+        const last5 = processedAll
           .slice(-5)
           .reverse()
           .map((g) => ({
@@ -342,19 +305,13 @@
 
         // Por horário
         const byHour = (start, end) => {
-          const range = processed.filter((g) => {
+          const range = processedAll.filter((g) => {
             const h = new Date(g.timestamp * 1000).getHours();
             return h >= start && h < end;
           });
           return {
             total: range.length,
-            wr: range.length
-              ? Math.round(
-                  (range.filter((g) => g.result === "W").length /
-                    range.length) *
-                    100,
-                )
-              : null,
+            wr: range.length ? Math.round((range.filter((g) => g.result === "W").length / range.length) * 100) : null,
           };
         };
 
