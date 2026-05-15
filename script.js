@@ -915,20 +915,84 @@
   };
 
   // --- LÃ“GICA DE CÃLCULO DE DELAY ---
-  const computeDelayValue = () => {
-    let min = parseFloat(autoDelayMin);
-    let max = parseFloat(autoDelayMax);
-    if (isNaN(min)) min = DEFAULT_MIN_DELAY;
-    if (isNaN(max)) max = DEFAULT_MAX_DELAY;
-    if (min > max) [min, max] = [max, min];
+  const sessionPacingProfile = 0.8 + (Math.random() * 0.4); // 0.8 (agressivo) a 1.2 (defensivo)
+  
+  const gaussianRandom = (mean = 0, stdev = 1) => {
+    let u = 1 - Math.random();
+    let v = Math.random();
+    let z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    return z * stdev + mean;
+  };
 
+  const computeDelayValue = (gameObj = null) => {
     if (autoDelayMode === "max") return 0;
     if (autoDelayMode === "average") {
+      let min = parseFloat(autoDelayMin) || DEFAULT_MIN_DELAY;
+      let max = parseFloat(autoDelayMax) || DEFAULT_MAX_DELAY;
       return Number(((min + max) / 2).toFixed(2));
-    } else {
-      const r = Math.random() * (max - min) + min;
-      return Number(r.toFixed(2));
     }
+    
+    // SMART PACING (Substitui o "random" básico por tempo orgânico)
+    let baseDelay = 0.2;
+    let maxDelay = 2.5;
+    
+    let timeMode = "blitz";
+    const url = window.location.href;
+    if (url.includes("1|") || url.includes("1/") || url.includes("2|")) timeMode = "bullet";
+    if (url.includes("10|") || url.includes("15|")) timeMode = "rapid";
+    
+    if (timeMode === "bullet") maxDelay = 2.5;
+    if (timeMode === "blitz") maxDelay = 6.0;
+    if (timeMode === "rapid") maxDelay = 12.0;
+    
+    let legalMovesCount = 20;
+    let moveNumber = 10;
+    let isForced = false;
+
+    if (gameObj) {
+       try {
+           const history = typeof gameObj.getHistory === "function" ? gameObj.getHistory() : [];
+           moveNumber = history.length;
+           
+           if (typeof gameObj.getLegalMoves === "function") {
+               const legalMoves = gameObj.getLegalMoves();
+               legalMovesCount = legalMoves.length;
+               if (legalMovesCount <= 1) isForced = true;
+           }
+       } catch (e) {}
+    }
+    
+    if (isForced) {
+        return Math.max(0.1, Number(gaussianRandom(0.2, 0.05).toFixed(2)));
+    }
+    
+    if (moveNumber <= 8) {
+        return Math.max(0.1, Math.min(1.0, Number(gaussianRandom(0.4, 0.15).toFixed(2))));
+    }
+    
+    let isTimeTrouble = false;
+    const clockEls = document.querySelectorAll(".clock-component .clock-time-component, .clock-component .clock-time");
+    for (const clock of clockEls) {
+        const text = clock.textContent.trim();
+        // Se a string contiver "0:0" e tiver tamanho curto (ex: "0:08", "0:05.1")
+        if (text.startsWith("0:0") && text.length <= 6) {
+             const secs = parseFloat(text.replace("0:0", ""));
+             if (secs < 10) isTimeTrouble = true;
+        }
+    }
+    
+    if (isTimeTrouble) {
+        return Math.max(0.1, Number(gaussianRandom(0.15, 0.05).toFixed(2)));
+    }
+    
+    let complexity = Math.min(1.0, legalMovesCount / 35.0);
+    complexity = complexity * sessionPacingProfile;
+    
+    const meanTime = baseDelay + (complexity * (maxDelay * 0.6));
+    let finalTime = gaussianRandom(meanTime, maxDelay * 0.15);
+    finalTime = Math.max(baseDelay, Math.min(maxDelay, finalTime));
+    
+    return Number(finalTime.toFixed(2));
   };
 
   // --- LÃ“GICA DE AUTO QUEUE (INDEPENDENTE DE IDIOMA) ---
@@ -1246,7 +1310,7 @@
 
       if (currentCache.has(cacheKey)) {
         const cached = currentCache.get(cacheKey);
-        chessBot.time = computeDelayValue();
+        chessBot.time = computeDelayValue(game);
         if (isAutoMove) {
           $(".myhigh, .myarrow").remove();
           if (chessBot.time <= 0) {
@@ -1273,7 +1337,7 @@
       checkfen = fen;
       can_interval = false;
 
-      chessBot.time = computeDelayValue();
+      chessBot.time = computeDelayValue(game);
       log(`Modo: ${gameMode} | Delay: ${chessBot.time}s | Elo: ${currentElo}`);
       log("Enviando request para " + SERVER_URL + "/getmove");
 
