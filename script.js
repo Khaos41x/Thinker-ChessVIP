@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC150
+// @name         TC154
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -1003,7 +1003,7 @@
         const cp = this.clamp(data.cp || 0);
         target = this.cpToPercent(cp);
       }
-      
+
       // Atualizar sempre para dar feedback visual instantaneo
       evalBarCurrent = target;
       return evalBarCurrent;
@@ -1045,20 +1045,20 @@
 
   function getPlayingSide() {
     // Metodo 1: Atributo flipped do Chess.com (mais confiavel)
-    const boardEl = document.querySelector("wc-chess-board") || 
-                    document.querySelector("chess-board") || 
+    const boardEl = document.querySelector("wc-chess-board") ||
+                    document.querySelector("chess-board") ||
                     document.querySelector(".board");
-    
+
     if (boardEl) {
-      const isFlipped = boardEl.hasAttribute("flipped") || 
-                        boardEl.classList.contains("flipped") || 
+      const isFlipped = boardEl.hasAttribute("flipped") ||
+                        boardEl.classList.contains("flipped") ||
                         boardEl.getAttribute("flipped") === "true" ||
                         boardEl.getAttribute("flipped") === "";
       if (isFlipped) return "b";
     }
 
     // Metodo 2: Verificar as iniciais ou nomes nos componentes de player (opcional/fallback)
-    
+
     // Metodo 3: URL
     const url = window.location.href;
     if (url.includes("color=black") || url.includes("color=b")) return "b";
@@ -1088,7 +1088,7 @@
 
     const side = getPlayingSide();
     const isBlack = (side === "b");
-    
+
     // Garante que o bar esteja visivel
     bar.style.display = "flex";
 
@@ -1096,7 +1096,7 @@
     const pct = Math.max(2, Math.min(98, evalBarCurrent));
 
     if (isBlack) {
-      // Jogando de PRETAS: 
+      // Jogando de PRETAS:
       // Queremos que a parte PRETA (background) fique embaixo.
       // Entao o preenchimento BRANCO (fill) deve vir do TOPO.
       fill.style.bottom = "auto";
@@ -1112,14 +1112,17 @@
       fill.style.borderRadius = "0 0 5px 5px";
     }
 
-    // Label
+    // Label (Perspectiva do Jogador)
+    // Se for preto, invertemos o sinal para que vantagem do jogador seja sempre "+"
     if (lastEvalData.mate !== null && lastEvalData.mate !== undefined) {
-      label.textContent = (lastEvalData.mate > 0 ? "+" : "") + "M" + Math.abs(lastEvalData.mate);
+      const displayMate = isBlack ? -lastEvalData.mate : lastEvalData.mate;
+      label.textContent = (displayMate > 0 ? "+" : "") + "M" + Math.abs(displayMate);
     } else {
-      const cpVal = (lastEvalData.cp || 0) / 100;
+      let cpVal = (lastEvalData.cp || 0) / 100;
+      if (isBlack) cpVal = -cpVal;
       label.textContent = (cpVal >= 0 ? "+" : "") + cpVal.toFixed(1);
     }
-    
+
     // Cor do label baseada no contraste
     // Se pct > 50 (mais branco), label preto. Se pct < 50 (mais escuro), label branco.
     label.style.color = (pct > 50) ? "#1a1a1a" : "#ffffff";
@@ -1172,11 +1175,11 @@
       if (!game) return;
       const currentFen = game.getFEN();
       if (!currentFen) return;
-      
+
       const now = Date.now();
       // Forçar atualização a cada 5s mesmo se o FEN for o mesmo (para garantir sincronia)
       if (currentFen === evalPollingFen && (now - lastEvalTime < 5000)) return;
-      
+
       evalPollingFen = currentFen;
       lastEvalTime = now;
       requestEval(currentFen);
