@@ -1003,9 +1003,8 @@
         const cp = this.clamp(data.cp || 0);
         target = this.cpToPercent(cp);
       }
-      // Anti-flicker: ignorar micro mudancas
-      if (Math.abs(target - evalBarCurrent) < 0.3) return evalBarCurrent;
-      // Pular direto pro target — a transicao CSS cuida da animacao suave
+      
+      // Atualizar sempre para dar feedback visual instantaneo
       evalBarCurrent = target;
       return evalBarCurrent;
     },
