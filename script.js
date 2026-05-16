@@ -983,6 +983,129 @@
     return z * stdev + mean;
   };
 
+  // ===== EVAL BAR ENGINE (baseado no documento tecnico) =====
+  let evalBarEnabled = localStorage.getItem("evalBar") === "true";
+  let lastEvalData = { cp: 0, mate: null, depth: 0 };
+  let evalBarCurrent = 50;
+  let lastEvalFen = "";
+
+  const evalBarEngine = {
+    clamp(cp) {
+      return Math.max(-1000, Math.min(1000, cp));
+    },
+    cpToPercent(cp) {
+      return 50 + 50 * Math.tanh(cp / 400);
+    },
+    mateToPercent(mate) {
+      const d = Math.abs(mate);
+      const saturation = 1 - 1 / (d + 1);
+      return mate > 0 ? 50 + saturation * 50 : 50 - saturation * 50;
+    },
+    depthBasedAlpha(depth) {
+      const base = 0.15;
+      return base * (1 - Math.exp(-depth / 10));
+    },
+    update(data) {
+      let target;
+      if (data.mate !== undefined && data.mate !== null) {
+        target = this.mateToPercent(data.mate);
+      } else {
+        const cp = this.clamp(data.cp || 0);
+        target = this.cpToPercent(cp);
+      }
+      const alpha = this.depthBasedAlpha(data.depth || 12);
+      if (Math.abs(target - evalBarCurrent) < 0.5) return evalBarCurrent;
+      evalBarCurrent += (target - evalBarCurrent) * alpha;
+      return evalBarCurrent;
+    },
+  };
+
+  function requestEval(fen) {
+    if (!evalBarEnabled && !smartPacingEnabled) return;
+    if (!fen || fen === lastEvalFen) return;
+    lastEvalFen = fen;
+    try {
+      GM_xmlhttpRequest({
+        method: "POST",
+        url: SERVER_URL + "/eval",
+        headers: { "Content-Type": "application/json" },
+        data: JSON.stringify({ fen: fen }),
+        onload: function (resp) {
+          try {
+            const data = JSON.parse(resp.responseText);
+            if (data) {
+              lastEvalData = data;
+              if (evalBarEnabled) {
+                evalBarEngine.update(data);
+                renderEvalBar();
+              }
+            }
+          } catch (e) {}
+        },
+        onerror: function () {},
+      });
+    } catch (e) {}
+  }
+
+  function renderEvalBar() {
+    let bar = document.getElementById("thinker-eval-bar");
+    if (!bar) {
+      injectEvalBarDOM();
+      bar = document.getElementById("thinker-eval-bar");
+      if (!bar) return;
+    }
+    const fill = document.getElementById("thinker-eval-fill");
+    const label = document.getElementById("thinker-eval-label");
+    if (!fill || !label) return;
+
+    const pct = Math.max(2, Math.min(98, evalBarCurrent));
+    fill.style.height = pct + "%";
+
+    if (lastEvalData.mate !== null && lastEvalData.mate !== undefined) {
+      label.textContent = (lastEvalData.mate > 0 ? "+" : "") + "M" + Math.abs(lastEvalData.mate);
+    } else {
+      const cpVal = (lastEvalData.cp || 0) / 100;
+      label.textContent = (cpVal >= 0 ? "+" : "") + cpVal.toFixed(1);
+    }
+    label.style.color = evalBarCurrent > 55 ? "#1a1a1a" : "#e0e0e0";
+    bar.style.display = "flex";
+  }
+
+  function injectEvalBarDOM() {
+    if (document.getElementById("thinker-eval-bar")) return;
+    const boardEl =
+      document.querySelector("wc-chess-board") ||
+      document.querySelector(".board") ||
+      document.querySelector("chess-board");
+    if (!boardEl) return;
+    const container = boardEl.parentElement;
+    if (!container) return;
+    container.style.display = "flex";
+    container.style.alignItems = "stretch";
+
+    const barEl = document.createElement("div");
+    barEl.id = "thinker-eval-bar";
+    barEl.style.cssText = "width:28px;min-height:100%;background:#1a1a1a;border-radius:6px;margin-right:6px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;box-shadow:0 2px 12px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.06);transition:all 0.3s ease;";
+
+    const fillEl = document.createElement("div");
+    fillEl.id = "thinker-eval-fill";
+    fillEl.style.cssText = "width:100%;height:50%;background:linear-gradient(to top,#f0f0f0 0%,#ffffff 100%);transition:height 0.6s cubic-bezier(0.22,1,0.36,1);position:absolute;bottom:0;left:0;border-radius:0 0 5px 5px;";
+
+    const labelEl = document.createElement("div");
+    labelEl.id = "thinker-eval-label";
+    labelEl.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;font-weight:700;font-family:'Inter',sans-serif;z-index:2;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,0.3);white-space:nowrap;";
+    labelEl.textContent = "0.0";
+
+    barEl.appendChild(fillEl);
+    barEl.appendChild(labelEl);
+    container.insertBefore(barEl, boardEl);
+  }
+
+  function removeEvalBarDOM() {
+    const bar = document.getElementById("thinker-eval-bar");
+    if (bar) bar.remove();
+  }
+
   const computeDelayValue = (gameObj = null) => {
     // ===== SMART PACING: quando ativo, ignora completamente o Auto Run Delay =====
     if (smartPacingEnabled) {
@@ -1072,9 +1195,28 @@
       return Math.max(0.1, Number(gaussianRandom(0.15, 0.05).toFixed(2)));
     }
 
+    // ===== EVAL-AWARE PACING: usar dados da eval bar se disponíveis =====
+    let evalFactor = 1.0;
+    if (lastEvalData && lastEvalData.cp !== null && lastEvalData.cp !== undefined) {
+      const absCp = Math.abs(lastEvalData.cp);
+      // Posição equilibrada (|cp| < 50): humano pensa mais
+      if (absCp < 50) evalFactor = 1.4;
+      // Leve vantagem/desvantagem (50-150): pensa moderado
+      else if (absCp < 150) evalFactor = 1.1;
+      // Vantagem clara (150-400): decisão relativamente rápida
+      else if (absCp < 400) evalFactor = 0.85;
+      // Vantagem esmagadora (>400): joga rápido, posição decidida
+      else evalFactor = 0.6;
+    }
+    if (lastEvalData && lastEvalData.mate !== null && lastEvalData.mate !== undefined) {
+      const absMate = Math.abs(lastEvalData.mate);
+      // Mate encontrado: joga rápido (reflexo de vitória/desespero)
+      evalFactor = absMate <= 3 ? 0.3 : 0.5;
+    }
+
     // Meio de jogo: complexidade posicional com ruído gaussiano
     let complexity = Math.min(1.0, legalMovesCount / 35.0);
-    complexity = complexity * sessionPacingProfile;
+    complexity = complexity * sessionPacingProfile * evalFactor;
 
     const meanTime = baseDelay + complexity * (maxDelay * 0.6);
     let finalTime = gaussianRandom(meanTime, maxDelay * 0.15);
@@ -1425,6 +1567,9 @@
       checkfen = fen;
       can_interval = false;
 
+      // Solicitar avaliacao para Eval Bar e Smart Pacing
+      requestEval(fen);
+
       chessBot.time = computeDelayValue(game);
       log(`Modo: ${gameMode} | Delay: ${chessBot.time}s | Elo: ${currentElo}`);
       log("Enviando request para " + SERVER_URL + "/getmove");
@@ -1686,6 +1831,22 @@
           </div>
         </div>
 
+        <div class="kb-section">
+          <p class="kb-section-label">Smart Pacing</p>
+          <div class="kb-radio-group">
+            <input type="radio" id="sp-on" name="kb-smart-pacing" value="1"><label for="sp-on">ON</label>
+            <input type="radio" id="sp-off" name="kb-smart-pacing" value="0" checked><label for="sp-off">OFF</label>
+          </div>
+        </div>
+
+        <div class="kb-section">
+          <p class="kb-section-label">Eval Bar</p>
+          <div class="kb-radio-group">
+            <input type="radio" id="eb-on" name="kb-eval-bar" value="1"><label for="eb-on">ON</label>
+            <input type="radio" id="eb-off" name="kb-eval-bar" value="0" checked><label for="eb-off">OFF</label>
+          </div>
+        </div>
+
         <div class="kb-section-col" id="puzzle-section" style="display: none;">
           <p class="kb-section-label">Puzzle Mode <span style="font-size:11px; color:rgba(255,255,255,0.4); font-weight:normal;">(Elo 3200)</span></p>
           <div class="kb-section" style="margin:0">
@@ -1710,14 +1871,6 @@
             <span style="font-size:11px; color:rgba(255,255,255,0.4)">800</span>
             <input id="kb-elo-slider" class="kb-slider" type="range" min="800" max="3200" step="100" value="3200">
             <span id="kb-elo-val" class="kb-slider-val">3200</span>
-          </div>
-        </div>
-
-        <div class="kb-section">
-          <p class="kb-section-label">Smart Pacing</p>
-          <div class="kb-radio-group">
-            <input type="radio" id="sp-on" name="kb-smart-pacing" value="1"><label for="sp-on">ON</label>
-            <input type="radio" id="sp-off" name="kb-smart-pacing" value="0" checked><label for="sp-off">OFF</label>
           </div>
         </div>
 
@@ -1945,6 +2098,24 @@
         if (smartPacingEnabled) {
           $(`input[name="kb-smart-pacing"][value="1"]`).prop("checked", true);
           $("#auto-delay-section").hide();
+        }
+
+        // --- EVAL BAR TOGGLE ---
+        $('input[name="kb-eval-bar"]').on("change", function () {
+          evalBarEnabled = $(this).val() === "1";
+          localStorage.setItem("evalBar", evalBarEnabled);
+          if (evalBarEnabled) {
+            injectEvalBarDOM();
+            lastEvalFen = ""; // force re-request
+          } else {
+            removeEvalBarDOM();
+          }
+          window.krypbotUpdateUI();
+        });
+
+        // Inicializar estado da Eval Bar
+        if (evalBarEnabled) {
+          $(`input[name="kb-eval-bar"][value="1"]`).prop("checked", true);
         }
 
         $("input[name='delayMode']").on("change", function () {
