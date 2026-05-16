@@ -390,6 +390,39 @@ def getmove():
         print(f"Erro: {e}")
         return jsonify([])
 
+@app.route("/eval", methods=["POST"])
+def evaluate():
+    try:
+        data = request.get_json(force=True, silent=True)
+        if not data:
+            import json
+            data = json.loads(request.data)
+        
+        fen = data.get("fen", "")
+        if not fen:
+            return jsonify({"cp": 0, "mate": None})
+            
+        board = chess.Board(fen)
+        
+        # Analise super rapida para a Eval Bar (0.05s)
+        # Usamos a ponder_engine se estiver livre, senao a engine principal
+        info = engine.analyse(board, chess.engine.Limit(time=0.05))
+        
+        score = info.get("score")
+        if score:
+            # Pegar o score do ponto de vista das brancas
+            white_score = score.white()
+            
+            if white_score.is_mate():
+                return jsonify({"cp": None, "mate": white_score.mate(), "depth": info.get("depth", 0)})
+            else:
+                return jsonify({"cp": white_score.score(), "mate": None, "depth": info.get("depth", 0)})
+                
+        return jsonify({"cp": 0, "mate": None})
+    except Exception as e:
+        print(f"Erro no eval: {e}")
+        return jsonify({"cp": 0, "mate": None})
+
 import rating
 import database
 
