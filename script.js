@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC142
+// @name         TC145
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -1001,10 +1001,6 @@
       const saturation = 1 - 1 / (d + 1);
       return mate > 0 ? 50 + saturation * 50 : 50 - saturation * 50;
     },
-    depthBasedAlpha(depth) {
-      const base = 0.15;
-      return base * (1 - Math.exp(-depth / 10));
-    },
     update(data) {
       let target;
       if (data.mate !== undefined && data.mate !== null) {
@@ -1013,9 +1009,10 @@
         const cp = this.clamp(data.cp || 0);
         target = this.cpToPercent(cp);
       }
-      const alpha = this.depthBasedAlpha(data.depth || 12);
-      if (Math.abs(target - evalBarCurrent) < 0.5) return evalBarCurrent;
-      evalBarCurrent += (target - evalBarCurrent) * alpha;
+      // Anti-flicker: ignorar micro mudancas
+      if (Math.abs(target - evalBarCurrent) < 0.3) return evalBarCurrent;
+      // Pular direto pro target — a transicao CSS cuida da animacao suave
+      evalBarCurrent = target;
       return evalBarCurrent;
     },
   };
@@ -1105,6 +1102,23 @@
     const bar = document.getElementById("thinker-eval-bar");
     if (bar) bar.remove();
   }
+
+  // ===== EVAL BAR POLLING INDEPENDENTE =====
+  // Roda a cada 800ms, verifica o FEN atual e pede eval
+  // Funciona mesmo quando nao e a vez do jogador
+  let evalPollingFen = "";
+  setInterval(() => {
+    if (!evalBarEnabled && !smartPacingEnabled) return;
+    try {
+      const { game } = get_cached_game();
+      if (!game) return;
+      const currentFen = game.getFEN();
+      if (currentFen && currentFen !== evalPollingFen) {
+        evalPollingFen = currentFen;
+        requestEval(currentFen);
+      }
+    } catch (e) {}
+  }, 800);
 
   const computeDelayValue = (gameObj = null) => {
     // ===== SMART PACING: quando ativo, ignora completamente o Auto Run Delay =====
