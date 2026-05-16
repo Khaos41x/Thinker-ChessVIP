@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC147
+// @name         TC150
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -1045,14 +1045,37 @@
   }
 
   function getPlayingSide() {
+    // Metodo 1: Chess.com adiciona atributo "flipped" no board quando jogando de pretas
+    const boardEl =
+      document.querySelector("wc-chess-board") ||
+      document.querySelector("chess-board") ||
+      document.querySelector(".board");
+    if (boardEl) {
+      if (
+        boardEl.hasAttribute("flipped") ||
+        boardEl.classList.contains("flipped") ||
+        boardEl.getAttribute("flipped") === "" ||
+        boardEl.getAttribute("flipped") === "true"
+      ) {
+        return "b";
+      }
+    }
+
+    // Metodo 2: URL da partida pode conter a cor
+    const url = window.location.href;
+    if (url.includes("color=black") || url.includes("color=b")) return "b";
+    if (url.includes("color=white") || url.includes("color=w")) return "w";
+
+    // Metodo 3: API do jogo (fallback, pode ser imprecisa)
     try {
       const { game } = get_cached_game();
       if (game && typeof game.getPlayingAs === "function") {
         const side = game.getPlayingAs();
-        // Chess.com retorna "b", 2, ou "black" para pretas
         if (side === "b" || side === 2 || side === "black") return "b";
+        if (side === "w" || side === 1 || side === "white") return "w";
       }
     } catch (e) {}
+
     return "w";
   }
 
