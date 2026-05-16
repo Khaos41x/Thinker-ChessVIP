@@ -1044,6 +1044,18 @@
     }
   }
 
+  function getPlayingSide() {
+    try {
+      const { game } = get_cached_game();
+      if (game && typeof game.getPlayingAs === "function") {
+        const side = game.getPlayingAs();
+        // Chess.com retorna "b", 2, ou "black" para pretas
+        if (side === "b" || side === 2 || side === "black") return "b";
+      }
+    } catch (e) {}
+    return "w";
+  }
+
   function renderEvalBar() {
     let bar = document.getElementById("thinker-eval-bar");
     if (!bar) {
@@ -1055,9 +1067,28 @@
     const label = document.getElementById("thinker-eval-label");
     if (!fill || !label) return;
 
+    // evalBarCurrent: 50=igual, >50=vantagem brancas, <50=vantagem pretas
     const pct = Math.max(2, Math.min(98, evalBarCurrent));
-    fill.style.height = pct + "%";
+    const isBlack = getPlayingSide() === "b";
 
+    if (isBlack) {
+      // Jogando de PRETAS: tabuleiro invertido
+      // Preto (nosso lado) fica EMBAIXO → fill branco vem do TOPO e cresce pra baixo
+      fill.style.removeProperty("bottom");
+      fill.style.top = "0";
+      fill.style.borderRadius = "5px 5px 0 0";
+      // pct grande = vantagem brancas = fill branco maior no topo = ruim pra nós
+      fill.style.height = pct + "%";
+    } else {
+      // Jogando de BRANCAS: tabuleiro normal
+      // Branco (nosso lado) fica EMBAIXO → fill branco vem da BASE e cresce pra cima
+      fill.style.removeProperty("top");
+      fill.style.bottom = "0";
+      fill.style.borderRadius = "0 0 5px 5px";
+      fill.style.height = pct + "%";
+    }
+
+    // Label de avaliação
     if (lastEvalData.mate !== null && lastEvalData.mate !== undefined) {
       label.textContent = (lastEvalData.mate > 0 ? "+" : "") + "M" + Math.abs(lastEvalData.mate);
     } else {
