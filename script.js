@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC145
+// @name         TC142
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -38,15 +38,10 @@
   class AutoAdjustRating {
     constructor(baseElo, storage = localStorage) {
       this._storage = storage;
+      this._enabled = false;
       this._baseElo = baseElo;
       this._currentDifficulty = baseElo;
       this._history = [];
-      // Restaurar estado persistido
-      this._enabled = this._storage.getItem("kb-auto-adjust") === "true";
-      if (this._enabled) {
-        this._currentDifficulty = this._loadDifficulty();
-        this._history = this._loadHistory();
-      }
     }
 
     _loadHistory() {
@@ -261,9 +256,9 @@
 
           const openingMatch = game.pgn
             ? game.pgn.match(/\[Opening "(.+?)"\]/) ||
-              game.pgn.match(
-                /\[ECOUrl "https?:\/\/www\.chess\.com\/openings\/([^"]+)"\]/,
-              )
+            game.pgn.match(
+              /\[ECOUrl "https?:\/\/www\.chess\.com\/openings\/([^"]+)"\]/,
+            )
             : null;
           const opening = openingMatch
             ? openingMatch[1].replace(/-/g, " ")
@@ -304,17 +299,17 @@
         const winRateByColor = {
           white: asWhite.length
             ? Math.round(
-                (asWhite.filter((g) => g.result === "W").length /
-                  asWhite.length) *
-                  100,
-              )
+              (asWhite.filter((g) => g.result === "W").length /
+                asWhite.length) *
+              100,
+            )
             : null,
           black: asBlack.length
             ? Math.round(
-                (asBlack.filter((g) => g.result === "W").length /
-                  asBlack.length) *
-                  100,
-              )
+              (asBlack.filter((g) => g.result === "W").length /
+                asBlack.length) *
+              100,
+            )
             : null,
         };
 
@@ -322,10 +317,10 @@
         const withAcc = processedAll.filter((g) => g.accuracy !== null);
         const avgAccuracy = withAcc.length
           ? parseFloat(
-              (
-                withAcc.reduce((s, g) => s + g.accuracy, 0) / withAcc.length
-              ).toFixed(1),
-            )
+            (
+              withAcc.reduce((s, g) => s + g.accuracy, 0) / withAcc.length
+            ).toFixed(1),
+          )
           : null;
 
         // Opening mais jogada por cor
@@ -359,10 +354,10 @@
             total: range.length,
             wr: range.length
               ? Math.round(
-                  (range.filter((g) => g.result === "W").length /
-                    range.length) *
-                    100,
-                )
+                (range.filter((g) => g.result === "W").length /
+                  range.length) *
+                100,
+              )
               : null,
           };
         };
@@ -401,9 +396,9 @@
         log("fetchData: chamado para " + username + " tc:" + timeControl);
         log(
           "OpponentIntel: fetchData iniciado para " +
-            username +
-            " | timeControl: " +
-            timeControl,
+          username +
+          " | timeControl: " +
+          timeControl,
         );
         const baseUrl = `https://api.chess.com/pub/player/${username}`;
 
@@ -417,13 +412,13 @@
               const data = JSON.parse(resp.responseText);
               log(
                 "fetchData: archives recebidos, total meses: " +
-                  (data.archives ? data.archives.length : 0),
+                (data.archives ? data.archives.length : 0),
               );
               log(
                 "OpponentIntel: archives recebidos â†’ " +
-                  JSON.stringify(
-                    data.archives ? data.archives.length + " meses" : "vazio",
-                  ),
+                JSON.stringify(
+                  data.archives ? data.archives.length + " meses" : "vazio",
+                ),
               );
               const archives = data.archives || [];
               if (archives.length === 0) return;
@@ -496,7 +491,7 @@
                                 '<span style="color:#666; font-size:11px; margin-left:8px;">sem dados</span>',
                               );
                             }
-                          } catch (e) {}
+                          } catch (e) { }
                         },
                         onerror: () => {
                           const processed = OpponentIntel.processGames(
@@ -573,7 +568,7 @@
 
         log(
           "renderZone2: #krypbot-container existe? " +
-            !!$("#krypbot-container").length,
+          !!$("#krypbot-container").length,
         );
         if (!$("#krypbot-container").length) return;
 
@@ -594,8 +589,7 @@
         </div>
 
         <!-- Win rate por cor - sÃ³ aparece se tiver dados -->
-        ${
-          winRateByColor.white !== null
+        ${winRateByColor.white !== null
             ? `
         <div style="display:flex; gap:10px;">
           <div style="flex:1; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px; text-align:center;">
@@ -610,53 +604,47 @@
           </div>
         </div>`
             : ""
-        }
+          }
 
         <!-- Abertura favorita - sem notaÃ§Ã£o, sÃ³ o nome limpo -->
-        ${
-          topOpeningWhite || topOpeningBlack
+        ${topOpeningWhite || topOpeningBlack
             ? `
         <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px;">
           <div style="font-size:10px; color:#888; margin-bottom:4px; letter-spacing:0.5px;">ABRE NORMALMENTE COM</div>
-          ${
-            topOpeningWhite
+          ${topOpeningWhite
               ? `<div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <span style="color:#aaa; font-size:11px; margin-top:2px;">Brancas</span>
             <span style="color:#fff; font-weight:600; text-align:right; max-width:180px; font-size:11px; line-height:1.4;">${cleanOpeningName(topOpeningWhite)}</span>
           </div>`
               : ""
-          }
-          ${
-            topOpeningBlack
+            }
+          ${topOpeningBlack
               ? `<div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <span style="color:#aaa; font-size:11px; margin-top:2px;">Pretas</span>
             <span style="color:#fff; font-weight:600; text-align:right; max-width:180px; font-size:11px; line-height:1.4;">${cleanOpeningName(topOpeningBlack)}</span>
           </div>`
               : ""
-          }
+            }
         </div>`
             : ""
-        }
+          }
 
         <!-- PrecisÃ£o mÃ©dia -->
-        ${
-          avgAccuracy !== null
+        ${avgAccuracy !== null
             ? `
         <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px;">
           <span style="color:#888; font-size:11px; letter-spacing:0.5px;">PRECISÃO MÉDIA</span>
           <span style="color:#00ff88; font-weight:800; font-size:18px;">${avgAccuracy}%</span>
         </div>`
             : ""
-        }
+          }
 
         <!-- Performance por horário - linguagem humana -->
-        ${
-          byHour.morning.total || byHour.afternoon.total || byHour.night.total
+        ${byHour.morning.total || byHour.afternoon.total || byHour.night.total
             ? `
         <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px;">
           <div style="font-size:10px; color:#888; margin-bottom:4px; letter-spacing:0.5px;">MELHOR HORÁRIO PARA ENFRENTAR</div>
-          ${
-            byHour.morning.total
+          ${byHour.morning.total
               ? `<div style="display:flex; justify-content:space-between; align-items:center;">
             <span style="color:#aaa; font-size:11px;">Manhã</span>
             <span style="color:${byHour.morning.wr >= 60 ? "#f44336" : byHour.morning.wr <= 40 ? "#00ff88" : "#fff"}; font-weight:700; font-size:11px;">
@@ -664,9 +652,8 @@
             </span>
           </div>`
               : ""
-          }
-          ${
-            byHour.afternoon.total
+            }
+          ${byHour.afternoon.total
               ? `<div style="display:flex; justify-content:space-between; align-items:center;">
             <span style="color:#aaa; font-size:11px;">Tarde</span>
             <span style="color:${byHour.afternoon.wr >= 60 ? "#f44336" : byHour.afternoon.wr <= 40 ? "#00ff88" : "#fff"}; font-weight:700; font-size:11px;">
@@ -674,9 +661,8 @@
             </span>
           </div>`
               : ""
-          }
-          ${
-            byHour.night.total
+            }
+          ${byHour.night.total
               ? `<div style="display:flex; justify-content:space-between; align-items:center;">
             <span style="color:#aaa; font-size:11px;">Noite</span>
             <span style="color:${byHour.night.wr >= 60 ? "#f44336" : byHour.night.wr <= 40 ? "#00ff88" : "#fff"}; font-weight:700; font-size:11px;">
@@ -684,20 +670,19 @@
             </span>
           </div>`
               : ""
-          }
+            }
         </div>`
             : ""
-        }
+          }
 
         <!-- Ãšltimas 5 partidas -->
-        ${
-          last5.length
+        ${last5.length
             ? `
         <div style="display:flex; flex-direction:column; gap:6px;">
           <div style="font-size:10px; color:#888; margin-bottom:2px; letter-spacing:0.5px;">ÚLTIMAS PARTIDAS</div>
           ${last5
-            .map(
-              (g) => `
+              .map(
+                (g) => `
             <div style="display:flex; align-items:center; gap:10px; padding:8px 10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:10px;">
               <div style="background:${g.result === "W" ? "rgba(0,255,136,0.15)" : g.result === "L" ? "rgba(244,67,54,0.15)" : "rgba(158,158,158,0.15)"}; color:${g.result === "W" ? "#00ff88" : g.result === "L" ? "#f44336" : "#9e9e9e"}; padding:3px 6px; border-radius:6px; font-weight:800; font-size:9px; letter-spacing:0.5px; width:28px; text-align:center;">
                 ${g.result === "W" ? "VIT" : g.result === "L" ? "DER" : "EMP"}
@@ -706,11 +691,11 @@
               ${g.accuracy !== null ? `<span style="color:#888; font-size:11px; font-weight:600;">${g.accuracy}%</span>` : ""}
             </div>
           `,
-            )
-            .join("")}
+              )
+              .join("")}
         </div>`
             : ""
-        }
+          }
       </div>`;
 
         // Cria wrapper flex se nÃ£o existir
@@ -801,9 +786,9 @@
         const username = getOpponentUsername();
         log(
           "OpponentIntel: check. Oponente: " +
-            username +
-            " | last: " +
-            OpponentIntel.lastOpponent,
+          username +
+          " | last: " +
+          OpponentIntel.lastOpponent,
         );
         if (username && username !== OpponentIntel.lastOpponent) {
           OpponentIntel.lastOpponent = username;
@@ -887,26 +872,16 @@
 
   // --- ESTADO DO AUTO RUN DELAY (PERSISTENTE) ---
   let autoDelayMin =
-      parseFloat(localStorage.getItem("autoMinDelay")) || DEFAULT_MIN_DELAY,
+    parseFloat(localStorage.getItem("autoMinDelay")) || DEFAULT_MIN_DELAY,
     autoDelayMax =
       parseFloat(localStorage.getItem("autoMaxDelay")) || DEFAULT_MAX_DELAY,
     autoDelayMode = localStorage.getItem("autoDelayMode") || DEFAULT_DELAY_MODE;
 
-  // Sempre forÃ§ar modo Random como padrão
-  autoDelayMode = "random";
-  autoDelayMin = 0.5;
-  autoDelayMax = 2.0;
-  localStorage.setItem("autoDelayMode", "random");
-  localStorage.setItem("autoMinDelay", 0.5);
-  localStorage.setItem("autoMaxDelay", 2.0);
+  // Validação inicial
+  if (isNaN(autoDelayMin) || autoDelayMin < 0) autoDelayMin = DEFAULT_MIN_DELAY;
+  if (isNaN(autoDelayMax) || autoDelayMax < 0) autoDelayMax = DEFAULT_MAX_DELAY;
+  if (autoDelayMin > autoDelayMax) [autoDelayMin, autoDelayMax] = [autoDelayMax, autoDelayMin];
 
-  // ValidaÃ§Ã£o inicial
-  if (isNaN(autoDelayMin) || autoDelayMin <= 0)
-    autoDelayMin = DEFAULT_MIN_DELAY;
-  if (isNaN(autoDelayMax) || autoDelayMax <= 0)
-    autoDelayMax = DEFAULT_MAX_DELAY;
-  if (autoDelayMin > autoDelayMax)
-    [autoDelayMin, autoDelayMax] = [autoDelayMax, autoDelayMin];
 
   let smartPacingEnabled = localStorage.getItem("smartPacing") === "true";
 
@@ -988,190 +963,19 @@
     return z * stdev + mean;
   };
 
-  // ===== EVAL BAR ENGINE (baseado no documento tecnico) =====
-  let evalBarEnabled = localStorage.getItem("evalBar") === "true";
-  let lastEvalData = { cp: 0, mate: null, depth: 0 };
-  let evalBarCurrent = 50;
-  let lastEvalFen = "";
-
-  const evalBarEngine = {
-    clamp(cp) {
-      return Math.max(-1000, Math.min(1000, cp));
-    },
-    cpToPercent(cp) {
-      return 50 + 50 * Math.tanh(cp / 400);
-    },
-    mateToPercent(mate) {
-      const d = Math.abs(mate);
-      const saturation = 1 - 1 / (d + 1);
-      return mate > 0 ? 50 + saturation * 50 : 50 - saturation * 50;
-    },
-    update(data) {
-      let target;
-      if (data.mate !== undefined && data.mate !== null) {
-        target = this.mateToPercent(data.mate);
-      } else {
-        const cp = this.clamp(data.cp || 0);
-        target = this.cpToPercent(cp);
-      }
-      // Anti-flicker: ignorar micro mudancas
-      if (Math.abs(target - evalBarCurrent) < 0.3) return evalBarCurrent;
-      // Pular direto pro target — a transicao CSS cuida da animacao suave
-      evalBarCurrent = target;
-      return evalBarCurrent;
-    },
-  };
-
-  function requestEval(fen) {
-    if (!evalBarEnabled && !smartPacingEnabled) return;
-    if (!fen) return;
-    // Sem guard de FEN duplicado aqui - o caller controla
-    try {
-      GM_xmlhttpRequest({
-        method: "POST",
-        url: SERVER_URL + "/eval",
-        headers: { "Content-Type": "application/json" },
-        data: JSON.stringify({ fen: fen }),
-        onload: function (resp) {
-          try {
-            const data = JSON.parse(resp.responseText);
-            if (data) {
-              lastEvalData = data;
-              if (evalBarEnabled) {
-                evalBarEngine.update(data);
-                renderEvalBar();
-              }
-            }
-          } catch (e) {
-            console.log("[KrypBot] Eval parse error:", e);
-          }
-        },
-        onerror: function (e) {
-          console.log("[KrypBot] Eval request error:", e);
-        },
-      });
-    } catch (e) {
-      console.log("[KrypBot] Eval exception:", e);
-    }
-  }
-
-  function getPlayingSide() {
-    try {
-      const { game } = get_cached_game();
-      if (game && game.getPlayingAs) {
-        const side = game.getPlayingAs();
-        if (side === "b" || side === 2) return "b";
-      }
-    } catch (e) {}
-    return "w";
-  }
-
-  function renderEvalBar() {
-    let bar = document.getElementById("thinker-eval-bar");
-    if (!bar) {
-      injectEvalBarDOM();
-      bar = document.getElementById("thinker-eval-bar");
-      if (!bar) return;
-    }
-    const fill = document.getElementById("thinker-eval-fill");
-    const label = document.getElementById("thinker-eval-label");
-    if (!fill || !label) return;
-
-    const playingSide = getPlayingSide();
-    const isBlack = playingSide === "b";
-
-    // evalBarCurrent: 50=equal, >50=white advantage, <50=black advantage
-    const pct = Math.max(2, Math.min(98, evalBarCurrent));
-
-    if (isBlack) {
-      // Jogando de PRETAS: fundo escuro embaixo (nosso lado), fill branco em cima
-      // Fill cresce do topo pra baixo. Mais branco = vantagem brancas (ruim pra nos)
-      fill.style.bottom = "auto";
-      fill.style.top = "0";
-      fill.style.borderRadius = "5px 5px 0 0";
-      fill.style.height = pct + "%";
-    } else {
-      // Jogando de BRANCAS: fill branco embaixo (nosso lado)
-      // Fill cresce de baixo pra cima. Mais branco = vantagem brancas (bom pra nos)
-      fill.style.top = "auto";
-      fill.style.bottom = "0";
-      fill.style.borderRadius = "0 0 5px 5px";
-      fill.style.height = pct + "%";
-    }
-
-    // Label de avaliacao
-    if (lastEvalData.mate !== null && lastEvalData.mate !== undefined) {
-      label.textContent = (lastEvalData.mate > 0 ? "+" : "") + "M" + Math.abs(lastEvalData.mate);
-    } else {
-      const cpVal = (lastEvalData.cp || 0) / 100;
-      label.textContent = (cpVal >= 0 ? "+" : "") + cpVal.toFixed(1);
-    }
-    label.style.color = evalBarCurrent > 55 ? "#1a1a1a" : "#e0e0e0";
-    bar.style.display = "flex";
-  }
-
-  function injectEvalBarDOM() {
-    if (document.getElementById("thinker-eval-bar")) return;
-    const boardEl =
-      document.querySelector("wc-chess-board") ||
-      document.querySelector(".board") ||
-      document.querySelector("chess-board");
-    if (!boardEl) return;
-    const container = boardEl.parentElement;
-    if (!container) return;
-    container.style.display = "flex";
-    container.style.alignItems = "stretch";
-
-    const barEl = document.createElement("div");
-    barEl.id = "thinker-eval-bar";
-    barEl.style.cssText = "width:28px;min-height:100%;background:#1a1a1a;border-radius:6px;margin-right:6px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;box-shadow:0 2px 12px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.06);transition:all 0.3s ease;";
-
-    const fillEl = document.createElement("div");
-    fillEl.id = "thinker-eval-fill";
-    fillEl.style.cssText = "width:100%;height:50%;background:linear-gradient(to top,#f0f0f0 0%,#ffffff 100%);transition:height 0.6s cubic-bezier(0.22,1,0.36,1);position:absolute;bottom:0;left:0;border-radius:0 0 5px 5px;";
-
-    const labelEl = document.createElement("div");
-    labelEl.id = "thinker-eval-label";
-    labelEl.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;font-weight:700;font-family:'Inter',sans-serif;z-index:2;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,0.3);white-space:nowrap;";
-    labelEl.textContent = "0.0";
-
-    barEl.appendChild(fillEl);
-    barEl.appendChild(labelEl);
-    container.insertBefore(barEl, boardEl);
-  }
-
-  function removeEvalBarDOM() {
-    const bar = document.getElementById("thinker-eval-bar");
-    if (bar) bar.remove();
-  }
-
-  // ===== EVAL BAR POLLING INDEPENDENTE =====
-  // Roda a cada 1s, verifica o FEN atual e pede eval
-  // Funciona em TODOS os turnos (nosso e do oponente)
-  let evalPollingFen = "";
-  setInterval(() => {
-    if (!evalBarEnabled && !smartPacingEnabled) return;
-    try {
-      const { game } = get_cached_game();
-      if (!game) return;
-      const currentFen = game.getFEN();
-      if (!currentFen) return;
-      if (currentFen === evalPollingFen) return;
-      evalPollingFen = currentFen;
-      requestEval(currentFen);
-    } catch (e) {
-      // get_cached_game pode falhar antes do jogo carregar
-    }
-  }, 1000);
-
   const computeDelayValue = (gameObj = null) => {
-    // ===== SMART PACING: quando ativo, ignora completamente o Auto Run Delay =====
+    // PRIORIDADE MAXIMA: modo MAX ou valores zerados = jogar instant
+    // Isso é verificado ANTES de tudo, inclusive antes do Smart Pacing
+    if (autoDelayMode === "max" || (autoDelayMin <= 0 && autoDelayMax <= 0 && !smartPacingEnabled)) {
+      return 0;
+    }
+
+    // Smart Pacing ativo: usa lógica humanizada
     if (smartPacingEnabled) {
       return computeSmartPacing(gameObj);
     }
 
-    // ===== AUTO RUN DELAY LEGADO (só roda quando Smart Pacing está OFF) =====
-    if (autoDelayMode === "max") return 0;
+    // AUTO RUN DELAY LEGADO (Smart Pacing OFF)
     if (autoDelayMode === "average") {
       let min = parseFloat(autoDelayMin) || DEFAULT_MIN_DELAY;
       let max = parseFloat(autoDelayMax) || DEFAULT_MAX_DELAY;
@@ -1232,7 +1036,7 @@
           legalMovesCount = legalMoves.length;
           if (legalMovesCount <= 1) isForced = true;
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
     // Lance forçado (xeque único, recaptura) → reflexo
@@ -1253,28 +1057,9 @@
       return Math.max(0.1, Number(gaussianRandom(0.15, 0.05).toFixed(2)));
     }
 
-    // ===== EVAL-AWARE PACING: usar dados da eval bar se disponíveis =====
-    let evalFactor = 1.0;
-    if (lastEvalData && lastEvalData.cp !== null && lastEvalData.cp !== undefined) {
-      const absCp = Math.abs(lastEvalData.cp);
-      // Posição equilibrada (|cp| < 50): humano pensa mais
-      if (absCp < 50) evalFactor = 1.4;
-      // Leve vantagem/desvantagem (50-150): pensa moderado
-      else if (absCp < 150) evalFactor = 1.1;
-      // Vantagem clara (150-400): decisão relativamente rápida
-      else if (absCp < 400) evalFactor = 0.85;
-      // Vantagem esmagadora (>400): joga rápido, posição decidida
-      else evalFactor = 0.6;
-    }
-    if (lastEvalData && lastEvalData.mate !== null && lastEvalData.mate !== undefined) {
-      const absMate = Math.abs(lastEvalData.mate);
-      // Mate encontrado: joga rápido (reflexo de vitória/desespero)
-      evalFactor = absMate <= 3 ? 0.3 : 0.5;
-    }
-
     // Meio de jogo: complexidade posicional com ruído gaussiano
     let complexity = Math.min(1.0, legalMovesCount / 35.0);
-    complexity = complexity * sessionPacingProfile * evalFactor;
+    complexity = complexity * sessionPacingProfile;
 
     const meanTime = baseDelay + complexity * (maxDelay * 0.6);
     let finalTime = gaussianRandom(meanTime, maxDelay * 0.15);
@@ -1539,7 +1324,7 @@
                 cached_game = cached_board[k];
                 break;
               }
-            } catch (e) {}
+            } catch (e) { }
           }
         }
       }
@@ -1624,9 +1409,6 @@
 
       checkfen = fen;
       can_interval = false;
-
-      // Solicitar avaliacao para Eval Bar e Smart Pacing
-      requestEval(fen);
 
       chessBot.time = computeDelayValue(game);
       log(`Modo: ${gameMode} | Delay: ${chessBot.time}s | Elo: ${currentElo}`);
@@ -1889,22 +1671,6 @@
           </div>
         </div>
 
-        <div class="kb-section">
-          <p class="kb-section-label">Smart Pacing</p>
-          <div class="kb-radio-group">
-            <input type="radio" id="sp-on" name="kb-smart-pacing" value="1"><label for="sp-on">ON</label>
-            <input type="radio" id="sp-off" name="kb-smart-pacing" value="0" checked><label for="sp-off">OFF</label>
-          </div>
-        </div>
-
-        <div class="kb-section">
-          <p class="kb-section-label">Eval Bar</p>
-          <div class="kb-radio-group">
-            <input type="radio" id="eb-on" name="kb-eval-bar" value="1"><label for="eb-on">ON</label>
-            <input type="radio" id="eb-off" name="kb-eval-bar" value="0" checked><label for="eb-off">OFF</label>
-          </div>
-        </div>
-
         <div class="kb-section-col" id="puzzle-section" style="display: none;">
           <p class="kb-section-label">Puzzle Mode <span style="font-size:11px; color:rgba(255,255,255,0.4); font-weight:normal;">(Elo 3200)</span></p>
           <div class="kb-section" style="margin:0">
@@ -1929,6 +1695,14 @@
             <span style="font-size:11px; color:rgba(255,255,255,0.4)">800</span>
             <input id="kb-elo-slider" class="kb-slider" type="range" min="800" max="3200" step="100" value="3200">
             <span id="kb-elo-val" class="kb-slider-val">3200</span>
+          </div>
+        </div>
+
+        <div class="kb-section">
+          <p class="kb-section-label">Smart Pacing</p>
+          <div class="kb-radio-group">
+            <input type="radio" id="sp-on" name="kb-smart-pacing" value="1"><label for="sp-on">ON</label>
+            <input type="radio" id="sp-off" name="kb-smart-pacing" value="0" checked><label for="sp-off">OFF</label>
           </div>
         </div>
 
@@ -2156,28 +1930,6 @@
         if (smartPacingEnabled) {
           $(`input[name="kb-smart-pacing"][value="1"]`).prop("checked", true);
           $("#auto-delay-section").hide();
-        }
-
-        // --- EVAL BAR TOGGLE ---
-        $('input[name="kb-eval-bar"]').on("change", function () {
-          evalBarEnabled = $(this).val() === "1";
-          localStorage.setItem("evalBar", evalBarEnabled);
-          if (evalBarEnabled) {
-            injectEvalBarDOM();
-            lastEvalFen = ""; // force re-request
-          } else {
-            removeEvalBarDOM();
-          }
-          window.krypbotUpdateUI();
-        });
-
-        // Inicializar estado da Eval Bar
-        if (evalBarEnabled) {
-          $(`input[name="kb-eval-bar"][value="1"]`).prop("checked", true);
-          // Injetar DOM imediatamente (nao esperar o primeiro eval)
-          setTimeout(() => {
-            injectEvalBarDOM();
-          }, 1500);
         }
 
         $("input[name='delayMode']").on("change", function () {

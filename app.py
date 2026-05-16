@@ -343,12 +343,8 @@ def getmove():
     cache_key = f"{get_base_fen(fen)}_{elo}"
     if cache_key in cache:
         elapsed = (time.perf_counter() - start_time) * 1000
-        cached = cache[cache_key]
-        print(f"[CACHE HIT] Jogada: {cached} | Latência Interna: {elapsed:.2f}ms", flush=True)
-        # Se cache tem eval, retorna com eval
-        if isinstance(cached, dict):
-            return jsonify(cached)
-        return jsonify([cached])
+        print(f"[CACHE HIT] Jogada: {cache[cache_key]} | Latência Interna: {elapsed:.2f}ms", flush=True)
+        return jsonify([cache[cache_key]])
     
     try:
         board = chess.Board(fen)
@@ -393,54 +389,6 @@ def getmove():
     except Exception as e:
         print(f"Erro: {e}")
         return jsonify([])
-
-
-# =============================================================================
-# EVAL ENDPOINT — Retorna avaliação da posição (cp ou mate)
-# =============================================================================
-@app.route("/eval", methods=["POST"])
-def get_eval():
-    """
-    Retorna a avaliação da posição atual em centipawns ou mate.
-    Input: { "fen": "..." }
-    Output: { "cp": number|null, "mate": number|null, "depth": number }
-    """
-    try:
-        data = request.get_json(force=True, silent=True)
-        if not data:
-            import json
-            data = json.loads(request.data)
-    except:
-        data = {}
-
-    fen = data.get("fen", "")
-    if not fen:
-        return jsonify({"cp": 0, "mate": None, "depth": 0})
-
-    try:
-        board = chess.Board(fen)
-        
-        # Análise rápida com limite de tempo curto para não travar
-        limit = chess.engine.Limit(time=0.15)
-        info = engine.analyse(board, limit)
-        
-        score = info.get("score")
-        depth = info.get("depth", 0)
-        
-        result = {"cp": None, "mate": None, "depth": depth}
-        
-        if score:
-            # Score é relativo ao side-to-move, convertemos para White POV
-            pov = score.white()
-            if pov.is_mate():
-                result["mate"] = pov.mate()
-            else:
-                result["cp"] = pov.score()
-        
-        return jsonify(result)
-    except Exception as e:
-        print(f"Eval erro: {e}")
-        return jsonify({"cp": 0, "mate": None, "depth": 0})
 
 import rating
 import database
