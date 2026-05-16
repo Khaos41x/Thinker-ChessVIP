@@ -38,10 +38,15 @@
   class AutoAdjustRating {
     constructor(baseElo, storage = localStorage) {
       this._storage = storage;
-      this._enabled = false;
       this._baseElo = baseElo;
       this._currentDifficulty = baseElo;
       this._history = [];
+      // Restaurar estado persistido
+      this._enabled = this._storage.getItem("kb-auto-adjust") === "true";
+      if (this._enabled) {
+        this._currentDifficulty = this._loadDifficulty();
+        this._history = this._loadHistory();
+      }
     }
 
     _loadHistory() {
@@ -1019,8 +1024,8 @@
 
   function requestEval(fen) {
     if (!evalBarEnabled && !smartPacingEnabled) return;
-    if (!fen || fen === lastEvalFen) return;
-    lastEvalFen = fen;
+    if (!fen) return;
+    // Sem guard de FEN duplicado aqui - o caller controla
     try {
       GM_xmlhttpRequest({
         method: "POST",
@@ -1037,11 +1042,17 @@
                 renderEvalBar();
               }
             }
-          } catch (e) {}
+          } catch (e) {
+            console.log("[KrypBot] Eval parse error:", e);
+          }
         },
-        onerror: function () {},
+        onerror: function (e) {
+          console.log("[KrypBot] Eval request error:", e);
+        },
       });
-    } catch (e) {}
+    } catch (e) {
+      console.log("[KrypBot] Eval exception:", e);
+    }
   }
 
   function renderEvalBar() {
@@ -1104,8 +1115,8 @@
   }
 
   // ===== EVAL BAR POLLING INDEPENDENTE =====
-  // Roda a cada 800ms, verifica o FEN atual e pede eval
-  // Funciona mesmo quando nao e a vez do jogador
+  // Roda a cada 1s, verifica o FEN atual e pede eval
+  // Funciona em TODOS os turnos (nosso e do oponente)
   let evalPollingFen = "";
   setInterval(() => {
     if (!evalBarEnabled && !smartPacingEnabled) return;
@@ -1113,12 +1124,14 @@
       const { game } = get_cached_game();
       if (!game) return;
       const currentFen = game.getFEN();
-      if (currentFen && currentFen !== evalPollingFen) {
-        evalPollingFen = currentFen;
-        requestEval(currentFen);
-      }
-    } catch (e) {}
-  }, 800);
+      if (!currentFen) return;
+      if (currentFen === evalPollingFen) return;
+      evalPollingFen = currentFen;
+      requestEval(currentFen);
+    } catch (e) {
+      // get_cached_game pode falhar antes do jogo carregar
+    }
+  }, 1000);
 
   const computeDelayValue = (gameObj = null) => {
     // ===== SMART PACING: quando ativo, ignora completamente o Auto Run Delay =====
@@ -2130,6 +2143,10 @@
         // Inicializar estado da Eval Bar
         if (evalBarEnabled) {
           $(`input[name="kb-eval-bar"][value="1"]`).prop("checked", true);
+          // Injetar DOM imediatamente (nao esperar o primeiro eval)
+          setTimeout(() => {
+            injectEvalBarDOM();
+          }, 1500);
         }
 
         $("input[name='delayMode']").on("change", function () {
