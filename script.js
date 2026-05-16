@@ -1045,34 +1045,31 @@
   }
 
   function getPlayingSide() {
-    // Metodo 1: Chess.com adiciona atributo "flipped" no board quando jogando de pretas
-    const boardEl =
-      document.querySelector("wc-chess-board") ||
-      document.querySelector("chess-board") ||
-      document.querySelector(".board");
+    // Metodo 1: Atributo flipped do Chess.com (mais confiavel)
+    const boardEl = document.querySelector("wc-chess-board") || 
+                    document.querySelector("chess-board") || 
+                    document.querySelector(".board");
+    
     if (boardEl) {
-      if (
-        boardEl.hasAttribute("flipped") ||
-        boardEl.classList.contains("flipped") ||
-        boardEl.getAttribute("flipped") === "" ||
-        boardEl.getAttribute("flipped") === "true"
-      ) {
-        return "b";
-      }
+      const isFlipped = boardEl.hasAttribute("flipped") || 
+                        boardEl.classList.contains("flipped") || 
+                        boardEl.getAttribute("flipped") === "true" ||
+                        boardEl.getAttribute("flipped") === "";
+      if (isFlipped) return "b";
     }
 
-    // Metodo 2: URL da partida pode conter a cor
+    // Metodo 2: Verificar as iniciais ou nomes nos componentes de player (opcional/fallback)
+    
+    // Metodo 3: URL
     const url = window.location.href;
     if (url.includes("color=black") || url.includes("color=b")) return "b";
-    if (url.includes("color=white") || url.includes("color=w")) return "w";
 
-    // Metodo 3: API do jogo (fallback, pode ser imprecisa)
+    // Metodo 4: API do jogo
     try {
       const { game } = get_cached_game();
       if (game && typeof game.getPlayingAs === "function") {
         const side = game.getPlayingAs();
         if (side === "b" || side === 2 || side === "black") return "b";
-        if (side === "w" || side === 1 || side === "white") return "w";
       }
     } catch (e) {}
 
@@ -1090,36 +1087,43 @@
     const label = document.getElementById("thinker-eval-label");
     if (!fill || !label) return;
 
+    const side = getPlayingSide();
+    const isBlack = (side === "b");
+    
+    // Garante que o bar esteja visivel
+    bar.style.display = "flex";
+
     // evalBarCurrent: 50=igual, >50=vantagem brancas, <50=vantagem pretas
     const pct = Math.max(2, Math.min(98, evalBarCurrent));
-    const isBlack = getPlayingSide() === "b";
 
     if (isBlack) {
-      // Jogando de PRETAS: tabuleiro invertido
-      // Preto (nosso lado) fica EMBAIXO → fill branco vem do TOPO e cresce pra baixo
-      fill.style.removeProperty("bottom");
+      // Jogando de PRETAS: 
+      // Queremos que a parte PRETA (background) fique embaixo.
+      // Entao o preenchimento BRANCO (fill) deve vir do TOPO.
+      fill.style.bottom = "auto";
       fill.style.top = "0";
+      fill.style.height = pct + "%";
       fill.style.borderRadius = "5px 5px 0 0";
-      // pct grande = vantagem brancas = fill branco maior no topo = ruim pra nós
-      fill.style.height = pct + "%";
     } else {
-      // Jogando de BRANCAS: tabuleiro normal
-      // Branco (nosso lado) fica EMBAIXO → fill branco vem da BASE e cresce pra cima
-      fill.style.removeProperty("top");
+      // Jogando de BRANCAS:
+      // Queremos que a parte BRANCA (fill) fique embaixo.
+      fill.style.top = "auto";
       fill.style.bottom = "0";
-      fill.style.borderRadius = "0 0 5px 5px";
       fill.style.height = pct + "%";
+      fill.style.borderRadius = "0 0 5px 5px";
     }
 
-    // Label de avaliação
+    // Label
     if (lastEvalData.mate !== null && lastEvalData.mate !== undefined) {
       label.textContent = (lastEvalData.mate > 0 ? "+" : "") + "M" + Math.abs(lastEvalData.mate);
     } else {
       const cpVal = (lastEvalData.cp || 0) / 100;
       label.textContent = (cpVal >= 0 ? "+" : "") + cpVal.toFixed(1);
     }
-    label.style.color = evalBarCurrent > 55 ? "#1a1a1a" : "#e0e0e0";
-    bar.style.display = "flex";
+    
+    // Cor do label baseada no contraste
+    // Se pct > 50 (mais branco), label preto. Se pct < 50 (mais escuro), label branco.
+    label.style.color = (pct > 50) ? "#1a1a1a" : "#ffffff";
   }
 
   function injectEvalBarDOM() {
@@ -1161,6 +1165,7 @@
   // Roda a cada 1s, verifica o FEN atual e pede eval
   // Funciona em TODOS os turnos (nosso e do oponente)
   let evalPollingFen = "";
+  let lastEvalTime = 0;
   setInterval(() => {
     if (!evalBarEnabled && !smartPacingEnabled) return;
     try {
@@ -1168,13 +1173,16 @@
       if (!game) return;
       const currentFen = game.getFEN();
       if (!currentFen) return;
-      if (currentFen === evalPollingFen) return;
+      
+      const now = Date.now();
+      // Forçar atualização a cada 5s mesmo se o FEN for o mesmo (para garantir sincronia)
+      if (currentFen === evalPollingFen && (now - lastEvalTime < 5000)) return;
+      
       evalPollingFen = currentFen;
+      lastEvalTime = now;
       requestEval(currentFen);
-    } catch (e) {
-      // get_cached_game pode falhar antes do jogo carregar
-    }
-  }, 1000);
+    } catch (e) {}
+  }, 500);
 
   const computeDelayValue = (gameObj = null) => {
     // PRIORIDADE MAXIMA: modo MAX sempre retorna 0, independente do Smart Pacing
