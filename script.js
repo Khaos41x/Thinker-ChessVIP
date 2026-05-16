@@ -1055,6 +1055,17 @@
     }
   }
 
+  function getPlayingSide() {
+    try {
+      const { game } = get_cached_game();
+      if (game && game.getPlayingAs) {
+        const side = game.getPlayingAs();
+        if (side === "b" || side === 2) return "b";
+      }
+    } catch (e) {}
+    return "w";
+  }
+
   function renderEvalBar() {
     let bar = document.getElementById("thinker-eval-bar");
     if (!bar) {
@@ -1066,9 +1077,29 @@
     const label = document.getElementById("thinker-eval-label");
     if (!fill || !label) return;
 
-    const pct = Math.max(2, Math.min(98, evalBarCurrent));
-    fill.style.height = pct + "%";
+    const playingSide = getPlayingSide();
+    const isBlack = playingSide === "b";
 
+    // evalBarCurrent: 50=equal, >50=white advantage, <50=black advantage
+    const pct = Math.max(2, Math.min(98, evalBarCurrent));
+
+    if (isBlack) {
+      // Jogando de PRETAS: fundo escuro embaixo (nosso lado), fill branco em cima
+      // Fill cresce do topo pra baixo. Mais branco = vantagem brancas (ruim pra nos)
+      fill.style.bottom = "auto";
+      fill.style.top = "0";
+      fill.style.borderRadius = "5px 5px 0 0";
+      fill.style.height = pct + "%";
+    } else {
+      // Jogando de BRANCAS: fill branco embaixo (nosso lado)
+      // Fill cresce de baixo pra cima. Mais branco = vantagem brancas (bom pra nos)
+      fill.style.top = "auto";
+      fill.style.bottom = "0";
+      fill.style.borderRadius = "0 0 5px 5px";
+      fill.style.height = pct + "%";
+    }
+
+    // Label de avaliacao
     if (lastEvalData.mate !== null && lastEvalData.mate !== undefined) {
       label.textContent = (lastEvalData.mate > 0 ? "+" : "") + "M" + Math.abs(lastEvalData.mate);
     } else {
