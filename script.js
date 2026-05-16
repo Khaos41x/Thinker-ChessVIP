@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC138
+// @name         TC142
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -236,20 +236,41 @@
 
         // Processamos TODOS os jogos disponíveis no mês para estatísticas globais precisas
         const processedAll = filtered.map((game) => {
-          const isWhite = game.white.username.toLowerCase() === username.toLowerCase();
+          const isWhite =
+            game.white.username.toLowerCase() === username.toLowerCase();
           const playerData = isWhite ? game.white : game.black;
-          const drawResults = ["agreed", "repetition", "stalemate", "insufficient", "50move", "timevsinsufficient"];
-          const result = playerData.result === "win" ? "W" : drawResults.includes(playerData.result) ? "D" : "L";
-          
+          const drawResults = [
+            "agreed",
+            "repetition",
+            "stalemate",
+            "insufficient",
+            "50move",
+            "timevsinsufficient",
+          ];
+          const result =
+            playerData.result === "win"
+              ? "W"
+              : drawResults.includes(playerData.result)
+                ? "D"
+                : "L";
+
           const openingMatch = game.pgn
-            ? game.pgn.match(/\[Opening "(.+?)"\]/) || game.pgn.match(/\[ECOUrl "https?:\/\/www\.chess\.com\/openings\/([^"]+)"\]/)
+            ? game.pgn.match(/\[Opening "(.+?)"\]/) ||
+              game.pgn.match(
+                /\[ECOUrl "https?:\/\/www\.chess\.com\/openings\/([^"]+)"\]/,
+              )
             : null;
-          const opening = openingMatch ? openingMatch[1].replace(/-/g, " ") : null;
-          
+          const opening = openingMatch
+            ? openingMatch[1].replace(/-/g, " ")
+            : null;
+
           return {
             result,
             color: isWhite ? "white" : "black",
-            accuracy: typeof playerData.accuracy === "number" ? playerData.accuracy : null,
+            accuracy:
+              typeof playerData.accuracy === "number"
+                ? playerData.accuracy
+                : null,
             opening,
             timestamp: game.end_time,
           };
@@ -276,14 +297,30 @@
         const asWhite = processedAll.filter((g) => g.color === "white");
         const asBlack = processedAll.filter((g) => g.color === "black");
         const winRateByColor = {
-          white: asWhite.length ? Math.round((asWhite.filter((g) => g.result === "W").length / asWhite.length) * 100) : null,
-          black: asBlack.length ? Math.round((asBlack.filter((g) => g.result === "W").length / asBlack.length) * 100) : null,
+          white: asWhite.length
+            ? Math.round(
+                (asWhite.filter((g) => g.result === "W").length /
+                  asWhite.length) *
+                  100,
+              )
+            : null,
+          black: asBlack.length
+            ? Math.round(
+                (asBlack.filter((g) => g.result === "W").length /
+                  asBlack.length) *
+                  100,
+              )
+            : null,
         };
 
         // Precisão média (Estatística global)
         const withAcc = processedAll.filter((g) => g.accuracy !== null);
         const avgAccuracy = withAcc.length
-          ? parseFloat((withAcc.reduce((s, g) => s + g.accuracy, 0) / withAcc.length).toFixed(1))
+          ? parseFloat(
+              (
+                withAcc.reduce((s, g) => s + g.accuracy, 0) / withAcc.length
+              ).toFixed(1),
+            )
           : null;
 
         // Opening mais jogada por cor
@@ -315,7 +352,13 @@
           });
           return {
             total: range.length,
-            wr: range.length ? Math.round((range.filter((g) => g.result === "W").length / range.length) * 100) : null,
+            wr: range.length
+              ? Math.round(
+                  (range.filter((g) => g.result === "W").length /
+                    range.length) *
+                    100,
+                )
+              : null,
           };
         };
 
@@ -681,9 +724,11 @@
       // Pega o username do jogador logado pelo link de perfil no nav
       const getMyOwnUsername = () => {
         // O jogador de baixo na board é SEMPRE o usuário local no Chess.com
-        const bottomEl = document.querySelector(".player-bottom-component .user-username-component, .player-component.player-bottom .user-username-component, .player-component.player-bottom .user-tagline-username");
+        const bottomEl = document.querySelector(
+          ".player-bottom-component .user-username-component, .player-component.player-bottom .user-username-component, .player-component.player-bottom .user-tagline-username",
+        );
         if (bottomEl) return bottomEl.textContent.trim().toLowerCase();
-        
+
         // Fallback: perfil na barra lateral (usualmente #nav-user-tagline-username)
         const navEl = document.querySelector("#nav-user-tagline-username");
         if (navEl) return navEl.textContent.trim().toLowerCase();
@@ -693,12 +738,16 @@
 
       const getOpponentUsername = () => {
         // O jogador de cima na board é SEMPRE o oponente no Chess.com
-        const topEl = document.querySelector(".player-top-component .user-username-component, .player-component.player-top .user-username-component, .player-component.player-top .user-tagline-username");
+        const topEl = document.querySelector(
+          ".player-top-component .user-username-component, .player-component.player-top .user-username-component, .player-component.player-top .user-tagline-username",
+        );
         if (topEl) return topEl.textContent.trim();
 
         // Fallback antigo
         const myUsername = getMyOwnUsername();
-        const all = document.querySelectorAll("a.user-username.username, a.user-username-component");
+        const all = document.querySelectorAll(
+          "a.user-username.username, a.user-username-component",
+        );
         for (const el of all) {
           const name = el.textContent.trim();
           if (name && (!myUsername || name.toLowerCase() !== myUsername)) {
@@ -709,12 +758,16 @@
       };
 
       const getMyUsernameElement = () => {
-        const bottomEl = document.querySelector(".player-bottom-component .user-username-component, .player-component.player-bottom .user-username-component, .player-component.player-bottom .user-tagline-username");
+        const bottomEl = document.querySelector(
+          ".player-bottom-component .user-username-component, .player-component.player-bottom .user-username-component, .player-component.player-bottom .user-tagline-username",
+        );
         if (bottomEl) return bottomEl;
-        
+
         const myUsername = getMyOwnUsername();
         if (!myUsername) return null;
-        const all = document.querySelectorAll("a.user-username.username, a.user-username-component");
+        const all = document.querySelectorAll(
+          "a.user-username.username, a.user-username-component",
+        );
         for (const el of all) {
           if (el.textContent.trim().toLowerCase() === myUsername) return el;
         }
@@ -722,11 +775,15 @@
       };
 
       const getOpponentElement = () => {
-        const topEl = document.querySelector(".player-top-component .user-username-component, .player-component.player-top .user-username-component, .player-component.player-top .user-tagline-username");
+        const topEl = document.querySelector(
+          ".player-top-component .user-username-component, .player-component.player-top .user-username-component, .player-component.player-top .user-tagline-username",
+        );
         if (topEl) return topEl;
 
         const myUsername = getMyOwnUsername();
-        const all = document.querySelectorAll("a.user-username.username, a.user-username-component");
+        const all = document.querySelectorAll(
+          "a.user-username.username, a.user-username-component",
+        );
         for (const el of all) {
           const name = el.textContent.trim();
           if (name && (!myUsername || name.toLowerCase() !== myUsername))
@@ -846,6 +903,8 @@
   if (autoDelayMin > autoDelayMax)
     [autoDelayMin, autoDelayMax] = [autoDelayMax, autoDelayMin];
 
+  let smartPacingEnabled = localStorage.getItem("smartPacing") === "true";
+
   let chessBot = {
     elo: 3200,
     time: 0.02,
@@ -915,8 +974,8 @@
   };
 
   // --- LÃ“GICA DE CÃLCULO DE DELAY ---
-  const sessionPacingProfile = 0.8 + (Math.random() * 0.4); // 0.8 (agressivo) a 1.2 (defensivo)
-  
+  const sessionPacingProfile = 0.8 + Math.random() * 0.4; // 0.8 (agressivo) a 1.2 (defensivo)
+
   const gaussianRandom = (mean = 0, stdev = 1) => {
     let u = 1 - Math.random();
     let v = Math.random();
@@ -925,73 +984,102 @@
   };
 
   const computeDelayValue = (gameObj = null) => {
+    // ===== SMART PACING: quando ativo, ignora completamente o Auto Run Delay =====
+    if (smartPacingEnabled) {
+      return computeSmartPacing(gameObj);
+    }
+
+    // ===== AUTO RUN DELAY LEGADO (só roda quando Smart Pacing está OFF) =====
     if (autoDelayMode === "max") return 0;
     if (autoDelayMode === "average") {
       let min = parseFloat(autoDelayMin) || DEFAULT_MIN_DELAY;
       let max = parseFloat(autoDelayMax) || DEFAULT_MAX_DELAY;
       return Number(((min + max) / 2).toFixed(2));
     }
-    
-    // SMART PACING (Substitui o "random" básico por tempo orgânico)
+    // Modo random legado
+    let min = parseFloat(autoDelayMin) || DEFAULT_MIN_DELAY;
+    let max = parseFloat(autoDelayMax) || DEFAULT_MAX_DELAY;
+    if (min > max) [min, max] = [max, min];
+    const r = Math.random() * (max - min) + min;
+    return Number(r.toFixed(2));
+  };
+
+  // ===== SMART PACING ENGINE (Gestão de tempo humanizada) =====
+  const computeSmartPacing = (gameObj = null) => {
     let baseDelay = 0.2;
     let maxDelay = 2.5;
-    
+
+    // Detecta o controle de tempo pelo relógio na tela
     let timeMode = "blitz";
-    const url = window.location.href;
-    if (url.includes("1|") || url.includes("1/") || url.includes("2|")) timeMode = "bullet";
-    if (url.includes("10|") || url.includes("15|")) timeMode = "rapid";
-    
+    const clockEls = document.querySelectorAll(
+      ".clock-component .clock-time-component, .clock-component .clock-time",
+    );
+    let myTimeRemaining = null;
+    for (const clock of clockEls) {
+      const text = clock.textContent.trim();
+      const parts = text.split(":");
+      if (parts.length === 2) {
+        const mins = parseInt(parts[0]);
+        const secs = parseFloat(parts[1]);
+        const total = mins * 60 + secs;
+        if (myTimeRemaining === null || total < myTimeRemaining) {
+          myTimeRemaining = total;
+        }
+        // Detectar modo pelo tempo inicial (baseado no range)
+        if (total <= 120) timeMode = "bullet";
+        else if (total <= 300) timeMode = "blitz";
+        else timeMode = "rapid";
+      }
+    }
+
     if (timeMode === "bullet") maxDelay = 2.5;
     if (timeMode === "blitz") maxDelay = 6.0;
     if (timeMode === "rapid") maxDelay = 12.0;
-    
+
     let legalMovesCount = 20;
     let moveNumber = 10;
     let isForced = false;
 
     if (gameObj) {
-       try {
-           const history = typeof gameObj.getHistory === "function" ? gameObj.getHistory() : [];
-           moveNumber = history.length;
-           
-           if (typeof gameObj.getLegalMoves === "function") {
-               const legalMoves = gameObj.getLegalMoves();
-               legalMovesCount = legalMoves.length;
-               if (legalMovesCount <= 1) isForced = true;
-           }
-       } catch (e) {}
-    }
-    
-    if (isForced) {
-        return Math.max(0.1, Number(gaussianRandom(0.2, 0.05).toFixed(2)));
-    }
-    
-    if (moveNumber <= 8) {
-        return Math.max(0.1, Math.min(1.0, Number(gaussianRandom(0.4, 0.15).toFixed(2))));
-    }
-    
-    let isTimeTrouble = false;
-    const clockEls = document.querySelectorAll(".clock-component .clock-time-component, .clock-component .clock-time");
-    for (const clock of clockEls) {
-        const text = clock.textContent.trim();
-        // Se a string contiver "0:0" e tiver tamanho curto (ex: "0:08", "0:05.1")
-        if (text.startsWith("0:0") && text.length <= 6) {
-             const secs = parseFloat(text.replace("0:0", ""));
-             if (secs < 10) isTimeTrouble = true;
+      try {
+        const history =
+          typeof gameObj.getHistory === "function" ? gameObj.getHistory() : [];
+        moveNumber = history.length;
+
+        if (typeof gameObj.getLegalMoves === "function") {
+          const legalMoves = gameObj.getLegalMoves();
+          legalMovesCount = legalMoves.length;
+          if (legalMovesCount <= 1) isForced = true;
         }
+      } catch (e) {}
     }
-    
-    if (isTimeTrouble) {
-        return Math.max(0.1, Number(gaussianRandom(0.15, 0.05).toFixed(2)));
+
+    // Lance forçado (xeque único, recaptura) → reflexo
+    if (isForced) {
+      return Math.max(0.1, Number(gaussianRandom(0.2, 0.05).toFixed(2)));
     }
-    
+
+    // Abertura (primeiros 8 lances) → memória muscular
+    if (moveNumber <= 8) {
+      return Math.max(
+        0.1,
+        Math.min(1.0, Number(gaussianRandom(0.4, 0.15).toFixed(2))),
+      );
+    }
+
+    // Apuro de tempo → instinto de sobrevivência
+    if (myTimeRemaining !== null && myTimeRemaining < 10) {
+      return Math.max(0.1, Number(gaussianRandom(0.15, 0.05).toFixed(2)));
+    }
+
+    // Meio de jogo: complexidade posicional com ruído gaussiano
     let complexity = Math.min(1.0, legalMovesCount / 35.0);
     complexity = complexity * sessionPacingProfile;
-    
-    const meanTime = baseDelay + (complexity * (maxDelay * 0.6));
+
+    const meanTime = baseDelay + complexity * (maxDelay * 0.6);
     let finalTime = gaussianRandom(meanTime, maxDelay * 0.15);
     finalTime = Math.max(baseDelay, Math.min(maxDelay, finalTime));
-    
+
     return Number(finalTime.toFixed(2));
   };
 
@@ -1625,7 +1713,15 @@
           </div>
         </div>
 
-        <div class="kb-section-col">
+        <div class="kb-section">
+          <p class="kb-section-label">Smart Pacing</p>
+          <div class="kb-radio-group">
+            <input type="radio" id="sp-on" name="kb-smart-pacing" value="1"><label for="sp-on">ON</label>
+            <input type="radio" id="sp-off" name="kb-smart-pacing" value="0" checked><label for="sp-off">OFF</label>
+          </div>
+        </div>
+
+        <div class="kb-section-col" id="auto-delay-section">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <p class="kb-section-label">Auto Run Delay</p>
             <span id="autoDelayDisplay" class="kb-delay-display">0.50 - 2.00s</span>
@@ -1832,6 +1928,24 @@
             `${autoDelayMin.toFixed(2)} - ${autoDelayMax.toFixed(2)}s`,
           );
         });
+
+        // --- SMART PACING TOGGLE ---
+        $('input[name="kb-smart-pacing"]').on("change", function () {
+          smartPacingEnabled = $(this).val() === "1";
+          localStorage.setItem("smartPacing", smartPacingEnabled);
+          if (smartPacingEnabled) {
+            $("#auto-delay-section").slideUp(200);
+          } else {
+            $("#auto-delay-section").slideDown(200);
+          }
+          window.krypbotUpdateUI();
+        });
+
+        // Inicializar visibilidade do Auto Run Delay baseado no estado salvo
+        if (smartPacingEnabled) {
+          $(`input[name="kb-smart-pacing"][value="1"]`).prop("checked", true);
+          $("#auto-delay-section").hide();
+        }
 
         $("input[name='delayMode']").on("change", function () {
           autoDelayMode = $(this).val();
