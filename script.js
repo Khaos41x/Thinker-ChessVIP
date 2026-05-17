@@ -27,12 +27,17 @@
   // --- SAFETY RESET / CONFIGURAÇÃO INICIAL ---
   // Garante que todas as features comecem DESATIVADAS por padrão no primeiro uso desta versão,
   // limpando qualquer estado anterior que possa ter ficado ativo (Smart Pacing, Eval Bar, Auto Adjust).
-  if (localStorage.getItem("kb_default_off_v3") !== "true") {
+  // Também força o modo do Auto Run Delay para Random (RND) por padrão.
+  if (localStorage.getItem("kb_default_off_v4") !== "true") {
     localStorage.setItem("smartPacing", "false");
     localStorage.setItem("evalBar", "false");
     localStorage.setItem("kb-auto-adjust", "false");
-    localStorage.setItem("kb_default_off_v3", "true");
+    localStorage.setItem("autoDelayMode", "random");
+    localStorage.setItem("autoMinDelay", "0.5");
+    localStorage.setItem("autoMaxDelay", "2.0");
+    localStorage.setItem("kb_default_off_v4", "true");
   }
+
 
 
   // --- CONFIGURAÃ‡Ã•ES PADRÃƒO (AUTO RUN DELAY) ---
