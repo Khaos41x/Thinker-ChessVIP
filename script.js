@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TC154
+// @name         TC157
 // @namespace    http://tampermonkey.net/
 // @version      2026-04-26
 // @description  Chess Bot com Servidor Local
@@ -37,8 +37,6 @@
     localStorage.setItem("autoMaxDelay", "2.0");
     localStorage.setItem("kb_default_off_v4", "true");
   }
-
-
 
   // --- CONFIGURAÃ‡Ã•ES PADRÃƒO (AUTO RUN DELAY) ---
   const DEFAULT_MIN_DELAY = 0.5,
@@ -911,7 +909,8 @@
   // Validacao inicial
   if (isNaN(autoDelayMin) || autoDelayMin < 0) autoDelayMin = DEFAULT_MIN_DELAY;
   if (isNaN(autoDelayMax) || autoDelayMax < 0) autoDelayMax = DEFAULT_MAX_DELAY;
-  if (autoDelayMin > autoDelayMax) [autoDelayMin, autoDelayMax] = [autoDelayMax, autoDelayMin];
+  if (autoDelayMin > autoDelayMax)
+    [autoDelayMin, autoDelayMax] = [autoDelayMax, autoDelayMin];
 
   let smartPacingEnabled = localStorage.getItem("smartPacing") === "true";
 
@@ -1061,15 +1060,17 @@
 
   function getPlayingSide() {
     // Metodo 1: Atributo flipped do Chess.com (mais confiavel)
-    const boardEl = document.querySelector("wc-chess-board") ||
-                    document.querySelector("chess-board") ||
-                    document.querySelector(".board");
+    const boardEl =
+      document.querySelector("wc-chess-board") ||
+      document.querySelector("chess-board") ||
+      document.querySelector(".board");
 
     if (boardEl) {
-      const isFlipped = boardEl.hasAttribute("flipped") ||
-                        boardEl.classList.contains("flipped") ||
-                        boardEl.getAttribute("flipped") === "true" ||
-                        boardEl.getAttribute("flipped") === "";
+      const isFlipped =
+        boardEl.hasAttribute("flipped") ||
+        boardEl.classList.contains("flipped") ||
+        boardEl.getAttribute("flipped") === "true" ||
+        boardEl.getAttribute("flipped") === "";
       if (isFlipped) return "b";
     }
 
@@ -1103,7 +1104,7 @@
     if (!fill || !label) return;
 
     const side = getPlayingSide();
-    const isBlack = (side === "b");
+    const isBlack = side === "b";
 
     // Garante que o bar esteja visivel
     bar.style.display = "flex";
@@ -1132,7 +1133,8 @@
     // Se for preto, invertemos o sinal para que vantagem do jogador seja sempre "+"
     if (lastEvalData.mate !== null && lastEvalData.mate !== undefined) {
       const displayMate = isBlack ? -lastEvalData.mate : lastEvalData.mate;
-      label.textContent = (displayMate > 0 ? "+" : "") + "M" + Math.abs(displayMate);
+      label.textContent =
+        (displayMate > 0 ? "+" : "") + "M" + Math.abs(displayMate);
     } else {
       let cpVal = (lastEvalData.cp || 0) / 100;
       if (isBlack) cpVal = -cpVal;
@@ -1141,7 +1143,7 @@
 
     // Cor do label baseada no contraste
     // Se pct > 50 (mais branco), label preto. Se pct < 50 (mais escuro), label branco.
-    label.style.color = (pct > 50) ? "#1a1a1a" : "#ffffff";
+    label.style.color = pct > 50 ? "#1a1a1a" : "#ffffff";
   }
 
   function injectEvalBarDOM() {
@@ -1158,15 +1160,18 @@
 
     const barEl = document.createElement("div");
     barEl.id = "thinker-eval-bar";
-    barEl.style.cssText = "width:28px;min-height:100%;background:#1a1a1a;border-radius:6px;margin-right:6px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;box-shadow:0 2px 12px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.06);transition:all 0.3s ease;";
+    barEl.style.cssText =
+      "width:28px;min-height:100%;background:#1a1a1a;border-radius:6px;margin-right:6px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;box-shadow:0 2px 12px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.06);transition:all 0.3s ease;";
 
     const fillEl = document.createElement("div");
     fillEl.id = "thinker-eval-fill";
-    fillEl.style.cssText = "width:100%;height:50%;background:linear-gradient(to top,#f0f0f0 0%,#ffffff 100%);transition:height 0.6s cubic-bezier(0.22,1,0.36,1);position:absolute;bottom:0;left:0;border-radius:0 0 5px 5px;";
+    fillEl.style.cssText =
+      "width:100%;height:50%;background:linear-gradient(to top,#f0f0f0 0%,#ffffff 100%);transition:height 0.6s cubic-bezier(0.22,1,0.36,1);position:absolute;bottom:0;left:0;border-radius:0 0 5px 5px;";
 
     const labelEl = document.createElement("div");
     labelEl.id = "thinker-eval-label";
-    labelEl.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;font-weight:700;font-family:'Inter',sans-serif;z-index:2;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,0.3);white-space:nowrap;";
+    labelEl.style.cssText =
+      "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;font-weight:700;font-family:'Inter',sans-serif;z-index:2;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,0.3);white-space:nowrap;";
     labelEl.textContent = "0.0";
 
     barEl.appendChild(fillEl);
@@ -1194,7 +1199,7 @@
 
       const now = Date.now();
       // Forçar atualização a cada 5s mesmo se o FEN for o mesmo (para garantir sincronia)
-      if (currentFen === evalPollingFen && (now - lastEvalTime < 5000)) return;
+      if (currentFen === evalPollingFen && now - lastEvalTime < 5000) return;
 
       evalPollingFen = currentFen;
       lastEvalTime = now;
@@ -1295,7 +1300,11 @@
 
     // ===== EVAL-AWARE PACING: usar dados da eval bar se disponíveis =====
     let evalFactor = 1.0;
-    if (lastEvalData && lastEvalData.cp !== null && lastEvalData.cp !== undefined) {
+    if (
+      lastEvalData &&
+      lastEvalData.cp !== null &&
+      lastEvalData.cp !== undefined
+    ) {
       const absCp = Math.abs(lastEvalData.cp);
       // Posição equilibrada (|cp| < 50): humano pensa mais
       if (absCp < 50) evalFactor = 1.4;
@@ -1306,7 +1315,11 @@
       // Vantagem esmagadora (>400): joga rápido, posição decidida
       else evalFactor = 0.6;
     }
-    if (lastEvalData && lastEvalData.mate !== null && lastEvalData.mate !== undefined) {
+    if (
+      lastEvalData &&
+      lastEvalData.mate !== null &&
+      lastEvalData.mate !== undefined
+    ) {
       const absMate = Math.abs(lastEvalData.mate);
       // Mate encontrado: joga rápido (reflexo de vitória/desespero)
       evalFactor = absMate <= 3 ? 0.3 : 0.5;

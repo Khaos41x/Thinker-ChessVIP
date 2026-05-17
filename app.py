@@ -363,9 +363,10 @@ def getmove():
         # A força (Elo) é controlada EXCLUSIVAMENTE pelo parâmetro Skill do Komodo.
         engine.configure({"Skill": skill_level})
         
-        # Limite de TEMPO ESTRITO (0.2s). NÃO passamos 'depth' para evitar
-        # que a engine ignore o tempo e trave por 25 segundos no primeiro lance.
-        limit = chess.engine.Limit(time=0.2)
+        # Limite de TEMPO DINÂMICO E ESTRITO. Se o time_limit for instantâneo (<= 0.01),
+        # usamos um tempo ultra-rápido (0.02s) para a jogada sair de forma imediata.
+        actual_time = 0.02 if time_limit <= 0.01 else max(0.05, min(0.2, time_limit))
+        limit = chess.engine.Limit(time=actual_time)
             
         result = engine.play(board, limit)
         
@@ -382,7 +383,7 @@ def getmove():
             ponder_thread.start()
             
             elapsed = (time.perf_counter() - start_time) * 1000
-            print(f"[ENGINE LIMIT] Jogada: {move} | Latência Interna: {elapsed:.2f}ms", flush=True)
+            print(f"[ENGINE LIMIT] Jogada: {move} | Latência Interna: {elapsed:.2f}ms | Tempo Configurado: {actual_time}s", flush=True)
             return jsonify([move])
         
         return jsonify([])
@@ -405,8 +406,9 @@ def evaluate():
         board = chess.Board(fen)
         
         # Analise super rapida para a Eval Bar (0.05s)
-        # Usamos a ponder_engine se estiver livre, senao a engine principal
-        info = engine.analyse(board, chess.engine.Limit(time=0.05))
+        # Usamos a ponder_engine para evitar concorrência com a engine principal,
+        # impedindo gargalos em lances instantâneos.
+        info = ponder_engine.analyse(board, chess.engine.Limit(time=0.05))
         
         score = info.get("score")
         if score:
