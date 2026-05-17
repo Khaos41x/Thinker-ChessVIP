@@ -24,6 +24,17 @@
 
   const SERVER_URL = "http://127.0.0.1:5050";
 
+  // --- SAFETY RESET / CONFIGURAÇÃO INICIAL ---
+  // Garante que todas as features comecem DESATIVADAS por padrão no primeiro uso desta versão,
+  // limpando qualquer estado anterior que possa ter ficado ativo (Smart Pacing, Eval Bar, Auto Adjust).
+  if (localStorage.getItem("kb_default_off_v3") !== "true") {
+    localStorage.setItem("smartPacing", "false");
+    localStorage.setItem("evalBar", "false");
+    localStorage.setItem("kb-auto-adjust", "false");
+    localStorage.setItem("kb_default_off_v3", "true");
+  }
+
+
   // --- CONFIGURAÃ‡Ã•ES PADRÃƒO (AUTO RUN DELAY) ---
   const DEFAULT_MIN_DELAY = 0.5,
     DEFAULT_MAX_DELAY = 2.0,
