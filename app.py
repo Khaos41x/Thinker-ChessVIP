@@ -23,7 +23,7 @@ from flask_socketio import SocketIO
 app = Flask(__name__)
 CORS(app)
 
-ENGINE_PATH = r"C:\Users\casa\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe"
+ENGINE_PATH = r"C:\Users\GG\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe"
 
 CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading', ping_timeout=30, ping_interval=10)
@@ -128,9 +128,8 @@ import subprocess
 
 def find_komodo_exe():
     candidates = [
-        r"C:\Users\casa\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
-        r"C:\Users\casa\Downloads\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
-        r"C:\Users\casa\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit-bmi2.exe"
+        r"C:\Users\GG\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
+        r"C:\Users\GG\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit-bmi2.exe"
     ]
     for f in candidates:
         if os.path.exists(f):
@@ -483,6 +482,15 @@ def get_history(username):
         limit = int(request.args.get("limit", 50))
         history = database.get_match_history(username, limit=limit)
         return jsonify([dict(h) for h in history])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/scout/<username>", methods=["GET"])
+def get_scout(username):
+    try:
+        scout_data = database.get_opponent_scout(username)
+        return jsonify(scout_data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

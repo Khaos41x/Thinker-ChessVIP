@@ -501,6 +501,81 @@ def get_match_history(username, limit=50):
         conn.close()
 
 
+def get_opponent_scout(username):
+    """Retorna o scout de desempenho recente do oponente para brancas e pretas."""
+    username = username.strip().lower()
+    conn = get_db_connection()
+    try:
+        rows = conn.execute('''
+            SELECT player_white, player_black, result FROM matches
+            WHERE player_white = ? OR player_black = ?
+            ORDER BY played_at DESC
+        ''', (username, username)).fetchall()
+
+        white_games = []
+        black_games = []
+
+        for row in rows:
+            white_player = row['player_white'].strip().lower()
+            black_player = row['player_black'].strip().lower()
+            res = row['result']
+
+            # Se o resultado não estiver definido, ignoramos
+            if not res or res not in ('white_win', 'black_win', 'draw'):
+                continue
+
+            is_white = (white_player == username)
+
+            # Do ponto de vista do oponente (username)
+            if res == 'draw':
+                outcome = 'D'
+            elif (res == 'white_win' and is_white) or (res == 'black_win' and not is_white):
+                outcome = 'W'
+            else:
+                outcome = 'L'
+
+            if is_white:
+                white_games.append(outcome)
+            else:
+                black_games.append(outcome)
+
+        # Pegamos apenas os 5 mais recentes
+        white_sample = white_games[:5]
+        black_sample = black_games[:5]
+
+        def compute_stats(color, sample):
+            total = len(sample)
+            if total == 0:
+                return {
+                    "cor": color,
+                    "amostra_total": 0,
+                    "vitorias": 0,
+                    "empates": 0,
+                    "derrotas": 0,
+                    "percentual_vitoria": None,
+                    "sem_dados": True
+                }
+            vits = sum(1 for r in sample if r == 'W')
+            emps = sum(1 for r in sample if r == 'D')
+            ders = sum(1 for r in sample if r == 'L')
+            pct = round((vits / total) * 100)
+            return {
+                "cor": color,
+                "amostra_total": total,
+                "vitorias": vits,
+                "empates": emps,
+                "derrotas": ders,
+                "percentual_vitoria": pct
+            }
+
+        return {
+            "brancas": compute_stats("brancas", white_sample),
+            "pretas": compute_stats("pretas", black_sample)
+        }
+    finally:
+        conn.close()
+
+
 def get_last_n_results(username, n=10):
     """Retorna os últimos n resultados do jogador como lista de strings: 'W', 'L', 'D'."""
     username = username.strip().lower()

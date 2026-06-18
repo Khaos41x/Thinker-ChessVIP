@@ -253,8 +253,23 @@
         }
         if (filtered.length === 0) return null;
 
+        // Filtra para remover partidas sem resultado definido (em andamento)
+        const finishedFiltered = filtered.filter((game) => {
+          const isWhite =
+            game.white.username.toLowerCase() === username.toLowerCase();
+          const playerData = isWhite ? game.white : game.black;
+          if (!playerData || !playerData.result) return false;
+          const r = playerData.result.toLowerCase().trim();
+          if (r === "" || r === "in_progress" || r === "unterminated" || r === "live") {
+            return false;
+          }
+          return true;
+        });
+
+        if (finishedFiltered.length === 0) return null;
+
         // Processamos TODOS os jogos disponíveis no mês para estatísticas globais precisas
-        const processedAll = filtered.map((game) => {
+        const processedAll = finishedFiltered.map((game) => {
           const isWhite =
             game.white.username.toLowerCase() === username.toLowerCase();
           const playerData = isWhite ? game.white : game.black;
@@ -381,6 +396,48 @@
           };
         };
 
+        // ----------------------------------------------------
+        // NOVO: CALCULO SCOUT OPONENTE (ÚLTIMAS 5 PARTIDAS POR COR)
+        // ----------------------------------------------------
+        const recentGames = processedAll.slice().reverse();
+        const scoutWhiteGames = recentGames.filter((g) => g.color === "white");
+        const scoutBlackGames = recentGames.filter((g) => g.color === "black");
+
+        const whiteSample = scoutWhiteGames.slice(0, 5);
+        const blackSample = scoutBlackGames.slice(0, 5);
+
+        const computeStats = (colorName, sample) => {
+          const total = sample.length;
+          if (total === 0) {
+            return {
+              cor: colorName,
+              amostra_total: 0,
+              vitorias: 0,
+              empates: 0,
+              derrotas: 0,
+              percentual_vitoria: null,
+              sem_dados: true,
+            };
+          }
+          const vits = sample.filter((g) => g.result === "W").length;
+          const emps = sample.filter((g) => g.result === "D").length;
+          const ders = sample.filter((g) => g.result === "L").length;
+          const pct = Math.round((vits / total) * 100);
+          return {
+            cor: colorName,
+            amostra_total: total,
+            vitorias: vits,
+            empates: emps,
+            derrotas: ders,
+            percentual_vitoria: pct,
+          };
+        };
+
+        const scoutOponente = {
+          brancas: computeStats("brancas", whiteSample),
+          pretas: computeStats("pretas", blackSample),
+        };
+
         return {
           wld,
           streak: { type: streakType, count: streakCount },
@@ -394,6 +451,7 @@
             afternoon: byHour(12, 18),
             night: byHour(18, 24),
           },
+          scoutOponente,
         };
       } catch (e) {
         log("OpponentIntel.processGames erro: " + e);
@@ -597,8 +655,11 @@
           topOpeningBlack,
           last5,
           byHour,
-          winRateByColor,
+          scoutOponente,
         } = data;
+
+        const bScout = scoutOponente ? scoutOponente.brancas : { sem_dados: true };
+        const pScout = scoutOponente ? scoutOponente.pretas : { sem_dados: true };
 
         const html = `
       <div id="oi-zone2" style="width:320px; flex-shrink:0; background:rgba(18, 18, 22, 0.75); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:20px; box-shadow:0 16px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1); padding:22px; font-family:'Inter',sans-serif; font-size:12px; color:#fff; display:flex; flex-direction:column; gap:15px; margin:30px 0; transition:all 0.4s cubic-bezier(0.16, 1, 0.3, 1);">
@@ -607,24 +668,40 @@
           <h2 style="font-size:18px; font-weight:800; background:linear-gradient(90deg,#00ff88,#00b8ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin:0; text-transform:uppercase; letter-spacing:0.5px;">SCOUT DO OPONENTE</h2>
         </div>
 
-        <!-- Win rate por cor - sÃ³ aparece se tiver dados -->
-        ${
-          winRateByColor.white !== null
-            ? `
+        <!-- Desempenho recente por cor (Últimas 5 partidas) -->
         <div style="display:flex; gap:10px;">
-          <div style="flex:1; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px; text-align:center;">
-            <div style="font-size:10px; color:#888; margin-bottom:6px; letter-spacing:0.5px;">JOGANDO DE BRANCAS</div>
-            <div style="font-size:22px; font-weight:800; color:#fff;">${winRateByColor.white}%</div>
-            <div style="font-size:10px; color:#666; margin-top:2px;">de vitória</div>
+          <!-- Card Brancas -->
+          <div style="flex:1; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px; text-align:center; display:flex; flex-direction:column; justify-content:center; min-height:85px;">
+            <div style="font-size:10px; color:#888; margin-bottom:4px; letter-spacing:0.5px; text-transform:uppercase;">ÚLTIMAS BRANCAS</div>
+            ${
+              bScout.sem_dados
+                ? `
+              <div style="font-size:14px; font-weight:600; color:#666; margin:8px 0;">Sem dados</div>
+              `
+                : `
+              <div style="font-size:22px; font-weight:800; color:#fff; line-height:1.2;">${bScout.percentual_vitoria}%</div>
+              <div style="font-size:10px; color:#00ff88; font-weight:600; margin-top:2px;">${bScout.vitorias}V / ${bScout.empates}E / ${bScout.derrotas}D</div>
+              <div style="font-size:9px; color:#555; margin-top:1px;">amostra: ${bScout.amostra_total}</div>
+              `
+            }
           </div>
-          <div style="flex:1; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px; text-align:center;">
-            <div style="font-size:10px; color:#888; margin-bottom:6px; letter-spacing:0.5px;">JOGANDO DE PRETAS</div>
-            <div style="font-size:22px; font-weight:800; color:#fff;">${winRateByColor.black !== null ? winRateByColor.black : "?"}%</div>
-            <div style="font-size:10px; color:#666; margin-top:2px;">de vitória</div>
+
+          <!-- Card Pretas -->
+          <div style="flex:1; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px; text-align:center; display:flex; flex-direction:column; justify-content:center; min-height:85px;">
+            <div style="font-size:10px; color:#888; margin-bottom:4px; letter-spacing:0.5px; text-transform:uppercase;">ÚLTIMAS PRETAS</div>
+            ${
+              pScout.sem_dados
+                ? `
+              <div style="font-size:14px; font-weight:600; color:#666; margin:8px 0;">Sem dados</div>
+              `
+                : `
+              <div style="font-size:22px; font-weight:800; color:#fff; line-height:1.2;">${pScout.percentual_vitoria}%</div>
+              <div style="font-size:10px; color:#00ff88; font-weight:600; margin-top:2px;">${pScout.vitorias}V / ${pScout.empates}E / ${pScout.derrotas}D</div>
+              <div style="font-size:9px; color:#555; margin-top:1px;">amostra: ${pScout.amostra_total}</div>
+              `
+            }
           </div>
-        </div>`
-            : ""
-        }
+        </div>
 
         <!-- Abertura favorita - sem notaÃ§Ã£o, sÃ³ o nome limpo -->
         ${
