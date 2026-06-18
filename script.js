@@ -671,33 +671,61 @@
         <!-- Desempenho recente por cor (Últimas 5 partidas) -->
         <div style="display:flex; gap:10px;">
           <!-- Card Brancas -->
-          <div style="flex:1; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px; text-align:center; display:flex; flex-direction:column; justify-content:center; min-height:85px;">
+          <div style="flex:1; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px; text-align:center; display:flex; flex-direction:column; justify-content:center; min-height:115px;">
             <div style="font-size:10px; color:#888; margin-bottom:4px; letter-spacing:0.5px; text-transform:uppercase;">ÚLTIMAS BRANCAS</div>
             ${
               bScout.sem_dados
                 ? `
-              <div style="font-size:14px; font-weight:600; color:#666; margin:8px 0;">Sem dados</div>
+              <div style="font-size:14px; font-weight:600; color:#666; margin:12px 0;">Sem dados</div>
               `
                 : `
               <div style="font-size:22px; font-weight:800; color:#fff; line-height:1.2;">${bScout.percentual_vitoria}%</div>
-              <div style="font-size:10px; color:#00ff88; font-weight:600; margin-top:2px;">${bScout.vitorias}V / ${bScout.empates}E / ${bScout.derrotas}D</div>
-              <div style="font-size:9px; color:#555; margin-top:1px;">amostra: ${bScout.amostra_total}</div>
+              <div style="font-size:10px; color:#aaa; margin-top:2px;">de vitória</div>
+              <div style="display:flex; gap:4px; justify-content:center; margin-top:8px;">
+                <div style="flex:1; background:rgba(0, 255, 136, 0.11); border:0.5px solid rgba(0, 255, 136, 0.22); border-radius:6px; padding:4px 2px; text-align:center;">
+                  <span style="font-size:11px; font-weight:800; color:#00ff88; display:block; line-height:1.2;">${bScout.vitorias}</span>
+                  <span style="font-size:8px; font-weight:600; color:#00ff88; text-transform:uppercase; display:block; margin-top:1px;">Vít</span>
+                </div>
+                <div style="flex:1; background:rgba(255, 179, 0, 0.11); border:0.5px solid rgba(255, 179, 0, 0.22); border-radius:6px; padding:4px 2px; text-align:center;">
+                  <span style="font-size:11px; font-weight:800; color:#ffb300; display:block; line-height:1.2;">${bScout.empates}</span>
+                  <span style="font-size:8px; font-weight:600; color:#ffb300; text-transform:uppercase; display:block; margin-top:1px;">Emp</span>
+                </div>
+                <div style="flex:1; background:rgba(255, 76, 76, 0.11); border:0.5px solid rgba(255, 76, 76, 0.22); border-radius:6px; padding:4px 2px; text-align:center;">
+                  <span style="font-size:11px; font-weight:800; color:#ff4c4c; display:block; line-height:1.2;">${bScout.derrotas}</span>
+                  <span style="font-size:8px; font-weight:600; color:#ff4c4c; text-transform:uppercase; display:block; margin-top:1px;">Der</span>
+                </div>
+              </div>
+              <div style="font-size:9px; color:#555; margin-top:6px;">amostra: ${bScout.amostra_total}</div>
               `
             }
           </div>
 
           <!-- Card Pretas -->
-          <div style="flex:1; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px; text-align:center; display:flex; flex-direction:column; justify-content:center; min-height:85px;">
+          <div style="flex:1; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px; text-align:center; display:flex; flex-direction:column; justify-content:center; min-height:115px;">
             <div style="font-size:10px; color:#888; margin-bottom:4px; letter-spacing:0.5px; text-transform:uppercase;">ÚLTIMAS PRETAS</div>
             ${
               pScout.sem_dados
                 ? `
-              <div style="font-size:14px; font-weight:600; color:#666; margin:8px 0;">Sem dados</div>
+              <div style="font-size:14px; font-weight:600; color:#666; margin:12px 0;">Sem dados</div>
               `
                 : `
               <div style="font-size:22px; font-weight:800; color:#fff; line-height:1.2;">${pScout.percentual_vitoria}%</div>
-              <div style="font-size:10px; color:#00ff88; font-weight:600; margin-top:2px;">${pScout.vitorias}V / ${pScout.empates}E / ${pScout.derrotas}D</div>
-              <div style="font-size:9px; color:#555; margin-top:1px;">amostra: ${pScout.amostra_total}</div>
+              <div style="font-size:10px; color:#aaa; margin-top:2px;">de vitória</div>
+              <div style="display:flex; gap:4px; justify-content:center; margin-top:8px;">
+                <div style="flex:1; background:rgba(0, 255, 136, 0.11); border:0.5px solid rgba(0, 255, 136, 0.22); border-radius:6px; padding:4px 2px; text-align:center;">
+                  <span style="font-size:11px; font-weight:800; color:#00ff88; display:block; line-height:1.2;">${pScout.vitorias}</span>
+                  <span style="font-size:8px; font-weight:600; color:#00ff88; text-transform:uppercase; display:block; margin-top:1px;">Vít</span>
+                </div>
+                <div style="flex:1; background:rgba(255, 179, 0, 0.11); border:0.5px solid rgba(255, 179, 0, 0.22); border-radius:6px; padding:4px 2px; text-align:center;">
+                  <span style="font-size:11px; font-weight:800; color:#ffb300; display:block; line-height:1.2;">${pScout.empates}</span>
+                  <span style="font-size:8px; font-weight:600; color:#ffb300; text-transform:uppercase; display:block; margin-top:1px;">Emp</span>
+                </div>
+                <div style="flex:1; background:rgba(255, 76, 76, 0.11); border:0.5px solid rgba(255, 76, 76, 0.22); border-radius:6px; padding:4px 2px; text-align:center;">
+                  <span style="font-size:11px; font-weight:800; color:#ff4c4c; display:block; line-height:1.2;">${pScout.derrotas}</span>
+                  <span style="font-size:8px; font-weight:600; color:#ff4c4c; text-transform:uppercase; display:block; margin-top:1px;">Der</span>
+                </div>
+              </div>
+              <div style="font-size:9px; color:#555; margin-top:6px;">amostra: ${pScout.amostra_total}</div>
               `
             }
           </div>
