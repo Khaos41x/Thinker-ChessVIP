@@ -769,44 +769,33 @@
         }
 
         <!-- Performance por horário - linguagem humana -->
-        ${
-          byHour.morning.total || byHour.afternoon.total || byHour.night.total
-            ? `
         <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px;">
           <div style="font-size:10px; color:#888; margin-bottom:4px; letter-spacing:0.5px;">MELHOR HORÁRIO PARA ENFRENTAR</div>
-          ${
-            byHour.morning.total
-              ? `<div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="color:#aaa; font-size:11px;">Manhã</span>
-            <span style="color:${byHour.morning.wr >= 60 ? "#f44336" : byHour.morning.wr <= 40 ? "#00ff88" : "#fff"}; font-weight:700; font-size:11px;">
-              ${byHour.morning.wr}% <span style="font-weight:400; color:#888; font-size:10px;">em ${byHour.morning.total} partida${byHour.morning.total > 1 ? "s" : ""}</span>
-            </span>
-          </div>`
-              : ""
-          }
-          ${
-            byHour.afternoon.total
-              ? `<div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="color:#aaa; font-size:11px;">Tarde</span>
-            <span style="color:${byHour.afternoon.wr >= 60 ? "#f44336" : byHour.afternoon.wr <= 40 ? "#00ff88" : "#fff"}; font-weight:700; font-size:11px;">
-              ${byHour.afternoon.wr}% <span style="font-weight:400; color:#888; font-size:10px;">em ${byHour.afternoon.total} partida${byHour.afternoon.total > 1 ? "s" : ""}</span>
-            </span>
-          </div>`
-              : ""
-          }
-          ${
-            byHour.night.total
-              ? `<div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="color:#aaa; font-size:11px;">Noite</span>
-            <span style="color:${byHour.night.wr >= 60 ? "#f44336" : byHour.night.wr <= 40 ? "#00ff88" : "#fff"}; font-weight:700; font-size:11px;">
-              ${byHour.night.wr}% <span style="font-weight:400; color:#888; font-size:10px;">em ${byHour.night.total} partida${byHour.night.total > 1 ? "s" : ""}</span>
-            </span>
-          </div>`
-              : ""
-          }
-        </div>`
-            : ""
-        }
+          ${[
+            { key: "morning", label: "Manhã", icon: "☀️", range: "6h-12h" },
+            { key: "afternoon", label: "Tarde", icon: "🌤️", range: "12h-18h" },
+            { key: "night", label: "Noite", icon: "🌙", range: "18h-0h" },
+          ].map(({ key, label, icon, range }) => {
+            const period = byHour[key];
+            if (period.total) {
+              const wrColor = period.wr >= 60 ? "#f44336" : period.wr <= 40 ? "#00ff88" : "#fff";
+              return `<div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="color:#aaa; font-size:11px;">${icon} ${label}</span>
+                <span style="color:${wrColor}; font-weight:700; font-size:11px;">
+                  ${period.wr}% <span style="font-weight:400; color:#888; font-size:10px;">em ${period.total} partida${period.total > 1 ? "s" : ""}</span>
+                </span>
+              </div>`;
+            } else {
+              return `<div style="opacity:0.65; border:1px dashed rgba(255,255,255,0.1); border-radius:8px; padding:6px 8px; display:flex; justify-content:space-between; align-items:center;">
+                <span style="color:#666; font-size:11px;">${icon} ${label}</span>
+                <span style="display:flex; align-items:center; gap:6px;">
+                  <span style="background:rgba(255,255,255,0.06); color:#555; font-size:9px; font-weight:600; padding:2px 6px; border-radius:4px; letter-spacing:0.3px;">Sem dados</span>
+                  <span style="color:#555; font-size:10px;">0 partidas</span>
+                </span>
+              </div>`;
+            }
+          }).join("")}
+        </div>
 
         <!-- Ãšltimas 5 partidas -->
         ${
