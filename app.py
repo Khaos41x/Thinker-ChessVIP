@@ -23,7 +23,7 @@ from flask_socketio import SocketIO
 app = Flask(__name__)
 CORS(app)
 
-ENGINE_PATH = r"C:\Users\casa\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe"
+ENGINE_PATH = r"C:\Users\2ln0g0tt7bkehifl\Downloads\komodo-extracted\komodo-14_224afb\Windows\komodo-14.1-64bit.exe"
 
 CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading', ping_timeout=30, ping_interval=10)
@@ -128,9 +128,8 @@ import subprocess
 
 def find_komodo_exe():
     candidates = [
-        r"C:\Users\casa\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
-        r"C:\Users\casa\Downloads\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
-        r"C:\Users\casa\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit-bmi2.exe"
+        r"C:\Users\2ln0g0tt7bkehifl\Downloads\komodo-extracted\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
+        r"C:\Users\2ln0g0tt7bkehifl\Downloads\komodo-extracted\komodo-14_224afb\Windows\komodo-14.1-64bit-bmi2.exe"
     ]
     for f in candidates:
         if os.path.exists(f):
