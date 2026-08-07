@@ -223,7 +223,7 @@
 
   let can_interval = true,
     auto_move = false,
-    auto_queue = false,
+    auto_queue = localStorage.getItem("kb-auto-queue") === "true",
     current_color =
       (typeof GM_getValue !== "undefined" ? GM_getValue("kb_color") : null) ||
       localStorage.getItem("kb_color") ||
@@ -1338,54 +1338,113 @@
 
   // --- LÃ“GICA DE AUTO QUEUE (INDEPENDENTE DE IDIOMA) ---
   let auto_queue_checkInterval = null;
+  let auto_queue_cooldown = false;
+
+  function isElementVisible(el) {
+    if (!el) return false;
+    const rect = el.getBoundingClientRect();
+    const style = window.getComputedStyle(el);
+    return (
+      rect.width > 0 &&
+      rect.height > 0 &&
+      style.visibility !== "hidden" &&
+      style.display !== "none" &&
+      style.opacity !== "0"
+    );
+  }
+
+  function isGameOverVisible() {
+    const gameOverSelectors = [
+      '[data-cy="game-over-modal"]',
+      '[data-cy="game-over-dialog"]',
+      '[class*="game-over"]',
+      '.modal-game-over',
+      '.game-over-modal',
+      '.game-over-component',
+      '.game-over-controls',
+      '.game-over-buttons-component',
+    ];
+
+    return gameOverSelectors.some((sel) => {
+      const el = document.querySelector(sel);
+      return el && isElementVisible(el);
+    });
+  }
+
+  function isAutoQueueCandidate(el) {
+    if (!el || !isElementVisible(el)) return false;
+    if (el.disabled || el.getAttribute("aria-disabled") === "true") return false;
+    if (el.closest("nav") || el.closest(".menu")) return false;
+
+    const text = (el.innerText || el.textContent || "").trim().toLowerCase();
+    const aria = (el.getAttribute("aria-label") || "").toLowerCase();
+    const href = (el.getAttribute("href") || "").toLowerCase();
+    const dataCy = (el.getAttribute("data-cy") || "").toLowerCase();
+    const dataTest = (el.getAttribute("data-test-element") || "").toLowerCase();
+    const haystack = `${text} ${aria} ${href} ${dataCy} ${dataTest}`;
+
+    const blockedTerms = [
+      "rematch",
+      "revanche",
+      "review",
+      "analisar",
+      "analysis",
+      "share",
+      "compartilhar",
+    ];
+    if (blockedTerms.some((term) => haystack.includes(term))) return false;
+
+    const positiveTerms = [
+      "new game",
+      "nova partida",
+      "novo jogo",
+      "jogar novamente",
+      "play again",
+      "play online",
+      "new-game",
+      "play-again",
+      "/play/online",
+    ];
+
+    return positiveTerms.some((term) => haystack.includes(term));
+  }
 
   function findNewGameButton() {
     const selectors = [
-      'button[data-cy="game-over-play-again-button"]',
-      'button[data-control-view="play-again"]',
-      ".ui_v5-button-primary.ui_v5-button-full",
-      ".game-over-controls-button",
-      ".new-game-button",
-      ".play-again-button",
+      '[data-cy="game-over-play-again-button"]',
       '[data-cy="new-game-button"]',
       '[data-cy="play-again-button"]',
-      ".game-over-buttons-component > button:nth-child(1)",
+      '[data-test-element="new-game-button"]',
+      '[data-control-view="play-again"]',
+      '.game-over-buttons-component button',
+      '.game-over-buttons-component a',
+      '.game-over-controls button',
+      '.game-over-controls a',
+      '.game-over-controls-button',
+      '.new-game-button',
+      '.play-again-button',
       'a.ui_v5-button-component[href*="/play/online"]',
-      'a[data-test-element="new-game-button"]',
     ];
 
-    let btn = null;
     for (const sel of selectors) {
-      btn = document.querySelector(sel);
-      if (btn && btn.offsetParent !== null) break;
-    }
-
-    if (!btn || btn.offsetParent === null) {
-      const buttons = document.querySelectorAll("button, a[href*='/play']");
-      for (const b of buttons) {
-        const text = b.innerText ? b.innerText.toLowerCase() : "";
-        const isVisible = b.offsetParent !== null;
-        const isGameButton = !b.closest("nav") && !b.closest(".menu");
-
-        if (isVisible && isGameButton) {
-          if (
-            (text.includes("new") ||
-              text.includes("nova ") ||
-              text.includes("novo ") ||
-              text.includes("jogar") ||
-              text.includes("play") ||
-              text.includes("partida")) &&
-            !text.includes("rematch") &&
-            !text.includes("revanche")
-          ) {
-            btn = b;
-            break;
-          }
-        }
+      const buttons = document.querySelectorAll(sel);
+      for (const candidate of buttons) {
+        if (isAutoQueueCandidate(candidate)) return candidate;
       }
     }
 
-    return btn;
+    const scopedRoots = document.querySelectorAll(
+      '[data-cy*="game-over"], [class*="game-over"], .modal-content, .ui_modal, [role="dialog"]',
+    );
+    for (const root of scopedRoots) {
+      if (!isElementVisible(root)) continue;
+      const buttons = root.querySelectorAll("button, a[href]");
+      for (const candidate of buttons) {
+        if (isAutoQueueCandidate(candidate)) return candidate;
+      }
+    }
+
+    return null;
   }
 
   function isInGame() {
@@ -1394,17 +1453,29 @@
     );
   }
 
-  let auto_queue_cooldown = false;
+  function clickAutoQueueTarget(target) {
+    ["pointerdown", "mousedown", "pointerup", "mouseup", "click"].forEach(
+      (eventName) => {
+        target.dispatchEvent(
+          new MouseEvent(eventName, {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+          }),
+        );
+      },
+    );
+  }
 
   function clickNewGame() {
     if (!auto_queue || auto_queue_cooldown) return;
-    if (!isInGame()) return;
+    if (!isInGame() && !isGameOverVisible()) return;
 
     const btn = findNewGameButton();
-    if (btn && btn.offsetParent !== null) {
+    if (btn) {
       auto_queue_cooldown = true;
       log("Auto Queue: Botão de nova partida detectado. Clicando...");
-      btn.click();
+      clickAutoQueueTarget(btn);
       log("Auto Queue: Clique executado! Aguardando 4s de cooldown.");
 
       setTimeout(() => {
@@ -1438,13 +1509,15 @@
     auto_queue_observer.observe(document.body, {
       childList: true,
       subtree: true,
+      attributes: true,
+      attributeFilter: ["class", "style", "aria-hidden", "disabled"],
     });
 
     auto_queue_checkInterval = setInterval(() => {
       if (auto_queue && !auto_queue_cooldown) {
         clickNewGame();
       }
-    }, 2000);
+    }, 750);
   }
 
   function cleanCache() {
@@ -2151,6 +2224,7 @@
 
         $('input[name="kb-auto-queue"]').on("change", function () {
           auto_queue = $(this).val() == "1";
+          localStorage.setItem("kb-auto-queue", auto_queue ? "true" : "false");
           handleAutoQueue();
           window.krypbotUpdateUI();
         });
@@ -2331,6 +2405,7 @@
           }
         }, 1000);
 
+        handleAutoQueue();
         window.krypbotUpdateUI();
       }
     }, 500);
