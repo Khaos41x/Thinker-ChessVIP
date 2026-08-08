@@ -223,7 +223,7 @@
 
   let can_interval = true,
     auto_move = false,
-    auto_queue = false,
+    auto_queue = localStorage.getItem("kb-auto-queue") === "true",
     current_color =
       (typeof GM_getValue !== "undefined" ? GM_getValue("kb_color") : null) ||
       localStorage.getItem("kb_color") ||
@@ -1338,54 +1338,175 @@
 
   // --- LÃ“GICA DE AUTO QUEUE (INDEPENDENTE DE IDIOMA) ---
   let auto_queue_checkInterval = null;
+  let auto_queue_cooldown = false;
 
-  function findNewGameButton() {
+  function isElementVisible(el) {
+    if (!el) return false;
+    const rect = el.getBoundingClientRect();
+    const style = window.getComputedStyle(el);
+    return (
+      rect.width > 0 &&
+      rect.height > 0 &&
+      style.visibility !== "hidden" &&
+      style.display !== "none" &&
+      style.opacity !== "0"
+    );
+  }
+
+  function getVisibleGameOverRoots() {
     const selectors = [
-      'button[data-cy="game-over-play-again-button"]',
-      'button[data-control-view="play-again"]',
-      ".ui_v5-button-primary.ui_v5-button-full",
-      ".game-over-controls-button",
-      ".new-game-button",
-      ".play-again-button",
-      '[data-cy="new-game-button"]',
-      '[data-cy="play-again-button"]',
-      ".game-over-buttons-component > button:nth-child(1)",
-      'a.ui_v5-button-component[href*="/play/online"]',
-      'a[data-test-element="new-game-button"]',
+      '[data-cy="game-over-modal"]',
+      '[data-cy="game-over-dialog"]',
+      '[data-cy*="game-over"]',
+      '[class*="game-over"]',
+      '.modal-game-over',
+      '.game-over-modal',
+      '.game-over-component',
+      '.game-over-controls',
+      '.game-over-buttons-component',
+      '[role="dialog"]',
     ];
 
-    let btn = null;
-    for (const sel of selectors) {
-      btn = document.querySelector(sel);
-      if (btn && btn.offsetParent !== null) break;
+    return [...document.querySelectorAll(selectors.join(","))].filter(
+      isElementVisible,
+    );
+  }
+
+  function isGameOverVisible() {
+    return getVisibleGameOverRoots().length > 0;
+  }
+
+  function getClickableRect(el) {
+    const rect = el.getBoundingClientRect();
+    return {
+      left: rect.left,
+      top: rect.top,
+      right: rect.right,
+      bottom: rect.bottom,
+      width: rect.width,
+      height: rect.height,
+      area: rect.width * rect.height,
+    };
+  }
+
+  function isAutoQueueCandidate(el, allowStructuralMatch = false) {
+    if (!el || !isElementVisible(el)) return false;
+    if (el.disabled || el.getAttribute("aria-disabled") === "true") return false;
+    if (el.closest("nav") || el.closest(".menu")) return false;
+
+    const text = (el.innerText || el.textContent || "").trim().toLowerCase();
+    const aria = (el.getAttribute("aria-label") || "").toLowerCase();
+    const href = (el.getAttribute("href") || "").toLowerCase();
+    const dataCy = (el.getAttribute("data-cy") || "").toLowerCase();
+    const dataTest = (el.getAttribute("data-test-element") || "").toLowerCase();
+    const controlView = (el.getAttribute("data-control-view") || "").toLowerCase();
+    const className = (el.className || "").toString().toLowerCase();
+    const haystack = `${text} ${aria} ${href} ${dataCy} ${dataTest} ${controlView} ${className}`;
+
+    const blockedTerms = [
+      "rematch",
+      "revanche",
+      "review",
+      "analysis",
+      "share",
+      "analisar",
+      "análise",
+      "analise",
+      "revisão",
+      "revisao",
+      "compartilhar",
+    ];
+    if (blockedTerms.some((term) => haystack.includes(term))) return false;
+
+    const semanticSignals = [
+      "game-over-play-again",
+      "new-game",
+      "play-again",
+      "new game",
+      "nova partida",
+      "novo jogo",
+      "jogar novamente",
+      "play again",
+      "play online",
+      "/play/online",
+    ];
+    if (semanticSignals.some((term) => haystack.includes(term))) return true;
+
+    return allowStructuralMatch;
+  }
+
+  function findStructuralNewGameButton() {
+    const roots = getVisibleGameOverRoots();
+    for (const root of roots) {
+      const buttons = [...root.querySelectorAll('button, a[href], [role="button"]')]
+        .filter((candidate) => isAutoQueueCandidate(candidate, true))
+        .map((candidate) => ({ el: candidate, rect: getClickableRect(candidate) }))
+        .filter(({ rect }) => rect.width >= 70 && rect.height >= 28);
+
+      if (!buttons.length) continue;
+
+      const rootRect = getClickableRect(root);
+      const bottomActions = buttons.filter(
+        ({ rect }) => rect.top > rootRect.top + rootRect.height * 0.55,
+      );
+      const actionPool = bottomActions.length ? bottomActions : buttons;
+      const maxArea = Math.max(...actionPool.map(({ rect }) => rect.area));
+      const compactActions = actionPool.filter(
+        ({ rect }) => rect.area < maxArea * 0.85 || actionPool.length <= 2,
+      );
+      const sorted = (compactActions.length ? compactActions : actionPool).sort(
+        (a, b) => a.rect.top - b.rect.top || a.rect.left - b.rect.left,
+      );
+
+      // In Chess.com game-over cards, the language-independent layout puts
+      // "new game / same time control" as the left action in the bottom row,
+      // while rematch is the right action. This keeps Auto Queue independent
+      // from text, color, and locale.
+      const bottomRowTop = sorted[sorted.length - 1].rect.top;
+      const bottomRow = sorted
+        .filter(({ rect }) => Math.abs(rect.top - bottomRowTop) < 12)
+        .sort((a, b) => a.rect.left - b.rect.left);
+      if (bottomRow.length) return bottomRow[0].el;
     }
 
-    if (!btn || btn.offsetParent === null) {
-      const buttons = document.querySelectorAll("button, a[href*='/play']");
-      for (const b of buttons) {
-        const text = b.innerText ? b.innerText.toLowerCase() : "";
-        const isVisible = b.offsetParent !== null;
-        const isGameButton = !b.closest("nav") && !b.closest(".menu");
+    return null;
+  }
 
-        if (isVisible && isGameButton) {
-          if (
-            (text.includes("new") ||
-              text.includes("nova ") ||
-              text.includes("novo ") ||
-              text.includes("jogar") ||
-              text.includes("play") ||
-              text.includes("partida")) &&
-            !text.includes("rematch") &&
-            !text.includes("revanche")
-          ) {
-            btn = b;
-            break;
-          }
-        }
+  function findNewGameButton() {
+    const trustedSelectors = [
+      '[data-cy="game-over-play-again-button"]',
+      '[data-cy="new-game-button"]',
+      '[data-cy="play-again-button"]',
+      '[data-test-element="new-game-button"]',
+      '[data-control-view="play-again"]',
+      'a.ui_v5-button-component[href*="/play/online"]',
+    ];
+
+    for (const sel of trustedSelectors) {
+      const buttons = document.querySelectorAll(sel);
+      for (const candidate of buttons) {
+        if (isAutoQueueCandidate(candidate, true)) return candidate;
       }
     }
 
-    return btn;
+    const selectors = [
+      '.game-over-buttons-component button',
+      '.game-over-buttons-component a',
+      '.game-over-controls button',
+      '.game-over-controls a',
+      '.game-over-controls-button',
+      '.new-game-button',
+      '.play-again-button',
+    ];
+
+    for (const sel of selectors) {
+      const buttons = document.querySelectorAll(sel);
+      for (const candidate of buttons) {
+        if (isAutoQueueCandidate(candidate)) return candidate;
+      }
+    }
+
+    return findStructuralNewGameButton();
   }
 
   function isInGame() {
@@ -1394,17 +1515,30 @@
     );
   }
 
-  let auto_queue_cooldown = false;
+  function clickAutoQueueTarget(target) {
+    target.scrollIntoView({ block: "center", inline: "center" });
+    ["pointerdown", "mousedown", "pointerup", "mouseup", "click"].forEach(
+      (eventName) => {
+        target.dispatchEvent(
+          new MouseEvent(eventName, {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+          }),
+        );
+      },
+    );
+  }
 
   function clickNewGame() {
     if (!auto_queue || auto_queue_cooldown) return;
-    if (!isInGame()) return;
+    if (!isInGame() && !isGameOverVisible()) return;
 
     const btn = findNewGameButton();
-    if (btn && btn.offsetParent !== null) {
+    if (btn) {
       auto_queue_cooldown = true;
       log("Auto Queue: Botão de nova partida detectado. Clicando...");
-      btn.click();
+      clickAutoQueueTarget(btn);
       log("Auto Queue: Clique executado! Aguardando 4s de cooldown.");
 
       setTimeout(() => {
@@ -1438,13 +1572,15 @@
     auto_queue_observer.observe(document.body, {
       childList: true,
       subtree: true,
+      attributes: true,
+      attributeFilter: ["class", "style", "aria-hidden", "disabled"],
     });
 
     auto_queue_checkInterval = setInterval(() => {
       if (auto_queue && !auto_queue_cooldown) {
         clickNewGame();
       }
-    }, 2000);
+    }, 500);
   }
 
   function cleanCache() {
@@ -2040,26 +2176,48 @@
         mainDiv.first().append(menuHtml);
         $("body").append(bannerHtml);
 
-        // Dynamically position the banner perfectly next to the sidebar
+        // Dynamically fill the whole right-side rail without covering the board/site background.
         function updateBannerPosition() {
           const sidebar = document.querySelector(
             ".board-layout-sidebar, .layout-board-sidebar, #board-layout-sidebar, .play-controller-component",
           );
+          const boardArea = document.querySelector(
+            "#board-layout-main, .board-layout-main, .board-layout-player-top, .board-layout-player-bottom, .board, .chess-board",
+          );
           const banner = document.getElementById("thinker-chess-banner");
           if (sidebar && banner) {
-            const rect = sidebar.getBoundingClientRect();
+            const sidebarRect = sidebar.getBoundingClientRect();
+            const boardRect = boardArea
+              ? boardArea.getBoundingClientRect()
+              : sidebarRect;
+            const gap = 8;
+            const pagePadding = 16;
+            const left = Math.ceil(sidebarRect.right + gap + window.scrollX);
+            const top = Math.max(
+              72,
+              Math.floor(Math.min(sidebarRect.top, boardRect.top) + window.scrollY),
+            );
+            const bottomLimit = Math.min(
+              window.innerHeight - 16,
+              Math.max(sidebarRect.bottom, boardRect.bottom),
+            );
+            const width = Math.max(
+              280,
+              Math.floor(document.documentElement.clientWidth - left - pagePadding),
+            );
+            const height = Math.max(
+              520,
+              Math.floor(bottomLimit + window.scrollY - top),
+            );
+
             banner.style.right = "auto";
-            banner.style.left = rect.right + window.scrollX + 13 + "px";
-            banner.style.top = rect.top + window.scrollY + "px";
-            banner.style.height = rect.height + "px";
-
-            // Subtract an extra pixel or use document.documentElement.clientWidth
-            let exactWidth =
-              document.documentElement.clientWidth - (rect.right + 13) - 2;
-            if (exactWidth < 80) exactWidth = 80;
-
-            banner.style.width = exactWidth + "px";
+            banner.style.left = left + "px";
+            banner.style.top = top + "px";
+            banner.style.width = width + "px";
+            banner.style.height = height + "px";
             banner.style.display = "flex";
+            banner.style.borderRadius = "6px";
+            banner.style.overflow = "hidden";
             document.body.style.overflowX = "hidden";
           }
           requestAnimationFrame(updateBannerPosition);
@@ -2151,6 +2309,7 @@
 
         $('input[name="kb-auto-queue"]').on("change", function () {
           auto_queue = $(this).val() == "1";
+          localStorage.setItem("kb-auto-queue", auto_queue ? "true" : "false");
           handleAutoQueue();
           window.krypbotUpdateUI();
         });
@@ -2331,6 +2490,7 @@
           }
         }, 1000);
 
+        handleAutoQueue();
         window.krypbotUpdateUI();
       }
     }, 500);
