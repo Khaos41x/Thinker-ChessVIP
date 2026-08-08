@@ -1860,26 +1860,10 @@
             );
 
             banner.style.right = "auto";
-<<<<<<< HEAD
             banner.style.left = left + "px";
             banner.style.top = top + "px";
             banner.style.width = width + "px";
             banner.style.height = height + "px";
-=======
-            banner.style.left = rect.right + window.scrollX + 13 + "px";
-            banner.style.top = rect.top + window.scrollY + "px";
-
-            // Keep the custom vertical banner inside Chess.com's right-side ad slot.
-            // The available right column is a tall rectangle (roughly 1:2), so deriving
-            // height from width prevents the image from stretching down past the ad box.
-            const availableWidth =
-              document.documentElement.clientWidth - (rect.right + 13) - 2;
-            const bannerWidth = Math.max(80, availableWidth);
-            const bannerHeight = Math.min(rect.height, Math.round(bannerWidth * 2));
-
-            banner.style.width = bannerWidth + "px";
-            banner.style.height = bannerHeight + "px";
->>>>>>> origin/master
             banner.style.display = "flex";
             banner.style.borderRadius = "6px";
             banner.style.overflow = "hidden";
