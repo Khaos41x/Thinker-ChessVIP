@@ -14,7 +14,7 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
     
-    ENGINE_PATH = r"C:\Users\casa\Downloads\komodo-14\komodo-14_224afb\Windows\komodo-14.1-64bit.exe"
+    ENGINE_PATH = r"C:\Users\2ln0g0tt7bkehifl\Downloads\komodo-extracted\komodo-14_224afb\Windows\komodo-14.1-64bit.exe"
     engine = None
     last_elo = None
     
