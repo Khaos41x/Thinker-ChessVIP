@@ -23,8 +23,6 @@ from flask_socketio import SocketIO
 app = Flask(__name__)
 CORS(app)
 
-ENGINE_PATH = r"C:\Users\2ln0g0tt7bkehifl\Downloads\komodo-extracted\komodo-14_224afb\Windows\komodo-14.1-64bit.exe"
-
 CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading', ping_timeout=30, ping_interval=10)
 
@@ -125,18 +123,56 @@ class Log:
 # =============================================================================
 
 import subprocess
+from pathlib import Path
 
 def find_komodo_exe():
+    """
+    Localiza o Komodo chess engine de forma portável.
+    Procura em:
+    1. ./engine/ (relativo ao app.py)
+    2. Variável de ambiente KOMODO_PATH
+    3. Se nenhum for encontrado, retorna None e avisa ao usuário
+    """
+    base_dir = Path(__file__).resolve().parent
+    
+    # Estratégia 1: ./engine/ relativo ao projeto
+    engine_dir = base_dir / "engine"
     candidates = [
-        r"C:\Users\2ln0g0tt7bkehifl\Downloads\komodo-extracted\komodo-14_224afb\Windows\komodo-14.1-64bit.exe",
-        r"C:\Users\2ln0g0tt7bkehifl\Downloads\komodo-extracted\komodo-14_224afb\Windows\komodo-14.1-64bit-bmi2.exe"
+        engine_dir / "komodo-14.1-64bit.exe",
+        engine_dir / "komodo-14.1-64bit-bmi2.exe",
+        engine_dir / "komodo.exe",
     ]
-    for f in candidates:
-        if os.path.exists(f):
-            return f
-    return candidates[0]
+    
+    for candidate in candidates:
+        if candidate.exists():
+            return str(candidate)
+    
+    # Estratégia 2: Variável de ambiente
+    env_path = os.environ.get("KOMODO_PATH")
+    if env_path:
+        env_candidate = Path(env_path)
+        if env_candidate.exists():
+            return str(env_candidate)
+        elif (env_candidate.parent / "komodo-14.1-64bit.exe").exists():
+            return str(env_candidate.parent / "komodo-14.1-64bit.exe")
+    
+    # Nenhum encontrado
+    return None
 
 ENGINE_PATH = find_komodo_exe()
+
+if ENGINE_PATH is None:
+    base_dir = Path(__file__).resolve().parent
+    print(f"\n{Colors.RED}{Colors.BOLD}[ERRO CRÍTICO]{Colors.RESET}")
+    print(f"Komodo 14 não foi encontrado!\n")
+    print(f"Esperado em:")
+    print(f"  • {base_dir / 'engine' / 'komodo-14.1-64bit.exe'}")
+    print(f"  • {base_dir / 'engine' / 'komodo.exe'}\n")
+    print(f"Solução:")
+    print(f"  1. Copie o Komodo para a pasta 'engine/' do projeto, OU")
+    print(f"  2. Defina a variável KOMODO_PATH:\n")
+    print(f"     set KOMODO_PATH=C:\\caminho\\para\\komodo.exe\n")
+    sys.exit(1)
 
 START_TIME = time.time()
 STATS = {

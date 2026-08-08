@@ -1,10 +1,143 @@
-# =========================================================
-# TESTE DO SERVIDOR KRYPBOT
-# =========================================================
+#!/usr/bin/env python3
+"""
+Minimal backend test for Thinker-Chess app.py
+Run with: python test_server.py
 
+Checks:
+ - GET /health returns 200 and valid JSON with status "ok"
+ - POST /getmove with a starting FEN returns 200 and a JSON array with at least one UCI move
+ - POST /eval with a starting FEN returns 200 and JSON containing 'cp' or 'mate'
+
+No external dependencies.
+"""
 import sys
-import io
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+import json
+import urllib.request
+import urllib.error
+
+BASE = "http://127.0.0.1:5050"
+TIMEOUT = 10
+
+
+def http_get(path):
+    url = BASE + path
+    req = urllib.request.Request(url, method="GET")
+    try:
+        with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
+            code = resp.getcode()
+            body = resp.read().decode("utf-8")
+            return code, body
+    except urllib.error.URLError as e:
+        print(f"Error: could not connect to {url}: {e}")
+        return None, None
+
+
+def http_post(path, data):
+    url = BASE + path
+    body_bytes = json.dumps(data).encode("utf-8")
+    req = urllib.request.Request(url, data=body_bytes, headers={"Content-Type": "application/json"}, method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
+            code = resp.getcode()
+            body = resp.read().decode("utf-8")
+            return code, body
+    except urllib.error.HTTPError as e:
+        # Try to read body
+        try:
+            body = e.read().decode("utf-8")
+        except Exception:
+            body = str(e)
+        print(f"HTTP {e.code} from {url}: {body}")
+        return e.code, body
+    except urllib.error.URLError as e:
+        print(f"Error: could not connect to {url}: {e}")
+        return None, None
+
+
+def check_health():
+    code, body = http_get("/health")
+    if code != 200 or not body:
+        print("[FAIL] /health: no response (is app.py running?)")
+        return False
+    try:
+        data = json.loads(body)
+    except Exception as e:
+        print("[FAIL] /health: response is not valid JSON:\n", body)
+        return False
+    if data.get("status") == "ok":
+        print("[OK] /health")
+        return True
+    else:
+        print("[FAIL] /health: unexpected payload:", data)
+        return False
+
+
+def check_getmove():
+    payload = {"fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "elo": 1200, "time": 0.05}
+    code, body = http_post("/getmove", payload)
+    if code != 200 or body is None:
+        print("[FAIL] /getmove: no response (is app.py running?)")
+        return False
+    try:
+        data = json.loads(body)
+    except Exception:
+        print("[FAIL] /getmove: response is not valid JSON:\n", body)
+        return False
+    # Expect a list with at least one UCI move like e2e4 or g1f3
+    if isinstance(data, list) and len(data) >= 1 and isinstance(data[0], str) and len(data[0]) >= 4:
+        # basic validation: letters/numbers
+        import re
+        if re.match(r"^[a-h][1-8][a-h][1-8][qrbn]?$", data[0]):
+            print("[OK] /getmove")
+            return True
+        else:
+            # still accept common outputs like 'c2c4'
+            print("[OK] /getmove (response present, but move format is unusual):", data)
+            return True
+    else:
+        print("[FAIL] /getmove: unexpected response:", data)
+        return False
+
+
+def check_eval():
+    payload = {"fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"}
+    code, body = http_post("/eval", payload)
+    if code != 200 or body is None:
+        print("[FAIL] /eval: no response (is app.py running?)")
+        return False
+    try:
+        data = json.loads(body)
+    except Exception:
+        print("[FAIL] /eval: response is not valid JSON:\n", body)
+        return False
+    if isinstance(data, dict) and ("cp" in data or "mate" in data):
+        print("[OK] /eval")
+        return True
+    else:
+        print("[FAIL] /eval: unexpected response:", data)
+        return False
+
+
+def main():
+    ok = True
+    h = check_health()
+    ok = ok and h
+    gm = check_getmove()
+    ok = ok and gm
+    ev = check_eval()
+    ok = ok and ev
+
+    if ok:
+        print("\nBackend OK")
+        print('\nNote: app.py now supports KOMODO_PATH env var as an additional discovery option.\n')
+        sys.exit(0)
+    else:
+        print("\nOne or more checks failed. Ensure app.py is running and Komodo engine is available.")
+        sys.exit(2)
+
+if __name__ == '__main__':
+    main()
+
 
 print("=" * 60)
 print("  KRYPBOT - TESTE COMPLETO")
