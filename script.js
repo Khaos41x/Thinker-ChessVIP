@@ -982,7 +982,361 @@
     return gameMode;
   };
 
-    // --- LÓGICA DE AUTO QUEUE (INDEPENDENTE DE IDIOMA) ---
+  // --- LÃ“GICA DE CÃLCULO DE DELAY ---
+  const sessionPacingProfile = 0.8 + Math.random() * 0.4; // 0.8 (agressivo) a 1.2 (defensivo)
+
+  const gaussianRandom = (mean = 0, stdev = 1) => {
+    let u = 1 - Math.random();
+    let v = Math.random();
+    let z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    return z * stdev + mean;
+  };
+
+  // ===== EVAL BAR ENGINE (baseado no documento tecnico) =====
+  let evalBarEnabled = localStorage.getItem("evalBar") === "true";
+  let lastEvalData = { cp: 0, mate: null, depth: 0 };
+  let evalBarCurrent = 50;
+  let lastEvalFen = "";
+
+  const evalBarEngine = {
+    clamp(cp) {
+      return Math.max(-1000, Math.min(1000, cp));
+    },
+    cpToPercent(cp) {
+      return 50 + 50 * Math.tanh(cp / 400);
+    },
+    mateToPercent(mate) {
+      const d = Math.abs(mate);
+      const saturation = 1 - 1 / (d + 1);
+      return mate > 0 ? 50 + saturation * 50 : 50 - saturation * 50;
+    },
+    update(data) {
+      let target;
+      if (data.mate !== undefined && data.mate !== null) {
+        target = this.mateToPercent(data.mate);
+      } else {
+        const cp = this.clamp(data.cp || 0);
+        target = this.cpToPercent(cp);
+      }
+
+      // Atualizar sempre para dar feedback visual instantaneo
+      evalBarCurrent = target;
+      return evalBarCurrent;
+    },
+  };
+
+  function requestEval(fen) {
+    if (!evalBarEnabled && !smartPacingEnabled) return;
+    if (!fen) return;
+    // Sem guard de FEN duplicado aqui - o caller controla
+    try {
+      GM_xmlhttpRequest({
+        method: "POST",
+        url: SERVER_URL + "/eval",
+        headers: { "Content-Type": "application/json" },
+        data: JSON.stringify({ fen: fen }),
+        onload: function (resp) {
+          try {
+            const data = JSON.parse(resp.responseText);
+            if (data) {
+              lastEvalData = data;
+              if (evalBarEnabled) {
+                evalBarEngine.update(data);
+                renderEvalBar();
+              }
+            }
+          } catch (e) {
+            console.log("[KrypBot] Eval parse error:", e);
+          }
+        },
+        onerror: function (e) {
+          console.log("[KrypBot] Eval request error:", e);
+        },
+      });
+    } catch (e) {
+      console.log("[KrypBot] Eval exception:", e);
+    }
+  }
+
+  function getPlayingSide() {
+    // Metodo 1: Atributo flipped do Chess.com (mais confiavel)
+    const boardEl =
+      document.querySelector("wc-chess-board") ||
+      document.querySelector("chess-board") ||
+      document.querySelector(".board");
+
+    if (boardEl) {
+      const isFlipped =
+        boardEl.hasAttribute("flipped") ||
+        boardEl.classList.contains("flipped") ||
+        boardEl.getAttribute("flipped") === "true" ||
+        boardEl.getAttribute("flipped") === "";
+      if (isFlipped) return "b";
+    }
+
+    // Metodo 2: Verificar as iniciais ou nomes nos componentes de player (opcional/fallback)
+
+    // Metodo 3: URL
+    const url = window.location.href;
+    if (url.includes("color=black") || url.includes("color=b")) return "b";
+
+    // Metodo 4: API do jogo
+    try {
+      const { game } = get_cached_game();
+      if (game && typeof game.getPlayingAs === "function") {
+        const side = game.getPlayingAs();
+        if (side === "b" || side === 2 || side === "black") return "b";
+      }
+    } catch (e) {}
+
+    return "w";
+  }
+
+  function renderEvalBar() {
+    let bar = document.getElementById("thinker-eval-bar");
+    if (!bar) {
+      injectEvalBarDOM();
+      bar = document.getElementById("thinker-eval-bar");
+      if (!bar) return;
+    }
+    const fill = document.getElementById("thinker-eval-fill");
+    const label = document.getElementById("thinker-eval-label");
+    if (!fill || !label) return;
+
+    const side = getPlayingSide();
+    const isBlack = side === "b";
+
+    // Garante que o bar esteja visivel
+    bar.style.display = "flex";
+
+    // evalBarCurrent: 50=igual, >50=vantagem brancas, <50=vantagem pretas
+    const pct = Math.max(2, Math.min(98, evalBarCurrent));
+
+    if (isBlack) {
+      // Jogando de PRETAS:
+      // Queremos que a parte PRETA (background) fique embaixo.
+      // Entao o preenchimento BRANCO (fill) deve vir do TOPO.
+      fill.style.bottom = "auto";
+      fill.style.top = "0";
+      fill.style.height = pct + "%";
+      fill.style.borderRadius = "5px 5px 0 0";
+    } else {
+      // Jogando de BRANCAS:
+      // Queremos que a parte BRANCA (fill) fique embaixo.
+      fill.style.top = "auto";
+      fill.style.bottom = "0";
+      fill.style.height = pct + "%";
+      fill.style.borderRadius = "0 0 5px 5px";
+    }
+
+    // Label (Perspectiva do Jogador)
+    // Se for preto, invertemos o sinal para que vantagem do jogador seja sempre "+"
+    if (lastEvalData.mate !== null && lastEvalData.mate !== undefined) {
+      const displayMate = isBlack ? -lastEvalData.mate : lastEvalData.mate;
+      label.textContent =
+        (displayMate > 0 ? "+" : "") + "M" + Math.abs(displayMate);
+    } else {
+      let cpVal = (lastEvalData.cp || 0) / 100;
+      if (isBlack) cpVal = -cpVal;
+      label.textContent = (cpVal >= 0 ? "+" : "") + cpVal.toFixed(1);
+    }
+
+    // Cor do label baseada no contraste
+    // Se pct > 50 (mais branco), label preto. Se pct < 50 (mais escuro), label branco.
+    label.style.color = pct > 50 ? "#1a1a1a" : "#ffffff";
+  }
+
+  function injectEvalBarDOM() {
+    if (document.getElementById("thinker-eval-bar")) return;
+    const boardEl =
+      document.querySelector("wc-chess-board") ||
+      document.querySelector(".board") ||
+      document.querySelector("chess-board");
+    if (!boardEl) return;
+    const container = boardEl.parentElement;
+    if (!container) return;
+    container.style.display = "flex";
+    container.style.alignItems = "stretch";
+
+    const barEl = document.createElement("div");
+    barEl.id = "thinker-eval-bar";
+    barEl.style.cssText =
+      "width:28px;min-height:100%;background:#1a1a1a;border-radius:6px;margin-right:6px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;box-shadow:0 2px 12px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.06);transition:all 0.3s ease;";
+
+    const fillEl = document.createElement("div");
+    fillEl.id = "thinker-eval-fill";
+    fillEl.style.cssText =
+      "width:100%;height:50%;background:linear-gradient(to top,#f0f0f0 0%,#ffffff 100%);transition:height 0.6s cubic-bezier(0.22,1,0.36,1);position:absolute;bottom:0;left:0;border-radius:0 0 5px 5px;";
+
+    const labelEl = document.createElement("div");
+    labelEl.id = "thinker-eval-label";
+    labelEl.style.cssText =
+      "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;font-weight:700;font-family:'Inter',sans-serif;z-index:2;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,0.3);white-space:nowrap;";
+    labelEl.textContent = "0.0";
+
+    barEl.appendChild(fillEl);
+    barEl.appendChild(labelEl);
+    container.insertBefore(barEl, boardEl);
+  }
+
+  function removeEvalBarDOM() {
+    const bar = document.getElementById("thinker-eval-bar");
+    if (bar) bar.remove();
+  }
+
+  // ===== EVAL BAR POLLING INDEPENDENTE =====
+  // Roda a cada 1s, verifica o FEN atual e pede eval
+  // Funciona em TODOS os turnos (nosso e do oponente)
+  let evalPollingFen = "";
+  let lastEvalTime = 0;
+  setInterval(() => {
+    if (!evalBarEnabled && !smartPacingEnabled) return;
+    try {
+      const { game } = get_cached_game();
+      if (!game) return;
+      const currentFen = game.getFEN();
+      if (!currentFen) return;
+
+      const now = Date.now();
+      // Forçar atualização a cada 5s mesmo se o FEN for o mesmo (para garantir sincronia)
+      if (currentFen === evalPollingFen && now - lastEvalTime < 5000) return;
+
+      evalPollingFen = currentFen;
+      lastEvalTime = now;
+      requestEval(currentFen);
+    } catch (e) {}
+  }, 500);
+
+  const computeDelayValue = (gameObj = null) => {
+    // PRIORIDADE MAXIMA: modo MAX sempre retorna 0, independente do Smart Pacing
+    if (autoDelayMode === "max") return 0;
+
+    // Smart Pacing ativo: usa logica humanizada
+    if (smartPacingEnabled) {
+      return computeSmartPacing(gameObj);
+    }
+
+    // AUTO RUN DELAY (Smart Pacing OFF)
+    if (autoDelayMode === "average") {
+      let min = parseFloat(autoDelayMin) || DEFAULT_MIN_DELAY;
+      let max = parseFloat(autoDelayMax) || DEFAULT_MAX_DELAY;
+      return Number(((min + max) / 2).toFixed(2));
+    }
+    // Modo random
+    let min = parseFloat(autoDelayMin) || DEFAULT_MIN_DELAY;
+    let max = parseFloat(autoDelayMax) || DEFAULT_MAX_DELAY;
+    if (min > max) [min, max] = [max, min];
+    const r = Math.random() * (max - min) + min;
+    return Number(r.toFixed(2));
+  };
+
+  // ===== SMART PACING ENGINE (Gestão de tempo humanizada) =====
+  const computeSmartPacing = (gameObj = null) => {
+    let baseDelay = 0.2;
+    let maxDelay = 2.5;
+
+    // Detecta o controle de tempo pelo relógio na tela
+    let timeMode = "blitz";
+    const clockEls = document.querySelectorAll(
+      ".clock-component .clock-time-component, .clock-component .clock-time",
+    );
+    let myTimeRemaining = null;
+    for (const clock of clockEls) {
+      const text = clock.textContent.trim();
+      const parts = text.split(":");
+      if (parts.length === 2) {
+        const mins = parseInt(parts[0]);
+        const secs = parseFloat(parts[1]);
+        const total = mins * 60 + secs;
+        if (myTimeRemaining === null || total < myTimeRemaining) {
+          myTimeRemaining = total;
+        }
+        // Detectar modo pelo tempo inicial (baseado no range)
+        if (total <= 120) timeMode = "bullet";
+        else if (total <= 300) timeMode = "blitz";
+        else timeMode = "rapid";
+      }
+    }
+
+    if (timeMode === "bullet") maxDelay = 2.5;
+    if (timeMode === "blitz") maxDelay = 6.0;
+    if (timeMode === "rapid") maxDelay = 12.0;
+
+    let legalMovesCount = 20;
+    let moveNumber = 10;
+    let isForced = false;
+
+    if (gameObj) {
+      try {
+        const history =
+          typeof gameObj.getHistory === "function" ? gameObj.getHistory() : [];
+        moveNumber = history.length;
+
+        if (typeof gameObj.getLegalMoves === "function") {
+          const legalMoves = gameObj.getLegalMoves();
+          legalMovesCount = legalMoves.length;
+          if (legalMovesCount <= 1) isForced = true;
+        }
+      } catch (e) {}
+    }
+
+    // Lance forçado (xeque único, recaptura) → reflexo
+    if (isForced) {
+      return Math.max(0.1, Number(gaussianRandom(0.2, 0.05).toFixed(2)));
+    }
+
+    // Abertura (primeiros 8 lances) → memória muscular
+    if (moveNumber <= 8) {
+      return Math.max(
+        0.1,
+        Math.min(1.0, Number(gaussianRandom(0.4, 0.15).toFixed(2))),
+      );
+    }
+
+    // Apuro de tempo → instinto de sobrevivência
+    if (myTimeRemaining !== null && myTimeRemaining < 10) {
+      return Math.max(0.1, Number(gaussianRandom(0.15, 0.05).toFixed(2)));
+    }
+
+    // ===== EVAL-AWARE PACING: usar dados da eval bar se disponíveis =====
+    let evalFactor = 1.0;
+    if (
+      lastEvalData &&
+      lastEvalData.cp !== null &&
+      lastEvalData.cp !== undefined
+    ) {
+      const absCp = Math.abs(lastEvalData.cp);
+      // Posição equilibrada (|cp| < 50): humano pensa mais
+      if (absCp < 50) evalFactor = 1.4;
+      // Leve vantagem/desvantagem (50-150): pensa moderado
+      else if (absCp < 150) evalFactor = 1.1;
+      // Vantagem clara (150-400): decisão relativamente rápida
+      else if (absCp < 400) evalFactor = 0.85;
+      // Vantagem esmagadora (>400): joga rápido, posição decidida
+      else evalFactor = 0.6;
+    }
+    if (
+      lastEvalData &&
+      lastEvalData.mate !== null &&
+      lastEvalData.mate !== undefined
+    ) {
+      const absMate = Math.abs(lastEvalData.mate);
+      // Mate encontrado: joga rápido (reflexo de vitória/desespero)
+      evalFactor = absMate <= 3 ? 0.3 : 0.5;
+    }
+
+    // Meio de jogo: complexidade posicional com ruído gaussiano
+    let complexity = Math.min(1.0, legalMovesCount / 35.0);
+    complexity = complexity * sessionPacingProfile * evalFactor;
+
+    const meanTime = baseDelay + complexity * (maxDelay * 0.6);
+    let finalTime = gaussianRandom(meanTime, maxDelay * 0.15);
+    finalTime = Math.max(baseDelay, Math.min(maxDelay, finalTime));
+
+    return Number(finalTime.toFixed(2));
+  };
+
+  // --- LÃ“GICA DE AUTO QUEUE (INDEPENDENTE DE IDIOMA) ---
   let auto_queue_checkInterval = null;
   let auto_queue_cooldown = false;
 
@@ -999,41 +1353,25 @@
     );
   }
 
-  function getVisibleGameOverRoots() {
-    const selectors = [
+  function isGameOverVisible() {
+    const gameOverSelectors = [
       '[data-cy="game-over-modal"]',
       '[data-cy="game-over-dialog"]',
-      '[data-cy*="game-over"]',
       '[class*="game-over"]',
       '.modal-game-over',
       '.game-over-modal',
       '.game-over-component',
       '.game-over-controls',
       '.game-over-buttons-component',
-      '[role="dialog"]',
     ];
 
-    return [...document.querySelectorAll(selectors.join(","))].filter(isElementVisible);
+    return gameOverSelectors.some((sel) => {
+      const el = document.querySelector(sel);
+      return el && isElementVisible(el);
+    });
   }
 
-  function isGameOverVisible() {
-    return getVisibleGameOverRoots().length > 0;
-  }
-
-  function getClickableRect(el) {
-    const rect = el.getBoundingClientRect();
-    return {
-      left: rect.left,
-      top: rect.top,
-      right: rect.right,
-      bottom: rect.bottom,
-      width: rect.width,
-      height: rect.height,
-      area: rect.width * rect.height,
-    };
-  }
-
-  function isAutoQueueCandidate(el, allowStructuralMatch = false) {
+  function isAutoQueueCandidate(el) {
     if (!el || !isElementVisible(el)) return false;
     if (el.disabled || el.getAttribute("aria-disabled") === "true") return false;
     if (el.closest("nav") || el.closest(".menu")) return false;
@@ -1043,93 +1381,41 @@
     const href = (el.getAttribute("href") || "").toLowerCase();
     const dataCy = (el.getAttribute("data-cy") || "").toLowerCase();
     const dataTest = (el.getAttribute("data-test-element") || "").toLowerCase();
-    const controlView = (el.getAttribute("data-control-view") || "").toLowerCase();
-    const className = (el.className || "").toString().toLowerCase();
-    const haystack = `${text} ${aria} ${href} ${dataCy} ${dataTest} ${controlView} ${className}`;
+    const haystack = `${text} ${aria} ${href} ${dataCy} ${dataTest}`;
 
     const blockedTerms = [
       "rematch",
       "revanche",
       "review",
+      "analisar",
       "analysis",
       "share",
-      "analisar",
-      "análise",
-      "analise",
-      "revisão",
-      "revisao",
       "compartilhar",
     ];
     if (blockedTerms.some((term) => haystack.includes(term))) return false;
 
-    const semanticSignals = [
-      "game-over-play-again",
-      "new-game",
-      "play-again",
+    const positiveTerms = [
       "new game",
       "nova partida",
       "novo jogo",
       "jogar novamente",
       "play again",
       "play online",
+      "new-game",
+      "play-again",
       "/play/online",
     ];
-    if (semanticSignals.some((term) => haystack.includes(term))) return true;
 
-    return allowStructuralMatch;
-  }
-
-  function findStructuralNewGameButton() {
-    const roots = getVisibleGameOverRoots();
-    for (const root of roots) {
-      const buttons = [...root.querySelectorAll('button, a[href], [role="button"]')]
-        .filter((candidate) => isAutoQueueCandidate(candidate, true))
-        .map((candidate) => ({ el: candidate, rect: getClickableRect(candidate) }))
-        .filter(({ rect }) => rect.width >= 70 && rect.height >= 28);
-
-      if (!buttons.length) continue;
-
-      const rootRect = getClickableRect(root);
-      const bottomActions = buttons.filter(
-        ({ rect }) => rect.top > rootRect.top + rootRect.height * 0.55,
-      );
-      const actionPool = bottomActions.length ? bottomActions : buttons;
-      const maxArea = Math.max(...actionPool.map(({ rect }) => rect.area));
-      const compactActions = actionPool.filter(
-        ({ rect }) => rect.area < maxArea * 0.85 || actionPool.length <= 2,
-      );
-      const sorted = (compactActions.length ? compactActions : actionPool).sort(
-        (a, b) => a.rect.top - b.rect.top || a.rect.left - b.rect.left,
-      );
-
-      const bottomRowTop = sorted[sorted.length - 1].rect.top;
-      const bottomRow = sorted
-        .filter(({ rect }) => Math.abs(rect.top - bottomRowTop) < 12)
-        .sort((a, b) => a.rect.left - b.rect.left);
-      if (bottomRow.length) return bottomRow[0].el;
-    }
-
-    return null;
+    return positiveTerms.some((term) => haystack.includes(term));
   }
 
   function findNewGameButton() {
-    const trustedSelectors = [
+    const selectors = [
       '[data-cy="game-over-play-again-button"]',
       '[data-cy="new-game-button"]',
       '[data-cy="play-again-button"]',
       '[data-test-element="new-game-button"]',
       '[data-control-view="play-again"]',
-      'a.ui_v5-button-component[href*="/play/online"]',
-    ];
-
-    for (const sel of trustedSelectors) {
-      const buttons = document.querySelectorAll(sel);
-      for (const candidate of buttons) {
-        if (isAutoQueueCandidate(candidate, true)) return candidate;
-      }
-    }
-
-    const selectors = [
       '.game-over-buttons-component button',
       '.game-over-buttons-component a',
       '.game-over-controls button',
@@ -1137,6 +1423,7 @@
       '.game-over-controls-button',
       '.new-game-button',
       '.play-again-button',
+      'a.ui_v5-button-component[href*="/play/online"]',
     ];
 
     for (const sel of selectors) {
@@ -1157,7 +1444,7 @@
       }
     }
 
-    return findStructuralNewGameButton();
+    return null;
   }
 
   function isInGame() {
@@ -1167,7 +1454,6 @@
   }
 
   function clickAutoQueueTarget(target) {
-    target.scrollIntoView({ block: "center", inline: "center" });
     ["pointerdown", "mousedown", "pointerup", "mouseup", "click"].forEach(
       (eventName) => {
         target.dispatchEvent(
@@ -1232,7 +1518,9 @@
         clickNewGame();
       }
     }, 750);
-  }function cleanCache() {
+  }
+
+  function cleanCache() {
     if (moveCache.size > 100) {
       const keys = Array.from(moveCache.keys());
       keys.slice(0, 50).forEach((k) => moveCache.delete(k));
@@ -1825,48 +2113,29 @@
         mainDiv.first().append(menuHtml);
         $("body").append(bannerHtml);
 
-        // Dynamically fill the whole right-side rail without covering the board/site background.
+        // Dynamically position the banner perfectly next to the sidebar
         function updateBannerPosition() {
           const sidebar = document.querySelector(
             ".board-layout-sidebar, .layout-board-sidebar, #board-layout-sidebar, .play-controller-component",
           );
-          const boardArea = document.querySelector(
-            "#board-layout-main, .board-layout-main, .board-layout-player-top, .board-layout-player-bottom, .board, .chess-board",
-          );
           const banner = document.getElementById("thinker-chess-banner");
           if (sidebar && banner) {
-            const sidebarRect = sidebar.getBoundingClientRect();
-            const boardRect = boardArea
-              ? boardArea.getBoundingClientRect()
-              : sidebarRect;
-            const gap = 8;
-            const pagePadding = 16;
-            const left = Math.ceil(sidebarRect.right + gap + window.scrollX);
-            const top = Math.max(
-              72,
-              Math.floor(Math.min(sidebarRect.top, boardRect.top) + window.scrollY),
-            );
-            const bottomLimit = Math.min(
-              window.innerHeight - 16,
-              Math.max(sidebarRect.bottom, boardRect.bottom),
-            );
-            const width = Math.max(
-              280,
-              Math.floor(document.documentElement.clientWidth - left - pagePadding),
-            );
-            const height = Math.max(
-              520,
-              Math.floor(bottomLimit + window.scrollY - top),
-            );
-
+            const rect = sidebar.getBoundingClientRect();
             banner.style.right = "auto";
-            banner.style.left = left + "px";
-            banner.style.top = top + "px";
-            banner.style.width = width + "px";
-            banner.style.height = height + "px";
+            banner.style.left = rect.right + window.scrollX + 13 + "px";
+            banner.style.top = rect.top + window.scrollY + "px";
+
+            // Keep the custom vertical banner inside Chess.com's right-side ad slot.
+            // The available right column is a tall rectangle (roughly 1:2), so deriving
+            // height from width prevents the image from stretching down past the ad box.
+            const availableWidth =
+              document.documentElement.clientWidth - (rect.right + 13) - 2;
+            const bannerWidth = Math.max(80, availableWidth);
+            const bannerHeight = Math.min(rect.height, Math.round(bannerWidth * 2));
+
+            banner.style.width = bannerWidth + "px";
+            banner.style.height = bannerHeight + "px";
             banner.style.display = "flex";
-            banner.style.borderRadius = "6px";
-            banner.style.overflow = "hidden";
             document.body.style.overflowX = "hidden";
           }
           requestAnimationFrame(updateBannerPosition);
@@ -2191,4 +2460,3 @@
     }, 10);
   });
 })();
-
