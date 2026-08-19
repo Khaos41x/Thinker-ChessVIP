@@ -460,8 +460,9 @@ def evaluate():
         print(f"Erro no eval: {e}")
         return jsonify({"cp": 0, "mate": None})
 
-import rating
+from core import rating
 import database
+
 
 @app.route("/record-match", methods=["POST"])
 def record_match():

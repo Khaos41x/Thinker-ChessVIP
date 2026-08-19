@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Banco de dados local
+users.db
+
+# Engine (binário grande, fornecido localmente)
+engine/
+
+# Node / opencode local
+node_modules/
+.opencode/node_modules/
+
+# Sistema
+.DS_Store
+Thumbs.db

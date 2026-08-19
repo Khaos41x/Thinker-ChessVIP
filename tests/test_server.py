@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Minimal backend test for Thinker-Chess app.py
-Run with: python test_server.py
+Run with: python tests/test_server.py
 
 Checks:
  - GET /health returns 200 and valid JSON with status "ok"

@@ -54,7 +54,7 @@ Commit `856adc8 — Optimize_engine_concurrency_and_instant_move_latencies`:
 
 ### 3. Auto-Adjust de Rating
 
-- Sistema em `rating.py` que ajusta ELO automaticamente baseado nas últimas N partidas
+- Sistema em `core/rating.py` que ajusta ELO automaticamente baseado nas últimas N partidas
 - Frontend `AutoAdjustRating` class em `script.js` que sobe/desce dificuldade conforme win rate
 - Detecta rating do oponente pelo DOM e ajusta base inicial
 
@@ -74,7 +74,7 @@ Frontend (script.js via Tampermonkey)
         │
         ├── /getmove     → Komodo engine → jogada UCI
         ├── /eval        → Ponder engine → score {cp, mate, depth}
-        ├── /record-match → rating.py → SQLite
+        ├── /record-match → core/rating.py → SQLite
         ├── /rating/<user> → rating.get_rating_summary()
         ├── /ratings      → ranking dos jogadores
         ├── /history/<user> → match history

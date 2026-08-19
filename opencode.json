@@ -1,0 +1,79 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTS.md"],
+  "mcp": {
+    "github": {
+      "type": "remote",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "enabled": true,
+      "headers": { "Authorization": "Bearer {env:GITHUB_TOKEN}" }
+    },
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "-y", "@playwright/mcp@latest"],
+      "enabled": true
+    },
+    "sqlite": {
+      "type": "local",
+      "command": ["C:\\Users\\2ln0g0tt7bkehifl\\.local\\bin\\mcp-server-sqlite.exe", "--db-path", "C:\\Users\\2ln0g0tt7bkehifl\\Thinker-ChessVIP\\users.db"],
+      "enabled": true
+    },
+    "fetch": {
+      "type": "local",
+      "command": ["C:\\Users\\2ln0g0tt7bkehifl\\.local\\bin\\mcp-server-fetch.exe"],
+      "enabled": true
+    },
+    "debugger": {
+      "type": "local",
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
+      "enabled": true
+    }
+  },
+  "lsp": {
+    "python": {
+      "command": ["pyright-langserver", "--stdio"],
+      "extensions": [".py"]
+    },
+    "typescript": {
+      "command": ["typescript-language-server", "--stdio"],
+      "extensions": [".ts", ".tsx"]
+    },
+    "javascript": {
+      "command": ["typescript-language-server", "--stdio"],
+      "extensions": [".js", ".mjs", ".cjs", ".jsx"]
+    }
+  },
+  "provider": {
+    "opencode": {
+      "models": {
+        "deepseek-v4-flash-free": {
+          "variants": {
+            "low": { "reasoningEffort": "low" },
+            "high": { "reasoningEffort": "high" },
+            "max": { "reasoningEffort": "max" }
+          }
+        }
+      }
+    }
+  },
+  "experimental": {
+    "mcp_timeout": 30000
+  },
+  "tool_output": {
+    "max_lines": 150,
+    "max_bytes": 4096
+  },
+  "compaction": {
+    "auto": true,
+    "tail_turns": 12
+  },
+  "permission": {
+    "bash": {
+      "*": "ask",
+      "git *": "allow",
+      "python *": "allow",
+      "npm *": "allow",
+      "npx *": "allow"
+    }
+  }
+}

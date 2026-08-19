@@ -1336,9 +1336,13 @@
     return Number(finalTime.toFixed(2));
   };
 
-  // --- LÃ“GICA DE AUTO QUEUE (INDEPENDENTE DE IDIOMA) ---
+  // --- AUTO QUEUE (detecção de fim de jogo via MutationObserver) ---
   let auto_queue_checkInterval = null;
   let auto_queue_cooldown = false;
+  let auto_queue_no_button_cycles = 0;
+  let auto_queue_nav_fallback = false;
+  let auto_queue_mutation_pending = false;
+  let auto_queue_game_over_logged = false;
 
   function isElementVisible(el) {
     if (!el) return false;
@@ -1353,135 +1357,434 @@
     );
   }
 
-  function isGameOverVisible() {
-    const gameOverSelectors = [
-      '[data-cy="game-over-modal"]',
-      '[data-cy="game-over-dialog"]',
-      '[class*="game-over"]',
-      '.modal-game-over',
-      '.game-over-modal',
-      '.game-over-component',
-      '.game-over-controls',
-      '.game-over-buttons-component',
-    ];
-
-    return gameOverSelectors.some((sel) => {
-      const el = document.querySelector(sel);
-      return el && isElementVisible(el);
-    });
+  // Nós onde buscar: a página INTEIRA + shadow DOM dos web components. O
+  // chess.com pode montar o modal de fim de jogo fora do board-layout (num
+  // overlay global no body), então a busca não pode ficar presa ao layout.
+  function getSearchTargets() {
+    const out = [];
+    const seen = new Set();
+    const pending = [document.documentElement, document.body];
+    while (pending.length) {
+      const node = pending.shift();
+      if (!node || seen.has(node)) continue;
+      seen.add(node);
+      out.push(node);
+      try {
+        node.querySelectorAll("*").forEach((child) => {
+          if (child.shadowRoot) pending.push(child.shadowRoot);
+        });
+      } catch (e) {}
+      if (node.shadowRoot) pending.push(node.shadowRoot);
+    }
+    return out;
   }
 
-  function isAutoQueueCandidate(el) {
-    if (!el || !isElementVisible(el)) return false;
-    if (el.disabled || el.getAttribute("aria-disabled") === "true") return false;
-    if (el.closest("nav") || el.closest(".menu")) return false;
+  function queryIn(targets, selector) {
+    const out = [];
+    targets.forEach((t) => {
+      let els = [];
+      try {
+        els = t.querySelectorAll(selector);
+      } catch (e) {}
+      els.forEach((el) => out.push(el));
+    });
+    return out;
+  }
 
-    const text = (el.innerText || el.textContent || "").trim().toLowerCase();
-    const aria = (el.getAttribute("aria-label") || "").toLowerCase();
-    const href = (el.getAttribute("href") || "").toLowerCase();
-    const dataCy = (el.getAttribute("data-cy") || "").toLowerCase();
-    const dataTest = (el.getAttribute("data-test-element") || "").toLowerCase();
-    const haystack = `${text} ${aria} ${href} ${dataCy} ${dataTest}`;
-
-    const blockedTerms = [
-      "rematch",
-      "revanche",
-      "review",
-      "analisar",
-      "analysis",
-      "share",
-      "compartilhar",
+  // Raiz do modal/aba de fim de partida. Usa atributos estáveis do chess.com,
+  // com fallback estrutural e por marcadores de classe/data-cy.
+  function findGameOverRoot(targets) {
+    const stableSelectors = [
+      '[data-cy="game-over-modal"]',
+      '[data-test-element="game-over-modal"]',
+      '[data-cy="game-over-dialog"]',
+      '.game-over-modal',
+      '[class*="game-over-modal"]',
+      '[class*="modal-game-over"]',
     ];
-    if (blockedTerms.some((term) => haystack.includes(term))) return false;
+    for (const sel of stableSelectors) {
+      const el = queryIn(targets, sel)[0];
+      if (el && isElementVisible(el)) return el;
+    }
+    for (const d of queryIn(targets, '[role="dialog"], [role="alertdialog"]')) {
+      if (!isElementVisible(d)) continue;
+      if (
+        queryIn(
+          [d],
+          '[data-cy*="game-over"], [data-test-element*="game-over"], [class*="game-over"]',
+        ).length
+      )
+        return d;
+    }
+    // Fallback: qualquer elemento visível com "game-over" no atributo/classe.
+    const marker = queryIn(
+      targets,
+      '[class*="game-over"], [data-cy*="game-over"], [data-test-element*="game-over"]',
+    )[0];
+    return marker && isElementVisible(marker) ? marker : null;
+  }
 
-    const positiveTerms = [
+  function isGameOverVisible(targets) {
+    let confirmed = false;
+    let reason = "";
+    if (findGameOverRoot(targets)) {
+      confirmed = true;
+      reason = "raiz game-over detectada";
+    } else if (findNewGameButton(targets)) {
+      confirmed = true;
+      reason = "botão de nova partida visível";
+    }
+    if (confirmed) {
+      // Loga só uma vez por episódio de fim de jogo (evita spam do polling).
+      if (!auto_queue_game_over_logged) {
+        auto_queue_game_over_logged = true;
+        console.log(`[TC AutoQueue] fim de partida confirmado (${reason}).`);
+      }
+    } else {
+      auto_queue_game_over_logged = false;
+    }
+    return confirmed;
+  }
+
+  // =========================================================================
+  // COMO INSPECIONAR O BOTÃO "NOVA PARTIDA" (Play Again) NO NAVEGADOR:
+  // 1. Deixe uma partida terminar no chess.com (modal de fim de jogo aberto).
+  // 2. Aperte F12 (DevTools) e ative a inspeção (Ctrl+Shift+C / Cmd+Shift+C).
+  // 3. Clique no botão "Play"/"Jogar"/"Nova partida".
+  // 4. No painel Elements, o elemento selecionado É o botão. Procure atributos
+  //    úteis: data-test-element, data-cy, aria-label, data-control-view, href
+  //    ou classes.
+  // 5. Se o botão estiver DENTRO de um web component (ex.: <wc-game-over>),
+  //    o DevTools mostra a árvore do shadow DOM — copie o atributo de lá.
+  // 6. Adicione o seletor novo na lista NEW_GAME_SELECTORS abaixo, ex.:
+  //    '[data-test-element="game-over-new-game-button"]'.
+  // =========================================================================
+  const NEW_GAME_SELECTORS = [
+    // data-attributes / test hooks (mais estáveis)
+    '[data-test-element="game-over-new-game-button"]',
+    '[data-test-element="game-over-play-again-button"]',
+    '[data-test-element="new-game-button"]',
+    '[data-test-element="play-again-button"]',
+    '[data-cy="game-over-new-game-button"]',
+    '[data-cy="game-over-play-again-button"]',
+    '[data-cy="new-game-button"]',
+    '[data-cy="play-again-button"]',
+    '[data-control-view="play-again"]',
+    // aria-labels (inglês/português)
+    '[aria-label="Play again"]',
+    '[aria-label="New game"]',
+    '[aria-label="Nova partida"]',
+    '[aria-label="Novo jogo"]',
+    '[aria-label="Jogar novamente"]',
+    // classes conhecidas (menos estáveis)
+    '.game-over-new-game-button',
+    '.game-over-play-again-button',
+    '.new-game-button',
+    '.play-again-button',
+    '.game-over-buttons-component button',
+    '.game-over-buttons-component a',
+    '.game-over-controls button',
+    '.game-over-controls a',
+    '[data-cy="game-over-button-new-game"]',
+    '.game-over-modal button',
+    '.game-over-modal a',
+    // atalhos diretos para a fila de partidas
+    'a[href="/play/live"]',
+    'a[href="/play/online"]',
+    'a[href="/play/daily"]',
+    'a[href*="/play/live"]',
+    'a[href*="/play/online"]',
+  ];
+
+  function btnKey(b) {
+    return [
+      b.getAttribute("data-cy") || "",
+      b.getAttribute("data-test-element") || "",
+      b.getAttribute("href") || "",
+      b.getAttribute("data-control-view") || "",
+      b.getAttribute("aria-label") || "",
+    ]
+      .join(" ")
+      .toLowerCase();
+  }
+
+  function findNewGameButton(targets) {
+    const root = findGameOverRoot(targets);
+    const gameOverDetected = !!root;
+
+    // 1) Seletores conhecidos (data-attributes / aria-labels / classes)
+    for (let i = 0; i < NEW_GAME_SELECTORS.length; i++) {
+      const sel = NEW_GAME_SELECTORS[i];
+      for (const el of queryIn(targets, sel)) {
+        if (!isElementVisible(el) || el.disabled) continue;
+        // Evita cliques em links/botões do menu superior ("Play"/"Jogar").
+        if (el.closest("nav") || el.closest("[class*='menu']")) continue;
+        if (gameOverDetected) {
+          console.log(`[TC AutoQueue] botão localizado por seletor: '${sel}'.`);
+        }
+        return el;
+      }
+    }
+
+    // 2) Texto / aria-label (inglês e português): o chess.com muda classes com
+    //    frequência, mas o texto do botão costuma sobreviver. Com o modal de
+    //    fim de jogo detectado, aceita "Play"/"Jogar" (botão primário).
+    const labelsStrong = [
+      "play again",
+      "play online",
+      "play another",
       "new game",
       "nova partida",
       "novo jogo",
       "jogar novamente",
-      "play again",
-      "play online",
-      "new-game",
-      "play-again",
-      "/play/online",
+      "jogar de novo",
     ];
-
-    return positiveTerms.some((term) => haystack.includes(term));
-  }
-
-  function findNewGameButton() {
-    const selectors = [
-      '[data-cy="game-over-play-again-button"]',
-      '[data-cy="new-game-button"]',
-      '[data-cy="play-again-button"]',
-      '[data-test-element="new-game-button"]',
-      '[data-control-view="play-again"]',
-      '.game-over-buttons-component button',
-      '.game-over-buttons-component a',
-      '.game-over-controls button',
-      '.game-over-controls a',
-      '.game-over-controls-button',
-      '.new-game-button',
-      '.play-again-button',
-      'a.ui_v5-button-component[href*="/play/online"]',
-    ];
-
-    for (const sel of selectors) {
-      const buttons = document.querySelectorAll(sel);
-      for (const candidate of buttons) {
-        if (isAutoQueueCandidate(candidate)) return candidate;
+    const labelsInModal = ["play", "jogar"];
+    const labels = gameOverDetected
+      ? labelsStrong.concat(labelsInModal)
+      : labelsStrong;
+    // Normaliza espaços extras/quebras de linha e caixa, para casar com
+    // "Nova\nPartida", "  JOGAR  ", "novo jogo", etc.
+    const normalize = (s) =>
+      (s || "").toLowerCase().replace(/\s+/g, " ").trim();
+    for (const el of queryIn(
+      gameOverDetected ? [root] : targets,
+      "button, a[href], [role='button']",
+    )) {
+      if (!isElementVisible(el) || el.disabled) continue;
+      if (el.closest("nav") || el.closest("[class*='menu']")) continue;
+      const text = normalize(el.innerText || el.textContent);
+      const aria = normalize(el.getAttribute("aria-label"));
+      const matched = labels.find((l) => `${text} ${aria}`.includes(l));
+      if (matched) {
+        if (gameOverDetected) {
+          console.log(`[TC AutoQueue] botão localizado por texto/aria: '${matched}'.`);
+        }
+        return el;
       }
     }
 
-    const scopedRoots = document.querySelectorAll(
-      '[data-cy*="game-over"], [class*="game-over"], .modal-content, .ui_modal, [role="dialog"]',
+    // 3) Estrutural: dentro do modal de fim de jogo, exclui ações secundárias.
+    if (!root) return null;
+    const all = queryIn([root], "button, a[href]").filter(
+      (b) => isElementVisible(b) && !b.disabled,
     );
-    for (const root of scopedRoots) {
-      if (!isElementVisible(root)) continue;
-      const buttons = root.querySelectorAll("button, a[href]");
-      for (const candidate of buttons) {
-        if (isAutoQueueCandidate(candidate)) return candidate;
+    if (!all.length) {
+      if (gameOverDetected) {
+        console.log("[TC AutoQueue] FALHA: modal de fim de jogo sem botões visíveis.");
       }
+      return null;
     }
-
-    return null;
-  }
-
-  function isInGame() {
-    return !!document.querySelector(
-      ".board-component, .game-component, [data-board], .board-layout-main, .chess-board, .board, wc-board, [class*='board']",
+    const candidates = all.filter(
+      (b) =>
+        !/(review|analysis|analisar|share|compartilhar|report|denunciar|close|fechar|board-flip)/i.test(
+          btnKey(b),
+        ),
     );
+    const pool = candidates.length ? candidates : all;
+    const byAttr = pool.find((b) => /(new|play|again|novo|nova|jogar)/i.test(btnKey(b)));
+    if (byAttr) {
+      if (gameOverDetected) {
+        console.log("[TC AutoQueue] botão localizado por atributo estrutural.");
+      }
+      return byAttr;
+    }
+    // Última fileira de botões (o primário costuma ficar no canto inferior)
+    pool.sort(
+      (a, b) =>
+        b.getBoundingClientRect().bottom - a.getBoundingClientRect().bottom ||
+        a.getBoundingClientRect().left - b.getBoundingClientRect().left,
+    );
+    if (gameOverDetected) {
+      console.log("[TC AutoQueue] botão localizado por fallback estrutural (última fileira).");
+    }
+    return pool[0];
   }
 
+  // Clique reforçado — simula um mouse humano com a sequência completa de
+  // eventos. O chess.com pode ignorar .click() simples (trusted events); aqui
+  // disparamos mouseover/mousedown/mouseup/click (bubbles + cancelable), que o
+  // React enxerga como um clique real.
   function clickAutoQueueTarget(target) {
-    ["pointerdown", "mousedown", "pointerup", "mouseup", "click"].forEach(
-      (eventName) => {
-        target.dispatchEvent(
-          new MouseEvent(eventName, {
-            bubbles: true,
-            cancelable: true,
-            view: window,
-          }),
+    if (!target) {
+      console.log("[TC AutoQueue] clique abortado: alvo nulo.");
+      return;
+    }
+    try {
+      target.scrollIntoView({ block: "center", inline: "center" });
+    } catch (e) {}
+    const rect = target.getBoundingClientRect();
+    const cx =
+      Math.round(rect.left + rect.width / 2) ||
+      Math.round(window.innerWidth / 2);
+    const cy =
+      Math.round(rect.top + rect.height / 2) ||
+      Math.round(window.innerHeight / 2);
+    const mk = (type, Ctor) => {
+      const opts = {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        view: window,
+        clientX: cx,
+        clientY: cy,
+        screenX: cx,
+        screenY: cy,
+        button: 0,
+        buttons: 1,
+        detail: 1,
+      };
+      try {
+        return new Ctor(type, opts);
+      } catch (e) {
+        const ev = document.createEvent("MouseEvent");
+        ev.initMouseEvent(
+          type,
+          true,
+          true,
+          window,
+          1,
+          cx,
+          cy,
+          cx,
+          cy,
+          false,
+          false,
+          false,
+          false,
+          0,
+          null,
         );
-      },
+        return ev;
+      }
+    };
+    const Pointer = typeof PointerEvent !== "undefined" ? PointerEvent : MouseEvent;
+    const cls = String(target.className || "").trim().split(/\s+/).join(".");
+    console.log(
+      `[TC AutoQueue] executando clique reforçado em <${target.tagName.toLowerCase()}${cls ? "." + cls : ""}>.`,
     );
+    const sequence = [
+      ["mouseover", MouseEvent],
+      ["pointerdown", Pointer],
+      ["mousedown", MouseEvent],
+      ["pointerup", Pointer],
+      ["mouseup", MouseEvent],
+      ["click", MouseEvent],
+    ];
+    for (const [type, Ctor] of sequence) {
+      const ev = mk(type, Ctor);
+      target.dispatchEvent(ev);
+      if (ev.defaultPrevented) {
+        console.log(`[TC AutoQueue] evento '${type}' bloqueado (preventDefault).`);
+      }
+    }
+    // Reforço final para alvos que só escutam o clique nativo.
+    try {
+      target.click();
+    } catch (e) {}
   }
 
-  function clickNewGame() {
+  function pullNextGameUrl() {
+    const url = window.location.href;
+    if (url.includes("/game/daily")) return "https://www.chess.com/play/daily";
+    if (url.includes("/game/live")) return "https://www.chess.com/play/live";
+    return "https://www.chess.com/play/online";
+  }
+
+  function clickNewGame(source) {
     if (!auto_queue || auto_queue_cooldown) return;
-    if (!isInGame() && !isGameOverVisible()) return;
 
-    const btn = findNewGameButton();
-    if (btn) {
-      auto_queue_cooldown = true;
-      log("Auto Queue: Botão de nova partida detectado. Clicando...");
-      clickAutoQueueTarget(btn);
-      log("Auto Queue: Clique executado! Aguardando 4s de cooldown.");
+    const targets = getSearchTargets();
+    if (!isGameOverVisible(targets)) {
+      auto_queue_no_button_cycles = 0;
+      return;
+    }
 
+    const btn = findNewGameButton(targets);
+    if (!btn) {
+      // Fallback: fim de partida detectado, mas sem botão localizável.
+      // Depois de alguns ciclos, navega direto para a fila de partidas.
+      auto_queue_no_button_cycles++;
+      if (auto_queue_no_button_cycles >= 4 && !auto_queue_nav_fallback) {
+        auto_queue_nav_fallback = true;
+        log("Auto Queue: Botão não encontrado. Abrindo a fila de partidas...");
+        console.log(`[TC AutoQueue] [${source}] 4 ciclos sem botão. Navegando para a fila de partidas.`);
+        window.location.href = pullNextGameUrl();
+      }
+      return;
+    }
+
+    auto_queue_no_button_cycles = 0;
+    auto_queue_cooldown = true;
+    // Delay assíncrono aleatório após o botão aparecer: mantém a naturalidade
+    // e evita cooldowns/rate-limit do servidor.
+    const delay = 1200 + Math.floor(Math.random() * 2800);
+    console.log(
+      `[TC AutoQueue] [${source}] botão de nova partida detectado; agendando clique em ${(delay / 1000).toFixed(1)}s.`,
+    );
+    setTimeout(() => {
+      if (!auto_queue) {
+        auto_queue_cooldown = false;
+        return;
+      }
+      let target = findNewGameButton(getSearchTargets());
+      if (!target || !isElementVisible(target)) target = btn;
+      clickAutoQueueTarget(target);
+      log("Auto Queue: Clique executado! Aguardando cooldown.");
       setTimeout(() => {
         auto_queue_cooldown = false;
       }, 4000);
+    }, delay);
+  }
+
+  // MutationObserver AMPLO: observa o <body> inteiro + todos os shadow roots.
+  // O modal de fim de jogo pode ser montado num overlay global fora do layout
+  // do tabuleiro, então não dá para depender só da estrutura mutável.
+  function startGameOverObserver() {
+    if (auto_queue_observer) {
+      auto_queue_observer.disconnect();
+      auto_queue_observer = null;
     }
+
+    auto_queue_observer = new MutationObserver(() => {
+      if (!auto_queue || auto_queue_cooldown) return;
+      // Debounce simples: mutações em rajada (animação do modal) geram uma
+      // única verificação.
+      if (auto_queue_mutation_pending) return;
+      auto_queue_mutation_pending = true;
+      setTimeout(() => {
+        auto_queue_mutation_pending = false;
+        clickNewGame("observer");
+      }, 200);
+    });
+
+    const observeTargets = [document.body];
+    const scanned = new Set();
+    const scan = (node) => {
+      if (!node || scanned.has(node)) return;
+      scanned.add(node);
+      if (node.shadowRoot) observeTargets.push(node.shadowRoot);
+      try {
+        node.querySelectorAll("*").forEach((child) => {
+          if (child.shadowRoot) observeTargets.push(child.shadowRoot);
+        });
+      } catch (e) {}
+    };
+    scan(document.documentElement);
+
+    observeTargets.forEach((t) => {
+      try {
+        auto_queue_observer.observe(t, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ["class", "style", "aria-hidden", "disabled"],
+        });
+      } catch (e) {}
+    });
+    console.log(
+      `[TC AutoQueue] MutationObserver ativo em <body> + ${observeTargets.length - 1} shadow root(s).`,
+    );
   }
 
   function handleAutoQueue() {
@@ -1490,34 +1793,25 @@
       auto_queue_checkInterval = null;
     }
 
-    if (auto_queue_observer) {
-      auto_queue_observer.disconnect();
-      auto_queue_observer = null;
-    }
+    startGameOverObserver();
 
     if (!auto_queue) {
       return;
     }
 
-    clickNewGame();
+    auto_queue_nav_fallback = false;
+    auto_queue_no_button_cycles = 0;
+    clickNewGame("polling");
 
-    auto_queue_observer = new MutationObserver(() => {
-      if (auto_queue && !auto_queue_cooldown) {
-        clickNewGame();
-      }
-    });
-    auto_queue_observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["class", "style", "aria-hidden", "disabled"],
-    });
-
+    // Polling ativo (força bruta / radar independente): varre a página inteira
+    // a cada 1s em busca do botão de nova partida, mesmo que o observer não
+    // veja o modal de fim de jogo.
+    console.log("[TC AutoQueue] Polling ativo (1s) iniciado.");
     auto_queue_checkInterval = setInterval(() => {
       if (auto_queue && !auto_queue_cooldown) {
-        clickNewGame();
+        clickNewGame("polling");
       }
-    }, 750);
+    }, 1000);
   }
 
   function cleanCache() {
@@ -2439,6 +2733,7 @@
   $(document).ready(() => {
     createMenu();
     removeAds();
+    handleAutoQueue();
 
     // Monitor game mode changes and update UI
     setInterval(() => {
