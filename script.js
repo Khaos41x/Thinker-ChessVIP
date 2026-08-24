@@ -2730,6 +2730,55 @@
     }, 1000);
   }
 
+  // --- EXTERNAL CONFIG PANEL (Server Polling) ---
+  let _lastExternalConfig = null;
+  function pollExternalConfig() {
+    GM_xmlhttpRequest({
+      method: "GET",
+      url: SERVER_URL + "/config/load",
+      onload(resp) {
+        try {
+          const s = JSON.parse(resp.responseText);
+          const key = JSON.stringify(s);
+          if (key === _lastExternalConfig) return;
+          _lastExternalConfig = key;
+          if (typeof s.hint === "boolean") { hint = s.hint; $('input[name="kb-bot-status"]').val(hint ? "1" : "0").prop("checked", true); if (!hint) $(".myhigh, .myarrow").remove(); }
+          if (typeof s.autoMove === "boolean") { auto_move = s.autoMove; $('input[name="kb-auto-move"]').val(auto_move ? "1" : "0").prop("checked", true); }
+          if (typeof s.autoQueue === "boolean") { auto_queue = s.autoQueue; localStorage.setItem("kb-auto-queue", auto_queue ? "true" : "false"); $('input[name="kb-auto-queue"]').val(auto_queue ? "1" : "0").prop("checked", true); handleAutoQueue(); }
+          if (typeof s.autoAdjust === "boolean") { if (s.autoAdjust) { autoAdjust.updateBaseElo(chessBot.elo); autoAdjust.enable(); } else { autoAdjust.disable(); } $('input[name="kb-auto-adjust"]').val(s.autoAdjust ? "1" : "0").prop("checked", true); }
+          if (typeof s.evalBar === "boolean") { evalBarEnabled = s.evalBar; localStorage.setItem("evalBar", evalBarEnabled); $('input[name="kb-eval-bar"]').val(evalBarEnabled ? "1" : "0").prop("checked", true); if (evalBarEnabled) { injectEvalBarDOM(); lastEvalFen = ""; } else { removeEvalBarDOM(); } }
+          if (typeof s.smartPacing === "boolean") { smartPacingEnabled = s.smartPacing; localStorage.setItem("smartPacing", smartPacingEnabled); $('input[name="kb-smart-pacing"]').val(smartPacingEnabled ? "1" : "0").prop("checked", true); if (smartPacingEnabled) { $("#auto-delay-section").slideUp(200); } else { $("#auto-delay-section").slideDown(200); } }
+          if (typeof s.elo === "number") { chessBot.elo = s.elo; $("#kb-elo-slider").val(s.elo); autoAdjust.updateBaseElo(s.elo); }
+          if (s.delayMode) { autoDelayMode = s.delayMode; localStorage.setItem("autoDelayMode", autoDelayMode); $('input[name="delayMode"][value="' + autoDelayMode + '"]').prop("checked", true); }
+          if (typeof s.minDelay === "number") { autoDelayMin = s.minDelay; localStorage.setItem("autoMinDelay", autoDelayMin); $("#minDelayInput").val(autoDelayMin.toFixed(2)); }
+          if (typeof s.maxDelay === "number") { autoDelayMax = s.maxDelay; localStorage.setItem("autoMaxDelay", autoDelayMax); $("#maxDelayInput").val(autoDelayMax.toFixed(2)); }
+          $("#autoDelayDisplay").text(autoDelayMode === "max" ? "INSTANT" : autoDelayMin.toFixed(2) + " - " + autoDelayMax.toFixed(2) + "s");
+          if (s.color) { current_color = s.color; localStorage.setItem("kb_color", current_color); if (typeof GM_setValue !== "undefined") GM_setValue("kb_color", current_color); $("#kb-color-picker").val(current_color); $(".myarrow").css("filter", `drop-shadow(0 4px 8px ${current_color}66)`); $(".myarrow path").attr("fill", current_color); $(".myarrow line").attr("stroke", current_color); $(".myhigh").css({"border-color": current_color, "background-color": current_color + "26", "box-shadow": `0 4px 12px ${current_color}33`}); }
+          window.krypbotUpdateUI();
+        } catch(e) {}
+      }
+    });
+  }
+  setInterval(pollExternalConfig, 2000);
+  setTimeout(() => {
+    GM_xmlhttpRequest({
+      method: "POST",
+      url: SERVER_URL + "/config/save",
+      headers: {"Content-Type": "application/json"},
+      data: JSON.stringify({
+        hint: hint, autoMove: auto_move, autoQueue: auto_queue,
+        autoAdjust: typeof autoAdjust !== "undefined" && autoAdjust.isEnabled(),
+        evalBar: typeof evalBarEnabled !== "undefined" ? evalBarEnabled : false,
+        smartPacing: typeof smartPacingEnabled !== "undefined" ? smartPacingEnabled : false,
+        elo: typeof chessBot !== "undefined" ? chessBot.elo : 1500,
+        delayMode: typeof autoDelayMode !== "undefined" ? autoDelayMode : "random",
+        minDelay: typeof autoDelayMin !== "undefined" ? autoDelayMin : 0.5,
+        maxDelay: typeof autoDelayMax !== "undefined" ? autoDelayMax : 2.0,
+        color: current_color
+      })
+    });
+  }, 500);
+
   $(document).ready(() => {
     createMenu();
     removeAds();

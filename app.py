@@ -39,6 +39,7 @@ class Colors:
     RED = "\033[91m"
     BOLD = "\033[1m"
     RESET = "\033[0m"
+    DIM = "\033[2m"
     MAGENTA = "\033[95m"
     ORANGE = "\033[38;5;208m"
     PURPLE = "\033[38;5;135m"
@@ -104,10 +105,45 @@ class Log:
         print(f"{Colors.CYAN}[{Log._time()}] {Colors.BLUE}[BOARD]   {Colors.RESET}{msg}{data_str}")
 
     @staticmethod
+    def _latency_color(ms):
+        if ms < 5:
+            return Colors.GREEN
+        if ms < 50:
+            return Colors.YELLOW
+        return Colors.RED
+
+    @staticmethod
+    def request(fen, elo, time_limit):
+        short_fen = fen[:35] + "..." if len(fen) > 35 else fen
+        print(
+            f"{Colors.CYAN}[{Log._time()}] "
+            f"{Colors.BOLD}[REQUEST]{Colors.RESET}  "
+            f"FEN: {Colors.DIM}{short_fen}{Colors.RESET} | "
+            f"Elo: {Colors.MAGENTA}{elo}{Colors.RESET} | "
+            f"Time: {time_limit}s"
+        )
+
+    @staticmethod
+    def move(source, move, latency_ms, extra=""):
+        color = Log._latency_color(latency_ms)
+        extra_str = f" | {extra}" if extra else ""
+        print(
+            f"{Colors.CYAN}[{Log._time()}] "
+            f"{Colors.BOLD}{source}{Colors.RESET}"
+            f"  {Colors.BOLD}{move}{Colors.RESET} | "
+            f"{color}{latency_ms:.2f}ms{Colors.RESET}"
+            f"{extra_str}"
+        )
+
+    @staticmethod
     def banner():
+        ts = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         print(f"""
-{Colors.CYAN}Servidor iniciado em: {Colors.YELLOW}{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}{Colors.RESET}
-{Colors.CYAN}Modo: {Colors.GREEN}SIMPLES{Colors.RESET} (sem autenticação)
+{Colors.CYAN}╔══════════════════════════════════════════════╗
+║  {Colors.BOLD}Thinker Chess VIP{Colors.RESET}{Colors.CYAN}  v2.2                       ║
+╠══════════════════════════════════════════════╣
+║  Inicio: {Colors.YELLOW}{ts}{Colors.RESET}{Colors.CYAN}  Modo: {Colors.GREEN}LOCAL{Colors.RESET}{Colors.CYAN}         ║
+╚══════════════════════════════════════════════╝{Colors.RESET}
 """)
 
     @staticmethod
@@ -163,15 +199,17 @@ ENGINE_PATH = find_komodo_exe()
 
 if ENGINE_PATH is None:
     base_dir = Path(__file__).resolve().parent
-    print(f"\n{Colors.RED}{Colors.BOLD}[ERRO CRÍTICO]{Colors.RESET}")
-    print(f"Komodo 14 não foi encontrado!\n")
-    print(f"Esperado em:")
-    print(f"  • {base_dir / 'engine' / 'komodo-14.1-64bit.exe'}")
-    print(f"  • {base_dir / 'engine' / 'komodo.exe'}\n")
-    print(f"Solução:")
-    print(f"  1. Copie o Komodo para a pasta 'engine/' do projeto, OU")
-    print(f"  2. Defina a variável KOMODO_PATH:\n")
-    print(f"     set KOMODO_PATH=C:\\caminho\\para\\komodo.exe\n")
+    print(f"\n{Colors.RED}{Colors.BOLD}╔═══ ERRO CRITICO ═══╗{Colors.RESET}")
+    print(f"{Colors.RED}║ Komodo 14 nao encontrado!{Colors.RESET}")
+    print(f"{Colors.RED}║{Colors.RESET}")
+    print(f"{Colors.RED}║ Esperado em:{Colors.RESET}")
+    print(f"{Colors.RED}║   {base_dir / 'engine' / 'komodo-14.1-64bit.exe'}{Colors.RESET}")
+    print(f"{Colors.RED}║   {base_dir / 'engine' / 'komodo.exe'}{Colors.RESET}")
+    print(f"{Colors.RED}║{Colors.RESET}")
+    print(f"{Colors.RED}║ Solucao:{Colors.RESET}")
+    print(f"{Colors.RED}║   1. Copie o Komodo para engine/{Colors.RESET}")
+    print(f"{Colors.RED}║   2. set KOMODO_PATH=C:\\caminho\\komodo.exe{Colors.RESET}")
+    print(f"{Colors.RED}{Colors.BOLD}╚═════════════════════╝{Colors.RESET}\n")
     sys.exit(1)
 
 START_TIME = time.time()
@@ -253,7 +291,7 @@ import multiprocessing
 
 cpu_count = multiprocessing.cpu_count()
 
-print("Iniciando Komodo 14.1...")
+Log.engine("Iniciando Komodo 14.1...")
 engine = chess.engine.SimpleEngine.popen_uci(ENGINE_PATH)
 ponder_engine = chess.engine.SimpleEngine.popen_uci(ENGINE_PATH)
 
@@ -310,12 +348,12 @@ def ponder_task(fen, elo):
         with ponder_lock:
             ponder_analysis = None
 
-print(f"Komodo ONLINE! (Threads: {cpu_count}, Hash: 256MB, Skill: 20)")
+Log.success("Komodo ONLINE!", data={"Threads": cpu_count, "Hash": "256MB", "Skill": 20})
 
-print("Warmup da engine...")
+Log.engine("Warmup da engine...")
 warmup_board = chess.Board()
 engine.play(warmup_board, chess.engine.Limit(depth=10))
-print("Warmup completo!")
+Log.success("Warmup completo!")
 
 # Opening Book
 OPENING_BOOK = {
@@ -343,6 +381,281 @@ def get_book(fen):
 def index():
     return "KrypBot v2.2 ONLINE"
 
+@app.route("/config")
+def config_panel():
+    return """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thinker Chess - Config Panel</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#fff;min-height:100vh;display:flex;justify-content:center;padding:30px 20px}
+.container{max-width:480px;width:100%}
+.header{text-align:center;margin-bottom:32px}
+.logo{font-size:28px;font-weight:800;background:linear-gradient(135deg,#00ff88,#00b8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.subtitle{color:rgba(255,255,255,0.4);font-size:13px;font-weight:500}
+.status-bar{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;padding:8px 16px;background:rgba(255,255,255,0.04);border-radius:20px;border:1px solid rgba(255,255,255,0.06)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#ef4444;transition:background 0.3s}
+.status-dot.connected{background:#00ff88;box-shadow:0 0 8px rgba(0,255,136,0.5)}
+.status-text{font-size:12px;color:rgba(255,255,255,0.5)}
+.card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:20px;margin-bottom:16px;transition:border-color 0.3s}
+.card:hover{border-color:rgba(255,255,255,0.1)}
+.card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,0.35);margin-bottom:16px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.row:last-child{border-bottom:none}
+.row-label{font-size:14px;font-weight:500;color:rgba(255,255,255,0.9)}
+.row-desc{font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px}
+.toggle{position:relative;width:44px;height:24px;cursor:pointer}
+.toggle input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:rgba(255,255,255,0.1);border-radius:12px;transition:all 0.3s}
+.slider:before{content:'';position:absolute;width:18px;height:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:all 0.3s}
+.toggle input:checked+.slider{background:linear-gradient(135deg,#00ff88,#00b8ff);box-shadow:0 0 12px rgba(0,255,136,0.3)}
+.toggle input:checked+.slider:before{transform:translateX(20px)}
+.slider-labels{display:flex;gap:6px}
+.slider-label{padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.4);transition:all 0.2s;border:1px solid transparent}
+.slider-label.active{background:rgba(0,255,136,0.12);color:#00ff88;border-color:rgba(0,255,136,0.2)}
+.slider-label:hover{background:rgba(255,255,255,0.08)}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;outline:none;margin:12px 0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:linear-gradient(135deg,#00ff88,#00b8ff);border-radius:50%;cursor:pointer;box-shadow:0 0 10px rgba(0,255,136,0.3)}
+.range-header{display:flex;justify-content:space-between;align-items:center}
+.range-value{font-size:13px;font-weight:600;color:#00ff88}
+input[type=number]{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:#fff;padding:8px 12px;font-size:13px;width:80px;text-align:center;font-family:inherit;outline:none;transition:border-color 0.2s}
+input[type=number]:focus{border-color:rgba(0,255,136,0.4)}
+input[type=number]::-webkit-inner-spin-button{opacity:0.5}
+.color-section{display:flex;align-items:center;gap:12px}
+.color-preview{width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,0.1);cursor:pointer;overflow:hidden;position:relative}
+.color-preview input[type=color]{position:absolute;width:50px;height:50px;top:-10px;left:-10px;border:none;cursor:pointer;opacity:0}
+.color-hex{font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);font-family:monospace}
+.btn-row{display:flex;gap:10px;margin-top:8px}
+.btn{flex:1;padding:12px;border:none;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s}
+.btn-primary{background:linear-gradient(135deg,#00ff88,#00b8ff);color:#000}
+.btn-primary:hover{box-shadow:0 4px 20px rgba(0,255,136,0.3);transform:translateY(-1px)}
+.btn-secondary{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.08)}
+.btn-secondary:hover{background:rgba(255,255,255,0.1)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:rgba(0,255,136,0.15);border:1px solid rgba(0,255,136,0.3);color:#00ff88;padding:12px 24px;border-radius:12px;font-size:13px;font-weight:600;backdrop-filter:blur(16px);transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);pointer-events:none;z-index:100}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.fade-in{animation:fadeIn 0.5s ease-out both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade-in:nth-child(2){animation-delay:0.05s}
+.fade-in:nth-child(3){animation-delay:0.1s}
+.fade-in:nth-child(4){animation-delay:0.15s}
+.fade-in:nth-child(5){animation-delay:0.2s}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header fade-in">
+    <div class="logo">Thinker Chess</div>
+    <div class="subtitle">External Config Panel</div>
+    <div class="status-bar">
+      <div class="status-dot" id="statusDot"></div>
+      <span class="status-text" id="statusText">Waiting for userscript...</span>
+    </div>
+  </div>
+
+  <div class="card fade-in">
+    <div class="card-title">Bot Controls</div>
+    <div class="row">
+      <div><div class="row-label">Bot Status</div><div class="row-desc">Enable move analysis and arrows</div></div>
+      <label class="toggle"><input type="checkbox" id="hint"><span class="slider"></span></label>
+    </div>
+    <div class="row">
+      <div><div class="row-label">Auto Moves</div><div class="row-desc">Bot plays the best move automatically</div></div>
+      <label class="toggle"><input type="checkbox" id="autoMove"><span class="slider"></span></label>
+    </div>
+    <div class="row">
+      <div><div class="row-label">Auto Queue</div><div class="row-desc">Start new game after current ends</div></div>
+      <label class="toggle"><input type="checkbox" id="autoQueue"><span class="slider"></span></label>
+    </div>
+  </div>
+
+  <div class="card fade-in">
+    <div class="card-title">Difficulty</div>
+    <div class="row">
+      <div><div class="row-label">Auto Adjust Rating</div><div class="row-desc">Dynamic difficulty based on results</div></div>
+      <label class="toggle"><input type="checkbox" id="autoAdjust"><span class="slider"></span></label>
+    </div>
+    <div class="range-header">
+      <div class="row-label">Elo Level</div>
+      <div class="range-value" id="eloValue">1500</div>
+    </div>
+    <input type="range" id="eloSlider" min="800" max="3200" step="100" value="1500">
+  </div>
+
+  <div class="card fade-in">
+    <div class="card-title">Timing</div>
+    <div class="row">
+      <div><div class="row-label">Smart Pacing</div><div class="row-desc">Human-like adaptive delays</div></div>
+      <label class="toggle"><input type="checkbox" id="smartPacing"><span class="slider"></span></label>
+    </div>
+    <div id="delaySection">
+      <div class="row">
+        <div class="row-label">Delay Mode</div>
+        <div class="slider-labels">
+          <span class="slider-label active" data-mode="random">RND</span>
+          <span class="slider-label" data-mode="max">MAX</span>
+        </div>
+      </div>
+      <div class="row">
+        <div><div class="row-label">Min Delay</div></div>
+        <input type="number" id="minDelay" min="0" max="10" step="0.1" value="0.5">
+      </div>
+      <div class="row">
+        <div><div class="row-label">Max Delay</div></div>
+        <input type="number" id="maxDelay" min="0" max="10" step="0.1" value="2.0">
+      </div>
+    </div>
+  </div>
+
+  <div class="card fade-in">
+    <div class="card-title">Display</div>
+    <div class="row">
+      <div><div class="row-label">Eval Bar</div><div class="row-desc">Show position evaluation</div></div>
+      <label class="toggle"><input type="checkbox" id="evalBar"><span class="slider"></span></label>
+    </div>
+    <div class="row">
+      <div class="row-label">Theme Color</div>
+      <div class="color-section">
+        <div class="color-preview" id="colorPreview">
+          <input type="color" id="colorPicker" value="#10B981">
+        </div>
+        <span class="color-hex" id="colorHex">#10B981</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card fade-in">
+    <div class="btn-row">
+      <button class="btn btn-primary" id="applyBtn">Apply All</button>
+      <button class="btn btn-secondary" id="refreshBtn">Refresh</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Settings applied!</div>
+
+<script>
+const API = window.location.origin;
+function showToast(text) {
+  const t = document.getElementById('toast');
+  t.textContent = text;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+function setConnected(v) {
+  document.getElementById('statusDot').className = 'status-dot' + (v ? ' connected' : '');
+  document.getElementById('statusText').textContent = v ? 'Synced with server' : 'Server offline...';
+}
+function toggleDelaySection(off) {
+  document.getElementById('delaySection').style.display = off ? 'none' : 'block';
+}
+function getConfig() {
+  const m = document.querySelector('.slider-label.active');
+  return {
+    hint: document.getElementById('hint').checked,
+    autoMove: document.getElementById('autoMove').checked,
+    autoQueue: document.getElementById('autoQueue').checked,
+    autoAdjust: document.getElementById('autoAdjust').checked,
+    evalBar: document.getElementById('evalBar').checked,
+    smartPacing: document.getElementById('smartPacing').checked,
+    elo: parseInt(document.getElementById('eloSlider').value),
+    delayMode: m ? m.dataset.mode : 'random',
+    minDelay: parseFloat(document.getElementById('minDelay').value) || 0.5,
+    maxDelay: parseFloat(document.getElementById('maxDelay').value) || 2.0,
+    color: document.getElementById('colorPicker').value
+  };
+}
+function applyToUI(s) {
+  document.getElementById('hint').checked = s.hint;
+  document.getElementById('autoMove').checked = s.autoMove;
+  document.getElementById('autoQueue').checked = s.autoQueue;
+  document.getElementById('autoAdjust').checked = s.autoAdjust;
+  document.getElementById('evalBar').checked = s.evalBar;
+  document.getElementById('smartPacing').checked = s.smartPacing;
+  document.getElementById('eloSlider').value = s.elo;
+  document.getElementById('eloValue').textContent = s.elo;
+  document.getElementById('minDelay').value = s.minDelay;
+  document.getElementById('maxDelay').value = s.maxDelay;
+  document.getElementById('colorPicker').value = s.color;
+  document.getElementById('colorHex').textContent = s.color;
+  document.getElementById('colorPreview').style.background = s.color;
+  document.querySelectorAll('.slider-label').forEach(l => {
+    l.classList.toggle('active', l.dataset.mode === s.delayMode);
+  });
+  toggleDelaySection(s.smartPacing);
+}
+async function saveConfig() {
+  try {
+    const r = await fetch(API + '/config/save', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(getConfig())
+    });
+    if (r.ok) { setConnected(true); showToast('Settings saved!'); }
+    else showToast('Error saving');
+  } catch(e) { showToast('Server offline!'); }
+}
+async function loadConfig() {
+  try {
+    const r = await fetch(API + '/config/load');
+    if (r.ok) { applyToUI(await r.json()); setConnected(true); }
+  } catch(e) { showToast('Server offline!'); }
+}
+document.querySelectorAll('.toggle input').forEach(el => el.addEventListener('change', saveConfig));
+document.querySelectorAll('.slider-label').forEach(el => el.addEventListener('click', () => {
+  el.parentElement.querySelectorAll('.slider-label').forEach(l => l.classList.remove('active'));
+  el.classList.add('active');
+  saveConfig();
+}));
+document.getElementById('eloSlider').addEventListener('input', e => {
+  document.getElementById('eloValue').textContent = e.target.value;
+  saveConfig();
+});
+document.getElementById('minDelay').addEventListener('change', saveConfig);
+document.getElementById('maxDelay').addEventListener('change', saveConfig);
+document.getElementById('colorPicker').addEventListener('input', e => {
+  document.getElementById('colorHex').textContent = e.target.value;
+  document.getElementById('colorPreview').style.background = e.target.value;
+  saveConfig();
+});
+document.getElementById('smartPacing').addEventListener('change', e => {
+  toggleDelaySection(e.target.checked);
+  saveConfig();
+});
+document.getElementById('applyBtn').addEventListener('click', saveConfig);
+document.getElementById('refreshBtn').addEventListener('click', loadConfig);
+loadConfig();
+</script>
+</body>
+</html>"""
+
+# --- External Config Panel API ---
+_external_config = {
+    "hint": False, "autoMove": False, "autoQueue": False,
+    "autoAdjust": False, "evalBar": False, "smartPacing": False,
+    "elo": 1500, "delayMode": "random", "minDelay": 0.5, "maxDelay": 2.0,
+    "color": "#10B981"
+}
+
+@app.route("/config/save", methods=["POST"])
+def config_save():
+    global _external_config
+    try:
+        data = request.get_json(force=True, silent=True)
+        if data:
+            _external_config.update(data)
+            return jsonify({"ok": True})
+    except Exception as e:
+        Log.error(f"Config save error: {e}")
+    return jsonify({"ok": False}), 400
+
+@app.route("/config/load", methods=["GET"])
+def config_load():
+    return jsonify(_external_config)
+
 @app.route("/getmove", methods=["POST"])
 @app.route("/getMove", methods=["POST"])
 def getmove():
@@ -360,7 +673,7 @@ def getmove():
     time_limit = float(data.get("time", 0.1))
     
     if fen:
-        print(f"\n[REQUEST] FEN: {fen[:30]}... | Elo: {elo} | Time: {time_limit}s", flush=True)
+        Log.request(fen, elo, time_limit)
     
     if not fen:
         return jsonify([])
@@ -378,7 +691,7 @@ def getmove():
     cache_key = f"{get_base_fen(fen)}_{elo}"
     if cache_key in cache:
         elapsed = (time.perf_counter() - start_time) * 1000
-        print(f"[CACHE HIT] Jogada: {cache[cache_key]} | Latência Interna: {elapsed:.2f}ms", flush=True)
+        Log.move("[CACHE]", cache[cache_key], elapsed)
         return jsonify([cache[cache_key]])
     
     try:
@@ -388,7 +701,7 @@ def getmove():
         if book_move:
             cache[cache_key] = book_move
             elapsed = (time.perf_counter() - start_time) * 1000
-            print(f"[OPENING BOOK] Jogada: {book_move} | Latência Interna: {elapsed:.2f}ms", flush=True)
+            Log.move("[BOOK]", book_move, elapsed)
             return jsonify([book_move])
         
         target_depth = get_target_depth(elo)
@@ -418,12 +731,12 @@ def getmove():
             ponder_thread.start()
             
             elapsed = (time.perf_counter() - start_time) * 1000
-            print(f"[ENGINE LIMIT] Jogada: {move} | Latência Interna: {elapsed:.2f}ms | Tempo Configurado: {actual_time}s", flush=True)
+            Log.move("[ENGINE]", move, elapsed, extra=f"tempo: {actual_time}s")
             return jsonify([move])
         
         return jsonify([])
     except Exception as e:
-        print(f"Erro: {e}")
+        Log.error(f"Erro no getmove: {e}")
         return jsonify([])
 
 @app.route("/eval", methods=["POST"])
@@ -457,7 +770,7 @@ def evaluate():
                 
         return jsonify({"cp": 0, "mate": None})
     except Exception as e:
-        print(f"Erro no eval: {e}")
+        Log.error(f"Erro no eval: {e}")
         return jsonify({"cp": 0, "mate": None})
 
 from core import rating
@@ -528,5 +841,6 @@ def health():
     return jsonify({"status": "ok", "cache": len(cache)})
 
 if __name__ == "__main__":
-    print("Rodando em http://127.0.0.1:5050")
+    Log.banner()
+    Log.success("Rodando em http://127.0.0.1:5050")
     app.run(host="127.0.0.1", port=5050, debug=False, threaded=True)
