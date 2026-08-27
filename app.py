@@ -525,6 +525,10 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.5}
         <span class="color-hex" id="colorHex">#10B981</span>
       </div>
     </div>
+    <div class="row">
+      <div><div class="row-label">Ghost Mode</div><div class="row-desc">Hide all menus on Chess.com (stealth)</div></div>
+      <label class="toggle"><input type="checkbox" id="ghostMode"><span class="slider"></span></label>
+    </div>
   </div>
 
   <div class="card fade-in">
@@ -565,10 +569,13 @@ function getConfig() {
     delayMode: m ? m.dataset.mode : 'random',
     minDelay: parseFloat(document.getElementById('minDelay').value) || 0.5,
     maxDelay: parseFloat(document.getElementById('maxDelay').value) || 2.0,
-    color: document.getElementById('colorPicker').value
+    color: document.getElementById('colorPicker').value,
+    ghostMode: document.getElementById('ghostMode').checked
   };
 }
+let _fromServer = false;
 function applyToUI(s) {
+  _fromServer = true;
   document.getElementById('hint').checked = s.hint;
   document.getElementById('autoMove').checked = s.autoMove;
   document.getElementById('autoQueue').checked = s.autoQueue;
@@ -586,13 +593,17 @@ function applyToUI(s) {
     l.classList.toggle('active', l.dataset.mode === s.delayMode);
   });
   toggleDelaySection(s.smartPacing);
+  document.getElementById('ghostMode').checked = s.ghostMode;
+  _fromServer = false;
 }
 async function saveConfig() {
+  if (_fromServer) return;
+  const cfg = getConfig();
   try {
     const r = await fetch(API + '/config/save', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(getConfig())
+      body: JSON.stringify(cfg)
     });
     if (r.ok) { setConnected(true); showToast('Settings saved!'); }
     else showToast('Error saving');
@@ -625,9 +636,26 @@ document.getElementById('smartPacing').addEventListener('change', e => {
   toggleDelaySection(e.target.checked);
   saveConfig();
 });
+document.getElementById('ghostMode').addEventListener('change', saveConfig);
 document.getElementById('applyBtn').addEventListener('click', saveConfig);
 document.getElementById('refreshBtn').addEventListener('click', loadConfig);
-loadConfig();
+let _lastPanelConfig = '';
+async function pollConfig() {
+  try {
+    const r = await fetch(API + '/config/load');
+    if (r.ok) {
+      const s = await r.json();
+      const key = JSON.stringify(s);
+      if (key !== _lastPanelConfig) {
+        _lastPanelConfig = key;
+        applyToUI(s);
+        setConnected(true);
+      }
+    }
+  } catch(e) {}
+}
+pollConfig();
+setInterval(pollConfig, 2000);
 </script>
 </body>
 </html>"""
@@ -637,7 +665,7 @@ _external_config = {
     "hint": False, "autoMove": False, "autoQueue": False,
     "autoAdjust": False, "evalBar": False, "smartPacing": False,
     "elo": 1500, "delayMode": "random", "minDelay": 0.5, "maxDelay": 2.0,
-    "color": "#10B981"
+    "color": "#10B981", "ghostMode": False
 }
 
 @app.route("/config/save", methods=["POST"])
