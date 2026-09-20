@@ -1,26 +1,31 @@
 const fs = require("fs");
-const crypto = require("crypto");
 const vm = require("vm");
 
 const source = fs.readFileSync("script.js", "utf8");
+if (Buffer.byteLength(source, "utf8") > 400000) {
+  throw new Error("userscript payload is too large for reliable Tampermonkey startup");
+}
 const start = source.indexOf("  const SCOUT_CACHE_TTL");
 const end = source.indexOf("  // --- ESTADO DO AUTO RUN DELAY", start);
 if (start < 0 || end < 0) throw new Error("OpponentIntel block not found");
 
 const embeddedBanner = source.match(
-  /<img src="data:image\/png;base64,([^"]+)" alt="Thinker Chess"/,
+  /<img src="data:image\/jpeg;base64,([^"]+)" alt="Thinker Chess"/,
 );
 if (!embeddedBanner) throw new Error("embedded Thinker Chess banner not found");
-const embeddedBannerHash = crypto
-  .createHash("sha256")
-  .update(Buffer.from(embeddedBanner[1], "base64"))
-  .digest("hex");
-const sourceBannerHash = crypto
-  .createHash("sha256")
-  .update(fs.readFileSync("Banner-ThinkerChess.png"))
-  .digest("hex");
-if (embeddedBannerHash !== sourceBannerHash) {
-  throw new Error("embedded banner does not match Banner-ThinkerChess.png");
+const embeddedBannerBytes = Buffer.from(embeddedBanner[1], "base64");
+if (embeddedBannerBytes.length > 100000 || embeddedBannerBytes.length < 30000) {
+  throw new Error("optimized embedded banner payload is outside the safe size range");
+}
+if (embeddedBannerBytes[0] !== 0xff || embeddedBannerBytes[1] !== 0xd8) {
+  throw new Error("optimized embedded banner is not a JPEG image");
+}
+if (
+  source.includes("// @require      https://code.jquery.com/jquery-3.7.1.min.js") ||
+  !source.includes("TC_VENDORED_JQUERY_START") ||
+  !source.includes("jQuery v3.7.1")
+) {
+  throw new Error("jQuery startup dependency was not vendored correctly");
 }
 if (
   !source.includes('position: fixed; right: -9999px') ||
@@ -60,14 +65,19 @@ vm.runInContext(
   context,
 );
 
-const bannerLayoutStart = source.indexOf("  function calculateThinkerBannerLayout");
+const bannerLayoutStart = source.indexOf("  let scheduleThinkerBannerPosition");
 const bannerLayoutEnd = source.indexOf("\n  function createMenu", bannerLayoutStart);
 if (bannerLayoutStart < 0 || bannerLayoutEnd < 0) {
   throw new Error("banner layout function not found");
 }
 vm.runInContext(
-  source.slice(bannerLayoutStart, bannerLayoutEnd) +
-    "\nglobalThis.calculateBannerLayout = calculateThinkerBannerLayout;",
+  "let _ghostModeActive = false; const SERVER_URL = 'http://127.0.0.1:5050';\n" +
+    source.slice(bannerLayoutStart, bannerLayoutEnd) +
+    "\nglobalThis.calculateBannerLayout = calculateThinkerBannerLayout;" +
+    "\nglobalThis.reconcileShells = reconcileThinkerUiShells;" +
+    "\nglobalThis.applyGhost = applyGhostModeVisibility;" +
+    "\nglobalThis.startReconciler = startThinkerUiReconciler;" +
+    "\nglobalThis.setShellNodes = (menu, banner) => { thinkerMenuNode = menu; thinkerBannerNode = banner; };",
   context,
 );
 
@@ -93,6 +103,93 @@ assert(
   context.calculateBannerLayout(sidebarRect, 1280, 720, true) === null,
   "Ghost Mode did not suppress banner layout",
 );
+const reportedLayout = context.calculateBannerLayout(
+  { left: 900, top: 137, right: 1248, bottom: 879 },
+  1433,
+  895,
+  false,
+);
+assert(
+  reportedLayout &&
+    reportedLayout.left === 1262 &&
+    reportedLayout.top === 137 &&
+    reportedLayout.width === 157 &&
+    reportedLayout.height === 742,
+  "banner geometry does not match the reported Chess.com viewport",
+);
+
+const recoveryControl = { style: {} };
+const shellMenu = { isConnected: false, style: {} };
+const shellBanner = { isConnected: false, style: {} };
+const shellWrapper = { style: {} };
+const shellScoutPrimary = { style: {} };
+const shellScoutSecondary = { style: {} };
+const shellHud = { style: {} };
+let activeShellHost = null;
+let menuMounts = 0;
+let bannerMounts = 0;
+const shellHost = {
+  appendChild(node) {
+    node.isConnected = true;
+    if (node === shellMenu) menuMounts++;
+  },
+};
+context.document.body = {
+  appendChild(node) {
+    node.isConnected = true;
+    if (node === shellBanner) bannerMounts++;
+  },
+};
+context.document.querySelector = () => activeShellHost;
+context.document.querySelectorAll = () => [shellHud];
+context.document.getElementById = (id) =>
+  ({
+    "kb-ghost-recovery": recoveryControl,
+    "krypbot-container": shellMenu,
+    "thinker-chess-banner": shellBanner,
+    "oi-wrapper": shellWrapper,
+    "oi-zone1": shellScoutPrimary,
+    "oi-zone2": shellScoutSecondary,
+  })[id] || null;
+context.setShellNodes(shellMenu, shellBanner);
+
+context.reconcileShells();
+assert(menuMounts === 0 && bannerMounts === 1, "shell mounted without a Chess.com host");
+activeShellHost = shellHost;
+context.reconcileShells();
+assert(menuMounts === 1 && bannerMounts === 1, "delayed host did not mount both UI shells");
+context.reconcileShells();
+assert(menuMounts === 1 && bannerMounts === 1, "idempotent reconciliation duplicated UI shells");
+shellMenu.isConnected = false;
+activeShellHost = {
+  appendChild(node) {
+    node.isConnected = true;
+    if (node === shellMenu) menuMounts++;
+  },
+};
+context.reconcileShells();
+assert(menuMounts === 2, "SPA host replacement did not remount the configuration panel");
+
+context.applyGhost(true);
+assert(shellMenu.style.display === "none", "Ghost Mode did not hide the configuration panel");
+assert(shellBanner.style.display === "none", "Ghost Mode did not hide the banner");
+assert(recoveryControl.style.display === "flex", "Ghost Mode recovery control was not exposed");
+context.applyGhost(false);
+assert(shellMenu.style.display === "flex", "Ghost Mode recovery did not restore the panel");
+assert(recoveryControl.style.display === "none", "Ghost Mode recovery control stayed visible");
+
+let reconcileIntervals = 0;
+context.window.setInterval = () => {
+  reconcileIntervals++;
+  return reconcileIntervals;
+};
+context.startReconciler();
+context.startReconciler();
+assert(reconcileIntervals === 1, "UI reconciler registered duplicate intervals");
+context.document.body = undefined;
+context.document.querySelectorAll = () => [];
+context.document.getElementById = () => null;
+context.document.querySelector = () => null;
 
 function game(index, result, overrides = {}) {
   return {
