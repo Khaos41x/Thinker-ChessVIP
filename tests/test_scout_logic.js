@@ -1,10 +1,34 @@
 const fs = require("fs");
+const crypto = require("crypto");
 const vm = require("vm");
 
 const source = fs.readFileSync("script.js", "utf8");
 const start = source.indexOf("  const SCOUT_CACHE_TTL");
 const end = source.indexOf("  // --- ESTADO DO AUTO RUN DELAY", start);
 if (start < 0 || end < 0) throw new Error("OpponentIntel block not found");
+
+const embeddedBanner = source.match(
+  /<img src="data:image\/png;base64,([^"]+)" alt="Thinker Chess"/,
+);
+if (!embeddedBanner) throw new Error("embedded Thinker Chess banner not found");
+const embeddedBannerHash = crypto
+  .createHash("sha256")
+  .update(Buffer.from(embeddedBanner[1], "base64"))
+  .digest("hex");
+const sourceBannerHash = crypto
+  .createHash("sha256")
+  .update(fs.readFileSync("Banner-ThinkerChess.png"))
+  .digest("hex");
+if (embeddedBannerHash !== sourceBannerHash) {
+  throw new Error("embedded banner does not match Banner-ThinkerChess.png");
+}
+if (
+  !source.includes('position: fixed; right: -9999px') ||
+  !source.includes("function calculateThinkerBannerLayout") ||
+  !source.includes("object-fit:cover;object-position:center center")
+) {
+  throw new Error("responsive full-height banner layout markers are missing");
+}
 
 const store = new Map();
 const context = {
@@ -36,9 +60,39 @@ vm.runInContext(
   context,
 );
 
+const bannerLayoutStart = source.indexOf("  function calculateThinkerBannerLayout");
+const bannerLayoutEnd = source.indexOf("\n  function createMenu", bannerLayoutStart);
+if (bannerLayoutStart < 0 || bannerLayoutEnd < 0) {
+  throw new Error("banner layout function not found");
+}
+vm.runInContext(
+  source.slice(bannerLayoutStart, bannerLayoutEnd) +
+    "\nglobalThis.calculateBannerLayout = calculateThinkerBannerLayout;",
+  context,
+);
+
 function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
+
+const sidebarRect = { left: 788, top: 16, right: 1088, bottom: 704 };
+const bannerLayout = context.calculateBannerLayout(sidebarRect, 1280, 720, false);
+assert(
+  bannerLayout &&
+    bannerLayout.left === 1102 &&
+    bannerLayout.top === 16 &&
+    bannerLayout.width === 164 &&
+    bannerLayout.height === 688,
+  "full-height banner geometry is incorrect",
+);
+assert(
+  context.calculateBannerLayout(sidebarRect, 1160, 720, false) === null,
+  "banner was not hidden for an unsafe narrow slot",
+);
+assert(
+  context.calculateBannerLayout(sidebarRect, 1280, 720, true) === null,
+  "Ghost Mode did not suppress banner layout",
+);
 
 function game(index, result, overrides = {}) {
   return {
@@ -155,7 +209,203 @@ assert(
   "monthly PubAPI URL is invalid",
 );
 
+function fakeElement({ text = "", href = null, visible = true } = {}) {
+  return {
+    textContent: text,
+    matches: (selector) => Boolean(href && selector.includes("a[href*='/member/']")),
+    querySelector: () => null,
+    getAttribute: (name) => (name === "href" ? href : null),
+    getBoundingClientRect: () => ({
+      width: visible ? 120 : 0,
+      height: visible ? 24 : 0,
+      left: 200,
+      right: 320,
+      top: 80,
+      bottom: 104,
+    }),
+  };
+}
+
+const memberElement = fakeElement({ text: "Rival 1800", href: "/member/Rival_Name/" });
+assert(
+  context.scout.extractUsernameFromElement(memberElement) === "rival_name",
+  "member URL username extraction failed",
+);
+assert(
+  context.scout.extractUsernameFromElement(fakeElement({ text: "Adversário" })) === null,
+  "lobby opponent placeholder was accepted",
+);
+assert(
+  context.scout.extractUsernameFromElement(fakeElement({ text: "Waiting for opponent" })) === null,
+  "multiword lobby placeholder was accepted",
+);
+assert(
+  context.scout.extractUsernameFromElement(fakeElement({ text: "NM Rival_Name" })) ===
+    "rival_name",
+  "NM title was mistaken for a username",
+);
+
+const originalQuerySelectorAll = context.document.querySelectorAll;
+const originalQuerySelector = context.document.querySelector;
+const currentUsernameElement = fakeElement({ text: "Rival_Name" });
+currentUsernameElement.matches = (selector) => selector.includes("[class*='username']");
+const currentTopContainer = {
+  textContent: "Rival_Name 1800",
+  matches: () => false,
+  querySelector: (selector) =>
+    selector.includes("username") ? currentUsernameElement : null,
+  getBoundingClientRect: () => ({ width: 528, height: 40, left: 228, right: 756, top: 16, bottom: 56 }),
+};
+let observedPlayerSelector = "";
+context.document.querySelector = () => null;
+context.document.querySelectorAll = (selector) => {
+  observedPlayerSelector = selector;
+  return selector.includes("#board-layout-player-top") ? [currentTopContainer] : [];
+};
+assert(
+  context.scout.findPlayerElement("top") === currentUsernameElement,
+  "current top-player container was not detected",
+);
+assert(
+  observedPlayerSelector.includes("#board-layout-player-top") &&
+    observedPlayerSelector.includes("#board-layout-main .player-component.player-top"),
+  "current Chess.com player hierarchy is not explicitly scoped",
+);
+context.document.querySelectorAll = originalQuerySelectorAll;
+context.document.querySelector = originalQuerySelector;
+
+const originalGetOpponentUsername = context.scout.getOpponentUsername;
+const originalGetOpponentElement = context.scout.getOpponentElement;
+context.scout.lastOpponent = "rival";
+context.scout.currentEntry = entry;
+context.scout.getOpponentUsername = () => "rival";
+context.scout.getOpponentElement = () => null;
+context.scout.checkOpponent();
+context.scout.getOpponentUsername = originalGetOpponentUsername;
+context.scout.getOpponentElement = originalGetOpponentElement;
+context.scout.currentEntry = null;
+
+const liveParent = {
+  insertBefore(node) {
+    node.parentNode = this;
+  },
+};
+const relocatedWrapper = {
+  id: "oi-wrapper",
+  parentNode: { id: "stale-parent" },
+  style: {},
+  appendChild(node) {
+    node.parentNode = this;
+  },
+};
+const relocatedContainer = { id: "krypbot-container", parentNode: liveParent };
+const originalGetElementById = context.document.getElementById;
+context.document.getElementById = (id) =>
+  id === "krypbot-container" ? relocatedContainer : id === "oi-wrapper" ? relocatedWrapper : null;
+context.scout.ensureScoutWrapper();
+assert(relocatedWrapper.parentNode === liveParent, "stale Scout wrapper was not relocated");
+assert(relocatedContainer.parentNode === relocatedWrapper, "Thinker panel was not reunited with Scout");
+context.document.getElementById = originalGetElementById;
+
+let loadingRestored = false;
+const originalRenderLoading = context.scout.renderLoading;
+context.scout.lastOpponent = "rival";
+context.scout.requestController = { abort() {} };
+context.scout.getOpponentUsername = () => "rival";
+context.scout.getOpponentElement = () => ({ nextElementSibling: null });
+context.scout.renderLoading = () => {
+  loadingRestored = true;
+};
+context.scout.checkOpponent();
+assert(loadingRestored, "loading UI was not restored after player-row replacement");
+context.scout.renderLoading = originalRenderLoading;
+context.scout.getOpponentUsername = originalGetOpponentUsername;
+context.scout.getOpponentElement = originalGetOpponentElement;
+context.scout.requestController = null;
+
 (async () => {
+  let gmOptions = null;
+  context.GM_xmlhttpRequest = (options) => {
+    gmOptions = options;
+    return { abort() {} };
+  };
+  const gmRequest = context.scout.createMonthlyRequest(url);
+  gmOptions.onload({ status: 200, responseText: JSON.stringify({ games }) });
+  const gmPayload = await gmRequest.promise;
+  assert(gmPayload.games.length === games.length, "GM transport response was not parsed");
+
+  const failedRequest = context.scout.createMonthlyRequest(url);
+  gmOptions.onerror();
+  let rejectedSilently = false;
+  try {
+    await failedRequest.promise;
+  } catch (error) {
+    rejectedSilently = true;
+  }
+  assert(rejectedSilently, "GM transport failure did not reject");
+
+  store.delete("tc_scout_rival");
+  let loadingRendered = false;
+  let finalEntry = null;
+  context.scout.lastOpponent = "rival";
+  context.scout.getOpponentUsername = () => "rival";
+  context.scout.renderLoading = () => {
+    loadingRendered = true;
+  };
+  context.scout.renderEntry = (value) => {
+    finalEntry = value;
+  };
+  const gmPipeline = context.scout.fetchData("rival");
+  gmOptions.onload({ status: 200, responseText: JSON.stringify({ games }) });
+  await gmPipeline;
+  assert(loadingRendered, "Scout loading UI was not mounted before request completion");
+  assert(finalEntry && finalEntry.username === "rival", "GM response did not render Scout data");
+  assert(store.has("tc_scout_rival"), "GM response was not cached");
+
+  store.delete("tc_scout_alpha");
+  store.delete("tc_scout_beta");
+  const controlledRequests = [];
+  context.GM_xmlhttpRequest = (options) => {
+    const controlled = { options, aborted: false };
+    controlledRequests.push(controlled);
+    return {
+      abort() {
+        controlled.aborted = true;
+        options.onabort();
+      },
+    };
+  };
+  const renderedUsers = [];
+  context.scout.renderLoading = () => {};
+  context.scout.renderEntry = (value) => renderedUsers.push(value.username);
+  context.scout.getOpponentUsername = () => context.scout.lastOpponent;
+  context.scout.lastOpponent = "alpha";
+  const alphaPipeline = context.scout.fetchData("alpha");
+  context.scout.lastOpponent = "beta";
+  const betaPipeline = context.scout.fetchData("beta");
+  const betaGames = games.map((value) => ({
+    ...value,
+    white: { ...value.white, username: "Beta" },
+  }));
+  controlledRequests[0].options.onload({
+    status: 200,
+    responseText: JSON.stringify({ games }),
+  });
+  controlledRequests[1].options.onload({
+    status: 200,
+    responseText: JSON.stringify({ games: betaGames }),
+  });
+  await Promise.all([alphaPipeline, betaPipeline]);
+  assert(controlledRequests[0].aborted, "previous GM request was not aborted");
+  assert(!store.has("tc_scout_alpha"), "aborted opponent response was cached");
+  assert(store.has("tc_scout_beta"), "current opponent response was not cached");
+  assert(
+    renderedUsers.length === 1 && renderedUsers[0] === "beta",
+    "stale GM response rendered over the current opponent",
+  );
+
+  delete context.GM_xmlhttpRequest;
+
   store.delete("tc_scout_rival");
   let resolveFetch;
   context.fetch = () =>
