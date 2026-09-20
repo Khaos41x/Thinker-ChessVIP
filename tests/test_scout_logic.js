@@ -27,6 +27,18 @@ if (
 ) {
   throw new Error("jQuery startup dependency was not vendored correctly");
 }
+if (
+  !source.includes("// @match        https://www.chess.com/*") ||
+  !source.includes("// @match        https://chess.com/*") ||
+  !source.includes("// @noframes") ||
+  !source.includes("function isThinkerSupportedRoute()") ||
+  !source.includes("function maybeStartThinkerUserscript()") ||
+  !source.includes("function installThinkerRouteBootstrap()") ||
+  !source.includes("if (thinkerUserscriptStarted) return;") ||
+  !source.includes("window.setInterval(maybeStartThinkerUserscript, 250)")
+) {
+  throw new Error("SPA-safe Tampermonkey bootstrap markers are missing");
+}
 const reconcileSource = source.slice(
   source.indexOf("  function reconcileThinkerUiShells"),
   source.indexOf("  function startThinkerUiReconciler"),

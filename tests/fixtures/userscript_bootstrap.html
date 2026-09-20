@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <style>
+      html, body { margin: 0; width: 1433px; min-height: 1200px; background: #262522; }
+      #board-layout-main { position: absolute; left: 228px; top: 16px; width: 688px; height: 788px; }
+      #board-layout-chessboard { width: 688px; height: 688px; background: #769656; }
+      .board-layout-sidebar { position: absolute; left: 948px; top: 16px; width: 300px; height: 868px; background: #1c1b19; }
+    </style>
+    <script>
+      window.GM_xmlhttpRequest = function (options) {
+        if (options.url.includes("/config/load")) {
+          setTimeout(function () {
+            options.onload({ status: 200, responseText: '{"hint":false,"autoMove":false,"autoQueue":false,"autoAdjust":false,"evalBar":false,"smartPacing":false,"ghostMode":false}' });
+          }, 0);
+        }
+        return { abort: function () {} };
+      };
+      window.GM_getValue = function (_, fallback) { return fallback; };
+      window.GM_setValue = function () {};
+    </script>
+  </head>
+  <body>
+    <main id="board-layout-main">
+      <div id="board-layout-player-top"><span class="user-username-component">Opponent</span></div>
+      <div id="board-layout-chessboard"></div>
+      <div id="board-layout-player-bottom"><span class="user-username-component">Player</span></div>
+    </main>
+    <aside class="board-layout-sidebar"></aside>
+    <script src="../../script.js"></script>
+  </body>
+</html>

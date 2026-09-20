@@ -1,16 +1,12 @@
 // ==UserScript==
 // @name         TC157
 // @namespace    http://tampermonkey.net/
-// @version      2026-09-20.3
+// @version      2026-09-20.4
 // @description  Chess Bot com Servidor Local
 // @author       You
-// @match        https://www.chess.com/play/computer*
-// @match        https://www.chess.com/play/*
-// @match        https://www.chess.com/game/*
-// @match        https://www.chess.com/puzzles/*
-// @match        https://www.chess.com/puzzle/*
-// @match        https://www.chess.com/puzzles/rated*
-// @match        https://www.chess.com/puzzles/rush*
+// @match        https://www.chess.com/*
+// @match        https://chess.com/*
+// @noframes
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @run-at       document-idle
 // @grant        GM_xmlhttpRequest
@@ -3482,13 +3478,27 @@
       }
     });
   }
-  pollExternalConfig();
-  setInterval(pollExternalConfig, 2000);
+  let thinkerUserscriptStarted = false;
+  let thinkerRouteWatchTimer = null;
+
+  function isThinkerSupportedRoute() {
+    const path = String(window.location.pathname || "").toLowerCase();
+    return /^\/(play|game|puzzle|puzzles)(\/|$)/.test(path) || Boolean(findThinkerMenuHost());
+  }
 
   function startThinkerUserscript() {
+    if (thinkerUserscriptStarted) return;
+    thinkerUserscriptStarted = true;
+    if (thinkerRouteWatchTimer !== null) {
+      window.clearInterval(thinkerRouteWatchTimer);
+      thinkerRouteWatchTimer = null;
+    }
+
     createMenu();
     removeAds();
     handleAutoQueue();
+    pollExternalConfig();
+    setInterval(pollExternalConfig, 2000);
 
     // Sync menu state to server ONLY if server still has defaults
     // (don't overwrite config panel changes)
@@ -3530,9 +3540,22 @@
     }, 10);
   }
 
+  function maybeStartThinkerUserscript() {
+    if (!thinkerUserscriptStarted && isThinkerSupportedRoute()) {
+      startThinkerUserscript();
+    }
+  }
+
+  function installThinkerRouteBootstrap() {
+    maybeStartThinkerUserscript();
+    if (!thinkerUserscriptStarted && thinkerRouteWatchTimer === null) {
+      thinkerRouteWatchTimer = window.setInterval(maybeStartThinkerUserscript, 250);
+    }
+  }
+
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", startThinkerUserscript, { once: true });
+    document.addEventListener("DOMContentLoaded", installThinkerRouteBootstrap, { once: true });
   } else {
-    startThinkerUserscript();
+    installThinkerRouteBootstrap();
   }
 })();
