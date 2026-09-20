@@ -27,16 +27,24 @@ if (
 ) {
   throw new Error("jQuery startup dependency was not vendored correctly");
 }
+const reconcileSource = source.slice(
+  source.indexOf("  function reconcileThinkerUiShells"),
+  source.indexOf("  function startThinkerUiReconciler"),
+);
 if (
-  !source.includes('position:absolute;left:-9999px') ||
+  !source.includes('position:fixed;left:-9999px;top:0;z-index:2147483000') ||
   !source.includes("function calculateThinkerBannerLayout") ||
   !source.includes("function calculateThinkerWorkspaceMargin") ||
   !source.includes("grid-template-columns:320px 320px") ||
   !source.includes('container.style.width = "320px"') ||
+  !source.includes(
+    "OpponentIntel.ensureScoutWrapper();\n        scheduleThinkerWorkspaceLayout();\n        OpponentIntel.startObserver();",
+  ) ||
   source.includes('addEventListener("scroll", scheduleThinkerBannerPosition') ||
+  reconcileSource.includes("\n    scheduleThinkerBannerPosition();") ||
   !source.includes("object-fit:cover;object-position:center center")
 ) {
-  throw new Error("static banner or below-fold workspace layout markers are missing");
+  throw new Error("stable fixed banner or below-fold workspace layout markers are missing");
 }
 
 const store = new Map();
@@ -121,18 +129,6 @@ assert(
     reportedLayout.width === 171 &&
     reportedLayout.height === 742,
   "banner geometry does not match the reported Chess.com viewport",
-);
-const scrolledLayout = context.calculateBannerLayout(
-  { left: 788, top: -584, right: 1088, bottom: 104 },
-  1280,
-  720,
-  false,
-  0,
-  600,
-);
-assert(
-  scrolledLayout.top === 16 && scrolledLayout.height === 688,
-  "absolute banner coordinates did not preserve a static document position",
 );
 assert(
   context.calculateWorkspaceMargin(836, 895) === 121 &&
