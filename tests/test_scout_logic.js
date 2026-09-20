@@ -28,11 +28,15 @@ if (
   throw new Error("jQuery startup dependency was not vendored correctly");
 }
 if (
-  !source.includes('position: fixed; right: -9999px') ||
+  !source.includes('position:absolute;left:-9999px') ||
   !source.includes("function calculateThinkerBannerLayout") ||
+  !source.includes("function calculateThinkerWorkspaceMargin") ||
+  !source.includes("grid-template-columns:320px 320px") ||
+  !source.includes('container.style.width = "320px"') ||
+  source.includes('addEventListener("scroll", scheduleThinkerBannerPosition') ||
   !source.includes("object-fit:cover;object-position:center center")
 ) {
-  throw new Error("responsive full-height banner layout markers are missing");
+  throw new Error("static banner or below-fold workspace layout markers are missing");
 }
 
 const store = new Map();
@@ -74,6 +78,7 @@ vm.runInContext(
   "let _ghostModeActive = false; const SERVER_URL = 'http://127.0.0.1:5050';\n" +
     source.slice(bannerLayoutStart, bannerLayoutEnd) +
     "\nglobalThis.calculateBannerLayout = calculateThinkerBannerLayout;" +
+    "\nglobalThis.calculateWorkspaceMargin = calculateThinkerWorkspaceMargin;" +
     "\nglobalThis.reconcileShells = reconcileThinkerUiShells;" +
     "\nglobalThis.applyGhost = applyGhostModeVisibility;" +
     "\nglobalThis.startReconciler = startThinkerUiReconciler;" +
@@ -89,9 +94,9 @@ const sidebarRect = { left: 788, top: 16, right: 1088, bottom: 704 };
 const bannerLayout = context.calculateBannerLayout(sidebarRect, 1280, 720, false);
 assert(
   bannerLayout &&
-    bannerLayout.left === 1102 &&
+    bannerLayout.left === 1096 &&
     bannerLayout.top === 16 &&
-    bannerLayout.width === 164 &&
+    bannerLayout.width === 178 &&
     bannerLayout.height === 688,
   "full-height banner geometry is incorrect",
 );
@@ -111,11 +116,28 @@ const reportedLayout = context.calculateBannerLayout(
 );
 assert(
   reportedLayout &&
-    reportedLayout.left === 1262 &&
+    reportedLayout.left === 1256 &&
     reportedLayout.top === 137 &&
-    reportedLayout.width === 157 &&
+    reportedLayout.width === 171 &&
     reportedLayout.height === 742,
   "banner geometry does not match the reported Chess.com viewport",
+);
+const scrolledLayout = context.calculateBannerLayout(
+  { left: 788, top: -584, right: 1088, bottom: 104 },
+  1280,
+  720,
+  false,
+  0,
+  600,
+);
+assert(
+  scrolledLayout.top === 16 && scrolledLayout.height === 688,
+  "absolute banner coordinates did not preserve a static document position",
+);
+assert(
+  context.calculateWorkspaceMargin(836, 895) === 121 &&
+    context.calculateWorkspaceMargin(836, 1080) === 306,
+  "workspace was not placed below normal and fullscreen viewport folds",
 );
 
 const recoveryControl = { style: {} };
@@ -191,14 +213,17 @@ context.document.querySelectorAll = () => [];
 context.document.getElementById = () => null;
 context.document.querySelector = () => null;
 
+const gameNow = Math.floor(Date.now() / 1000) - 60;
 function game(index, result, overrides = {}) {
   return {
-    end_time: 2000 - index,
-    white: { username: "Rival", result },
+    end_time: gameNow - index,
+    white: { username: "Rival", result, rating: 1800 - index },
     black: {
       username: "Other",
       result: result === "win" ? "checkmated" : "win",
+      rating: 1750 - index,
     },
+    time_class: ["bullet", "blitz", "rapid"][index % 3],
     pgn:
       index % 2 === 0
         ? '[Opening "Italian Game"]'
@@ -231,10 +256,31 @@ assert(entry.hudStats.total === 10, "HUD sample must be limited to ten");
 assert(entry.hudStats.streak.type === "W", "streak type is incorrect");
 assert(entry.hudStats.streak.count === 3, "streak count is incorrect");
 assert(entry.scoutStats.sampleSize === 12, "malformed games entered Scout sample");
-assert(entry.scoutStats.openings.white.count === 6, "opening aggregation failed");
+assert(entry.scoutStats.openings.white[0].count === 6, "opening aggregation failed");
+assert(entry.scoutStats.draws === 2 && entry.scoutStats.losses === 3, "full record is incorrect");
+assert(entry.scoutStats.scoreRate === 67, "score rate is incorrect");
+assert(entry.scoutStats.colors.white.games === 12, "color split is incorrect");
+assert(
+  entry.scoutStats.timeClasses.length === 3 &&
+    entry.scoutStats.timeClasses.reduce((total, item) => total + item.games, 0) === 12,
+  "time-control profile is incorrect",
+);
+assert(entry.scoutStats.lossPattern.reason === "timeout", "loss pattern is incorrect");
+assert(
+  entry.scoutStats.rating.latest === 1800 && entry.scoutStats.rating.change === 11,
+  "rating movement is incorrect",
+);
 assert(
   context.scout.isValidCacheEntry(entry, "rival"),
   "valid cache entry was rejected",
+);
+const sparseEntry = context.scout.processGames([game(0, "win")], "rival");
+assert(
+  sparseEntry &&
+    sparseEntry.scoutStats.sampleSize === 1 &&
+    sparseEntry.scoutStats.momentum.delta === null &&
+    context.scout.isValidCacheEntry(sparseEntry, "rival"),
+  "sparse Scout sample was not handled safely",
 );
 
 context.scout.writeCache(entry);
@@ -299,6 +345,17 @@ assert(context.scout.checkTimer === null, "observer restart left debounce locked
 store.set("tc_scout_broken", "{bad-json");
 assert(context.scout.readCache("broken") === null, "corrupt cache was returned");
 assert(!store.has("tc_scout_broken"), "corrupt cache was not invalidated");
+store.set(
+  "tc_scout_legacy",
+  JSON.stringify({
+    timestamp: Date.now(),
+    username: "legacy",
+    hudStats: entry.hudStats,
+    scoutStats: { sampleSize: 12, wins: 7, winRate: 58, openings: {} },
+  }),
+);
+assert(context.scout.readCache("legacy") === null, "legacy cache shape was accepted");
+assert(!store.has("tc_scout_legacy"), "legacy cache shape was not invalidated");
 
 const url = context.scout.getCurrentMonthUrl("rival");
 assert(
@@ -395,7 +452,7 @@ const relocatedWrapper = {
     node.parentNode = this;
   },
 };
-const relocatedContainer = { id: "krypbot-container", parentNode: liveParent };
+const relocatedContainer = { id: "krypbot-container", parentNode: liveParent, style: {} };
 const originalGetElementById = context.document.getElementById;
 context.document.getElementById = (id) =>
   id === "krypbot-container" ? relocatedContainer : id === "oi-wrapper" ? relocatedWrapper : null;
