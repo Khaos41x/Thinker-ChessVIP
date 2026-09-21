@@ -7,6 +7,7 @@
       #board-layout-main { position: absolute; left: 228px; top: 16px; width: 688px; height: 788px; }
       #board-layout-chessboard { width: 688px; height: 688px; background: #769656; }
       .board-layout-sidebar { position: absolute; left: 948px; top: 16px; width: 300px; height: 868px; background: #1c1b19; }
+      #oi-wrapper { margin-top: 30px !important; }
     </style>
     <script>
       window.GM_xmlhttpRequest = function (options) {
@@ -14,6 +15,26 @@
           setTimeout(function () {
             options.onload({ status: 200, responseText: '{"hint":false,"autoMove":false,"autoQueue":false,"autoAdjust":false,"evalBar":false,"smartPacing":false,"ghostMode":false}' });
           }, 0);
+        }
+        if (options.url.includes("api.chess.com/pub/player/")) {
+          const now = Math.floor(Date.now() / 1000);
+          const openings = ["Pirc Defense: Classical Variation", "Caro-Kann Defense: Exchange Variation", "Giuoco Piano Game", "King's Fianchetto Opening"];
+          const games = Array.from({ length: 50 }, function (_, index) {
+            const isWhite = index % 2 === 0;
+            const result = index < 26 ? "win" : index < 28 ? "agreed" : "checkmated";
+            const player = { username: "GMTestTC01", result: result, rating: 1840 + (index % 18) };
+            const rival = { username: "Rival" + index, result: result === "win" ? "resigned" : "win", rating: 1800 + index };
+            return {
+              end_time: now - index * 3600,
+              time_class: index < 46 ? "bullet" : "blitz",
+              white: isWhite ? player : rival,
+              black: isWhite ? rival : player,
+              pgn: '[Opening "' + openings[index % openings.length] + '"]\n\n1. e4 e5 2. Nf3 Nc6'
+            };
+          });
+          setTimeout(function () {
+            options.onload({ status: 200, responseText: JSON.stringify({ games: games }) });
+          }, 20);
         }
         return { abort: function () {} };
       };
@@ -23,7 +44,7 @@
   </head>
   <body>
     <main id="board-layout-main">
-      <div id="board-layout-player-top"><span class="user-username-component">Opponent</span></div>
+      <div id="board-layout-player-top"><span class="user-username-component">GMTestTC01</span></div>
       <div id="board-layout-chessboard"></div>
       <div id="board-layout-player-bottom"><span class="user-username-component">Player</span></div>
     </main>

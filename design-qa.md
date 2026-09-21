@@ -1,31 +1,48 @@
-# Design QA — Scout visibility and Thinker Chess banner
+# Design QA — Painéis compactos e banner ancorado
 
-## References
+## Evidências
 
-- Annotated Scout placement screenshot: `codex-clipboard-c2216ab1-70fc-47c2-9d91-33c5c026cfa0.png`
-- Annotated opponent HUD screenshot: `codex-clipboard-f387165c-6a14-47f7-90e5-3ce339adcf1a.png`
-- Full-height banner reference: `codex-clipboard-443a94f4-50d2-40c4-8ced-0ab55876fcb3.png`
-- Production asset: `Banner-ThinkerChess.png` (1122×1402)
+- Referência do painel de configuração: `C:\Users\SOBOOA~1\AppData\Local\Temp\codex-clipboard-49119e7d-581f-4221-a8d1-940320f73785.png`
+- Referência do Scout: `C:\Users\SOBOOA~1\AppData\Local\Temp\codex-clipboard-f5afb823-66c2-40c8-8b03-dba9eb7d1ef5.png`
+- Implementação renderizada: `C:\Users\sobooa7iqytvqheo\Desktop\Thinker-ChessVIP\tests\artifacts\thinker-panels-final.png`
+- Viewport da implementação: 1433 × 1500 CSS px, `deviceScaleFactor: 1`.
+- Pixels das fontes: configuração 284 × 467; Scout 323 × 715.
+- Pixels da captura implementada: 1433 × 1500. Não houve normalização de densidade; todas as evidências foram comparadas em densidade 1×.
+- Estado: tema escuro, painel de configuração expandido, Scout com 50 partidas simuladas pela mesma estrutura da PubAPI, banner visível ao lado da sidebar.
 
-## Current Chess.com verification
+## Comparação visual
 
-The current live layout was captured at 1280×720. The upper player is rendered under `#board-layout-player-top > .player-component.player-top`, with the nickname in `.cc-user-username-component`. The notation sidebar measured x=788, y=16, width=300, height=688, leaving a 164-pixel right-side slot after the configured margins.
+As três imagens foram abertas juntas na mesma comparação. A implementação reproduz a superfície quase preta, borda discreta, raio de 20 px, tipografia compacta, controles alinhados, switches de 34 × 20 px, divisores, slider, inputs e hierarquia das referências. A largura útil do painel de configuração é 268 px, compatível com o painel visível dentro da referência de 284 px; o Scout tem 296 px, compatível com o painel visível dentro da referência de 323 px.
 
-## Comparison
+O Scout preserva o gráfico circular, resumo V/E/D, resultados por cor, desempenho por ritmo e aberturas mais jogadas. A cópia principal foi intencionalmente alterada de “aproveitamento/score” para “taxa de vitórias”, atendendo ao requisito de clareza e usando apenas `vitórias ÷ jogos`. As linhas por cor e ritmo também dizem explicitamente “vitórias”. Contagens de “outras aberturas” foram omitidas porque a PubAPI pode não fornecer uma abertura identificável para todas as partidas; exibi-las como abertura conhecida criaria falsa precisão.
 
-- Opponent HUD attaches to the current nickname node and remains immediately adjacent to it.
-- The Scout wrapper is a non-wrapping horizontal flex row, placing the Scout card directly to the right of the Thinker settings card.
-- The supplied banner is embedded byte-for-byte, centered with `object-fit: cover`, and uses the visible notation-sidebar height rather than a width-derived short height.
-- At the captured viewport, the computed banner slot is approximately 164×688; at narrower widths it remains visible down to a safe 96-pixel slot without covering the sidebar.
-- Ghost Mode continues hiding all three custom surfaces.
+O banner usa `position:absolute` nas coordenadas de documento da sidebar de notações. Assim, ele pertence ao mesmo plano do layout do Chess.com: não possui listener de scroll, não persegue o viewport e mantém sua posição ao lado da área de notações.
 
-## Automated checks
+## Superfícies obrigatórias
 
-- Banner source/embedded SHA-256 equality.
-- Current and legacy opponent selector handling.
-- Lobby placeholder rejection.
-- Tampermonkey transport success/failure.
-- Stale opponent response rejection.
-- Syntax, whitespace, endpoint and console-silence checks.
+- Tipografia: Inter com fallback Arial, pesos e hierarquia equivalentes; truncamento aplicado somente aos nomes longos de abertura.
+- Espaçamento e ritmo: padding, divisores, gaps, raios e dimensões dos dois painéis alinhados às referências.
+- Cores e tokens: fundo `#111216`, bordas `#202228`, texto branco/cinza e verde semântico reproduzidos.
+- Imagens e ícones: banner original preservado; controles usam ícones de biblioteca embutidos como imagens, sem placeholders.
+- Cópia e conteúdo: termos ambíguos removidos; todas as métricas visíveis identificam fórmula, amostra ou unidade.
+
+## Interações e regressões
+
+- Inputs, radios, slider, seletor de cor e fechamento continuam conectados aos handlers existentes.
+- DOM final confirmou painel, Scout e banner montados.
+- Banner final confirmado como absoluto e ancorado.
+- Nenhum `SCORE` ou `% score` visível.
+- Nenhum `SyntaxError`, `ReferenceError`, `TypeError` ou erro fatal no Chrome.
+- Nenhuma chamada direta a `console.log/info/warn/trace/error/debug`.
+
+## Histórico de comparação
+
+1. P1: painéis antigos divergiam completamente das referências; substituídos pela estrutura compacta e pelos novos tokens visuais.
+2. P1: banner fixo ao viewport mudava de posição relativa durante scroll; alterado para coordenadas absolutas de documento da sidebar.
+3. P1: “Score” era semanticamente ambíguo; removido e substituído por taxa de vitórias calculada diretamente.
+4. P2: inputs numéricos truncavam valores na primeira captura; largura e aparência nativa dos spinners foram corrigidas.
+5. P2: símbolos aproximados diferiam dos ícones da referência; substituídos por ícones reais de biblioteca incorporados.
+
+Não restam diferenças P0, P1 ou P2 acionáveis. A ausência das linhas “+ N em outras aberturas” é uma decisão de integridade dos dados, não uma divergência visual acidental.
 
 final result: passed

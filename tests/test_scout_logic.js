@@ -39,16 +39,23 @@ if (
 ) {
   throw new Error("SPA-safe Tampermonkey bootstrap markers are missing");
 }
+if (
+  !source.includes("taxa de vitórias") ||
+  source.includes(">SCORE<") ||
+  source.includes("% score")
+) {
+  throw new Error("Scout still exposes an ambiguous score label");
+}
 const reconcileSource = source.slice(
   source.indexOf("  function reconcileThinkerUiShells"),
   source.indexOf("  function startThinkerUiReconciler"),
 );
 if (
-  !source.includes('position:fixed;left:-9999px;top:0;z-index:2147483000') ||
+  !source.includes('position:absolute;left:-9999px;top:0;z-index:50') ||
   !source.includes("function calculateThinkerBannerLayout") ||
   !source.includes("function calculateThinkerWorkspaceMargin") ||
-  !source.includes("grid-template-columns:320px 320px") ||
-  !source.includes('container.style.width = "320px"') ||
+  !source.includes("grid-template-columns:268px 296px") ||
+  !source.includes('container.style.width = "268px"') ||
   !source.includes(
     "OpponentIntel.ensureScoutWrapper();\n        scheduleThinkerWorkspaceLayout();\n        OpponentIntel.startObserver();",
   ) ||
@@ -56,7 +63,7 @@ if (
   reconcileSource.includes("\n    scheduleThinkerBannerPosition();") ||
   !source.includes("object-fit:cover;object-position:center center")
 ) {
-  throw new Error("stable fixed banner or below-fold workspace layout markers are missing");
+  throw new Error("sidebar-anchored banner or redesigned workspace layout markers are missing");
 }
 
 const store = new Map();
@@ -141,6 +148,11 @@ assert(
     reportedLayout.width === 171 &&
     reportedLayout.height === 742,
   "banner geometry does not match the reported Chess.com viewport",
+);
+const scrolledLayout = context.calculateBannerLayout(sidebarRect, 1280, 720, false, 0, 500);
+assert(
+  scrolledLayout && scrolledLayout.top === 516,
+  "banner did not remain anchored to the sidebar document position while scrolling",
 );
 assert(
   context.calculateWorkspaceMargin(836, 895) === 121 &&
