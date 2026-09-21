@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC157
 // @namespace    http://tampermonkey.net/
-// @version      2026-09-20.5
+// @version      2026-09-21.1
 // @description  Chess Bot com Servidor Local
 // @author       You
 // @match        https://www.chess.com/*
@@ -295,6 +295,7 @@
     retryCount: 0,
     observer: null,
     checkTimer: null,
+    freshnessInterval: null,
 
     normalizeUsername(value) {
       return String(value || "").trim().toLowerCase();
@@ -582,37 +583,21 @@
       if (openingTag) return this.cleanOpeningName(openingTag[1]);
 
       const ecoUrl = pgn.match(
-        /\[ECOUrl\s+"https?:\/\/(?:www\.)?chess\.com\/openings\/([^"]+)"\]/i,
+        /\[ECOUrl\s+"https?:\/\/(?:www\.)?chess\.com\/openings\/([^"?#]+)(?:[?#][^"]*)?"\]/i,
       );
-      if (ecoUrl) {
+      const gameEcoUrl =
+        typeof game.eco === "string"
+          ? game.eco.match(/^https?:\/\/(?:www\.)?chess\.com\/openings\/([^?#]+)/i)
+          : null;
+      const trustedOpeningPath = ecoUrl?.[1] || gameEcoUrl?.[1];
+      if (trustedOpeningPath) {
         try {
-          return this.cleanOpeningName(decodeURIComponent(ecoUrl[1]));
+          return this.cleanOpeningName(decodeURIComponent(trustedOpeningPath));
         } catch (e) {
-          return this.cleanOpeningName(ecoUrl[1]);
+          return this.cleanOpeningName(trustedOpeningPath);
         }
       }
-
-      if (typeof game.eco === "string" && game.eco.trim()) {
-        return this.cleanOpeningName(game.eco);
-      }
-      if (!pgn) return null;
-
-      const moveText = pgn
-        .replace(/\[[^\]]*\]/g, " ")
-        .replace(/\{[^}]*\}/g, " ")
-        .replace(/\([^)]*\)/g, " ")
-        .replace(/\$\d+/g, " ");
-      const moves = moveText
-        .split(/\s+/)
-        .map((token) => token.replace(/^\d+\.(?:\.\.)?/, ""))
-        .filter(
-          (token) =>
-            token &&
-            !/^\d+\.(?:\.\.)?$/.test(token) &&
-            !/^(1-0|0-1|1\/2-1\/2|\*)$/.test(token),
-        )
-        .slice(0, 6);
-      return moves.length >= 2 ? this.cleanOpeningName(moves.join(" ")) : null;
+      return null;
     },
 
     favoriteOpenings(games, color, limit = 2) {
@@ -704,11 +689,24 @@
     processGames(games, username) {
       const normalized = this.normalizeUsername(username);
       if (!Array.isArray(games) || !normalized) return null;
+      const now = new Date();
+      const monthStart = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1) / 1000;
+      const nextMonthStart = Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1) / 1000;
+      const currentTime = Math.floor(now.getTime() / 1000);
       const recent = games
+        .filter((game) =>
+          this.isPlainObject(game) &&
+          Number.isInteger(game.end_time) &&
+          game.end_time >= monthStart &&
+          game.end_time < nextMonthStart &&
+          game.end_time <= currentTime &&
+          (this.normalizeUsername(game.white?.username) === normalized ||
+            this.normalizeUsername(game.black?.username) === normalized),
+        )
+        .sort((a, b) => b.end_time - a.end_time)
+        .slice(0, 50)
         .map((game) => this.classifyGame(game, normalized))
-        .filter(Boolean)
-        .sort((a, b) => b.timestamp - a.timestamp)
-        .slice(0, 50);
+        .filter(Boolean);
       if (!recent.length) return null;
 
       const hudGames = recent.slice(0, 10);
@@ -914,7 +912,7 @@
       }
       const currentMarginTop = wrapper.style.marginTop;
       wrapper.style.cssText =
-        "display:grid;grid-template-columns:268px 296px;gap:14px;align-items:start;width:max-content;max-width:none;overflow:visible;margin-bottom:30px;";
+        "display:grid;grid-template-columns:268px 296px;gap:14px;align-items:start;width:max-content;max-width:none;overflow:visible;margin-left:clamp(0px,calc(100% - 578px),44px);margin-bottom:30px;";
       wrapper.style.marginTop = currentMarginTop || "30px";
       container.style.width = "268px";
       container.style.maxWidth = "268px";
@@ -1321,6 +1319,13 @@
         return;
       }
       if (username === this.lastOpponent) {
+        if (this.currentEntry && !this.isValidCacheEntry(this.currentEntry, username)) {
+          this.invalidateCache(username);
+          this.currentEntry = null;
+          this.hide();
+          this.fetchData(username);
+          return;
+        }
         const target = this.getOpponentElement();
         if (!target) return;
         const existingHud = document.querySelector(".tc-hud-stats");
@@ -1379,6 +1384,9 @@
           attributes: true,
           attributeFilter: ["class", "href"],
         });
+      }
+      if (!this.freshnessInterval) {
+        this.freshnessInterval = window.setInterval(() => this.checkOpponent(), 60000);
       }
       this.checkOpponent();
     },
@@ -3145,6 +3153,34 @@
         OpponentIntel.ensureScoutWrapper();
         scheduleThinkerWorkspaceLayout();
         OpponentIntel.startObserver();
+        const switchGroups = document.querySelectorAll(
+          "#krypbot-container .kb-radio-group",
+        );
+        switchGroups.forEach((group) => {
+          if (group.querySelector('input[name="delayMode"]')) return;
+          const onInput = group.querySelector('input[value="1"]');
+          const offInput = group.querySelector('input[value="0"]');
+          if (!onInput || !offInput) return;
+          group.setAttribute("role", "switch");
+          group.setAttribute("tabindex", "0");
+          group.setAttribute("aria-checked", onInput.checked ? "true" : "false");
+          const toggle = () => {
+            const nextInput = onInput.checked ? offInput : onInput;
+            nextInput.checked = true;
+            group.setAttribute("aria-checked", onInput.checked ? "true" : "false");
+            nextInput.dispatchEvent(new Event("change", { bubbles: true }));
+          };
+          group.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            toggle();
+          }, true);
+          group.addEventListener("keydown", (event) => {
+            if (event.key !== " " && event.key !== "Enter") return;
+            event.preventDefault();
+            toggle();
+          });
+        });
         // Add Minimize Logic
         $("#kb-minimize-toggle").on("click", function (e) {
           e.stopPropagation();
@@ -3214,28 +3250,71 @@
           } else {
             $("#puzzle-section").hide();
           }
+          switchGroups.forEach((group) => {
+            const onInput = group.querySelector('input[value="1"]');
+            if (onInput) group.setAttribute("aria-checked", onInput.checked ? "true" : "false");
+          });
         };
 
         // Push current menu state to server so config panel reads correct values
         function pushToServer() {
+          _localConfigRevision++;
+          _localConfigPending = true;
+          _queuedConfigSnapshot = JSON.stringify({
+            hint: hint,
+            autoMove: auto_move,
+            autoQueue: auto_queue,
+            autoAdjust: typeof autoAdjust !== "undefined" && autoAdjust.isEnabled(),
+            evalBar: typeof evalBarEnabled !== "undefined" ? evalBarEnabled : false,
+            smartPacing: typeof smartPacingEnabled !== "undefined" ? smartPacingEnabled : false,
+            elo: typeof chessBot !== "undefined" ? chessBot.elo : 1500,
+            delayMode: typeof autoDelayMode !== "undefined" ? autoDelayMode : "random",
+            minDelay: typeof autoDelayMin !== "undefined" ? autoDelayMin : 0.5,
+            maxDelay: typeof autoDelayMax !== "undefined" ? autoDelayMax : 2.0,
+            color: current_color,
+            ghostMode: _ghostModeActive
+          });
+          flushConfigSave();
+        }
+
+        function flushConfigSave() {
+          if (_configSaveInFlight || !_queuedConfigSnapshot) return;
+          const snapshot = _queuedConfigSnapshot;
+          _queuedConfigSnapshot = null;
+          _configSaveInFlight = true;
+          const onFailure = () => {
+            _configSaveInFlight = false;
+            if (!_queuedConfigSnapshot) _queuedConfigSnapshot = snapshot;
+            if (_configRetryTimer === null) {
+              _configRetryTimer = window.setTimeout(() => {
+                _configRetryTimer = null;
+                flushConfigSave();
+              }, 2000);
+            }
+          };
           GM_xmlhttpRequest({
             method: "POST",
             url: SERVER_URL + "/config/save",
             headers: {"Content-Type": "application/json"},
-            data: JSON.stringify({
-              hint: hint,
-              autoMove: auto_move,
-              autoQueue: auto_queue,
-              autoAdjust: typeof autoAdjust !== "undefined" && autoAdjust.isEnabled(),
-              evalBar: typeof evalBarEnabled !== "undefined" ? evalBarEnabled : false,
-              smartPacing: typeof smartPacingEnabled !== "undefined" ? smartPacingEnabled : false,
-              elo: typeof chessBot !== "undefined" ? chessBot.elo : 1500,
-              delayMode: typeof autoDelayMode !== "undefined" ? autoDelayMode : "random",
-              minDelay: typeof autoDelayMin !== "undefined" ? autoDelayMin : 0.5,
-              maxDelay: typeof autoDelayMax !== "undefined" ? autoDelayMax : 2.0,
-              color: current_color,
-              ghostMode: _ghostModeActive
-            })
+            timeout: 5000,
+            data: snapshot,
+            onload(response) {
+              if (response.status < 200 || response.status >= 300) {
+                onFailure();
+                return;
+              }
+              _configSaveInFlight = false;
+              if (_queuedConfigSnapshot) {
+                flushConfigSave();
+              } else {
+                _localConfigPending = false;
+                _lastExternalConfig = null;
+                pollExternalConfig();
+              }
+            },
+            onerror: onFailure,
+            ontimeout: onFailure,
+            onabort: onFailure,
           });
         }
 
@@ -3448,6 +3527,9 @@
 
         handleAutoQueue();
         window.krypbotUpdateUI();
+        _menuReady = true;
+        _lastExternalConfig = null;
+        pollExternalConfig();
       }
     }, 500);
   }
@@ -3481,20 +3563,26 @@
   let _lastExternalConfig = null;
   let _ghostModeActive = false;
   let _menuReady = false;
+  let _localConfigRevision = 0;
+  let _localConfigPending = false;
+  let _configSaveInFlight = false;
+  let _queuedConfigSnapshot = null;
+  let _configRetryTimer = null;
+  let _configPollId = 0;
 
   function pollExternalConfig() {
+    if (!_menuReady || _localConfigPending) return;
+    const requestRevision = _localConfigRevision;
+    const pollId = ++_configPollId;
     GM_xmlhttpRequest({
       method: "GET",
       url: SERVER_URL + "/config/load",
       onload(resp) {
         try {
+          if (!_menuReady || _localConfigPending || requestRevision !== _localConfigRevision || pollId !== _configPollId || resp.status !== 200) return;
           const s = JSON.parse(resp.responseText);
           const key = JSON.stringify(s);
           if (key === _lastExternalConfig) return;
-          _lastExternalConfig = key;
-
-          // Don't apply server values until menu is initialized + startup POST sent
-          if (!_menuReady) return;
 
           // Ghost Mode — apply immediately, hide EVERYTHING
           if (typeof s.ghostMode === "boolean") {
@@ -3581,6 +3669,8 @@
             $(".myarrow line").attr("stroke", current_color);
             $(".myhigh").css({"border-color": current_color, "background-color": current_color + "26", "box-shadow": `0 4px 12px ${current_color}33`});
           }
+          if (typeof window.krypbotUpdateUI === "function") window.krypbotUpdateUI();
+          _lastExternalConfig = key;
         } catch(e) {}
       }
     });
@@ -3604,28 +3694,7 @@
     createMenu();
     removeAds();
     handleAutoQueue();
-    pollExternalConfig();
     setInterval(pollExternalConfig, 2000);
-
-    // Sync menu state to server ONLY if server still has defaults
-    // (don't overwrite config panel changes)
-    setTimeout(() => {
-      GM_xmlhttpRequest({
-        method: "GET",
-        url: SERVER_URL + "/config/load",
-        onload(resp) {
-          try {
-            const s = JSON.parse(resp.responseText);
-            const isDefault = s.hint === false && s.autoMove === false && s.autoQueue === false
-              && s.autoAdjust === false && s.evalBar === false && s.smartPacing === false
-              && s.ghostMode === false;
-            if (isDefault) pushToServer();
-          } catch(e) { pushToServer(); }
-          _lastExternalConfig = null; // Force next poll to re-apply
-          _menuReady = true;
-        }
-      });
-    }, 500);
 
     // Monitor game mode changes and update UI
     setInterval(() => {

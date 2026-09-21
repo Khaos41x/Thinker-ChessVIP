@@ -2,6 +2,79 @@ const fs = require("fs");
 const vm = require("vm");
 
 const source = fs.readFileSync("script.js", "utf8");
+const switchStart = source.indexOf('        const switchGroups = document.querySelectorAll(');
+const switchEnd = source.indexOf('        // Add Minimize Logic', switchStart);
+if (switchStart < 0 || switchEnd < 0) throw new Error("switch binding block not found");
+const switchListeners = {};
+const switchAttributes = {};
+let switchChanges = 0;
+let switchState = "off";
+const onSwitch = { dispatchEvent: () => { switchChanges++; } };
+const offSwitch = { dispatchEvent: () => { switchChanges++; } };
+Object.defineProperty(onSwitch, "checked", {
+  get: () => switchState === "on",
+  set: (value) => { if (value) switchState = "on"; },
+});
+Object.defineProperty(offSwitch, "checked", {
+  get: () => switchState === "off",
+  set: (value) => { if (value) switchState = "off"; },
+});
+const switchGroup = {
+  querySelector: (selector) =>
+    selector.includes('delayMode') ? null : selector.includes('value="1"') ? onSwitch : offSwitch,
+  setAttribute: (name, value) => { switchAttributes[name] = value; },
+  addEventListener: (name, handler) => { switchListeners[name] = handler; },
+};
+vm.runInNewContext(source.slice(switchStart, switchEnd), {
+  document: { querySelectorAll: () => [switchGroup] },
+  Event: class { constructor(type) { this.type = type; } },
+});
+const switchClick = () => switchListeners.click({ preventDefault() {}, stopPropagation() {} });
+switchClick();
+if (!onSwitch.checked || switchChanges !== 1 || switchAttributes["aria-checked"] !== "true") {
+  throw new Error("one click did not activate the switch");
+}
+switchClick();
+if (!offSwitch.checked || switchChanges !== 2 || switchAttributes["aria-checked"] !== "false") {
+  throw new Error("one click did not deactivate the switch");
+}
+switchListeners.keydown({ key: "Enter", preventDefault() {} });
+if (!onSwitch.checked || switchChanges !== 3) throw new Error("switch keyboard activation failed");
+const pollStart = source.indexOf("  let _lastExternalConfig = null;");
+const pollEnd = source.indexOf("  let thinkerUserscriptStarted = false;", pollStart);
+if (pollStart < 0 || pollEnd < 0) throw new Error("config polling block not found");
+let capturedPoll = null;
+const pollContext = {
+  SERVER_URL: "http://127.0.0.1:5050",
+  GM_xmlhttpRequest: (options) => { capturedPoll = options; },
+  $: () => { throw new Error("stale response reached UI"); },
+};
+vm.createContext(pollContext);
+vm.runInContext(
+  source.slice(pollStart, pollEnd) +
+    "\nglobalThis.pollConfig = pollExternalConfig;" +
+    "\nglobalThis.markMenuReady = () => { _menuReady = true; };" +
+    "\nglobalThis.markLocalChange = () => { _localConfigRevision++; _localConfigPending = true; };" +
+    "\nglobalThis.clearLocalPending = () => { _localConfigPending = false; };",
+  pollContext,
+);
+pollContext.pollConfig();
+if (capturedPoll) throw new Error("config polled before menu was ready");
+pollContext.markMenuReady();
+pollContext.pollConfig();
+if (!capturedPoll) throw new Error("ready menu did not poll config");
+const stalePoll = capturedPoll;
+pollContext.markLocalChange();
+stalePoll.onload({ status: 200, responseText: '{"hint":false}' });
+capturedPoll = null;
+pollContext.pollConfig();
+if (capturedPoll) throw new Error("config polled while local save was pending");
+pollContext.clearLocalPending();
+pollContext.pollConfig();
+const racedPoll = capturedPoll;
+pollContext.markLocalChange();
+pollContext.clearLocalPending();
+racedPoll.onload({ status: 200, responseText: '{"hint":false}' });
 if (Buffer.byteLength(source, "utf8") > 400000) {
   throw new Error("userscript payload is too large for reliable Tampermonkey startup");
 }
@@ -55,6 +128,7 @@ if (
   !source.includes("function calculateThinkerBannerLayout") ||
   !source.includes("function calculateThinkerWorkspaceMargin") ||
   !source.includes("grid-template-columns:268px 296px") ||
+  !source.includes("margin-left:clamp(0px,calc(100% - 578px),44px)") ||
   !source.includes('container.style.width = "268px"') ||
   !source.includes(
     "OpponentIntel.ensureScoutWrapper();\n        scheduleThinkerWorkspaceLayout();\n        OpponentIntel.startObserver();",
@@ -277,6 +351,38 @@ assert(entry.hudStats.streak.type === "W", "streak type is incorrect");
 assert(entry.hudStats.streak.count === 3, "streak count is incorrect");
 assert(entry.scoutStats.sampleSize === 12, "malformed games entered Scout sample");
 assert(entry.scoutStats.openings.white[0].count === 6, "opening aggregation failed");
+const noOpening = context.scout.extractOpening({ pgn: "1. e4 e5 2. Nf3 Nc6" });
+assert(noOpening === null, "raw moves were incorrectly presented as a named opening");
+assert(
+  context.scout.extractOpening({ eco: "https://www.chess.com/openings/Queens-Gambit" }) === "Queens Gambit",
+  "Chess.com ECO URL was not parsed as an opening",
+);
+const currentDate = new Date();
+const monthStart = Math.floor(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), 1) / 1000);
+const monthFiltered = context.scout.processGames([
+  game(0, "win"),
+  game(1, "timeout", { end_time: monthStart - 1 }),
+  game(2, "timeout", { end_time: Math.floor(Date.now() / 1000) + 3600 }),
+], "rival");
+assert(monthFiltered.scoutStats.sampleSize === 1, "out-of-month or future games entered Scout sample");
+const scoutMethods = {
+  getOpponentUsername: context.scout.getOpponentUsername,
+  invalidateCache: context.scout.invalidateCache,
+  hide: context.scout.hide,
+  fetchData: context.scout.fetchData,
+};
+let rolloverFetch = null;
+context.scout.lastOpponent = "rival";
+context.scout.currentEntry = { ...entry, timestamp: 1 };
+context.scout.getOpponentUsername = () => "rival";
+context.scout.invalidateCache = () => {};
+context.scout.hide = () => {};
+context.scout.fetchData = (username) => { rolloverFetch = username; };
+context.scout.checkOpponent();
+assert(rolloverFetch === "rival", "expired or prior-month Scout entry was not refreshed");
+Object.assign(context.scout, scoutMethods);
+context.scout.lastOpponent = null;
+context.scout.currentEntry = null;
 assert(entry.scoutStats.draws === 2 && entry.scoutStats.losses === 3, "full record is incorrect");
 assert(entry.scoutStats.scoreRate === 67, "score rate is incorrect");
 assert(entry.scoutStats.colors.white.games === 12, "color split is incorrect");

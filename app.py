@@ -8,6 +8,7 @@ import os
 import time
 import datetime
 import collections
+import functools
 import threading
 import logging
 import subprocess
@@ -259,7 +260,19 @@ class LRUCache:
 
 analysis_cache = LRUCache()
 engine = None
+ponder_engine = None
 cache = {}
+engine_lock = threading.RLock()
+ponder_engine_lock = threading.RLock()
+engine_request_lock = threading.RLock()
+
+
+def serialized_engine_request(handler):
+    @functools.wraps(handler)
+    def wrapped(*args, **kwargs):
+        with engine_request_lock:
+            return handler(*args, **kwargs)
+    return wrapped
 
 def get_target_depth(elo):
     if elo <= 800:
@@ -292,20 +305,45 @@ import multiprocessing
 cpu_count = multiprocessing.cpu_count()
 
 Log.engine("Iniciando Komodo 14.1...")
-engine = chess.engine.SimpleEngine.popen_uci(ENGINE_PATH)
-ponder_engine = chess.engine.SimpleEngine.popen_uci(ENGINE_PATH)
+def create_engine(ponder=False):
+    instance = chess.engine.SimpleEngine.popen_uci(ENGINE_PATH)
+    try:
+        instance.configure({
+            "Threads": max(1, cpu_count - 1) if ponder else cpu_count,
+            "Hash": 256,
+            "Skill": 20,
+        })
+        return instance
+    except Exception:
+        try:
+            instance.close()
+        except Exception:
+            pass
+        raise
 
-engine.configure({
-    "Threads": cpu_count,
-    "Hash": 256,
-    "Skill": 20,
-})
 
-ponder_engine.configure({
-    "Threads": max(1, cpu_count - 1),
-    "Hash": 256,
-    "Skill": 20,
-})
+def restart_engine(ponder=False):
+    global engine, ponder_engine
+    previous = ponder_engine if ponder else engine
+    if ponder:
+        ponder_engine = None
+    else:
+        engine = None
+    if previous is not None:
+        try:
+            previous.close()
+        except Exception:
+            pass
+    replacement = create_engine(ponder)
+    if ponder:
+        ponder_engine = replacement
+    else:
+        engine = replacement
+    return replacement
+
+
+engine = create_engine()
+ponder_engine = create_engine(ponder=True)
 
 ponder_thread = None
 ponder_stop_event = threading.Event()
@@ -315,38 +353,61 @@ ponder_lock = threading.Lock()
 def get_base_fen(fen):
     return " ".join(fen.split(" ")[:4])
 
-def ponder_task(fen, elo):
+def stop_ponder():
+    ponder_stop_event.set()
+    with ponder_lock:
+        analysis = ponder_analysis
+    if analysis is not None:
+        try:
+            analysis.stop()
+        except Exception:
+            pass
+    if ponder_thread and ponder_thread.is_alive() and ponder_thread is not threading.current_thread():
+        ponder_thread.join(timeout=0.3)
+
+
+def ponder_task(fen, elo, stop_event):
     global ponder_analysis
+    analysis = None
     try:
         board = chess.Board(fen)
+        if not board.is_valid() or board.is_game_over():
+            return
         target_depth = get_target_depth(elo)
         limit = chess.engine.Limit(time=10.0, depth=target_depth)
-        
-        # Ajusta o nível de Skill no Pondering
         skill_level = get_skill_level(elo)
-        ponder_engine.configure({"Skill": skill_level})
-        
-        with ponder_engine.analysis(board, limit) as analysis:
-            with ponder_lock:
-                ponder_analysis = analysis
-            for info in analysis:
-                if ponder_stop_event.is_set():
-                    break
-                if "pv" in info and len(info["pv"]) >= 2:
-                    opp_move = info["pv"][0]
-                    our_resp = info["pv"][1]
-                    
-                    tmp_board = board.copy()
-                    tmp_board.push(opp_move)
-                    future_fen = tmp_board.fen()
-                    
-                    cache_key = f"{get_base_fen(future_fen)}_{elo}"
-                    cache[cache_key] = our_resp.uci()
-    except Exception as e:
-        pass
+        with ponder_engine_lock:
+            if stop_event.is_set():
+                return
+            if ponder_engine is None:
+                restart_engine(ponder=True)
+            ponder_engine.configure({"Skill": skill_level})
+            with ponder_engine.analysis(board, limit) as analysis:
+                with ponder_lock:
+                    ponder_analysis = analysis
+                for info in analysis:
+                    if stop_event.is_set():
+                        break
+                    if "pv" in info and len(info["pv"]) >= 2:
+                        opp_move, our_resp = info["pv"][:2]
+                        if opp_move not in board.legal_moves:
+                            continue
+                        tmp_board = board.copy()
+                        tmp_board.push(opp_move)
+                        if our_resp in tmp_board.legal_moves:
+                            cache_key = f"{get_base_fen(tmp_board.fen())}_{elo}"
+                            cache[cache_key] = our_resp.uci()
+    except Exception:
+        if not stop_event.is_set():
+            with ponder_engine_lock:
+                try:
+                    restart_engine(ponder=True)
+                except Exception as error:
+                    Log.error(f"Falha ao reiniciar engine de ponder: {error}")
     finally:
         with ponder_lock:
-            ponder_analysis = None
+            if ponder_analysis is analysis:
+                ponder_analysis = None
 
 Log.success("Komodo ONLINE!", data={"Threads": cpu_count, "Hash": "256MB", "Skill": 20})
 
@@ -376,6 +437,26 @@ def get_book(fen):
     except:
         pass
     return None
+
+
+def play_with_recovery(board, skill_level, limit):
+    with engine_lock:
+        for attempt in range(2):
+            try:
+                if engine is None:
+                    restart_engine()
+                engine.configure({"Skill": skill_level})
+                result = engine.play(board, limit)
+                if result.move is None or result.move not in board.legal_moves:
+                    raise chess.engine.EngineError("Komodo retornou um lance invalido")
+                return result.move
+            except Exception as error:
+                Log.warning(f"Komodo indisponivel; reiniciando ({attempt + 1}/2): {error}")
+                try:
+                    restart_engine()
+                except Exception as restart_error:
+                    Log.error(f"Nao foi possivel reiniciar Komodo: {restart_error}")
+        return None
 
 @app.route("/")
 def index():
@@ -686,6 +767,7 @@ def config_load():
 
 @app.route("/getmove", methods=["POST"])
 @app.route("/getMove", methods=["POST"])
+@serialized_engine_request
 def getmove():
     start_time = time.perf_counter()
     try:
@@ -697,8 +779,11 @@ def getmove():
         data = {}
         
     fen = data.get("fen", "")
-    elo = int(data.get("elo", 3200))
-    time_limit = float(data.get("time", 0.1))
+    try:
+        elo = int(data.get("elo", 3200))
+        time_limit = float(data.get("time", 0.1))
+    except (TypeError, ValueError):
+        return jsonify([])
     
     if fen:
         Log.request(fen, elo, time_limit)
@@ -706,56 +791,56 @@ def getmove():
     if not fen:
         return jsonify([])
     
-    global ponder_thread, ponder_stop_event, ponder_analysis
-    
-    ponder_stop_event.set()
-    with ponder_lock:
-        if ponder_analysis:
-            ponder_analysis.stop()
-            
-    if ponder_thread and ponder_thread.is_alive():
-        ponder_thread.join(timeout=0.01)
-    
-    cache_key = f"{get_base_fen(fen)}_{elo}"
-    if cache_key in cache:
-        elapsed = (time.perf_counter() - start_time) * 1000
-        Log.move("[CACHE]", cache[cache_key], elapsed)
-        return jsonify([cache[cache_key]])
-    
     try:
         board = chess.Board(fen)
+        if not board.is_valid() or board.is_game_over():
+            return jsonify([])
+
+        global ponder_thread, ponder_stop_event
+        stop_ponder()
+
+        cache_key = f"{get_base_fen(board.fen())}_{elo}"
+        cached_move = cache.get(cache_key)
+        if cached_move:
+            try:
+                if chess.Move.from_uci(cached_move) in board.legal_moves:
+                    elapsed = (time.perf_counter() - start_time) * 1000
+                    Log.move("[CACHE]", cached_move, elapsed)
+                    return jsonify([cached_move])
+            except (ValueError, TypeError):
+                pass
+            cache.pop(cache_key, None)
         
         book_move = get_book(fen)
-        if book_move:
+        try:
+            legal_book_move = book_move and chess.Move.from_uci(book_move) in board.legal_moves
+        except (ValueError, TypeError):
+            legal_book_move = False
+        if legal_book_move:
             cache[cache_key] = book_move
             elapsed = (time.perf_counter() - start_time) * 1000
             Log.move("[BOOK]", book_move, elapsed)
             return jsonify([book_move])
         
-        target_depth = get_target_depth(elo)
         skill_level = get_skill_level(elo)
-        
-        # Aplica o nível de Skill. Se for 3200, ele vai usar o máximo (25).
-        # A força (Elo) é controlada EXCLUSIVAMENTE pelo parâmetro Skill do Komodo.
-        engine.configure({"Skill": skill_level})
         
         # Limite de TEMPO DINÂMICO E ESTRITO. Se o time_limit for instantâneo (<= 0.01),
         # usamos um tempo ultra-rápido (0.02s) para a jogada sair de forma imediata.
         actual_time = 0.02 if time_limit <= 0.01 else max(0.05, min(0.2, time_limit))
         limit = chess.engine.Limit(time=actual_time)
             
-        result = engine.play(board, limit)
+        move_obj = play_with_recovery(board, skill_level, limit)
         
-        if result.move:
-            move = result.move.uci()
+        if move_obj:
+            move = move_obj.uci()
             cache[cache_key] = move
             
             # Initiate pondering for the opponent's turn
             next_board = board.copy()
-            next_board.push(result.move)
+            next_board.push(move_obj)
             
-            ponder_stop_event.clear()
-            ponder_thread = threading.Thread(target=ponder_task, args=(next_board.fen(), elo))
+            ponder_stop_event = threading.Event()
+            ponder_thread = threading.Thread(target=ponder_task, args=(next_board.fen(), elo, ponder_stop_event), daemon=True)
             ponder_thread.start()
             
             elapsed = (time.perf_counter() - start_time) * 1000
@@ -768,6 +853,7 @@ def getmove():
         return jsonify([])
 
 @app.route("/eval", methods=["POST"])
+@serialized_engine_request
 def evaluate():
     try:
         data = request.get_json(force=True, silent=True)
@@ -780,11 +866,29 @@ def evaluate():
             return jsonify({"cp": 0, "mate": None})
             
         board = chess.Board(fen)
+        if not board.is_valid() or board.is_game_over():
+            return jsonify({"cp": 0, "mate": None})
+        stop_ponder()
         
         # Analise super rapida para a Eval Bar (0.05s)
         # Usamos a ponder_engine para evitar concorrência com a engine principal,
         # impedindo gargalos em lances instantâneos.
-        info = ponder_engine.analyse(board, chess.engine.Limit(time=0.05))
+        info = None
+        with ponder_engine_lock:
+            for attempt in range(2):
+                try:
+                    if ponder_engine is None:
+                        restart_engine(ponder=True)
+                    info = ponder_engine.analyse(board, chess.engine.Limit(time=0.05))
+                    break
+                except Exception as error:
+                    Log.warning(f"Engine de avaliacao indisponivel; reiniciando ({attempt + 1}/2): {error}")
+                    try:
+                        restart_engine(ponder=True)
+                    except Exception as restart_error:
+                        Log.error(f"Nao foi possivel reiniciar engine de avaliacao: {restart_error}")
+            if info is None:
+                return jsonify({"cp": 0, "mate": None})
         
         score = info.get("score")
         if score:
