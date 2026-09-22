@@ -2,6 +2,105 @@ const fs = require("fs");
 const vm = require("vm");
 
 const source = fs.readFileSync("script.js", "utf8");
+const jqueryResolverStart = source.indexOf("  function resolveThinkerJQuery() {");
+const jqueryResolverEnd = source.indexOf("  let $ = resolveThinkerJQuery();", jqueryResolverStart);
+if (jqueryResolverStart < 0 || jqueryResolverEnd < 0) throw new Error("vendored jQuery resolver is missing");
+const exportedJQuery = function () {};
+exportedJQuery.fn = { jquery: "3.7.1" };
+const resolvedJQuery = vm.runInNewContext(
+  source.slice(jqueryResolverStart, jqueryResolverEnd) + "\nresolveThinkerJQuery()",
+  { module: { exports: exportedJQuery }, window: {} },
+);
+if (resolvedJQuery !== exportedJQuery) throw new Error("CommonJS-exported jQuery cannot mount the userscript UI");
+const nativeMountStart = source.indexOf("  function createMenu() {");
+const nativeMountEnd = source.indexOf("  function removeAds() {", nativeMountStart);
+if (nativeMountStart < 0 || nativeMountEnd < 0) throw new Error("native UI mount path is missing");
+let mountCallback = null;
+let mountedMenu = false;
+let mountedBanner = false;
+let bannerPositioned = false;
+let shellReconcilerStarted = false;
+const nativeMountContext = {
+  document: {
+    head: { insertAdjacentHTML() {} },
+    body: { insertAdjacentHTML() { mountedBanner = true; } },
+    getElementById(id) {
+      if (id === "krypbot-container") return mountedMenu ? {} : null;
+      if (id === "thinker-chess-banner") return mountedBanner ? {} : null;
+      return null;
+    },
+  },
+  getThinkerMountHost: () => ({ insertAdjacentHTML() { mountedMenu = true; } }),
+  positionThinkerBannerShell: () => { bannerPositioned = true; },
+  startThinkerUiReconciler: () => { shellReconcilerStarted = true; },
+  resolveThinkerJQuery: () => null,
+  setInterval: (callback) => { mountCallback = callback; return 1; },
+};
+vm.runInNewContext(
+  "let thinkerUiBound=false, thinkerMountTimer=null, thinkerMenuNode=null, thinkerBannerNode=null, $=null;\n" +
+    source.slice(nativeMountStart, nativeMountEnd) + "\nglobalThis.mount=createMenu;",
+  nativeMountContext,
+);
+nativeMountContext.mount();
+mountCallback();
+if (!mountedMenu || !mountedBanner || !bannerPositioned || !shellReconcilerStarted) {
+  throw new Error("panel and banner failed to mount when jQuery was unavailable");
+}
+const startupStart = source.indexOf("  function startThinkerUserscript() {");
+const startupEnd = source.indexOf("  function maybeStartThinkerUserscript() {", startupStart);
+if (startupStart < 0 || startupEnd < 0) throw new Error("userscript startup block is missing");
+let recoveryCallback = null;
+let createAttempts = 0;
+let reconcileCount = 0;
+let shellsPresent = false;
+const recoveryContext = {
+  document: {
+    body: {},
+    getElementById: () => shellsPresent ? { style: { display: "flex" } } : null,
+  },
+  window: {
+    setInterval: (callback) => { recoveryCallback = callback; return 1; },
+    clearInterval() {},
+  },
+  setInterval: () => 1,
+  isThinkerSupportedRoute: () => true,
+  createMenu: () => {
+    createAttempts++;
+    if (createAttempts === 1) throw new Error("temporary mount failure");
+    shellsPresent = true;
+  },
+  reconcileThinkerUiShells: () => { reconcileCount++; },
+  positionThinkerBannerShell() {},
+  removeAds() {},
+  handleAutoQueue() {},
+  pollExternalConfig() {},
+};
+vm.runInNewContext(
+  "let thinkerUserscriptStarted=false, thinkerRouteWatchTimer=null, thinkerShellWatchTimer=null, thinkerShellMissingTicks=0, thinkerMountTimer=null, thinkerUiBound=false, _ghostModeActive=false;\n" +
+    source.slice(startupStart, startupEnd) + "\nstartThinkerUserscript();",
+  recoveryContext,
+);
+if (!recoveryCallback) throw new Error("UI recovery watchdog did not start after a mount failure");
+recoveryCallback();
+if (!shellsPresent || createAttempts !== 2) throw new Error("UI did not recover from a transient mount failure");
+recoveryCallback();
+if (reconcileCount < 2) throw new Error("UI recovery watchdog stopped after the first successful mount");
+for (const key of ["smartPacing", "evalBar", "kb-auto-adjust", "kb-auto-queue"]) {
+  if (!source.includes(`localStorage.setItem("${key}", "false")`)) {
+    throw new Error(`${key} was not reset to off for this version`);
+  }
+}
+if (!source.includes('kb_default_off_v5')) throw new Error("new off-by-default migration is missing");
+const storageStart = source.indexOf("  const localStorage = (() => {");
+const storageEnd = source.indexOf("\n  function debug(", storageStart);
+if (storageStart < 0 || storageEnd < 0) throw new Error("storage fallback block not found");
+const blockedStorageWindow = {};
+Object.defineProperty(blockedStorageWindow, "localStorage", { get() { throw new Error("blocked"); } });
+const blockedStorage = vm.runInNewContext(
+  source.slice(storageStart, storageEnd) + "\nlocalStorage.setItem('test', 'ok'); localStorage.getItem('test');",
+  { window: blockedStorageWindow, Map },
+);
+if (blockedStorage !== "ok") throw new Error("blocked browser storage stopped userscript initialization");
 const switchStart = source.indexOf('        const switchGroups = document.querySelectorAll(');
 const switchEnd = source.indexOf('        // Add Minimize Logic', switchStart);
 if (switchStart < 0 || switchEnd < 0) throw new Error("switch binding block not found");
@@ -160,7 +259,7 @@ const context = {
     disconnect() {}
     observe() {}
   },
-  window: {},
+  window: { location: { pathname: "/play/online" } },
   autoAdjust: { isEnabled: () => false },
 };
 
@@ -179,6 +278,8 @@ vm.runInContext(
   "let _ghostModeActive = false; const SERVER_URL = 'http://127.0.0.1:5050';\n" +
     source.slice(bannerLayoutStart, bannerLayoutEnd) +
     "\nglobalThis.calculateBannerLayout = calculateThinkerBannerLayout;" +
+    "\nglobalThis.findMountHost = getThinkerMountHost;" +
+    "\nglobalThis.findSidebar = findThinkerSidebar;" +
     "\nglobalThis.calculateWorkspaceMargin = calculateThinkerWorkspaceMargin;" +
     "\nglobalThis.reconcileShells = reconcileThinkerUiShells;" +
     "\nglobalThis.applyGhost = applyGhostModeVisibility;" +
@@ -190,6 +291,89 @@ vm.runInContext(
 function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
+
+const savedCreateElement = context.document.createElement;
+const savedGetElementById = context.document.getElementById;
+const savedEnsureScoutWrapper = context.scout.ensureScoutWrapper;
+let renderedScoutPanel = null;
+context.document.createElement = () => ({
+  style: {},
+  dataset: {},
+  querySelector: () => ({ addEventListener() {} }),
+  appendChild() {},
+});
+context.document.getElementById = () => null;
+context.scout.ensureScoutWrapper = () => ({ wrapper: { appendChild: (panel) => { renderedScoutPanel = panel; } } });
+context.scout.renderStatus("waiting");
+assert(renderedScoutPanel?.dataset.state === "waiting", "waiting Scout card was not rendered");
+assert(renderedScoutPanel.style.cssText.includes("display:flex;flex-direction:column"),
+  "waiting Scout card did not isolate its content vertically");
+assert(renderedScoutPanel.innerHTML.indexOf('class="tc-scout-head"') < renderedScoutPanel.innerHTML.indexOf('class="tc-scout-empty"') &&
+  renderedScoutPanel.innerHTML.indexOf('class="tc-scout-empty"') < renderedScoutPanel.innerHTML.indexOf('class="tc-scout-status"') &&
+  renderedScoutPanel.innerHTML.indexOf('class="tc-scout-status"') < renderedScoutPanel.innerHTML.indexOf('class="tc-scout-empty-detail"'),
+  "waiting Scout header, status, and explanation are not separate blocks");
+assert(renderedScoutPanel.innerHTML.includes("padding-top:16px") &&
+  renderedScoutPanel.innerHTML.includes("gap:8px") &&
+  renderedScoutPanel.innerHTML.includes("white-space:normal;overflow-wrap:anywhere"),
+  "waiting Scout spacing or text wrapping regressed");
+assert(renderedScoutPanel.innerHTML.includes('aria-label="Fechar Scout"'),
+  "waiting Scout card has no close button in the header");
+
+context.scout.lastOpponent = "rival";
+context.scout.renderScout({
+  lastPlayed: Date.now() / 1000,
+  sampleSize: 50,
+  wins: 19,
+  draws: 1,
+  losses: 30,
+  winRate: 38,
+  colors: {
+    white: { games: 26, wins: 9, draws: 0, losses: 17, winRate: 35 },
+    black: { games: 24, wins: 10, draws: 1, losses: 13, winRate: 42 },
+  },
+  timeClasses: [],
+  openings: { white: [], black: [] },
+});
+const scoutColors = vm.runInContext("SCOUT_RESULT_COLORS", context);
+const renderedChart = renderedScoutPanel.innerHTML.match(/class="tc-scout-donut" style="background:([^"]+)"/);
+assert(renderedChart, "Scout W/D/L chart was not rendered");
+for (const [result, marker] of [["win", "w"], ["draw", "e"], ["loss", "l"]]) {
+  assert(renderedChart[1].includes(scoutColors[result]) &&
+    renderedScoutPanel.innerHTML.includes(`class="${marker}" style="color:${scoutColors[result]}"`),
+  `Scout ${result} chart segment and legend do not share the same color`);
+}
+assert(scoutColors.draw !== scoutColors.loss, "Scout draw and loss colors are indistinguishable");
+assert(renderedChart[1].includes(`${scoutColors.win} 0% 38%`) &&
+  renderedChart[1].includes(`${scoutColors.draw} 38% 40%`) &&
+  renderedChart[1].includes(`${scoutColors.loss} 40% 100%`),
+  "Scout chart segments do not reflect the 19W/1D/30L sample");
+context.document.createElement = savedCreateElement;
+context.document.getElementById = savedGetElementById;
+context.scout.ensureScoutWrapper = savedEnsureScoutWrapper;
+
+const wcBoardHost = { id: "wc-board-parent" };
+const wcBoard = { closest: () => null, parentElement: wcBoardHost };
+const savedQuerySelector = context.document.querySelector;
+context.document.querySelector = (selector) => selector.includes("wc-chess-board") ? wcBoard : null;
+assert(context.findMountHost() === wcBoardHost,
+  "wc-chess-board-only Chess.com layout did not mount the configuration panel");
+context.document.querySelector = () => null;
+const fallbackMountBody = { id: "body" };
+context.document.body = fallbackMountBody;
+assert(context.findMountHost() === fallbackMountBody,
+  "supported route without a recognized board left the entire UI unmounted");
+context.document.querySelector = savedQuerySelector;
+
+const boardForSidebar = { getBoundingClientRect: () => ({ left: 227, right: 867, width: 640 }) };
+const fallbackSidebar = {
+  contains: () => false,
+  getBoundingClientRect: () => ({ left: 899, right: 1248, width: 349, height: 746 }),
+};
+context.document.querySelector = (selector) => selector.includes("wc-chess-board") ? boardForSidebar : null;
+context.document.querySelectorAll = () => [fallbackSidebar];
+assert(context.findSidebar() === fallbackSidebar, "sidebar fallback missed the visible Chess.com controls");
+context.document.querySelector = () => null;
+assert(context.findSidebar() === null, "sidebar fallback selected a control without a board");
 
 const sidebarRect = { left: 788, top: 16, right: 1088, bottom: 704 };
 const bannerLayout = context.calculateBannerLayout(sidebarRect, 1280, 720, false);
@@ -247,12 +431,14 @@ let bannerMounts = 0;
 const shellHost = {
   appendChild(node) {
     node.isConnected = true;
+    node.parentNode = this;
     if (node === shellMenu) menuMounts++;
   },
 };
 context.document.body = {
   appendChild(node) {
     node.isConnected = true;
+    node.parentNode = this;
     if (node === shellBanner) bannerMounts++;
   },
 };
@@ -268,6 +454,8 @@ context.document.getElementById = (id) =>
     "oi-zone2": shellScoutSecondary,
   })[id] || null;
 context.setShellNodes(shellMenu, shellBanner);
+const originalEnsureScoutWrapper = context.scout.ensureScoutWrapper;
+context.scout.ensureScoutWrapper = () => null;
 
 context.reconcileShells();
 assert(menuMounts === 0 && bannerMounts === 1, "shell mounted without a Chess.com host");
@@ -280,6 +468,7 @@ shellMenu.isConnected = false;
 activeShellHost = {
   appendChild(node) {
     node.isConnected = true;
+    node.parentNode = this;
     if (node === shellMenu) menuMounts++;
   },
 };
@@ -302,6 +491,7 @@ context.window.setInterval = () => {
 context.startReconciler();
 context.startReconciler();
 assert(reconcileIntervals === 1, "UI reconciler registered duplicate intervals");
+context.scout.ensureScoutWrapper = originalEnsureScoutWrapper;
 context.document.body = undefined;
 context.document.querySelectorAll = () => [];
 context.document.getElementById = () => null;
@@ -358,13 +548,14 @@ assert(
   "Chess.com ECO URL was not parsed as an opening",
 );
 const currentDate = new Date();
-const monthStart = Math.floor(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), 1) / 1000);
+const earliestMonth = Math.floor(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth() - 2, 1) / 1000);
 const monthFiltered = context.scout.processGames([
   game(0, "win"),
-  game(1, "timeout", { end_time: monthStart - 1 }),
+  game(1, "timeout", { end_time: earliestMonth - 1 }),
+  game(3, "win", { end_time: earliestMonth + 1 }),
   game(2, "timeout", { end_time: Math.floor(Date.now() / 1000) + 3600 }),
 ], "rival");
-assert(monthFiltered.scoutStats.sampleSize === 1, "out-of-month or future games entered Scout sample");
+assert(monthFiltered.scoutStats.sampleSize === 2, "outside-window or future games entered Scout sample");
 const scoutMethods = {
   getOpponentUsername: context.scout.getOpponentUsername,
   invalidateCache: context.scout.invalidateCache,
@@ -551,6 +742,17 @@ assert(
     observedPlayerSelector.includes("#board-layout-main .player-component.player-top"),
   "current Chess.com player hierarchy is not explicitly scoped",
 );
+const genericTop = fakeElement({ text: "Comfortably_smart (1345)" });
+genericTop.closest = () => null;
+genericTop.getBoundingClientRect = () => ({ width: 180, height: 30, left: 277, right: 457, top: 137, bottom: 167 });
+const genericBoard = {
+  getBoundingClientRect: () => ({ width: 640, height: 640, left: 227, right: 867, top: 187, bottom: 827 }),
+};
+context.document.querySelectorAll = (selector) =>
+  selector.includes("wc-chess-board") ? [genericBoard]
+    : selector.includes("[class*='player-name']") ? [genericTop] : [];
+assert(context.scout.findPlayerElement("top") === genericTop,
+  "geometry fallback missed a visible opponent outside known Chess.com classes");
 context.document.querySelectorAll = originalQuerySelectorAll;
 context.document.querySelector = originalQuerySelector;
 
@@ -604,17 +806,21 @@ context.scout.getOpponentElement = originalGetOpponentElement;
 context.scout.requestController = null;
 
 (async () => {
+  const fiftyGames = Array.from({ length: 50 }, (_, index) => game(index, "win"));
+  context.fetch = () => Promise.reject(new Error("browser-fetch-blocked"));
   let gmOptions = null;
   context.GM_xmlhttpRequest = (options) => {
     gmOptions = options;
     return { abort() {} };
   };
   const gmRequest = context.scout.createMonthlyRequest(url);
+  await new Promise(setImmediate);
   gmOptions.onload({ status: 200, responseText: JSON.stringify({ games }) });
   const gmPayload = await gmRequest.promise;
   assert(gmPayload.games.length === games.length, "GM transport response was not parsed");
 
   const failedRequest = context.scout.createMonthlyRequest(url);
+  await new Promise(setImmediate);
   gmOptions.onerror();
   let rejectedSilently = false;
   try {
@@ -636,7 +842,8 @@ context.scout.requestController = null;
     finalEntry = value;
   };
   const gmPipeline = context.scout.fetchData("rival");
-  gmOptions.onload({ status: 200, responseText: JSON.stringify({ games }) });
+  await new Promise(setImmediate);
+  gmOptions.onload({ status: 200, responseText: JSON.stringify({ games: fiftyGames }) });
   await gmPipeline;
   assert(loadingRendered, "Scout loading UI was not mounted before request completion");
   assert(finalEntry && finalEntry.username === "rival", "GM response did not render Scout data");
@@ -645,16 +852,9 @@ context.scout.requestController = null;
   store.delete("tc_scout_alpha");
   store.delete("tc_scout_beta");
   const controlledRequests = [];
-  context.GM_xmlhttpRequest = (options) => {
-    const controlled = { options, aborted: false };
-    controlledRequests.push(controlled);
-    return {
-      abort() {
-        controlled.aborted = true;
-        options.onabort();
-      },
-    };
-  };
+  context.fetch = (requestUrl, options) => new Promise((resolve) => {
+    controlledRequests.push({ requestUrl, options, resolve });
+  });
   const renderedUsers = [];
   context.scout.renderLoading = () => {};
   context.scout.renderEntry = (value) => renderedUsers.push(value.username);
@@ -663,20 +863,14 @@ context.scout.requestController = null;
   const alphaPipeline = context.scout.fetchData("alpha");
   context.scout.lastOpponent = "beta";
   const betaPipeline = context.scout.fetchData("beta");
-  const betaGames = games.map((value) => ({
+  const betaGames = fiftyGames.map((value) => ({
     ...value,
     white: { ...value.white, username: "Beta" },
   }));
-  controlledRequests[0].options.onload({
-    status: 200,
-    responseText: JSON.stringify({ games }),
-  });
-  controlledRequests[1].options.onload({
-    status: 200,
-    responseText: JSON.stringify({ games: betaGames }),
-  });
+  controlledRequests[0].resolve({ ok: true, json: async () => ({ games: fiftyGames }) });
+  controlledRequests[1].resolve({ ok: true, json: async () => ({ games: betaGames }) });
   await Promise.all([alphaPipeline, betaPipeline]);
-  assert(controlledRequests[0].aborted, "previous GM request was not aborted");
+  assert(controlledRequests[0].options.signal.aborted, "previous browser request was not aborted");
   assert(!store.has("tc_scout_alpha"), "aborted opponent response was cached");
   assert(store.has("tc_scout_beta"), "current opponent response was not cached");
   assert(
@@ -685,6 +879,27 @@ context.scout.requestController = null;
   );
 
   delete context.GM_xmlhttpRequest;
+
+  store.delete("tc_scout_rival");
+  const previousMonthStart = Math.floor(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth() - 1, 2) / 1000);
+  const previousGames = Array.from({ length: 50 }, (_, index) =>
+    game(index, "win", { end_time: previousMonthStart + index }),
+  );
+  const previousUrl = context.scout.getCurrentMonthUrl("rival", 1);
+  const requestedMonths = [];
+  context.fetch = (requestUrl) => {
+    requestedMonths.push(requestUrl);
+    return Promise.resolve({ ok: true, json: async () => ({ games: requestUrl === url ? [] : previousGames }) });
+  };
+  context.scout.lastOpponent = "rival";
+  context.scout.getOpponentUsername = () => "rival";
+  let previousEntry = null;
+  context.scout.renderEntry = (value) => { previousEntry = value; };
+  await context.scout.fetchData("rival");
+  assert(requestedMonths.length === 2 && requestedMonths[0] === url && requestedMonths[1] === previousUrl,
+    "Scout did not search the previous PubAPI month after an empty current month");
+  assert(previousEntry?.scoutStats.sampleSize === 50 && context.scout.isValidCacheEntry(previousEntry, "rival"),
+    "real previous-month results were rejected or replaced by fabricated statistics");
 
   store.delete("tc_scout_rival");
   let resolveFetch;

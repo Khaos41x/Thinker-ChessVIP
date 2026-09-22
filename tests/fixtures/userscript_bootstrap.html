@@ -6,7 +6,7 @@
       html, body { margin: 0; width: 1433px; min-height: 1200px; background: #262522; }
       #board-layout-main { position: absolute; left: 228px; top: 16px; width: 688px; height: 788px; }
       #board-layout-chessboard { width: 688px; height: 688px; background: #769656; }
-      .board-layout-sidebar { position: absolute; left: 948px; top: 16px; width: 300px; height: 868px; background: #1c1b19; }
+      .board-layout-sidebar { position: absolute; left: 788px; top: 16px; width: 300px; height: 868px; background: #1c1b19; }
       #oi-wrapper { margin-top: 30px !important; }
     </style>
     <script>
@@ -50,5 +50,13 @@
     </main>
     <aside class="board-layout-sidebar"></aside>
     <script src="../../script.js"></script>
+    <script>
+      if (location.search.includes("remount=1")) {
+        setTimeout(function () {
+          document.getElementById("oi-wrapper")?.remove();
+          document.getElementById("thinker-chess-banner")?.remove();
+        }, 1300);
+      }
+    </script>
   </body>
 </html>
