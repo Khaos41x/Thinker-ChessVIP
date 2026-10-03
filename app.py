@@ -8,6 +8,7 @@ import os
 import time
 import datetime
 import collections
+import atexit
 import functools
 import threading
 import logging
@@ -17,6 +18,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 import chess
 import chess.engine
+import psutil
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_socketio import SocketIO
@@ -259,12 +261,9 @@ class LRUCache:
 
 
 analysis_cache = LRUCache()
-engine = None
-ponder_engine = None
 cache = {}
-engine_lock = threading.RLock()
-ponder_engine_lock = threading.RLock()
 engine_request_lock = threading.RLock()
+ANALYSIS_DEPTH = 10
 
 
 def serialized_engine_request(handler):
@@ -300,120 +299,173 @@ def get_skill_level(elo):
     skill = int((elo - 800) / 120)
     return max(0, min(25, skill))
 
-import multiprocessing
 
-cpu_count = multiprocessing.cpu_count()
-
-Log.engine("Iniciando Komodo 14.1...")
-def create_engine(ponder=False):
-    instance = chess.engine.SimpleEngine.popen_uci(ENGINE_PATH)
+def has_live_python_parent(process):
     try:
-        instance.configure({
-            "Threads": max(1, cpu_count - 1) if ponder else cpu_count,
-            "Hash": 256,
-            "Skill": 20,
-        })
-        return instance
-    except Exception:
+        parent = process.parent()
+        if parent is None or not parent.is_running():
+            return False
+        return parent.name().casefold() in {
+            "python",
+            "python.exe",
+            "pythonw",
+            "pythonw.exe",
+        }
+    except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+        return False
+
+
+def cleanup_stale_komodo(engine_path):
+    target_path = Path(engine_path).resolve()
+    current_username = psutil.Process(os.getpid()).username().casefold()
+
+    for process in psutil.process_iter(["pid", "username", "exe"]):
         try:
+            if process.pid == os.getpid():
+                continue
+            username = (process.info["username"] or "").casefold()
+            executable = process.info["exe"]
+            if username != current_username or not executable:
+                continue
+            if Path(executable).resolve() != target_path:
+                continue
+            if has_live_python_parent(process):
+                continue
+            process.terminate()
+            try:
+                process.wait(timeout=1.5)
+            except psutil.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=1.5)
+        except (
+            psutil.NoSuchProcess,
+            psutil.AccessDenied,
+            psutil.ZombieProcess,
+            OSError,
+        ):
+            continue
+
+
+class KomodoSingleton:
+    _instance = None
+    _instance_lock = threading.Lock()
+
+    def __new__(cls, executable_path):
+        with cls._instance_lock:
+            if cls._instance is None:
+                cls._instance = super().__new__(cls)
+                cls._instance._initialized = False
+        return cls._instance
+
+    def __init__(self, executable_path):
+        if self._initialized:
+            return
+        self.executable_path = str(Path(executable_path).resolve())
+        self._engine = None
+        self._lock = threading.RLock()
+        self._initialized = True
+
+    @property
+    def process_pid(self):
+        with self._lock:
+            if self._engine is None:
+                return None
+            try:
+                return self._engine.transport.get_pid()
+            except (AttributeError, OSError):
+                return None
+
+    def _start_locked(self):
+        if self._engine is not None:
+            return
+        instance = chess.engine.SimpleEngine.popen_uci(self.executable_path)
+        try:
+            instance.configure({"Threads": 1, "Hash": 128, "Skill": 20})
+        except Exception:
             instance.close()
-        except Exception:
-            pass
-        raise
+            raise
+        self._engine = instance
+
+    def _restart_locked(self):
+        previous = self._engine
+        self._engine = None
+        if previous is not None:
+            try:
+                previous.close()
+            except Exception:
+                pass
+        self._start_locked()
+
+    def _clear_hash_locked(self):
+        if "Clear Hash" in self._engine.options:
+            self._engine.configure({"Clear Hash": None})
+
+    def analyse(self, board, limit, multipv=None, clear_hash=False):
+        with self._lock:
+            for attempt in range(2):
+                try:
+                    self._start_locked()
+                    self._engine.configure({"Skill": 20})
+                    if clear_hash:
+                        self._clear_hash_locked()
+                    kwargs = {"multipv": multipv} if multipv is not None else {}
+                    result = self._engine.analyse(board, limit, **kwargs)
+                    return result if isinstance(result, list) else [result]
+                except Exception as error:
+                    Log.warning(f"Komodo indisponivel; reiniciando ({attempt + 1}/2): {error}")
+                    try:
+                        self._restart_locked()
+                    except Exception as restart_error:
+                        Log.error(f"Nao foi possivel reiniciar Komodo: {restart_error}")
+            return None
+
+    def play(self, board, limit, skill_level):
+        with self._lock:
+            for attempt in range(2):
+                try:
+                    self._start_locked()
+                    self._engine.configure({"Skill": skill_level})
+                    result = self._engine.play(board, limit)
+                    if result.move is None or result.move not in board.legal_moves:
+                        raise chess.engine.EngineError("Komodo retornou um lance invalido")
+                    return result.move
+                except Exception as error:
+                    Log.warning(f"Komodo indisponivel; reiniciando ({attempt + 1}/2): {error}")
+                    try:
+                        self._restart_locked()
+                    except Exception as restart_error:
+                        Log.error(f"Nao foi possivel reiniciar Komodo: {restart_error}")
+            return None
+
+    def close(self):
+        with self._lock:
+            current = self._engine
+            self._engine = None
+            if current is not None:
+                try:
+                    current.close()
+                except Exception:
+                    pass
 
 
-def restart_engine(ponder=False):
-    global engine, ponder_engine
-    previous = ponder_engine if ponder else engine
-    if ponder:
-        ponder_engine = None
-    else:
-        engine = None
-    if previous is not None:
-        try:
-            previous.close()
-        except Exception:
-            pass
-    replacement = create_engine(ponder)
-    if ponder:
-        ponder_engine = replacement
-    else:
-        engine = replacement
-    return replacement
-
-
-engine = create_engine()
-ponder_engine = create_engine(ponder=True)
-
-ponder_thread = None
-ponder_stop_event = threading.Event()
-ponder_analysis = None
-ponder_lock = threading.Lock()
+cleanup_stale_komodo(ENGINE_PATH)
+komodo = KomodoSingleton(ENGINE_PATH)
+atexit.register(komodo.close)
 
 def get_base_fen(fen):
     return " ".join(fen.split(" ")[:4])
 
 def stop_ponder():
-    ponder_stop_event.set()
-    with ponder_lock:
-        analysis = ponder_analysis
-    if analysis is not None:
-        try:
-            analysis.stop()
-        except Exception:
-            pass
-    if ponder_thread and ponder_thread.is_alive() and ponder_thread is not threading.current_thread():
-        ponder_thread.join(timeout=0.3)
+    return None
 
 
-def ponder_task(fen, elo, stop_event):
-    global ponder_analysis
-    analysis = None
-    try:
-        board = chess.Board(fen)
-        if not board.is_valid() or board.is_game_over():
-            return
-        target_depth = get_target_depth(elo)
-        limit = chess.engine.Limit(time=10.0, depth=target_depth)
-        skill_level = get_skill_level(elo)
-        with ponder_engine_lock:
-            if stop_event.is_set():
-                return
-            if ponder_engine is None:
-                restart_engine(ponder=True)
-            ponder_engine.configure({"Skill": skill_level})
-            with ponder_engine.analysis(board, limit) as analysis:
-                with ponder_lock:
-                    ponder_analysis = analysis
-                for info in analysis:
-                    if stop_event.is_set():
-                        break
-                    if "pv" in info and len(info["pv"]) >= 2:
-                        opp_move, our_resp = info["pv"][:2]
-                        if opp_move not in board.legal_moves:
-                            continue
-                        tmp_board = board.copy()
-                        tmp_board.push(opp_move)
-                        if our_resp in tmp_board.legal_moves:
-                            cache_key = f"{get_base_fen(tmp_board.fen())}_{elo}"
-                            cache[cache_key] = our_resp.uci()
-    except Exception:
-        if not stop_event.is_set():
-            with ponder_engine_lock:
-                try:
-                    restart_engine(ponder=True)
-                except Exception as error:
-                    Log.error(f"Falha ao reiniciar engine de ponder: {error}")
-    finally:
-        with ponder_lock:
-            if ponder_analysis is analysis:
-                ponder_analysis = None
-
-Log.success("Komodo ONLINE!", data={"Threads": cpu_count, "Hash": "256MB", "Skill": 20})
+Log.engine("Iniciando Komodo 14.1...")
 
 Log.engine("Warmup da engine...")
 warmup_board = chess.Board()
-engine.play(warmup_board, chess.engine.Limit(depth=10))
+if komodo.play(warmup_board, chess.engine.Limit(depth=10), 20) is None:
+    raise RuntimeError("Komodo falhou durante o warmup")
+Log.success("Komodo ONLINE!", data={"Threads": 1, "Hash": "128MB", "Skill": 20})
 Log.success("Warmup completo!")
 
 # Opening Book
@@ -440,23 +492,34 @@ def get_book(fen):
 
 
 def play_with_recovery(board, skill_level, limit):
-    with engine_lock:
-        for attempt in range(2):
-            try:
-                if engine is None:
-                    restart_engine()
-                engine.configure({"Skill": skill_level})
-                result = engine.play(board, limit)
-                if result.move is None or result.move not in board.legal_moves:
-                    raise chess.engine.EngineError("Komodo retornou um lance invalido")
-                return result.move
-            except Exception as error:
-                Log.warning(f"Komodo indisponivel; reiniciando ({attempt + 1}/2): {error}")
-                try:
-                    restart_engine()
-                except Exception as restart_error:
-                    Log.error(f"Nao foi possivel reiniciar Komodo: {restart_error}")
-        return None
+    return komodo.play(board, limit, skill_level)
+
+
+def score_to_cp(info, turn):
+    score = info.get("score")
+    if score is None:
+        return None, False
+    relative = score.pov(turn)
+    return relative.score(mate_score=100_000), relative.is_mate()
+
+
+def calculate_complexity(lines, turn):
+    if not lines:
+        return 1.0, False
+    best_cp, best_is_mate = score_to_cp(lines[0], turn)
+    if best_is_mate:
+        return 0.15, True
+    if len(lines) < 2:
+        return 1.0, False
+    second_cp, _ = score_to_cp(lines[1], turn)
+    if best_cp is None or second_cp is None:
+        return 1.0, False
+    delta_cp = abs(best_cp - second_cp)
+    if delta_cp > 250:
+        return 0.3, False
+    if delta_cp < 30:
+        return 1.8, False
+    return 1.0, False
 
 @app.route("/")
 def index():
@@ -796,9 +859,6 @@ def getmove():
         if not board.is_valid() or board.is_game_over():
             return jsonify([])
 
-        global ponder_thread, ponder_stop_event
-        stop_ponder()
-
         cache_key = f"{get_base_fen(board.fen())}_{elo}"
         cached_move = cache.get(cache_key)
         if cached_move:
@@ -835,14 +895,6 @@ def getmove():
             move = move_obj.uci()
             cache[cache_key] = move
             
-            # Initiate pondering for the opponent's turn
-            next_board = board.copy()
-            next_board.push(move_obj)
-            
-            ponder_stop_event = threading.Event()
-            ponder_thread = threading.Thread(target=ponder_task, args=(next_board.fen(), elo, ponder_stop_event), daemon=True)
-            ponder_thread.start()
-            
             elapsed = (time.perf_counter() - start_time) * 1000
             Log.move("[ENGINE]", move, elapsed, extra=f"tempo: {actual_time}s")
             return jsonify([move])
@@ -868,27 +920,10 @@ def evaluate():
         board = chess.Board(fen)
         if not board.is_valid() or board.is_game_over():
             return jsonify({"cp": 0, "mate": None})
-        stop_ponder()
-        
-        # Analise super rapida para a Eval Bar (0.05s)
-        # Usamos a ponder_engine para evitar concorrência com a engine principal,
-        # impedindo gargalos em lances instantâneos.
-        info = None
-        with ponder_engine_lock:
-            for attempt in range(2):
-                try:
-                    if ponder_engine is None:
-                        restart_engine(ponder=True)
-                    info = ponder_engine.analyse(board, chess.engine.Limit(time=0.05))
-                    break
-                except Exception as error:
-                    Log.warning(f"Engine de avaliacao indisponivel; reiniciando ({attempt + 1}/2): {error}")
-                    try:
-                        restart_engine(ponder=True)
-                    except Exception as restart_error:
-                        Log.error(f"Nao foi possivel reiniciar engine de avaliacao: {restart_error}")
-            if info is None:
-                return jsonify({"cp": 0, "mate": None})
+        lines = komodo.analyse(board, chess.engine.Limit(time=0.05))
+        if not lines:
+            return jsonify({"cp": 0, "mate": None})
+        info = lines[0]
         
         score = info.get("score")
         if score:
@@ -904,6 +939,54 @@ def evaluate():
     except Exception as e:
         Log.error(f"Erro no eval: {e}")
         return jsonify({"cp": 0, "mate": None})
+
+
+@app.route("/analyze", methods=["POST"])
+@serialized_engine_request
+def analyze_position():
+    data = request.get_json(silent=True)
+    if data is None:
+        data = {}
+    if not isinstance(data, dict):
+        return jsonify({"error": "invalid json object"}), 400
+    fen = data.get("fen")
+    if not isinstance(fen, str) or not fen.strip():
+        return jsonify({"error": "fen is required"}), 400
+    try:
+        board = chess.Board(fen)
+    except ValueError:
+        return jsonify({"error": "invalid fen"}), 400
+    if not board.is_valid():
+        return jsonify({"error": "invalid position"}), 422
+    legal_moves = list(board.legal_moves)
+    if not legal_moves:
+        return jsonify({"error": "terminal position"}), 422
+    if len(legal_moves) == 1:
+        return jsonify({
+            "move": legal_moves[0].uci(),
+            "complexityMultiplier": 0.15,
+            "isForced": True,
+        })
+    lines = komodo.analyse(
+        board,
+        chess.engine.Limit(depth=ANALYSIS_DEPTH),
+        multipv=2,
+        clear_hash=True,
+    )
+    if not lines:
+        return jsonify({"error": "engine unavailable"}), 503
+    usable_lines = [
+        line for line in lines
+        if line.get("pv") and line["pv"][0] in board.legal_moves
+    ]
+    if not usable_lines:
+        return jsonify({"error": "engine returned no legal line"}), 503
+    multiplier, is_forced = calculate_complexity(usable_lines, board.turn)
+    return jsonify({
+        "move": usable_lines[0]["pv"][0].uci(),
+        "complexityMultiplier": multiplier,
+        "isForced": is_forced,
+    })
 
 from core import rating
 import database

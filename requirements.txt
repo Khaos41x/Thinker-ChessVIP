@@ -1,0 +1,6 @@
+Flask
+Flask-Cors
+Flask-SocketIO
+python-chess
+psutil>=6.0,<8
+waitress

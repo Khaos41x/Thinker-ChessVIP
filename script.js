@@ -1610,6 +1610,171 @@ try {
   // --- LÃ“GICA DE CÃLCULO DE DELAY ---
   const sessionPacingProfile = 0.8 + Math.random() * 0.4; // 0.8 (agressivo) a 1.2 (defensivo)
 
+  class SmartPacer {
+    constructor({
+      deltaFactor = 0.25,
+      maxExtraDelayMs = 3500,
+      jitterLimit = 0.18,
+      jitterSigma = 0.06,
+      emergencyMinMs = 150,
+      emergencyMaxMs = 250,
+      random = Math.random,
+    } = {}) {
+      this.deltaFactor = deltaFactor;
+      this.maxExtraDelayMs = maxExtraDelayMs;
+      this.jitterLimit = jitterLimit;
+      this.jitterSigma = jitterSigma;
+      this.emergencyMinMs = emergencyMinMs;
+      this.emergencyMaxMs = emergencyMaxMs;
+      this.random = random;
+      this.pendingTimer = null;
+      this.pendingReject = null;
+      this.pendingSignal = null;
+      this.pendingAbort = null;
+    }
+
+    parseTime(value) {
+      if (Number.isFinite(value)) return Math.max(0, value);
+      if (typeof value !== "string") {
+        throw new TypeError("Tempo deve ser numero em ms ou texto de relogio");
+      }
+      const normalized = value.trim().replace(",", ".");
+      if (/^\d+(?:\.\d+)?$/.test(normalized)) {
+        return Math.round(Number(normalized) * 1000);
+      }
+      const rawParts = normalized.split(":");
+      const parts = rawParts.map(Number);
+      if (
+        parts.length < 2 ||
+        parts.length > 3 ||
+        rawParts.some((part) => part === "") ||
+        parts.some((part) => !Number.isFinite(part) || part < 0)
+      ) {
+        throw new TypeError(`Tempo invalido: ${value}`);
+      }
+      if (parts[parts.length - 1] >= 60) {
+        throw new TypeError(`Tempo invalido: ${value}`);
+      }
+      if (parts.length === 3 && parts[1] >= 60) {
+        throw new TypeError(`Tempo invalido: ${value}`);
+      }
+      const seconds =
+        parts.length === 3
+          ? parts[0] * 3600 + parts[1] * 60 + parts[2]
+          : parts[0] * 60 + parts[1];
+      return Math.round(seconds * 1000);
+    }
+
+    uniform(min, max) {
+      return min + this.random() * (max - min);
+    }
+
+    standardGaussian() {
+      const rawU1 = Number(this.random());
+      const rawU2 = Number(this.random());
+      const u1 = Math.min(
+        1 - Number.EPSILON,
+        Math.max(Number.MIN_VALUE, Number.isFinite(rawU1) ? rawU1 : 0.5),
+      );
+      const u2 = Math.min(
+        1 - Number.EPSILON,
+        Math.max(0, Number.isFinite(rawU2) ? rawU2 : 0.5),
+      );
+      return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    }
+
+    gaussianFactor() {
+      const variation = Math.max(
+        -this.jitterLimit,
+        Math.min(this.jitterLimit, this.standardGaussian() * this.jitterSigma),
+      );
+      return 1 + variation;
+    }
+
+    calculateDelay({
+      userTime,
+      opponentTime,
+      baseDelayMs,
+      complexityMultiplier = 1,
+      isForced = false,
+    }) {
+      const userTimeMs = this.parseTime(userTime);
+      const opponentTimeMs = this.parseTime(opponentTime);
+      const baseMs = Number(baseDelayMs);
+      const multiplier = Number(complexityMultiplier);
+      if (!Number.isFinite(baseMs) || baseMs < 0) {
+        throw new TypeError("baseDelayMs invalido");
+      }
+      if (!Number.isFinite(multiplier) || multiplier <= 0) {
+        throw new TypeError("complexityMultiplier invalido");
+      }
+      if (userTimeMs < 10000 || isForced) {
+        return Math.round(this.uniform(this.emergencyMinMs, this.emergencyMaxMs));
+      }
+      const delta = userTimeMs - opponentTimeMs;
+      const extraDelay =
+        delta > 0
+          ? Math.min(delta * this.deltaFactor, this.maxExtraDelayMs)
+          : 0;
+      const deterministicDelay = baseMs * multiplier + extraDelay;
+      return Math.max(0, Math.round(deterministicDelay * this.gaussianFactor()));
+    }
+
+    cancel() {
+      if (this.pendingTimer !== null) {
+        clearTimeout(this.pendingTimer);
+      }
+      if (this.pendingSignal && this.pendingAbort) {
+        this.pendingSignal.removeEventListener("abort", this.pendingAbort);
+      }
+      const reject = this.pendingReject;
+      this.pendingTimer = null;
+      this.pendingReject = null;
+      this.pendingSignal = null;
+      this.pendingAbort = null;
+      if (reject) reject(new DOMException("Agendamento cancelado", "AbortError"));
+    }
+
+    schedule(callback, pacingInput, { signal } = {}) {
+      if (typeof callback !== "function") {
+        throw new TypeError("callback deve ser uma funcao");
+      }
+      this.cancel();
+      const delayMs = this.calculateDelay(pacingInput);
+      const promise = new Promise((resolve, reject) => {
+        let timerId = null;
+        const abort = () => {
+          if (this.pendingTimer === timerId) this.cancel();
+        };
+        if (signal?.aborted) {
+          reject(new DOMException("Agendamento cancelado", "AbortError"));
+          return;
+        }
+        signal?.addEventListener("abort", abort, { once: true });
+        timerId = setTimeout(async () => {
+          if (this.pendingTimer !== timerId) return;
+          this.pendingTimer = null;
+          this.pendingReject = null;
+          this.pendingSignal = null;
+          this.pendingAbort = null;
+          signal?.removeEventListener("abort", abort);
+          try {
+            resolve(await callback());
+          } catch (error) {
+            reject(error);
+          }
+        }, delayMs);
+        this.pendingTimer = timerId;
+        this.pendingReject = reject;
+        this.pendingSignal = signal || null;
+        this.pendingAbort = abort;
+      });
+      return { delayMs, promise };
+    }
+  }
+
+  const smartPacer = new SmartPacer();
+
   const gaussianRandom = (mean = 0, stdev = 1) => {
     let u = 1 - Math.random();
     let v = Math.random();
