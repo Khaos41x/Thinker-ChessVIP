@@ -18,9 +18,9 @@ context: []
 
 ## Boundaries & Constraints
 
-**Always:** Use one Komodo process with Threads=1 and Hash=128; serialize engine access; preserve move cache, opening book, recovery, `/getmove`, and `/eval`; keep pacing suitable only for offline analysis, puzzles, post-game review, or a non-competitive demo; treat numeric JS times as milliseconds and clock strings as seconds.
+**Always:** Use one Komodo process with Threads=1 and Hash=128; serialize engine access; preserve move cache, opening book, recovery, `/getmove`, and `/eval`; treat numeric JS times as milliseconds and clock strings as seconds.
 
-**Ask First:** Any change to endpoint response shapes, engine binary, opening-book behavior, or integration with live-game move execution.
+**Ask First:** Any change to endpoint response shapes, engine binary, or opening-book behavior.
 
 **Never:** Commit `users.db`, the Komodo binary, or secrets; kill processes by name alone; claim the 250 MB budget without measuring aggregate RSS during a real analysis.
 

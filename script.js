@@ -1735,12 +1735,18 @@ try {
       if (reject) reject(new DOMException("Agendamento cancelado", "AbortError"));
     }
 
-    schedule(callback, pacingInput, { signal } = {}) {
+    schedule(callback, pacingInput, { signal, exactDelay = false } = {}) {
       if (typeof callback !== "function") {
         throw new TypeError("callback deve ser uma funcao");
       }
       this.cancel();
-      const delayMs = this.calculateDelay(pacingInput);
+      const exactDelayMs = Number(pacingInput?.baseDelayMs);
+      if (exactDelay && (!Number.isFinite(exactDelayMs) || exactDelayMs < 0)) {
+        throw new TypeError("baseDelayMs invalido");
+      }
+      const delayMs = exactDelay
+        ? Math.round(exactDelayMs)
+        : this.calculateDelay(pacingInput);
       const promise = new Promise((resolve, reject) => {
         let timerId = null;
         const abort = () => {
@@ -2554,22 +2560,132 @@ try {
     }
   }
 
-  const auto_move_piece = function (from, to, board) {
-    if (!board) return;
-    const game = board.game || (board.gameManager && board.gameManager.game);
-    if (!game) return;
-    const moves = game.getLegalMoves();
-    for (let i = 0; i < moves.length; i++) {
-      if (moves[i].from == from && moves[i].to == to) {
-        game.move({
-          ...moves[i],
-          promotion: "q",
-          animate: false,
-          userGenerated: true,
-        });
-        break;
-      }
+  const getSmartPacerClockValues = () => {
+    const fallback = {
+      userTime: 60000,
+      opponentTime: 60000,
+      hasClockData: false,
+    };
+    const clocks = Array.from(
+      new Set(
+        document.querySelectorAll(
+          ".clock-component .clock-time-component, .clock-component .clock-time",
+        ),
+      ),
+    )
+      .map((clock) => {
+        const rect =
+          typeof clock.getBoundingClientRect === "function"
+            ? clock.getBoundingClientRect()
+            : null;
+        return {
+          text: clock.textContent?.trim(),
+          rect,
+          visible: !rect || rect.width > 0 || rect.height > 0,
+        };
+      })
+      .filter((clock) => clock.text && clock.visible)
+      .sort((a, b) => {
+        if (!a.rect || !b.rect) return 0;
+        return a.rect.top - b.rect.top;
+      });
+    if (clocks.length < 2) return fallback;
+    const values = {
+      userTime: clocks[clocks.length - 1].text,
+      opponentTime: clocks[0].text,
+      hasClockData: true,
+    };
+    try {
+      smartPacer.parseTime(values.userTime);
+      smartPacer.parseTime(values.opponentTime);
+      return values;
+    } catch (error) {
+      return fallback;
     }
+  };
+
+  const auto_move_piece = function (
+    from,
+    to,
+    board,
+    baseDelaySeconds = 0,
+    {
+      expectedFen = null,
+      useSmartPacing = true,
+      shouldExecute = () => true,
+    } = {},
+  ) {
+    smartPacer.cancel();
+    if (!board) return null;
+
+    const getGame = () =>
+      board.game || (board.gameManager && board.gameManager.game);
+    const scheduledGame = getGame();
+    const findMove = (game) => {
+      if (!game || typeof game.getLegalMoves !== "function") return null;
+      try {
+        return (
+          game
+            .getLegalMoves()
+            .find((move) => move.from == from && move.to == to) || null
+        );
+      } catch (error) {
+        return null;
+      }
+    };
+    const executeMove = () => {
+      const game = getGame();
+      if (game !== scheduledGame || !shouldExecute()) return false;
+      if (
+        expectedFen !== null &&
+        (typeof game.getFEN !== "function" || game.getFEN() !== expectedFen)
+      ) {
+        return false;
+      }
+      const move = findMove(game);
+      if (!move || typeof game.move !== "function") return false;
+      game.move({
+        ...move,
+        promotion: "q",
+        animate: false,
+        userGenerated: true,
+      });
+      return true;
+    };
+
+    const game = scheduledGame;
+    const legalMoves =
+      game && typeof game.getLegalMoves === "function"
+        ? (() => {
+            try {
+              return game.getLegalMoves();
+            } catch (error) {
+              return [];
+            }
+          })()
+        : [];
+    if (!legalMoves.some((move) => move.from == from && move.to == to)) {
+      return null;
+    }
+
+    const delaySeconds = Number(baseDelaySeconds);
+    if (!Number.isFinite(delaySeconds) || delaySeconds <= 0) {
+      return executeMove();
+    }
+
+    const { hasClockData, ...clockValues } = getSmartPacerClockValues();
+    const scheduled = smartPacer.schedule(executeMove, {
+      ...clockValues,
+      baseDelayMs: delaySeconds * 1000,
+      complexityMultiplier: 1,
+      isForced: legalMoves.length <= 1,
+    }, {
+      exactDelay: !useSmartPacing || !hasClockData,
+    });
+    scheduled.promise.catch((error) => {
+      if (error?.name !== "AbortError") log("SmartPacer erro: " + error);
+    });
+    return scheduled;
   };
 
   const get_number = (elm) => {
@@ -2748,26 +2864,29 @@ try {
       const cacheKey = fen + "_" + currentElo;
       const currentCache = isPuzzleMode ? puzzleMoveCache : moveCache;
       const isAutoMove = isPuzzleMode ? puzzleAutoMove : auto_move;
+      const autoMoveOptions = {
+        expectedFen: fen,
+        useSmartPacing: smartPacingEnabled,
+        shouldExecute: () =>
+          isPuzzleMode ? puzzleAutoMove : auto_move && gameMode !== "puzzle",
+      };
 
       if (currentCache.has(cacheKey)) {
         const cached = currentCache.get(cacheKey);
         chessBot.time = computeDelayValue(game);
         if (isAutoMove) {
           $(".myhigh, .myarrow").remove();
-          if (chessBot.time <= 0) {
-            auto_move_piece(
-              cached.substring(0, 2),
-              cached.substring(2, 4),
-              board,
-            );
-          } else {
-            setTimeout(() => {
-              auto_move_piece(
-                cached.substring(0, 2),
-                cached.substring(2, 4),
-                board,
-              );
-            }, chessBot.time * 1000);
+          checkfen = fen;
+          const scheduledMove = auto_move_piece(
+            cached.substring(0, 2),
+            cached.substring(2, 4),
+            board,
+            chessBot.time,
+            autoMoveOptions,
+          );
+          if (scheduledMove === null) {
+            currentCache.delete(cacheKey);
+            checkfen = "";
           }
         } else {
           create_div(cached);
@@ -2805,21 +2924,13 @@ try {
 
               if (isAutoMove) {
                 $(".myhigh, .myarrow").remove();
-                if (chessBot.time <= 0) {
-                  auto_move_piece(
-                    move.substring(0, 2),
-                    move.substring(2, 4),
-                    board,
-                  );
-                } else {
-                  setTimeout(() => {
-                    auto_move_piece(
-                      move.substring(0, 2),
-                      move.substring(2, 4),
-                      board,
-                    );
-                  }, chessBot.time * 1000);
-                }
+                auto_move_piece(
+                  move.substring(0, 2),
+                  move.substring(2, 4),
+                  board,
+                  chessBot.time,
+                  autoMoveOptions,
+                );
               } else {
                 create_div(move);
               }
