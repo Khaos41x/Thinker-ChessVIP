@@ -2,21 +2,58 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=1433, initial-scale=1">
+    <base href="/tests/fixtures/">
     <style>
-      html, body { margin: 0; width: 1433px; min-height: 1200px; background: #262522; }
-      #board-layout-main { position: absolute; left: 228px; top: 16px; width: 688px; height: 788px; }
-      #board-layout-chessboard { width: 688px; height: 688px; background: #769656; }
-      .board-layout-sidebar { position: absolute; left: 788px; top: 16px; width: 300px; height: 868px; background: #1c1b19; }
-      #oi-wrapper { margin-top: 30px !important; }
+      html, body { margin: 0; width: 1433px; min-height: 1800px; overflow-x: hidden; background: #262522; }
+      body { font-family: Arial, sans-serif; color: #fff; }
+      .chess-navigation { position: fixed; inset: 0 auto 0 0; width: 145px; background: #211f1d; z-index: 40; }
+      #lobby-root { position: relative; min-height: 895px; }
+      .lobby-placeholder { position: absolute; left: 228px; top: 137px; width: 1020px; height: 742px; background: #211f1d; }
+      .fixture-game-shell { position: relative; min-height: 895px; }
+      #board-layout-main, .board-layout-main { position: absolute; left: 227px; top: 137px; width: 640px; height: 742px; }
+      wc-chess-board { display: block; position: absolute; left: 0; top: 50px; width: 640px; height: 640px; background: #769656; }
+      #board-layout-player-top { position: absolute; left: 0; top: 0; width: 640px; height: 40px; }
+      #board-layout-player-bottom { position: absolute; left: 0; top: 700px; width: 640px; height: 40px; }
+      .play-controller-component { position: absolute; left: 900px; top: 137px; width: 348px; height: 742px; background: #171614; }
+      .stale-controller { display: none; left: 875px; width: 0; height: 0; }
+      .ad-rail { position: fixed; left: 1256px; top: 137px; width: 171px; height: 742px; background: rgba(8, 8, 8, .92); z-index: 999999; pointer-events: none; }
     </style>
     <script>
+      const fixtureParams = new URLSearchParams(location.search);
+      history.replaceState({}, "", "/play/online?" + fixtureParams.toString());
+      window.fixtureState = {
+        configSaves: [],
+        layoutMounts: 0,
+        layoutReplacements: 0,
+        mountErrorInjected: false,
+      };
+
       window.GM_xmlhttpRequest = function (options) {
         if (options.url.includes("/config/load")) {
+          const ghostMode = fixtureParams.get("ghost") === "1";
           setTimeout(function () {
-            options.onload({ status: 200, responseText: '{"hint":false,"autoMove":false,"autoQueue":false,"autoAdjust":false,"evalBar":false,"smartPacing":false,"ghostMode":false}' });
+            options.onload({
+              status: 200,
+              responseText: JSON.stringify({
+                hint: false,
+                autoMove: false,
+                autoQueue: false,
+                autoAdjust: false,
+                evalBar: false,
+                smartPacing: false,
+                ghostMode: ghostMode,
+              }),
+            });
           }, 0);
-        }
-        if (options.url.includes("api.chess.com/pub/player/")) {
+        } else if (options.url.includes("/config/save")) {
+          window.fixtureState.configSaves.push(JSON.parse(options.data || "{}"));
+          options.onload?.({ status: 200, responseText: "{}" });
+        } else if (options.url.includes("api.chess.com/pub/player/")) {
+          if (fixtureParams.get("network") === "error") {
+            setTimeout(function () { options.onerror?.({ status: 503 }); }, 20);
+            return { abort: function () {} };
+          }
           const now = Math.floor(Date.now() / 1000);
           const openings = ["Pirc Defense: Classical Variation", "Caro-Kann Defense: Exchange Variation", "Giuoco Piano Game", "King's Fianchetto Opening"];
           const games = Array.from({ length: 50 }, function (_, index) {
@@ -29,7 +66,7 @@
               time_class: index < 46 ? "bullet" : "blitz",
               white: isWhite ? player : rival,
               black: isWhite ? rival : player,
-              pgn: '[Opening "' + openings[index % openings.length] + '"]\n\n1. e4 e5 2. Nf3 Nc6'
+              pgn: '[Opening "' + openings[index % openings.length] + '"]\n\n1. e4 e5 2. Nf3 Nc6',
             };
           });
           setTimeout(function () {
@@ -40,22 +77,63 @@
       };
       window.GM_getValue = function (_, fallback) { return fallback; };
       window.GM_setValue = function () {};
+
+      if (fixtureParams.get("mountError") === "1") {
+        const nativeInsertAdjacentHTML = Element.prototype.insertAdjacentHTML;
+        Element.prototype.insertAdjacentHTML = function (position, html) {
+          if (!window.fixtureState.mountErrorInjected && html.includes('id="krypbot-container"')) {
+            window.fixtureState.mountErrorInjected = true;
+            throw new Error("fixture-mount-error");
+          }
+          return nativeInsertAdjacentHTML.call(this, position, html);
+        };
+      }
     </script>
   </head>
   <body>
-    <main id="board-layout-main">
-      <div id="board-layout-player-top"><span class="user-username-component">GMTestTC01</span></div>
-      <div id="board-layout-chessboard"></div>
-      <div id="board-layout-player-bottom"><span class="user-username-component">Player</span></div>
+    <nav class="chess-navigation" aria-label="Chess.com navigation"></nav>
+    <main id="lobby-root">
+      <section class="lobby-placeholder" aria-label="Online play lobby"></section>
     </main>
-    <aside class="board-layout-sidebar"></aside>
-    <script src="../../script.js"></script>
+    <aside class="ad-rail" aria-label="Advertisement"></aside>
+    <script src="../../script.js?v=2026-10-04.1"></script>
     <script>
-      if (location.search.includes("remount=1")) {
-        setTimeout(function () {
-          document.getElementById("oi-wrapper")?.remove();
-          document.getElementById("thinker-chess-banner")?.remove();
-        }, 1300);
+      function createGameShell(generation) {
+        const shell = document.createElement("section");
+        shell.className = "fixture-game-shell";
+        shell.dataset.generation = String(generation);
+        shell.innerHTML = `
+          <main id="board-layout-main" class="board-layout-main">
+            <div id="board-layout-player-top"><span class="user-username-component">Waiting for opponent</span></div>
+            <wc-chess-board></wc-chess-board>
+            <div id="board-layout-player-bottom"><span class="user-username-component">Player</span></div>
+          </main>
+          <aside class="play-controller-component stale-controller" aria-hidden="true"></aside>
+          <aside class="play-controller-component" data-controller-generation="${generation}"></aside>`;
+        return shell;
+      }
+
+      window.mountFixtureLayout = function () {
+        document.getElementById("lobby-root")?.remove();
+        document.querySelector(".fixture-game-shell")?.remove();
+        window.fixtureState.layoutMounts++;
+        document.body.appendChild(createGameShell(window.fixtureState.layoutMounts));
+        window.dispatchEvent(new CustomEvent("thinker-fixture-mounted"));
+      };
+
+      window.replaceFixtureLayout = function () {
+        const previous = document.querySelector(".fixture-game-shell");
+        const replacement = createGameShell(window.fixtureState.layoutMounts + 1);
+        previous?.replaceWith(replacement);
+        window.fixtureState.layoutMounts++;
+        window.fixtureState.layoutReplacements++;
+        window.dispatchEvent(new CustomEvent("thinker-fixture-replaced"));
+      };
+
+      const mountDelay = Number(fixtureParams.get("delay") || 700);
+      setTimeout(window.mountFixtureLayout, mountDelay);
+      if (fixtureParams.get("replace") === "1") {
+        setTimeout(window.replaceFixtureLayout, mountDelay + 2200);
       }
     </script>
   </body>

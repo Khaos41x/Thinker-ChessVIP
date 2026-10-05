@@ -2,6 +2,27 @@ const fs = require("fs");
 const vm = require("vm");
 
 const source = fs.readFileSync("script.js", "utf8");
+const browserFixture = fs.readFileSync("tests/fixtures/userscript_bootstrap.html", "utf8");
+for (const marker of [
+  'width=1433',
+  'height: 742px',
+  'history.replaceState({}, "", "/play/online?',
+  'class="play-controller-component stale-controller"',
+  'class="play-controller-component" data-controller-generation=',
+  'window.mountFixtureLayout',
+  'window.replaceFixtureLayout',
+  'fixtureParams.get("ghost")',
+  'fixtureParams.get("mountError")',
+  'fixtureParams.get("network")',
+]) {
+  if (!browserFixture.includes(marker)) throw new Error(`browser fixture is missing: ${marker}`);
+}
+if (
+  browserFixture.indexOf('play-controller-component stale-controller') >
+  browserFixture.indexOf('data-controller-generation=')
+) {
+  throw new Error("browser fixture no longer presents the hidden controller before the visible one");
+}
 const jqueryResolverStart = source.indexOf("  function resolveThinkerJQuery() {");
 const jqueryResolverEnd = source.indexOf("  let $ = resolveThinkerJQuery();", jqueryResolverStart);
 if (jqueryResolverStart < 0 || jqueryResolverEnd < 0) throw new Error("vendored jQuery resolver is missing");
@@ -33,6 +54,10 @@ const nativeMountContext = {
   getThinkerMountHost: () => ({ insertAdjacentHTML() { mountedMenu = true; } }),
   positionThinkerBannerShell: () => { bannerPositioned = true; },
   startThinkerUiReconciler: () => { shellReconcilerStarted = true; },
+  ensureThinkerLauncher: () => ({}),
+  clearThinkerMountFailure() {},
+  applyGhostModeVisibility() {},
+  failThinkerUiMount(error) { throw error; },
   resolveThinkerJQuery: () => null,
   setInterval: (callback) => { mountCallback = callback; return 1; },
 };
@@ -53,21 +78,37 @@ let recoveryCallback = null;
 let createAttempts = 0;
 let reconcileCount = 0;
 let shellsPresent = false;
+let shellWatchStarts = 0;
+let backgroundIntervalStarts = 0;
 const recoveryContext = {
   document: {
     body: {},
     getElementById: () => shellsPresent ? { style: { display: "flex" } } : null,
   },
   window: {
-    setInterval: (callback) => { recoveryCallback = callback; return 1; },
+    setInterval: (callback) => {
+      shellWatchStarts++;
+      recoveryCallback = callback;
+      return shellWatchStarts;
+    },
     clearInterval() {},
   },
-  setInterval: () => 1,
+  setInterval: () => {
+    backgroundIntervalStarts++;
+    return backgroundIntervalStarts;
+  },
   isThinkerSupportedRoute: () => true,
-  createMenu: () => {
+  ensureThinkerLauncher() {},
+  positionThinkerLauncher() {},
+  positionThinkerBannerShell() {},
+  cleanupThinkerUiLifecycle() {},
+  failThinkerUiMount(error) { throw error; },
+  attemptThinkerUiMount: () => {
     createAttempts++;
-    if (createAttempts === 1) throw new Error("temporary mount failure");
+    if (createAttempts === 1) return false;
     shellsPresent = true;
+    recoveryContext.setUiBound?.(true);
+    return true;
   },
   reconcileThinkerUiShells: () => { reconcileCount++; },
   positionThinkerBannerShell() {},
@@ -77,14 +118,28 @@ const recoveryContext = {
 };
 vm.runInNewContext(
   "let thinkerUserscriptStarted=false, thinkerRouteWatchTimer=null, thinkerShellWatchTimer=null, thinkerShellMissingTicks=0, thinkerMountTimer=null, thinkerUiBound=false, _ghostModeActive=false;\n" +
-    source.slice(startupStart, startupEnd) + "\nstartThinkerUserscript();",
+    source.slice(startupStart, startupEnd) +
+    "\nglobalThis.startUserscript=startThinkerUserscript; globalThis.setUiBound=(value)=>{ thinkerUiBound=value; }; startThinkerUserscript();",
   recoveryContext,
 );
 if (!recoveryCallback) throw new Error("UI recovery watchdog did not start after a mount failure");
+const lifecycleCounts = [shellWatchStarts, backgroundIntervalStarts];
+recoveryContext.startUserscript();
+if (shellWatchStarts !== lifecycleCounts[0] || backgroundIntervalStarts !== lifecycleCounts[1]) {
+  throw new Error("repeated userscript startup duplicated lifecycle intervals");
+}
 recoveryCallback();
 if (!shellsPresent || createAttempts !== 2) throw new Error("UI did not recover from a transient mount failure");
 recoveryCallback();
 if (reconcileCount < 2) throw new Error("UI recovery watchdog stopped after the first successful mount");
+const startupSource = source.slice(startupStart, startupEnd);
+if (
+  !/catch\s*\((?!_)\w+\)/.test(startupSource) ||
+  !/(mount|shell).*(error|failure|diagnostic)|(error|failure|diagnostic).*(mount|shell)/is.test(startupSource) ||
+  !/(mount|shell).{0,80}(dataset|title)|(dataset|title).{0,80}(mount|shell)/is.test(source)
+) {
+  throw new Error("mount failures are not retained as bounded internal control metadata");
+}
 for (const key of ["smartPacing", "evalBar", "kb-auto-adjust", "kb-auto-queue"]) {
   if (!source.includes(`localStorage.setItem("${key}", "false")`)) {
     throw new Error(`${key} was not reset to off for this version`);
@@ -223,7 +278,12 @@ const reconcileSource = source.slice(
   source.indexOf("  function startThinkerUiReconciler"),
 );
 if (
-  !source.includes('position:absolute;left:-9999px;top:0;z-index:50') ||
+  source.includes('position:absolute;left:-9999px;top:0;z-index:50') ||
+  !/(?:id=["']thinker-chess-launcher["']|launcher\.id\s*=\s*["']thinker-chess-launcher["'])/.test(source) ||
+  !source.includes("scrollIntoView") ||
+  !/thinker-chess-launcher[^`]+position:fixed[^`]+z-index:214748\d+/s.test(source) ||
+  !source.includes("pointer-events:none") ||
+  !/thinker-chess-banner[^`]+position:fixed[^`]+z-index:214748\d+/s.test(source) ||
   !source.includes("function calculateThinkerBannerLayout") ||
   !source.includes("function calculateThinkerWorkspaceMargin") ||
   !source.includes("grid-template-columns:268px 296px") ||
@@ -236,7 +296,7 @@ if (
   reconcileSource.includes("\n    scheduleThinkerBannerPosition();") ||
   !source.includes("object-fit:cover;object-position:center center")
 ) {
-  throw new Error("sidebar-anchored banner or redesigned workspace layout markers are missing");
+  throw new Error("viewport-safe banner, launcher, or workspace layout markers are missing");
 }
 
 const store = new Map();
@@ -284,7 +344,11 @@ vm.runInContext(
     "\nglobalThis.reconcileShells = reconcileThinkerUiShells;" +
     "\nglobalThis.applyGhost = applyGhostModeVisibility;" +
     "\nglobalThis.startReconciler = startThinkerUiReconciler;" +
-    "\nglobalThis.setShellNodes = (menu, banner) => { thinkerMenuNode = menu; thinkerBannerNode = banner; };",
+    "\nglobalThis.ensureLauncher = ensureThinkerLauncher;" +
+    "\nglobalThis.positionLauncher = positionThinkerLauncher;" +
+    "\nglobalThis.recordMountFailure = recordThinkerMountFailure;" +
+    "\nglobalThis.clearMountFailure = clearThinkerMountFailure;" +
+    "\nglobalThis.setShellNodes = (menu, banner, launcher) => { thinkerMenuNode = menu; thinkerBannerNode = banner; if (typeof thinkerLauncherNode !== 'undefined') thinkerLauncherNode = launcher; };",
   context,
 );
 
@@ -364,16 +428,50 @@ assert(context.findMountHost() === fallbackMountBody,
   "supported route without a recognized board left the entire UI unmounted");
 context.document.querySelector = savedQuerySelector;
 
-const boardForSidebar = { getBoundingClientRect: () => ({ left: 227, right: 867, width: 640 }) };
-const fallbackSidebar = {
+const boardForSidebar = {
+  isConnected: true,
+  getBoundingClientRect: () => ({ left: 227, top: 187, right: 867, bottom: 827, width: 640, height: 640 }),
+};
+const hiddenKnownSidebar = {
+  isConnected: true,
   contains: () => false,
-  getBoundingClientRect: () => ({ left: 899, right: 1248, width: 349, height: 746 }),
+  getBoundingClientRect: () => ({ left: 875, top: 137, right: 875, bottom: 137, width: 0, height: 0 }),
+};
+const disconnectedKnownSidebar = {
+  isConnected: false,
+  contains: () => false,
+  getBoundingClientRect: () => ({ left: 900, top: 137, right: 1248, bottom: 879, width: 348, height: 742 }),
+};
+const offViewportKnownSidebar = {
+  isConnected: true,
+  contains: () => false,
+  getBoundingClientRect: () => ({ left: 1500, top: 137, right: 1848, bottom: 879, width: 348, height: 742 }),
+};
+const visibleKnownSidebar = {
+  isConnected: true,
+  contains: () => false,
+  getBoundingClientRect: () => ({ left: 900, top: 137, right: 1248, bottom: 879, width: 348, height: 742 }),
+};
+const fallbackSidebar = {
+  isConnected: true,
+  contains: () => false,
+  getBoundingClientRect: () => ({ left: 899, top: 133, right: 1248, bottom: 879, width: 349, height: 746 }),
 };
 context.document.querySelector = (selector) => selector.includes("wc-chess-board") ? boardForSidebar : null;
+context.document.documentElement = { clientWidth: 1433, clientHeight: 895 };
+context.window.innerWidth = 1433;
+context.window.innerHeight = 895;
+context.document.querySelectorAll = (selector) =>
+  selector.includes(".play-controller-component")
+    ? [hiddenKnownSidebar, disconnectedKnownSidebar, offViewportKnownSidebar, visibleKnownSidebar]
+    : [fallbackSidebar];
+assert(context.findSidebar() === visibleKnownSidebar,
+  "hidden, disconnected, or off-viewport controller won over the visible controller");
 context.document.querySelectorAll = () => [fallbackSidebar];
 assert(context.findSidebar() === fallbackSidebar, "sidebar fallback missed the visible Chess.com controls");
 context.document.querySelector = () => null;
-assert(context.findSidebar() === null, "sidebar fallback selected a control without a board");
+context.document.querySelectorAll = () => [hiddenKnownSidebar, offViewportKnownSidebar];
+assert(context.findSidebar() === null, "sidebar selection accepted only hidden or off-viewport controls");
 
 const sidebarRect = { left: 788, top: 16, right: 1088, bottom: 704 };
 const bannerLayout = context.calculateBannerLayout(sidebarRect, 1280, 720, false);
@@ -409,18 +507,65 @@ assert(
 );
 const scrolledLayout = context.calculateBannerLayout(sidebarRect, 1280, 720, false, 0, 500);
 assert(
-  scrolledLayout && scrolledLayout.top === 516,
-  "banner did not remain anchored to the sidebar document position while scrolling",
+  scrolledLayout && scrolledLayout.top === 16,
+  "fixed banner geometry changed with document scroll",
 );
+const narrowLayout = context.calculateBannerLayout(sidebarRect, 1160, 720, false);
+assert(narrowLayout === null, "unsafe narrow viewport exposed the banner");
 assert(
   context.calculateWorkspaceMargin(836, 895) === 121 &&
     context.calculateWorkspaceMargin(836, 1080) === 306,
   "workspace was not placed below normal and fullscreen viewport folds",
 );
 
-const recoveryControl = { style: {} };
+const launcherWorkspace = {
+  scrollOptions: null,
+  focused: false,
+  scrollIntoView(options) { this.scrollOptions = options; },
+  focus() { this.focused = true; },
+};
+let createdLauncher = null;
+let launcherClick = null;
+const launcherBody = {
+  appendChild(node) {
+    createdLauncher = node;
+    node.isConnected = true;
+    node.parentNode = this;
+  },
+};
+context.document.body = launcherBody;
+context.document.createElement = () => ({
+  style: {},
+  dataset: {},
+  addEventListener(name, handler) { if (name === "click") launcherClick = handler; },
+});
+context.document.getElementById = (id) =>
+  id === "thinker-chess-launcher" ? createdLauncher
+    : id === "oi-wrapper" ? launcherWorkspace : null;
+context.document.querySelector = () => null;
+context.document.querySelectorAll = () => [];
+const launcher = context.ensureLauncher();
+assert(launcher && launcher.style.display === "flex" && launcherClick,
+  "launcher was not immediately discoverable before delayed Chess.com hosts");
+assert(Number.parseInt(launcher.style.left, 10) + 46 <= 227 && launcher.style.top === "835px",
+  "launcher fallback was not kept outside the supplied lobby board geometry");
+launcherClick();
+assert(
+  launcherWorkspace.scrollOptions?.behavior === "smooth" &&
+    launcherWorkspace.scrollOptions?.block === "start" && launcherWorkspace.focused,
+  "launcher did not navigate and focus the existing below-fold workspace",
+);
+
+const recoveryControl = { style: {}, dataset: {}, title: "" };
 const shellMenu = { isConnected: false, style: {} };
 const shellBanner = { isConnected: false, style: {} };
+const shellLauncher = {
+  isConnected: false,
+  style: {},
+  dataset: {},
+  title: "",
+  addEventListener(name, handler) { if (name === "click") this.clickHandler = handler; },
+};
 const shellWrapper = { style: {} };
 const shellScoutPrimary = { style: {} };
 const shellScoutSecondary = { style: {} };
@@ -428,6 +573,7 @@ const shellHud = { style: {} };
 let activeShellHost = null;
 let menuMounts = 0;
 let bannerMounts = 0;
+let launcherMounts = 0;
 const shellHost = {
   appendChild(node) {
     node.isConnected = true;
@@ -440,6 +586,7 @@ context.document.body = {
     node.isConnected = true;
     node.parentNode = this;
     if (node === shellBanner) bannerMounts++;
+    if (node === shellLauncher) launcherMounts++;
   },
 };
 context.document.querySelector = () => activeShellHost;
@@ -449,22 +596,40 @@ context.document.getElementById = (id) =>
     "kb-ghost-recovery": recoveryControl,
     "krypbot-container": shellMenu,
     "thinker-chess-banner": shellBanner,
+    "thinker-chess-launcher": shellLauncher,
     "oi-wrapper": shellWrapper,
     "oi-zone1": shellScoutPrimary,
     "oi-zone2": shellScoutSecondary,
   })[id] || null;
-context.setShellNodes(shellMenu, shellBanner);
+context.setShellNodes(shellMenu, shellBanner, shellLauncher);
 const originalEnsureScoutWrapper = context.scout.ensureScoutWrapper;
 context.scout.ensureScoutWrapper = () => null;
 
+context.recordMountFailure(new Error("x".repeat(400)));
+context.recordMountFailure(new Error("second failure"));
+assert(shellLauncher.dataset.mountError.startsWith("2: Error: second failure"),
+  "mount diagnostic did not retain the latest bounded failure count");
+assert(shellLauncher.dataset.mountError.length <= 240 && recoveryControl.dataset.mountError.length <= 240,
+  "mount diagnostic metadata was not bounded");
+assert(shellLauncher.title.includes("second failure") && recoveryControl.title.includes("second failure"),
+  "mount diagnostic was not exposed on discoverable controls");
+context.clearMountFailure();
+assert(shellLauncher.dataset.mountError === "" && recoveryControl.dataset.mountError === "",
+  "successful recovery did not clear mount diagnostics");
+
 context.reconcileShells();
-assert(menuMounts === 0 && bannerMounts === 1, "shell mounted without a Chess.com host");
+assert(menuMounts === 0 && bannerMounts === 1 && launcherMounts === 1,
+  "viewport shells did not mount before the delayed Chess.com host");
 activeShellHost = shellHost;
 context.reconcileShells();
-assert(menuMounts === 1 && bannerMounts === 1, "delayed host did not mount both UI shells");
+assert(menuMounts === 1 && bannerMounts === 1 && launcherMounts === 1,
+  "delayed host did not preserve exactly one of every UI shell");
 context.reconcileShells();
-assert(menuMounts === 1 && bannerMounts === 1, "idempotent reconciliation duplicated UI shells");
+assert(menuMounts === 1 && bannerMounts === 1 && launcherMounts === 1,
+  "idempotent reconciliation duplicated UI shells");
 shellMenu.isConnected = false;
+shellBanner.isConnected = false;
+shellLauncher.isConnected = false;
 activeShellHost = {
   appendChild(node) {
     node.isConnected = true;
@@ -473,14 +638,20 @@ activeShellHost = {
   },
 };
 context.reconcileShells();
-assert(menuMounts === 2, "SPA host replacement did not remount the configuration panel");
+assert(menuMounts === 2 && bannerMounts === 2 && launcherMounts === 2,
+  "full SPA host replacement did not remount every UI shell exactly once");
+context.reconcileShells();
+assert(menuMounts === 2 && bannerMounts === 2 && launcherMounts === 2,
+  "post-replacement reconciliation duplicated UI shells");
 
 context.applyGhost(true);
 assert(shellMenu.style.display === "none", "Ghost Mode did not hide the configuration panel");
 assert(shellBanner.style.display === "none", "Ghost Mode did not hide the banner");
+assert(shellLauncher.style.display === "none", "Ghost Mode did not hide the launcher");
 assert(recoveryControl.style.display === "flex", "Ghost Mode recovery control was not exposed");
 context.applyGhost(false);
 assert(shellMenu.style.display === "flex", "Ghost Mode recovery did not restore the panel");
+assert(shellLauncher.style.display !== "none", "Ghost Mode recovery did not restore the launcher");
 assert(recoveryControl.style.display === "none", "Ghost Mode recovery control stayed visible");
 
 let reconcileIntervals = 0;
