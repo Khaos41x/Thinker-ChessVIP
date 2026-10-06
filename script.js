@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC157
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-04.1
+// @version      2026-10-04.2
 // @description  Chess Bot com Servidor Local
 // @author       You
 // @match        https://www.chess.com/*
@@ -1612,16 +1612,12 @@ try {
 
   class SmartPacer {
     constructor({
-      deltaFactor = 0.25,
-      maxExtraDelayMs = 3500,
       jitterLimit = 0.18,
       jitterSigma = 0.06,
       emergencyMinMs = 150,
       emergencyMaxMs = 250,
       random = Math.random,
     } = {}) {
-      this.deltaFactor = deltaFactor;
-      this.maxExtraDelayMs = maxExtraDelayMs;
       this.jitterLimit = jitterLimit;
       this.jitterSigma = jitterSigma;
       this.emergencyMinMs = emergencyMinMs;
@@ -1692,32 +1688,50 @@ try {
     }
 
     calculateDelay({
-      userTime,
-      opponentTime,
-      baseDelayMs,
-      complexityMultiplier = 1,
+      userTime = null,
+      opponentTime = null,
+      phase = "middlegame",
+      legalMovesCount = 20,
+      evaluation = null,
       isForced = false,
     }) {
-      const userTimeMs = this.parseTime(userTime);
-      const opponentTimeMs = this.parseTime(opponentTime);
-      const baseMs = Number(baseDelayMs);
-      const multiplier = Number(complexityMultiplier);
-      if (!Number.isFinite(baseMs) || baseMs < 0) {
-        throw new TypeError("baseDelayMs invalido");
+      const parseOptionalTime = (value) => {
+        if (value === null || value === undefined || value === "") return null;
+        try { return this.parseTime(value); } catch (error) { return null; }
+      };
+      const userTimeMs = parseOptionalTime(userTime);
+      const opponentTimeMs = parseOptionalTime(opponentTime);
+      if (isForced || (userTimeMs !== null && userTimeMs < 10000)) {
+        const reflexDelay = this.uniform(this.emergencyMinMs, this.emergencyMaxMs);
+        if (userTimeMs === null) return Math.round(reflexDelay);
+        return Math.round(Math.max(0, Math.min(reflexDelay, userTimeMs * 0.04)));
       }
-      if (!Number.isFinite(multiplier) || multiplier <= 0) {
-        throw new TypeError("complexityMultiplier invalido");
+      const phaseCenters = { opening: 620, middlegame: 1050, endgame: 760 };
+      const center = phaseCenters[phase] || phaseCenters.middlegame;
+      const moves = Number.isFinite(Number(legalMovesCount)) ? Math.max(1, Math.min(60, Number(legalMovesCount))) : 20;
+      const branching = Math.max(0, Math.min(1, (moves - 8) / 32));
+      let positionFactor = 0.78 + branching * 1.25;
+      if (evaluation && typeof evaluation === "object") {
+        if (evaluation.mate !== null && evaluation.mate !== undefined && Number.isFinite(Number(evaluation.mate))) {
+          positionFactor *= Math.abs(Number(evaluation.mate)) <= 3 ? 0.55 : 0.72;
+        } else if (evaluation.cp !== null && evaluation.cp !== undefined && Number.isFinite(Number(evaluation.cp))) {
+          const absCp = Math.abs(Number(evaluation.cp));
+          positionFactor *= absCp < 50 ? 1.22 : absCp < 150 ? 1.08 : absCp < 400 ? 0.9 : 0.72;
+        }
       }
-      if (userTimeMs < 10000 || isForced) {
-        return Math.round(this.uniform(this.emergencyMinMs, this.emergencyMaxMs));
+      let clockFactor = 1;
+      if (userTimeMs !== null && opponentTimeMs !== null) {
+        const balance = (userTimeMs - opponentTimeMs) / Math.max(userTimeMs, opponentTimeMs, 1000);
+        clockFactor *= balance >= 0 ? 1 + Math.min(0.38, balance * 0.65) : 1 + Math.max(-0.42, balance * 0.8);
       }
-      const delta = userTimeMs - opponentTimeMs;
-      const extraDelay =
-        delta > 0
-          ? Math.min(delta * this.deltaFactor, this.maxExtraDelayMs)
-          : 0;
-      const deterministicDelay = baseMs * multiplier + extraDelay;
-      return Math.max(0, Math.round(deterministicDelay * this.gaussianFactor()));
+      if (userTimeMs !== null && userTimeMs < 20000) clockFactor *= 0.58;
+      else if (userTimeMs !== null && userTimeMs < 45000) clockFactor *= 0.8;
+      let delay = center * positionFactor * clockFactor * this.gaussianFactor();
+      if (userTimeMs !== null) {
+        const safeShare = userTimeMs < 20000 ? 0.035 : userTimeMs < 60000 ? 0.055 : 0.075;
+        delay = Math.min(delay, Math.max(this.emergencyMaxMs, userTimeMs * safeShare));
+      }
+      return Math.round(Math.max(this.emergencyMaxMs, Math.min(6500, delay)));
     }
 
     cancel() {
@@ -1836,6 +1850,7 @@ try {
             const data = JSON.parse(resp.responseText);
             if (data) {
               lastEvalData = data;
+              lastEvalFen = fen;
               if (evalBarEnabled) {
                 evalBarEngine.update(data);
                 renderEvalBar();
@@ -2003,14 +2018,12 @@ try {
     } catch (e) {}
   }, 500);
 
-  const computeDelayValue = (gameObj = null) => {
+  const computeDelayValue = () => {
     // PRIORIDADE MAXIMA: modo MAX sempre retorna 0, independente do Smart Pacing
     if (autoDelayMode === "max") return 0;
 
-    // Smart Pacing ativo: usa logica humanizada
-    if (smartPacingEnabled) {
-      return computeSmartPacing(gameObj);
-    }
+    // O SmartPacer calcula o atraso final no instante do agendamento.
+    if (smartPacingEnabled) return 1;
 
     // AUTO RUN DELAY (Smart Pacing OFF)
     if (autoDelayMode === "average") {
@@ -2024,112 +2037,6 @@ try {
     if (min > max) [min, max] = [max, min];
     const r = Math.random() * (max - min) + min;
     return Number(r.toFixed(2));
-  };
-
-  // ===== SMART PACING ENGINE (Gestão de tempo humanizada) =====
-  const computeSmartPacing = (gameObj = null) => {
-    let baseDelay = 0.2;
-    let maxDelay = 2.5;
-
-    // Detecta o controle de tempo pelo relógio na tela
-    let timeMode = "blitz";
-    const clockEls = document.querySelectorAll(
-      ".clock-component .clock-time-component, .clock-component .clock-time",
-    );
-    let myTimeRemaining = null;
-    for (const clock of clockEls) {
-      const text = clock.textContent.trim();
-      const parts = text.split(":");
-      if (parts.length === 2) {
-        const mins = parseInt(parts[0]);
-        const secs = parseFloat(parts[1]);
-        const total = mins * 60 + secs;
-        if (myTimeRemaining === null || total < myTimeRemaining) {
-          myTimeRemaining = total;
-        }
-        // Detectar modo pelo tempo inicial (baseado no range)
-        if (total <= 120) timeMode = "bullet";
-        else if (total <= 300) timeMode = "blitz";
-        else timeMode = "rapid";
-      }
-    }
-
-    if (timeMode === "bullet") maxDelay = 2.5;
-    if (timeMode === "blitz") maxDelay = 6.0;
-    if (timeMode === "rapid") maxDelay = 12.0;
-
-    let legalMovesCount = 20;
-    let moveNumber = 10;
-    let isForced = false;
-
-    if (gameObj) {
-      try {
-        const history =
-          typeof gameObj.getHistory === "function" ? gameObj.getHistory() : [];
-        moveNumber = history.length;
-
-        if (typeof gameObj.getLegalMoves === "function") {
-          const legalMoves = gameObj.getLegalMoves();
-          legalMovesCount = legalMoves.length;
-          if (legalMovesCount <= 1) isForced = true;
-        }
-      } catch (e) {}
-    }
-
-    // Lance forçado (xeque único, recaptura) → reflexo
-    if (isForced) {
-      return Math.max(0.1, Number(gaussianRandom(0.2, 0.05).toFixed(2)));
-    }
-
-    // Abertura (primeiros 8 lances) → memória muscular
-    if (moveNumber <= 8) {
-      return Math.max(
-        0.1,
-        Math.min(1.0, Number(gaussianRandom(0.4, 0.15).toFixed(2))),
-      );
-    }
-
-    // Apuro de tempo → instinto de sobrevivência
-    if (myTimeRemaining !== null && myTimeRemaining < 10) {
-      return Math.max(0.1, Number(gaussianRandom(0.15, 0.05).toFixed(2)));
-    }
-
-    // ===== EVAL-AWARE PACING: usar dados da eval bar se disponíveis =====
-    let evalFactor = 1.0;
-    if (
-      lastEvalData &&
-      lastEvalData.cp !== null &&
-      lastEvalData.cp !== undefined
-    ) {
-      const absCp = Math.abs(lastEvalData.cp);
-      // Posição equilibrada (|cp| < 50): humano pensa mais
-      if (absCp < 50) evalFactor = 1.4;
-      // Leve vantagem/desvantagem (50-150): pensa moderado
-      else if (absCp < 150) evalFactor = 1.1;
-      // Vantagem clara (150-400): decisão relativamente rápida
-      else if (absCp < 400) evalFactor = 0.85;
-      // Vantagem esmagadora (>400): joga rápido, posição decidida
-      else evalFactor = 0.6;
-    }
-    if (
-      lastEvalData &&
-      lastEvalData.mate !== null &&
-      lastEvalData.mate !== undefined
-    ) {
-      const absMate = Math.abs(lastEvalData.mate);
-      // Mate encontrado: joga rápido (reflexo de vitória/desespero)
-      evalFactor = absMate <= 3 ? 0.3 : 0.5;
-    }
-
-    // Meio de jogo: complexidade posicional com ruído gaussiano
-    let complexity = Math.min(1.0, legalMovesCount / 35.0);
-    complexity = complexity * sessionPacingProfile * evalFactor;
-
-    const meanTime = baseDelay + complexity * (maxDelay * 0.6);
-    let finalTime = gaussianRandom(meanTime, maxDelay * 0.15);
-    finalTime = Math.max(baseDelay, Math.min(maxDelay, finalTime));
-
-    return Number(finalTime.toFixed(2));
   };
 
   // --- AUTO QUEUE (detecção resiliente de fim de jogo) ---
@@ -2562,46 +2469,105 @@ try {
 
   const getSmartPacerClockValues = () => {
     const fallback = {
-      userTime: 60000,
-      opponentTime: 60000,
+      userTime: null,
+      opponentTime: null,
       hasClockData: false,
     };
-    const clocks = Array.from(
-      new Set(
-        document.querySelectorAll(
-          ".clock-component .clock-time-component, .clock-component .clock-time",
-        ),
-      ),
-    )
+    const board = document.querySelector?.(
+      "wc-chess-board, chess-board, #board-single, .chess-board-wrapper, .board-wrapper, .board, .chess-board, [class*='board-component']",
+    );
+    const root = board?.closest?.(
+      "#board-layout-main, .board-layout-main, .board-layout, main, .puzzle-layout, .puzzle-container",
+    ) || document;
+    const selector = [
+      ".clock-component .clock-time-component",
+      ".clock-component .clock-time",
+      ".clock-time-component",
+      ".clock-time",
+      "[data-testid='clock']",
+      "wc-chess-clock",
+    ].join(",");
+    const isActuallyVisible = (node) => {
+      let current = node;
+      while (current && current.nodeType !== 9) {
+        if (current.hidden || current.getAttribute?.("aria-hidden") === "true") return false;
+        if (typeof window !== "undefined" && typeof window.getComputedStyle === "function") {
+          const style = window.getComputedStyle(current);
+          if (style?.display === "none" || style?.visibility === "hidden" || Number(style?.opacity) === 0) return false;
+        }
+        current = current.parentElement;
+      }
+      return true;
+    };
+    const boardRect = typeof board?.getBoundingClientRect === "function" ? board.getBoundingClientRect() : null;
+    const seen = new Set();
+    const clocks = Array.from(new Set(root.querySelectorAll(selector)))
       .map((clock) => {
+        const container = clock.closest?.(
+          ".clock-component, [class*='clock-component'], [data-testid='clock'], wc-chess-clock, [class*='player-row'], [class*='player-component']",
+        ) || clock;
         const rect =
-          typeof clock.getBoundingClientRect === "function"
-            ? clock.getBoundingClientRect()
+          typeof container.getBoundingClientRect === "function"
+            ? container.getBoundingClientRect()
             : null;
         return {
           text: clock.textContent?.trim(),
           rect,
-          visible: !rect || rect.width > 0 || rect.height > 0,
+          container,
+          visible: isActuallyVisible(clock) && (!rect || (rect.width > 0 && rect.height > 0)),
         };
       })
-      .filter((clock) => clock.text && clock.visible)
+      .filter((clock) => {
+        if (!clock.text || !clock.visible) return false;
+        try { smartPacer.parseTime(clock.text); return true; } catch (error) { return false; }
+      })
+      .filter((clock) => {
+        if (boardRect && clock.rect) {
+          const verticalSlack = Math.max(120, boardRect.height * 0.25);
+          if (clock.rect.bottom < boardRect.top - verticalSlack || clock.rect.top > boardRect.bottom + verticalSlack) return false;
+        }
+        const geometry = clock.rect
+          ? `${Math.round(clock.rect.left || 0)}:${Math.round(clock.rect.top || 0)}:${Math.round(clock.rect.width || 0)}:${Math.round(clock.rect.height || 0)}`
+          : "no-rect";
+        const key = `${clock.text}|${geometry}`;
+        if (seen.has(clock.container) || seen.has(key)) return false;
+        seen.add(clock.container);
+        seen.add(key);
+        return true;
+      })
       .sort((a, b) => {
         if (!a.rect || !b.rect) return 0;
         return a.rect.top - b.rect.top;
       });
     if (clocks.length < 2) return fallback;
-    const values = {
+    return {
       userTime: clocks[clocks.length - 1].text,
       opponentTime: clocks[0].text,
       hasClockData: true,
     };
-    try {
-      smartPacer.parseTime(values.userTime);
-      smartPacer.parseTime(values.opponentTime);
-      return values;
-    } catch (error) {
-      return fallback;
-    }
+  };
+
+  const deriveSmartPacerPhase = (fen) => {
+    if (typeof fen !== "string") return "middlegame";
+    const fields = fen.trim().split(/\s+/);
+    const ranks = (fields[0] || "").split("/");
+    const validPlacement = ranks.length === 8 && ranks.every((rank) => {
+      if (!/^(?:[prnbqkPRNBQK1-8])+$/.test(rank)) return false;
+      return Array.from(rank).reduce((sum, token) => sum + (/\d/.test(token) ? Number(token) : 1), 0) === 8;
+    });
+    if (fields.length < 6 || !validPlacement || !/^[wb]$/.test(fields[1]) || !Number.isFinite(Number(fields[5]))) return "middlegame";
+    const pieces = fields[0].replace(/[\d/]/g, "");
+    const fullmove = Number(fields[5]);
+    const values = { n: 3, b: 3, r: 5, q: 9 };
+    const nonPawnMaterial = Array.from(pieces).reduce((total, piece) => total + (values[piece.toLowerCase()] || 0), 0);
+    if (Number.isFinite(fullmove) && fullmove <= 8 && nonPawnMaterial >= 40) return "opening";
+    if (nonPawnMaterial <= 20 || pieces.length <= 10) return "endgame";
+    return "middlegame";
+  };
+
+  const getSmartPacerEvaluation = (fen) => {
+    if (!fen || lastEvalFen !== fen || !lastEvalData || typeof lastEvalData !== "object") return null;
+    return { cp: lastEvalData.cp, mate: lastEvalData.mate };
   };
 
   const auto_move_piece = function (
@@ -2612,6 +2578,7 @@ try {
     {
       expectedFen = null,
       useSmartPacing = true,
+      forceImmediate = false,
       shouldExecute = () => true,
     } = {},
   ) {
@@ -2669,18 +2636,25 @@ try {
     }
 
     const delaySeconds = Number(baseDelaySeconds);
-    if (!Number.isFinite(delaySeconds) || delaySeconds <= 0) {
+    if (forceImmediate || !Number.isFinite(delaySeconds) || delaySeconds <= 0) {
       return executeMove();
     }
 
-    const { hasClockData, ...clockValues } = getSmartPacerClockValues();
+    const scheduledFen = (() => {
+      try { return game && typeof game.getFEN === "function" ? game.getFEN() : expectedFen; }
+      catch (error) { return expectedFen; }
+    })();
+    const clockValues = getSmartPacerClockValues();
     const scheduled = smartPacer.schedule(executeMove, {
-      ...clockValues,
+      userTime: clockValues.userTime,
+      opponentTime: clockValues.opponentTime,
       baseDelayMs: delaySeconds * 1000,
-      complexityMultiplier: 1,
+      phase: deriveSmartPacerPhase(scheduledFen),
+      legalMovesCount: legalMoves.length,
+      evaluation: getSmartPacerEvaluation(scheduledFen),
       isForced: legalMoves.length <= 1,
     }, {
-      exactDelay: !useSmartPacing || !hasClockData,
+      exactDelay: !useSmartPacing,
     });
     scheduled.promise.catch((error) => {
       if (error?.name !== "AbortError") log("SmartPacer erro: " + error);
@@ -2867,6 +2841,7 @@ try {
       const autoMoveOptions = {
         expectedFen: fen,
         useSmartPacing: smartPacingEnabled,
+        forceImmediate: autoDelayMode === "max",
         shouldExecute: () =>
           isPuzzleMode ? puzzleAutoMove : auto_move && gameMode !== "puzzle",
       };
@@ -2960,7 +2935,6 @@ try {
   let scheduleThinkerWorkspaceLayout = () => {};
   let thinkerMenuNode = null;
   let thinkerBannerNode = null;
-  let thinkerLauncherNode = null;
   let thinkerUiReconcileTimer = null;
   let thinkerMountTimer = null;
   let thinkerUiBound = false;
@@ -3032,15 +3006,10 @@ try {
 
   function updateThinkerMountDiagnostics() {
     const message = thinkerUiLastFailure.slice(0, 240);
-    const controls = [
-      document.getElementById("thinker-chess-launcher"),
-      document.getElementById("kb-ghost-recovery"),
-    ].filter(Boolean);
+    const controls = [document.getElementById("kb-ghost-recovery")].filter(Boolean);
     controls.forEach((control) => {
       control.dataset.mountError = message;
-      const baseTitle = control.id === "thinker-chess-launcher"
-        ? "Abrir Thinker Chess"
-        : "Restore Thinker Chess controls";
+      const baseTitle = "Restore Thinker Chess controls";
       control.title = message ? `${baseTitle} (${message})` : baseTitle;
     });
   }
@@ -3163,88 +3132,6 @@ try {
     return closest;
   }
 
-  function positionThinkerLauncher() {
-    const launcher = document.getElementById("thinker-chess-launcher");
-    if (!launcher) return;
-    const size = 46;
-    const edge = 14;
-    const viewportWidth = document.documentElement?.clientWidth || window.innerWidth || 1024;
-    const viewportHeight = window.innerHeight || document.documentElement?.clientHeight || 768;
-    const board = document.querySelector(
-      "wc-chess-board, chess-board, #board-single, .board, .chess-board, [class*='board-component']",
-    );
-    const boardRect = getThinkerRect(board);
-    const sidebarRect = getThinkerRect(findThinkerSidebar());
-    const bannerRect = getThinkerRect(document.getElementById("thinker-chess-banner"));
-    const blockedRects = [boardRect, sidebarRect, bannerRect].filter(Boolean);
-    const clampLeft = (left) => Math.max(edge, Math.min(viewportWidth - size - edge, Math.round(left)));
-    const clampTop = (top) => Math.max(edge, Math.min(viewportHeight - size - edge, Math.round(top)));
-    const candidates = [];
-    if (sidebarRect) candidates.push({ left: sidebarRect.right + edge, top: clampTop(sidebarRect.top) });
-    if (boardRect) candidates.push({ left: boardRect.right + edge, top: clampTop(boardRect.top) });
-    if (sidebarRect) candidates.push({ left: sidebarRect.left - size - edge, top: clampTop(sidebarRect.top) });
-    if (boardRect) candidates.push({ left: boardRect.left - size - edge, top: clampTop(boardRect.top) });
-    candidates.push(
-      { left: edge, top: Math.max(edge, viewportHeight - size - edge) },
-      { left: Math.max(edge, viewportWidth - size - edge), top: Math.max(edge, viewportHeight - size - edge) },
-      { left: edge, top: edge },
-      { left: Math.max(edge, viewportWidth - size - edge), top: edge },
-      { left: edge, top: Math.max(edge, Math.round((viewportHeight - size) / 2)) },
-      { left: Math.max(edge, viewportWidth - size - edge), top: Math.max(edge, Math.round((viewportHeight - size) / 2)) },
-    );
-    for (let top = edge; top <= viewportHeight - size - edge; top += size + edge) {
-      candidates.push({ left: edge, top }, { left: viewportWidth - size - edge, top });
-    }
-    const chosen = candidates.find((candidate) => {
-      const left = clampLeft(candidate.left);
-      const top = clampTop(candidate.top);
-      const rect = {
-        left,
-        top,
-        right: left + size,
-        bottom: top + size,
-      };
-      return blockedRects.every((blocked) => !thinkerRectsOverlap(rect, blocked, 8));
-    });
-    if (!chosen) {
-      launcher.style.display = "none";
-      return;
-    }
-    launcher.style.display = _ghostModeActive ? "none" : "flex";
-    launcher.style.left = clampLeft(chosen.left) + "px";
-    launcher.style.top = clampTop(chosen.top) + "px";
-    launcher.style.right = "auto";
-    launcher.style.bottom = "auto";
-  }
-
-  function ensureThinkerLauncher() {
-    if (!document.body) return null;
-    let launcher = document.getElementById("thinker-chess-launcher");
-    if (!launcher) {
-      launcher = document.createElement("button");
-      launcher.id = "thinker-chess-launcher";
-      launcher.type = "button";
-      launcher.textContent = "TC";
-      launcher.style.cssText =
-        "position:fixed;left:14px;bottom:14px;z-index:2147483001;width:46px;height:46px;border:1px solid rgba(0,255,136,.62);border-radius:14px;background:#11151a;color:#00ff88;font:800 13px/1 Inter,Arial,sans-serif;box-shadow:0 10px 28px rgba(0,0,0,.55),0 0 16px rgba(0,255,136,.2);cursor:pointer;display:none;align-items:center;justify-content:center;";
-      launcher.addEventListener("click", () => {
-        const workspace = document.getElementById("oi-wrapper") || document.getElementById("krypbot-container");
-        if (!workspace) {
-          if (thinkerMountTimer === null) attemptThinkerUiMount();
-          return;
-        }
-        workspace.scrollIntoView({ behavior: "smooth", block: "start" });
-        if (typeof workspace.focus === "function") workspace.focus({ preventScroll: true });
-      });
-      document.body.appendChild(launcher);
-    }
-    thinkerLauncherNode = launcher;
-    launcher.style.display = _ghostModeActive ? "none" : "flex";
-    positionThinkerLauncher();
-    updateThinkerMountDiagnostics();
-    return launcher;
-  }
-
   function ensureGhostRecoveryControl() {
     if (!document.body) return null;
     let control = document.getElementById("kb-ghost-recovery");
@@ -3281,7 +3168,6 @@ try {
     const scoutPrimary = document.getElementById("oi-zone1");
     const scoutSecondary = document.getElementById("oi-zone2");
     const banner = document.getElementById("thinker-chess-banner");
-    const launcher = document.getElementById("thinker-chess-launcher");
     document.querySelectorAll(".tc-hud-stats").forEach((hud) => {
       hud.style.display = _ghostModeActive ? "none" : "inline-flex";
     });
@@ -3290,10 +3176,8 @@ try {
     if (scoutPrimary) scoutPrimary.style.display = _ghostModeActive ? "none" : "";
     if (scoutSecondary) scoutSecondary.style.display = _ghostModeActive ? "none" : "flex";
     if (banner && _ghostModeActive) banner.style.display = "none";
-    if (launcher) launcher.style.display = _ghostModeActive ? "none" : "flex";
     ensureGhostRecoveryControl();
     if (!_ghostModeActive) {
-      ensureThinkerLauncher();
       scheduleThinkerBannerPosition();
     }
   }
@@ -3312,9 +3196,6 @@ try {
       document.body.appendChild(thinkerBannerNode);
       bannerRemounted = true;
     }
-    if (thinkerLauncherNode && !thinkerLauncherNode.isConnected && document.body) {
-      document.body.appendChild(thinkerLauncherNode);
-    }
     if (
       thinkerMenuNode &&
       thinkerMenuNode.isConnected &&
@@ -3324,7 +3205,6 @@ try {
     ) {
       OpponentIntel.ensureScoutWrapper();
     }
-    ensureThinkerLauncher();
     ensureGhostRecoveryControl();
     if (bannerRemounted) scheduleThinkerBannerPosition();
   }
@@ -3368,7 +3248,6 @@ try {
     if (!banner) return;
     if (!sidebar) {
       banner.style.display = "none";
-      positionThinkerLauncher();
       return;
     }
     const layout = calculateThinkerBannerLayout(
@@ -3379,7 +3258,6 @@ try {
     );
     if (!layout) {
       banner.style.display = "none";
-      positionThinkerLauncher();
       return;
     }
     banner.style.left = layout.left + "px";
@@ -3388,7 +3266,6 @@ try {
     banner.style.width = layout.width + "px";
     banner.style.height = layout.height + "px";
     banner.style.display = "flex";
-    positionThinkerLauncher();
   }
 
   function createMenu() {
@@ -3755,7 +3632,6 @@ try {
     `;
 
     if (!document.getElementById("tc-userscript-style")) document.head.insertAdjacentHTML("beforeend", css);
-    ensureThinkerLauncher();
     startThinkerUiReconciler();
 
     thinkerMountTimer = setInterval(function () {
@@ -3807,7 +3683,6 @@ try {
           banner.style.width = layout.width + "px";
           banner.style.height = layout.height + "px";
           banner.style.display = "flex";
-          positionThinkerLauncher();
         }
         scheduleThinkerBannerPosition = () => {
           if (thinkerBannerFrame !== null) return;
@@ -3842,14 +3717,12 @@ try {
         thinkerResizeHandler = () => {
           scheduleThinkerBannerPosition();
           scheduleThinkerWorkspaceLayout();
-          positionThinkerLauncher();
         };
         window.addEventListener("resize", thinkerResizeHandler, { passive: true });
         thinkerBannerLayoutObserver = new MutationObserver(() => {
           reconcileThinkerUiShells();
           const currentSidebar = findThinkerSidebar();
           if (currentSidebar !== thinkerObservedBannerSidebar) scheduleThinkerBannerPosition();
-          positionThinkerLauncher();
         });
         thinkerBannerLayoutObserver.observe(document.body, {
           childList: true,
@@ -4423,7 +4296,6 @@ try {
     }
 
     try {
-      ensureThinkerLauncher();
       attemptThinkerUiMount();
     } catch (error) {
       failThinkerUiMount(error);
@@ -4434,22 +4306,18 @@ try {
         const menu = document.getElementById("krypbot-container");
         const wrapper = document.getElementById("oi-wrapper");
         const banner = document.getElementById("thinker-chess-banner");
-        const launcher = document.getElementById("thinker-chess-launcher");
         if (menu) menu.style.display = "none";
         if (wrapper) wrapper.style.display = "none";
         if (banner) banner.style.display = "none";
-        if (launcher) launcher.style.display = "none";
         return;
       }
       try {
         reconcileThinkerUiShells();
         const menu = document.getElementById("krypbot-container");
         const banner = document.getElementById("thinker-chess-banner");
-        const launcher = document.getElementById("thinker-chess-launcher");
-        if (menu && banner && launcher && thinkerUiBound) {
+        if (menu && banner && thinkerUiBound) {
           thinkerShellMissingTicks = 0;
           if (banner.style.display === "none" && !_ghostModeActive) positionThinkerBannerShell();
-          positionThinkerLauncher();
           return;
         }
         thinkerShellMissingTicks++;
