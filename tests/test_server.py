@@ -14,9 +14,15 @@ import sys
 import json
 import urllib.request
 import urllib.error
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from core.smart_pacing.security import CapabilityStore
 
 BASE = "http://127.0.0.1:5050"
 TIMEOUT = 10
+CAPABILITY = CapabilityStore().ensure()
 
 
 def http_get(path):
@@ -35,7 +41,15 @@ def http_get(path):
 def http_post(path, data):
     url = BASE + path
     body_bytes = json.dumps(data).encode("utf-8")
-    req = urllib.request.Request(url, data=body_bytes, headers={"Content-Type": "application/json"}, method="POST")
+    req = urllib.request.Request(
+        url,
+        data=body_bytes,
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {CAPABILITY}",
+        },
+        method="POST",
+    )
     try:
         with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
             code = resp.getcode()

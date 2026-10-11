@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC157
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-04.2
+// @version      2026-10-08.4
 // @description  Chess Bot com Servidor Local
 // @author       You
 // @match        https://www.chess.com/*
@@ -10,6 +10,8 @@
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @run-at       document-idle
 // @grant        GM_xmlhttpRequest
+// @grant        GM_getValue
+// @grant        GM_setValue
 // @connect      localhost
 // @connect      127.0.0.1
 // @connect      api.chess.com
@@ -964,11 +966,11 @@ try {
 
     escapeHtml(value) {
       return String(value || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replace(/&/g, "\u0026amp;")
+        .replace(/</g, "\u0026lt;")
+        .replace(/>/g, "\u0026gt;")
+        .replace(/"/g, "\u0026quot;")
+        .replace(/'/g, "\u0026#039;");
     },
 
     ensureScoutWrapper() {
@@ -988,8 +990,9 @@ try {
         layoutChanged = true;
       }
       const currentMarginTop = wrapper.style.marginTop;
+      wrapper.removeAttribute?.("data-thinker-fixed-workspace");
       wrapper.style.cssText =
-        "display:grid;grid-template-columns:268px 296px;gap:14px;align-items:start;width:max-content;max-width:none;overflow:visible;margin-left:clamp(0px,calc(100% - 578px),44px);margin-bottom:30px;";
+        "display:grid;grid-template-columns:268px 296px;gap:14px;align-items:start;width:max-content;max-width:none;overflow:visible;margin-left:clamp(0px,calc(100% - 578px),44px);margin-bottom:30px;position:static;inset:auto;transform:none;float:none;";
       wrapper.style.marginTop = currentMarginTop || "30px";
       container.style.width = "268px";
       container.style.maxWidth = "268px";
@@ -1095,7 +1098,7 @@ try {
             : streak.type === "L"
               ? "color:#76b7ff;background:rgba(244,67,90,.18);border-color:rgba(118,183,255,.28)"
               : "color:#d1d5db;background:rgba(209,213,219,.12);border-color:rgba(209,213,219,.22)";
-        const icon = streak.type === "W" ? "&#128293;" : streak.type === "L" ? "&#10052;" : "&#10134;";
+        const icon = streak.type === "W" ? "\u{1F525}" : streak.type === "L" ? "\u2744" : "\u2796";
         badge = `<span style="padding:2px 5px;border:1px solid;border-radius:6px;${badgeStyle}">${icon} ${streak.count}${streak.type}</span>`;
       }
 
@@ -1538,6 +1541,8 @@ try {
     [autoDelayMin, autoDelayMax] = [autoDelayMax, autoDelayMin];
 
   let smartPacingEnabled = localStorage.getItem("smartPacing") === "true";
+  let smartPacingV2Enabled = localStorage.getItem("smartPacingV2") === "true";
+  let smartPacingV2ShadowEnabled = localStorage.getItem("smartPacingV2Shadow") === "true";
 
   let chessBot = {
     elo: 3200,
@@ -1617,12 +1622,14 @@ try {
       emergencyMinMs = 150,
       emergencyMaxMs = 250,
       random = Math.random,
+      now = Date.now,
     } = {}) {
       this.jitterLimit = jitterLimit;
       this.jitterSigma = jitterSigma;
       this.emergencyMinMs = emergencyMinMs;
       this.emergencyMaxMs = emergencyMaxMs;
       this.random = random;
+      this.now = now;
       this.pendingTimer = null;
       this.pendingReject = null;
       this.pendingSignal = null;
@@ -1687,12 +1694,45 @@ try {
       return 1 + variation;
     }
 
+    clockScale(userTimeMs) {
+      if (userTimeMs === null) return 1;
+      const anchors = [
+        [10000, 0.24],
+        [20000, 0.3],
+        [45000, 0.38],
+        [75000, 0.48],
+        [120000, 0.68],
+        [180000, 0.88],
+        [300000, 1],
+        [600000, 1.1],
+      ];
+      if (userTimeMs <= anchors[0][0]) return anchors[0][1];
+      for (let index = 1; index < anchors.length; index++) {
+        const [rightTime, rightScale] = anchors[index];
+        const [leftTime, leftScale] = anchors[index - 1];
+        if (userTimeMs <= rightTime) {
+          const progress = (userTimeMs - leftTime) / (rightTime - leftTime);
+          return leftScale + (rightScale - leftScale) * progress;
+        }
+      }
+      return anchors[anchors.length - 1][1];
+    }
+
+    clockThinkCap(userTimeMs) {
+      if (userTimeMs === null) return 6500;
+      if (userTimeMs < 20000) return 420;
+      if (userTimeMs < 45000) return 700;
+      if (userTimeMs <= 75000) return 950;
+      if (userTimeMs <= 120000) return 1400;
+      if (userTimeMs <= 240000) return 2800;
+      return Math.min(6500, Math.max(2800, userTimeMs * 0.05));
+    }
+
     calculateDelay({
       userTime = null,
       opponentTime = null,
       phase = "middlegame",
-      legalMovesCount = 20,
-      evaluation = null,
+      complexityMultiplier = 1,
       isForced = false,
     }) {
       const parseOptionalTime = (value) => {
@@ -1706,32 +1746,22 @@ try {
         if (userTimeMs === null) return Math.round(reflexDelay);
         return Math.round(Math.max(0, Math.min(reflexDelay, userTimeMs * 0.04)));
       }
-      const phaseCenters = { opening: 620, middlegame: 1050, endgame: 760 };
+      const phaseCenters = { opening: 800, middlegame: 1050, endgame: 850 };
       const center = phaseCenters[phase] || phaseCenters.middlegame;
-      const moves = Number.isFinite(Number(legalMovesCount)) ? Math.max(1, Math.min(60, Number(legalMovesCount))) : 20;
-      const branching = Math.max(0, Math.min(1, (moves - 8) / 32));
-      let positionFactor = 0.78 + branching * 1.25;
-      if (evaluation && typeof evaluation === "object") {
-        if (evaluation.mate !== null && evaluation.mate !== undefined && Number.isFinite(Number(evaluation.mate))) {
-          positionFactor *= Math.abs(Number(evaluation.mate)) <= 3 ? 0.55 : 0.72;
-        } else if (evaluation.cp !== null && evaluation.cp !== undefined && Number.isFinite(Number(evaluation.cp))) {
-          const absCp = Math.abs(Number(evaluation.cp));
-          positionFactor *= absCp < 50 ? 1.22 : absCp < 150 ? 1.08 : absCp < 400 ? 0.9 : 0.72;
-        }
-      }
-      let clockFactor = 1;
+      const rawComplexity = Number(complexityMultiplier);
+      const positionFactor = Number.isFinite(rawComplexity)
+        ? Math.max(0.15, Math.min(1.8, rawComplexity))
+        : 1;
+      let clockFactor = this.clockScale(userTimeMs);
       if (userTimeMs !== null && opponentTimeMs !== null) {
         const balance = (userTimeMs - opponentTimeMs) / Math.max(userTimeMs, opponentTimeMs, 1000);
-        clockFactor *= balance >= 0 ? 1 + Math.min(0.38, balance * 0.65) : 1 + Math.max(-0.42, balance * 0.8);
+        clockFactor *= balance >= 0
+          ? 1 + Math.min(0.12, balance * 0.2)
+          : 1 + Math.max(-0.2, balance * 0.32);
       }
-      if (userTimeMs !== null && userTimeMs < 20000) clockFactor *= 0.58;
-      else if (userTimeMs !== null && userTimeMs < 45000) clockFactor *= 0.8;
       let delay = center * positionFactor * clockFactor * this.gaussianFactor();
-      if (userTimeMs !== null) {
-        const safeShare = userTimeMs < 20000 ? 0.035 : userTimeMs < 60000 ? 0.055 : 0.075;
-        delay = Math.min(delay, Math.max(this.emergencyMaxMs, userTimeMs * safeShare));
-      }
-      return Math.round(Math.max(this.emergencyMaxMs, Math.min(6500, delay)));
+      delay = Math.min(delay, this.clockThinkCap(userTimeMs));
+      return Math.round(Math.max(140, Math.min(6500, delay)));
     }
 
     cancel() {
@@ -1758,9 +1788,20 @@ try {
       if (exactDelay && (!Number.isFinite(exactDelayMs) || exactDelayMs < 0)) {
         throw new TypeError("baseDelayMs invalido");
       }
-      const delayMs = exactDelay
+      const prescribedTargetMs = Number(pacingInput?.targetTotalMs);
+      const targetDelayMs = exactDelay
         ? Math.round(exactDelayMs)
-        : this.calculateDelay(pacingInput);
+        : Number.isFinite(prescribedTargetMs) && prescribedTargetMs >= 0
+          ? Math.round(prescribedTargetMs)
+          : this.calculateDelay(pacingInput);
+      const observedAt = Number(pacingInput?.positionObservedAt);
+      const suppliedElapsedMs = Number(pacingInput?.technicalElapsedMs);
+      const elapsedMs = !exactDelay && Number.isFinite(suppliedElapsedMs)
+        ? Math.max(0, suppliedElapsedMs)
+        : !exactDelay && Number.isFinite(observedAt)
+          ? Math.max(0, this.now() - observedAt)
+          : 0;
+      const delayMs = Math.max(0, Math.round(targetDelayMs - elapsedMs));
       const promise = new Promise((resolve, reject) => {
         let timerId = null;
         const abort = () => {
@@ -1789,11 +1830,375 @@ try {
         this.pendingSignal = signal || null;
         this.pendingAbort = abort;
       });
-      return { delayMs, promise };
+      return { delayMs, targetDelayMs, elapsedMs, promise };
     }
   }
 
   const smartPacer = new SmartPacer();
+
+  const smartPacingAnalysisCache = new Map();
+  let engineCapability = typeof GM_getValue === "function"
+    ? String(GM_getValue("thinkerEngineCapability", "") || "").trim()
+    : "";
+  let enginePairingPromptAttempted = false;
+  const getEngineCapability = () => {
+    if (engineCapability || enginePairingPromptAttempted) return engineCapability;
+    enginePairingPromptAttempted = true;
+    const promptFunction = typeof window !== "undefined" && typeof window.prompt === "function"
+      ? window.prompt.bind(window)
+      : null;
+    if (!promptFunction) return "";
+    const supplied = promptFunction(
+      "Primeiro acesso ao Thinker Chess. Cole o token exibido no terminal do servidor:",
+      "",
+    );
+    engineCapability = String(supplied || "").trim();
+    if (engineCapability && typeof GM_setValue === "function") {
+      GM_setValue("thinkerEngineCapability", engineCapability);
+    }
+    return engineCapability;
+  };
+  const engineRequestHeaders = () => {
+    const headers = { "Content-Type": "application/json" };
+    const capability = getEngineCapability();
+    if (!capability) throw new Error("pairing_required");
+    if (capability) headers.Authorization = `Bearer ${capability}`;
+    return headers;
+  };
+  const handleEngineUnauthorized = (response) => {
+    if (Number(response?.status) !== 401) return false;
+    if (engineCapability) {
+      engineCapability = "";
+      enginePairingPromptAttempted = false;
+      if (typeof GM_setValue === "function") GM_setValue("thinkerEngineCapability", "");
+    }
+    return true;
+  };
+  const smartPacingAnalysisPending = new Map();
+  let smartPacingObservedFen = "";
+  let smartPacingObservedAt = 0;
+
+  const neutralSmartPacingAnalysis = (fen) => ({
+    fen,
+    complexityMultiplier: 1,
+    isForced: false,
+  });
+
+  const cancelStaleSmartPacingAnalyses = (currentFen = "") => {
+    for (const [pendingFen, pending] of smartPacingAnalysisPending) {
+      if (pendingFen === currentFen) continue;
+      pending.cancel();
+    }
+  };
+
+  const observeSmartPacingPosition = (fen) => {
+    if (!fen || fen === smartPacingObservedFen) return smartPacingObservedAt;
+    smartPacingObservedFen = fen;
+    smartPacingObservedAt = Date.now();
+    cancelStaleSmartPacingAnalyses(fen);
+    smartPacer.cancel();
+    return smartPacingObservedAt;
+  };
+
+  const requestSmartPacingAnalysis = (fen) => {
+    if (!fen) return Promise.resolve(neutralSmartPacingAnalysis(fen));
+    if (smartPacingAnalysisCache.has(fen)) {
+      return Promise.resolve(smartPacingAnalysisCache.get(fen));
+    }
+    const existing = smartPacingAnalysisPending.get(fen);
+    if (existing) return existing.promise;
+
+    let requestHandle = null;
+    let settled = false;
+    let rejectPending = null;
+    const finish = (resolve, value, { cache = false } = {}) => {
+      if (settled) return;
+      settled = true;
+      smartPacingAnalysisPending.delete(fen);
+      if (cache) {
+        smartPacingAnalysisCache.set(fen, value);
+        while (smartPacingAnalysisCache.size > 64) {
+          smartPacingAnalysisCache.delete(smartPacingAnalysisCache.keys().next().value);
+        }
+      }
+      resolve(value);
+    };
+    const promise = new Promise((resolve, reject) => {
+      rejectPending = reject;
+      const fallback = () => finish(resolve, neutralSmartPacingAnalysis(fen));
+      try {
+        requestHandle = GM_xmlhttpRequest({
+          method: "POST",
+          url: SERVER_URL + "/analyze",
+          headers: engineRequestHeaders(),
+          data: JSON.stringify({ fen }),
+          timeout: 5000,
+          onload: (resp) => {
+            try {
+              if (handleEngineUnauthorized(resp)) return fallback();
+              if (Number(resp?.status) >= 400) return fallback();
+              const data = JSON.parse(resp.responseText);
+              const multiplier = Number(data?.complexityMultiplier);
+              if (!Number.isFinite(multiplier)) return fallback();
+              finish(resolve, {
+                fen,
+                complexityMultiplier: Math.max(0.15, Math.min(1.8, multiplier)),
+                isForced: data?.isForced === true,
+              }, { cache: true });
+            } catch (error) {
+              fallback();
+            }
+          },
+          onerror: fallback,
+          ontimeout: fallback,
+          onabort: () => {},
+        });
+      } catch (error) {
+        fallback();
+      }
+    });
+    const cancel = () => {
+      if (settled) return;
+      settled = true;
+      smartPacingAnalysisPending.delete(fen);
+      try { requestHandle?.abort?.(); } catch (error) {}
+      rejectPending?.(new DOMException("Analise cancelada", "AbortError"));
+    };
+    smartPacingAnalysisPending.set(fen, { promise, cancel });
+    return promise;
+  };
+
+  const smartPacingV2Runtime = {
+    gameIdentity: null,
+    runtimeGameToken: "",
+    positionRevision: 0,
+    fen: "",
+    observedAtMonoMs: 0,
+    activeRequest: null,
+    initialUserTimeMs: null,
+    temporalDebtMs: 0,
+    cooldownMoves: 0,
+  };
+
+  const stableJson = (value) => {
+    if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
+    if (value && typeof value === "object") {
+      return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${stableJson(value[key])}`).join(",")}}`;
+    }
+    return JSON.stringify(value);
+  };
+
+  const sha256Hex = async (value) => {
+    const bytes = new TextEncoder().encode(value);
+    const digest = await globalThis.crypto.subtle.digest("SHA-256", bytes);
+    return Array.from(new Uint8Array(digest), (item) => item.toString(16).padStart(2, "0")).join("");
+  };
+
+  const smartPacingV2Digest = async (namespace, payload) =>
+    sha256Hex(stableJson({ namespace, payload }));
+
+  const createSmartPacingV2Token = () => {
+    const bytes = new Uint32Array(4);
+    globalThis.crypto.getRandomValues(bytes);
+    return Array.from(bytes, (value) => value.toString(16).padStart(8, "0")).join("");
+  };
+
+  const beginSmartPacingV2Observation = (fen, gameIdentity) => {
+    if (smartPacingV2Runtime.gameIdentity !== gameIdentity) {
+      try { smartPacingV2Runtime.activeRequest?.abort?.(); } catch (error) {}
+      smartPacingV2Runtime.gameIdentity = gameIdentity;
+      smartPacingV2Runtime.runtimeGameToken = "";
+      smartPacingV2Runtime.positionRevision = 0;
+      smartPacingV2Runtime.fen = "";
+      smartPacingV2Runtime.observedAtMonoMs = 0;
+      smartPacingV2Runtime.activeRequest = null;
+      smartPacingV2Runtime.initialUserTimeMs = null;
+      smartPacingV2Runtime.temporalDebtMs = 0;
+      smartPacingV2Runtime.cooldownMoves = 0;
+    }
+    if (!smartPacingV2Runtime.runtimeGameToken) {
+      smartPacingV2Runtime.runtimeGameToken = createSmartPacingV2Token();
+    }
+    if (fen !== smartPacingV2Runtime.fen) {
+      smartPacingV2Runtime.fen = fen;
+      smartPacingV2Runtime.positionRevision += 1;
+      smartPacingV2Runtime.observedAtMonoMs = performance.now();
+      try { smartPacingV2Runtime.activeRequest?.abort?.(); } catch (error) {}
+      smartPacingV2Runtime.activeRequest = null;
+    }
+    return {
+      runtimeGameToken: smartPacingV2Runtime.runtimeGameToken,
+      positionRevision: smartPacingV2Runtime.positionRevision,
+      observedAtMonoMs: smartPacingV2Runtime.observedAtMonoMs,
+    };
+  };
+
+  const smartPacingV2Keys = async (fen, observation) => {
+    const fields = String(fen || "").trim().split(/\s+/);
+    if (fields.length !== 6) throw new TypeError("FEN invalida para Smart Pacing V2");
+    const observationHash = await smartPacingV2Digest("observation-v1", {
+      schemaVersion: 1,
+      runtimeGameToken: observation.runtimeGameToken,
+      positionRevision: observation.positionRevision,
+      exactFullFen: fields.join(" "),
+    });
+    const analysisHash = await smartPacingV2Digest("analysis-v1", {
+      boardFen: fields[0],
+      sideToMove: fields[1],
+      castlingRights: fields[2],
+      enPassantSquare: fields[3],
+      halfmoveClock: Number(fields[4]),
+      historyDigestOrUnknown: "unknown",
+    });
+    return {
+      observationKey: `obs1:${observationHash}`,
+      analysisPositionKey: `ana1:${analysisHash}`,
+    };
+  };
+
+  const smartPacingV2ClockBudget = (clockValues) => {
+    const parse = (value) => {
+      try { return smartPacer.parseTime(value); } catch (error) { return null; }
+    };
+    const userRemainingMs = parse(clockValues?.userTime);
+    if (smartPacingV2Runtime.initialUserTimeMs === null && userRemainingMs !== null) {
+      smartPacingV2Runtime.initialUserTimeMs = userRemainingMs;
+    }
+    const initial = smartPacingV2Runtime.initialUserTimeMs ?? userRemainingMs;
+    const family = initial !== null && initial <= 120000 ? "bullet" : initial !== null && initial > 600000 ? "rapid" : "blitz";
+    const reserveMinimum = { bullet: 2500, blitz: 6500, rapid: 15000 }[family];
+    const responseFloor = { bullet: 130, blitz: 180, rapid: 240 }[family];
+    const paceRate = { bullet: 0.36, blitz: 0.5, rapid: 0.64 }[family];
+    const reliable = userRemainingMs !== null;
+    const reserveMs = reliable ? Math.max(reserveMinimum, 30 * responseFloor, 540) : Math.round(reserveMinimum * 1.35);
+    const spendableMs = reliable ? Math.max(0, userRemainingMs - reserveMs - 180) : 0;
+    const sustainableMs = Math.max(responseFloor, spendableMs / 30 * paceRate);
+    const survival = !reliable || spendableMs <= reserveMs * 0.3;
+    const analysisTier = survival ? "survival" : spendableMs < 1500 ? "fast" : spendableMs > 5000 ? "deep" : "standard";
+    const tierCap = { survival: 90, fast: 250, standard: 700, deep: 1600 }[analysisTier];
+    return {
+      userRemainingMs,
+      reserveMs,
+      spendableMs,
+      sustainableMs,
+      survival,
+      analysisTier,
+      clientBudgetMs: Math.max(25, Math.min(tierCap, spendableMs)),
+      executionMarginMs: 180,
+    };
+  };
+
+  const decideSmartPacingV2 = (plan, clockBudget, observedAtMonoMs) => {
+    const evidence = plan.evidence || {};
+    const value = Math.max(0, Math.min(1, Number(evidence.decisionValue) || 0));
+    const forcedness = Math.max(0, Math.min(1, Number(evidence.forcedness) || 0));
+    const confidence = Math.max(0, Math.min(1, Number(evidence.analysisConfidence) || 0));
+    const debtFactor = 1 / (1 + smartPacingV2Runtime.temporalDebtMs / Math.max(1, clockBudget.sustainableMs * 2));
+    const longThink = !clockBudget.survival && value >= 0.78 && confidence >= 0.72 && forcedness <= 0.45 && smartPacingV2Runtime.cooldownMoves === 0;
+    const pacingClass = clockBudget.survival
+      ? "SURVIVAL"
+      : confidence < 0.45
+        ? "DEGRADED"
+        : forcedness >= 0.8
+          ? "REFLEX"
+          : longThink
+            ? "LONG_THINK"
+            : value >= 0.62
+              ? "CRITICAL"
+              : value <= 0.25 || Number(evidence.familiarity) >= 0.7
+                ? "SIMPLE"
+                : "NORMAL";
+    const factor = { SURVIVAL: 0.35, DEGRADED: 0.6, REFLEX: 0.45, SIMPLE: 0.75, NORMAL: 1, CRITICAL: 1.65, LONG_THINK: 4.5 }[pacingClass];
+    const rationalTarget = clockBudget.sustainableMs * factor * debtFactor;
+    const dynamicCap = longThink
+      ? Math.min(clockBudget.spendableMs * 0.2, clockBudget.sustainableMs * 7)
+      : Math.min(clockBudget.spendableMs, clockBudget.sustainableMs * 2.5);
+    const targetTotalMs = Math.max(0, Math.round(Math.min(rationalTarget, dynamicCap, clockBudget.spendableMs)));
+    return {
+      timingModelVersion: 1,
+      class: pacingClass,
+      targetTotalMs,
+      technicalElapsedMs: Math.max(0, Math.round(performance.now() - observedAtMonoMs)),
+      sustainableMs: Math.round(clockBudget.sustainableMs),
+      reserveMs: clockBudget.reserveMs,
+      decisionValue: value,
+      predictedOpponentReplies: evidence.predictedReplies || [],
+      reasonCodes: evidence.reasonCodes || [],
+    };
+  };
+
+  const commitSmartPacingV2Outcome = ({ pacingDecision }) => {
+    if (!pacingDecision) return;
+    const overspend = Math.max(0, pacingDecision.targetTotalMs - pacingDecision.sustainableMs);
+    smartPacingV2Runtime.temporalDebtMs = Math.max(
+      0,
+      smartPacingV2Runtime.temporalDebtMs * 0.72 + overspend - Math.max(0, pacingDecision.sustainableMs - pacingDecision.targetTotalMs) * 0.4,
+    );
+    smartPacingV2Runtime.cooldownMoves = pacingDecision.class === "LONG_THINK"
+      ? 3
+      : Math.max(0, smartPacingV2Runtime.cooldownMoves - 1);
+  };
+
+  const requestSmartPacingV2Plan = async ({ fen, elo, clockValues, observation }) => {
+    const keys = await smartPacingV2Keys(fen, observation);
+    if (observation.positionRevision !== smartPacingV2Runtime.positionRevision) {
+      throw new DOMException("Posicao obsoleta", "AbortError");
+    }
+    const budget = smartPacingV2ClockBudget(clockValues);
+    const requestId = `${observation.runtimeGameToken}-${observation.positionRevision}`;
+    const payload = {
+      schemaVersion: 1,
+      requestId,
+      runtimeGameToken: observation.runtimeGameToken,
+      positionRevision: observation.positionRevision,
+      observationKey: keys.observationKey,
+      analysisPositionKey: keys.analysisPositionKey,
+      fen,
+      lastMove: null,
+      historyDigest: null,
+      moveSelectionElo: Math.round(elo),
+      perceptionElo: Math.round(elo),
+      analysisTier: budget.analysisTier,
+      clientBudgetMs: budget.clientBudgetMs,
+      analysisBudgetVersion: 1,
+      evidenceModelVersion: 1,
+    };
+    return new Promise((resolve, reject) => {
+      let settled = false;
+      const handle = GM_xmlhttpRequest({
+        method: "POST",
+        url: SERVER_URL + "/move-plan",
+        headers: engineRequestHeaders(),
+        data: JSON.stringify(payload),
+        timeout: Math.max(1000, budget.clientBudgetMs + 750),
+        onload: (response) => {
+          if (settled) return;
+          settled = true;
+          if (handleEngineUnauthorized(response)) return reject(new Error("move-plan nao autenticado"));
+          if (Number(response.status) >= 400) return reject(new Error(`move-plan HTTP ${response.status}`));
+          try {
+            const plan = JSON.parse(response.responseText);
+            if (
+              plan.schemaVersion !== 1 ||
+              plan.requestId !== requestId ||
+              plan.observationKey !== keys.observationKey ||
+              plan.positionRevision !== observation.positionRevision ||
+              (plan.move !== null && !/^[a-h][1-8][a-h][1-8][qrbn]?$/.test(plan.move))
+            ) {
+              throw new TypeError("Contrato move-plan invalido");
+            }
+            resolve({ plan, budget });
+          } catch (error) {
+            reject(error);
+          }
+        },
+        onerror: () => { if (!settled) { settled = true; reject(new Error("move-plan indisponivel")); } },
+        ontimeout: () => { if (!settled) { settled = true; reject(new Error("move-plan timeout")); } },
+        onabort: () => { if (!settled) { settled = true; reject(new DOMException("Request cancelado", "AbortError")); } },
+      });
+      smartPacingV2Runtime.activeRequest = handle;
+    });
+  };
 
   const gaussianRandom = (mean = 0, stdev = 1) => {
     let u = 1 - Math.random();
@@ -1836,17 +2241,18 @@ try {
   };
 
   function requestEval(fen) {
-    if (!evalBarEnabled && !smartPacingEnabled) return;
+    if (!evalBarEnabled) return;
     if (!fen) return;
     // Sem guard de FEN duplicado aqui - o caller controla
     try {
       GM_xmlhttpRequest({
         method: "POST",
         url: SERVER_URL + "/eval",
-        headers: { "Content-Type": "application/json" },
+        headers: engineRequestHeaders(),
         data: JSON.stringify({ fen: fen }),
         onload: function (resp) {
           try {
+            if (handleEngineUnauthorized(resp)) return;
             const data = JSON.parse(resp.responseText);
             if (data) {
               lastEvalData = data;
@@ -2484,9 +2890,18 @@ try {
       ".clock-component .clock-time",
       ".clock-time-component",
       ".clock-time",
+      "[class*='clock-time']",
       "[data-testid='clock']",
+      "[data-cy*='clock']",
+      "[data-test-element*='clock']",
       "wc-chess-clock",
     ].join(",");
+    const extractClockText = (value) => {
+      const text = String(value || "").trim().replace(",", ".");
+      const colonMatch = text.match(/(?:^|\s)(\d{1,3}:\d{2}(?:\.\d+)?)(?:\s|$)/);
+      if (colonMatch) return colonMatch[1];
+      return /^\d+(?:\.\d+)?$/.test(text) ? text : null;
+    };
     const isActuallyVisible = (node) => {
       let current = node;
       while (current && current.nodeType !== 9) {
@@ -2501,7 +2916,11 @@ try {
     };
     const boardRect = typeof board?.getBoundingClientRect === "function" ? board.getBoundingClientRect() : null;
     const seen = new Set();
-    const clocks = Array.from(new Set(root.querySelectorAll(selector)))
+    const rootClockNodes = Array.from(root.querySelectorAll(selector));
+    const clockNodes = root !== document && rootClockNodes.length < 2
+      ? rootClockNodes.concat(Array.from(document.querySelectorAll(selector)))
+      : rootClockNodes;
+    const clocks = Array.from(new Set(clockNodes))
       .map((clock) => {
         const container = clock.closest?.(
           ".clock-component, [class*='clock-component'], [data-testid='clock'], wc-chess-clock, [class*='player-row'], [class*='player-component']",
@@ -2511,7 +2930,7 @@ try {
             ? container.getBoundingClientRect()
             : null;
         return {
-          text: clock.textContent?.trim(),
+          text: extractClockText(clock.textContent),
           rect,
           container,
           visible: isActuallyVisible(clock) && (!rect || (rect.width > 0 && rect.height > 0)),
@@ -2565,9 +2984,10 @@ try {
     return "middlegame";
   };
 
-  const getSmartPacerEvaluation = (fen) => {
-    if (!fen || lastEvalFen !== fen || !lastEvalData || typeof lastEvalData !== "object") return null;
-    return { cp: lastEvalData.cp, mate: lastEvalData.mate };
+  const isSmartPacerTimeTrouble = (userTime) => {
+    if (userTime === null || userTime === undefined || userTime === "") return false;
+    try { return smartPacer.parseTime(userTime) < 10000; }
+    catch (error) { return false; }
   };
 
   const auto_move_piece = function (
@@ -2580,6 +3000,12 @@ try {
       useSmartPacing = true,
       forceImmediate = false,
       shouldExecute = () => true,
+      analysis = null,
+      pacingDecision = null,
+      promotion = null,
+      onOutcome = null,
+      positionObservedAt = null,
+      clockValues = null,
     } = {},
   ) {
     smartPacer.cancel();
@@ -2588,13 +3014,26 @@ try {
     const getGame = () =>
       board.game || (board.gameManager && board.gameManager.game);
     const scheduledGame = getGame();
+    const normalizedPromotion = typeof promotion === "string" && /^[qrbn]$/i.test(promotion)
+      ? promotion.toLowerCase()
+      : null;
+    const movePromotion = (move) => {
+      if (!move) return null;
+      const raw = move.promotion ?? move.promotionPiece ?? move.uci?.slice?.(4, 5) ?? null;
+      if (typeof raw === "string") return raw.toLowerCase().slice(0, 1);
+      return null;
+    };
     const findMove = (game) => {
       if (!game || typeof game.getLegalMoves !== "function") return null;
       try {
         return (
           game
             .getLegalMoves()
-            .find((move) => move.from == from && move.to == to) || null
+            .find((move) =>
+              move.from == from &&
+              move.to == to &&
+              (normalizedPromotion === null || movePromotion(move) === normalizedPromotion),
+            ) || null
         );
       } catch (error) {
         return null;
@@ -2613,10 +3052,13 @@ try {
       if (!move || typeof game.move !== "function") return false;
       game.move({
         ...move,
-        promotion: "q",
+        promotion: normalizedPromotion || "q",
         animate: false,
         userGenerated: true,
       });
+      if (typeof onOutcome === "function") {
+        onOutcome({ outcome: "executed", pacingDecision });
+      }
       return true;
     };
 
@@ -2631,12 +3073,16 @@ try {
             }
           })()
         : [];
-    if (!legalMoves.some((move) => move.from == from && move.to == to)) {
+    if (!legalMoves.some((move) =>
+      move.from == from &&
+      move.to == to &&
+      (normalizedPromotion === null || movePromotion(move) === normalizedPromotion),
+    )) {
       return null;
     }
 
     const delaySeconds = Number(baseDelaySeconds);
-    if (forceImmediate || !Number.isFinite(delaySeconds) || delaySeconds <= 0) {
+    if (forceImmediate || (!useSmartPacing && (!Number.isFinite(delaySeconds) || delaySeconds <= 0))) {
       return executeMove();
     }
 
@@ -2644,18 +3090,28 @@ try {
       try { return game && typeof game.getFEN === "function" ? game.getFEN() : expectedFen; }
       catch (error) { return expectedFen; }
     })();
-    const clockValues = getSmartPacerClockValues();
+    const pacingClocks = clockValues || getSmartPacerClockValues();
+    const complexityMultiplier = Number(analysis?.complexityMultiplier);
     const scheduled = smartPacer.schedule(executeMove, {
-      userTime: clockValues.userTime,
-      opponentTime: clockValues.opponentTime,
+      userTime: pacingClocks.userTime,
+      opponentTime: pacingClocks.opponentTime,
       baseDelayMs: delaySeconds * 1000,
       phase: deriveSmartPacerPhase(scheduledFen),
-      legalMovesCount: legalMoves.length,
-      evaluation: getSmartPacerEvaluation(scheduledFen),
-      isForced: legalMoves.length <= 1,
+      complexityMultiplier: Number.isFinite(complexityMultiplier) ? complexityMultiplier : 1,
+      isForced: legalMoves.length <= 1 || analysis?.isForced === true,
+      targetTotalMs: pacingDecision?.targetTotalMs,
+      technicalElapsedMs: pacingDecision?.technicalElapsedMs,
+      positionObservedAt,
     }, {
       exactDelay: !useSmartPacing,
     });
+    if (useSmartPacing) {
+      log(
+        `Smart Pacing | relogio=${pacingClocks.userTime ?? "?"} | fase=${deriveSmartPacerPhase(scheduledFen)} | ` +
+        `complexidade=${Number.isFinite(complexityMultiplier) ? complexityMultiplier.toFixed(2) : "1.00"} | ` +
+        `alvo=${scheduled.targetDelayMs}ms | motor=${Math.round(scheduled.elapsedMs)}ms | espera=${scheduled.delayMs}ms`,
+      );
+    }
     scheduled.promise.catch((error) => {
       if (error?.name !== "AbortError") log("SmartPacer erro: " + error);
     });
@@ -2805,6 +3261,7 @@ try {
       }
 
       fen = game.getFEN();
+      const positionObservedAt = observeSmartPacingPosition(fen);
 
       if (!isPuzzleMode) {
         const turn = game ? game.getTurn() : null;
@@ -2838,13 +3295,92 @@ try {
       const cacheKey = fen + "_" + currentElo;
       const currentCache = isPuzzleMode ? puzzleMoveCache : moveCache;
       const isAutoMove = isPuzzleMode ? puzzleAutoMove : auto_move;
+      const clockValues = getSmartPacerClockValues();
       const autoMoveOptions = {
         expectedFen: fen,
         useSmartPacing: smartPacingEnabled,
-        forceImmediate: autoDelayMode === "max",
+        forceImmediate: !smartPacingEnabled && autoDelayMode === "max",
+        positionObservedAt,
+        clockValues,
         shouldExecute: () =>
           isPuzzleMode ? puzzleAutoMove : auto_move && gameMode !== "puzzle",
       };
+      const v2Observation = !isPuzzleMode && (smartPacingV2Enabled || smartPacingV2ShadowEnabled)
+        ? beginSmartPacingV2Observation(fen, game)
+        : null;
+      if (v2Observation && smartPacingV2ShadowEnabled && !smartPacingV2Enabled) {
+        requestSmartPacingV2Plan({ fen, elo: currentElo, clockValues, observation: v2Observation })
+          .then(({ plan, budget }) => {
+            const decision = decideSmartPacingV2(plan, budget, v2Observation.observedAtMonoMs);
+            log(`Smart Pacing V2 shadow | classe=${decision.class} | alvo=${decision.targetTotalMs}ms | status=${plan.status}`);
+          })
+          .catch((error) => {
+            if (error?.name !== "AbortError") log("Smart Pacing V2 shadow: " + error);
+          });
+      }
+      const analysisPromise =
+        smartPacingEnabled &&
+        !smartPacingV2Enabled &&
+        isAutoMove &&
+        !isSmartPacerTimeTrouble(clockValues.userTime)
+          ? requestSmartPacingAnalysis(fen)
+          : null;
+      const scheduleAutoMove = (move, onInvalid = null, v2Options = null) => {
+        const perform = (analysis) => {
+          const scheduledMove = auto_move_piece(
+            move.substring(0, 2),
+            move.substring(2, 4),
+            board,
+            v2Options ? 0 : chessBot.time,
+            { ...autoMoveOptions, analysis, ...(v2Options || {}) },
+          );
+          if (scheduledMove === null && typeof onInvalid === "function") onInvalid();
+          return scheduledMove;
+        };
+        if (!analysisPromise) return perform(null);
+        analysisPromise.then(perform).catch((error) => {
+          if (error?.name !== "AbortError") perform(null);
+        });
+        return analysisPromise;
+      };
+
+      if (v2Observation && smartPacingV2Enabled) {
+        checkfen = fen;
+        can_interval = false;
+        requestSmartPacingV2Plan({ fen, elo: currentElo, clockValues, observation: v2Observation })
+          .then(({ plan, budget }) => {
+            if (
+              v2Observation.positionRevision !== smartPacingV2Runtime.positionRevision ||
+              fen !== smartPacingV2Runtime.fen
+            ) {
+              return;
+            }
+            if (!plan.move || plan.status === "terminal" || plan.status === "error") return;
+            const pacingDecision = decideSmartPacingV2(plan, budget, v2Observation.observedAtMonoMs);
+            log(
+              `Smart Pacing V2 | classe=${pacingDecision.class} | alvo=${pacingDecision.targetTotalMs}ms | ` +
+              `motor=${pacingDecision.technicalElapsedMs}ms | reserva=${pacingDecision.reserveMs}ms`,
+            );
+            if (isAutoMove) {
+              $(".myhigh, .myarrow").remove();
+              scheduleAutoMove(plan.move, null, {
+                pacingDecision,
+                promotion: plan.move.length === 5 ? plan.move[4] : null,
+                onOutcome: commitSmartPacingV2Outcome,
+              });
+            } else {
+              create_div(plan.move);
+            }
+          })
+          .catch((error) => {
+            if (error?.name !== "AbortError") log("Smart Pacing V2: " + error);
+            checkfen = "";
+          })
+          .finally(() => {
+            can_interval = true;
+          });
+        return;
+      }
 
       if (currentCache.has(cacheKey)) {
         const cached = currentCache.get(cacheKey);
@@ -2852,17 +3388,10 @@ try {
         if (isAutoMove) {
           $(".myhigh, .myarrow").remove();
           checkfen = fen;
-          const scheduledMove = auto_move_piece(
-            cached.substring(0, 2),
-            cached.substring(2, 4),
-            board,
-            chessBot.time,
-            autoMoveOptions,
-          );
-          if (scheduledMove === null) {
+          scheduleAutoMove(cached, () => {
             currentCache.delete(cacheKey);
             checkfen = "";
-          }
+          });
         } else {
           create_div(cached);
         }
@@ -2882,7 +3411,7 @@ try {
       GM_xmlhttpRequest({
         method: "POST",
         url: SERVER_URL + "/getmove",
-        headers: { "Content-Type": "application/json" },
+        headers: engineRequestHeaders(),
         data: JSON.stringify({
           fen: fen,
           elo: currentElo,
@@ -2890,6 +3419,10 @@ try {
         }),
         onload: function (resp) {
           try {
+            if (handleEngineUnauthorized(resp)) {
+              can_interval = true;
+              return;
+            }
             const data = JSON.parse(resp.responseText);
             if (data && data.length > 0) {
               const move = data[0];
@@ -2899,13 +3432,7 @@ try {
 
               if (isAutoMove) {
                 $(".myhigh, .myarrow").remove();
-                auto_move_piece(
-                  move.substring(0, 2),
-                  move.substring(2, 4),
-                  board,
-                  chessBot.time,
-                  autoMoveOptions,
-                );
+                scheduleAutoMove(move);
               } else {
                 create_div(move);
               }
@@ -3185,6 +3712,15 @@ try {
   function reconcileThinkerUiShells() {
     const host = getThinkerMountHost();
     const wrapper = document.getElementById("oi-wrapper");
+    if (wrapper) {
+      wrapper.removeAttribute?.("data-thinker-fixed-workspace");
+      wrapper.style.position = "static";
+      wrapper.style.inset = "auto";
+      wrapper.style.transform = "none";
+      wrapper.style.float = "none";
+      wrapper.style.maxHeight = "none";
+      wrapper.style.overflow = "visible";
+    }
     let bannerRemounted = false;
     if (thinkerMenuNode && host) {
       const shell = wrapper && typeof wrapper.contains === "function" && wrapper.contains(thinkerMenuNode)
@@ -3211,7 +3747,7 @@ try {
 
   function startThinkerUiReconciler() {
     if (thinkerUiReconcileTimer !== null) return;
-    thinkerUiReconcileTimer = window.setInterval(reconcileThinkerUiShells, 1000);
+    thinkerUiReconcileTimer = window.setInterval(reconcileThinkerUiShells, 400);
   }
 
   function calculateThinkerBannerLayout(
@@ -3236,6 +3772,23 @@ try {
     };
   }
 
+  function positionThinkerBannerFallback(banner) {
+    const viewportWidth = document.documentElement.clientWidth;
+    const viewportHeight = window.innerHeight;
+    if (!banner || _ghostModeActive || viewportWidth < 1100 || viewportHeight < 360) {
+      if (banner) banner.style.display = "none";
+      return false;
+    }
+    const width = Math.max(120, Math.min(170, Math.floor(viewportWidth * 0.12)));
+    banner.style.left = viewportWidth - width - 8 + "px";
+    banner.style.right = "auto";
+    banner.style.top = "74px";
+    banner.style.width = width + "px";
+    banner.style.height = Math.max(260, viewportHeight - 88) + "px";
+    banner.style.display = "flex";
+    return true;
+  }
+
   function calculateThinkerWorkspaceMargin(naturalDocumentTop, viewportHeight, gameplayDocumentBottom = 0) {
     const baseMargin = 30;
     const safeTop = Math.max(Math.max(0, viewportHeight) + 32, Math.max(0, gameplayDocumentBottom) + 32);
@@ -3247,7 +3800,7 @@ try {
     const sidebar = findThinkerSidebar();
     if (!banner) return;
     if (!sidebar) {
-      banner.style.display = "none";
+      positionThinkerBannerFallback(banner);
       return;
     }
     const layout = calculateThinkerBannerLayout(
@@ -3257,7 +3810,7 @@ try {
       _ghostModeActive,
     );
     if (!layout) {
-      banner.style.display = "none";
+      positionThinkerBannerFallback(banner);
       return;
     }
     banner.style.left = layout.left + "px";
@@ -3661,7 +4214,7 @@ try {
             if (thinkerObservedBannerSidebar) thinkerBannerResizeObserver.observe(thinkerObservedBannerSidebar);
           }
           if (!sidebar) {
-            banner.style.display = "none";
+            positionThinkerBannerFallback(banner);
             return;
           }
 
@@ -3673,7 +4226,7 @@ try {
             typeof _ghostModeActive !== "undefined" && _ghostModeActive,
           );
           if (!layout) {
-            banner.style.display = "none";
+            positionThinkerBannerFallback(banner);
             return;
           }
 
@@ -3694,6 +4247,13 @@ try {
         function updateWorkspaceLayout() {
           const wrapper = document.getElementById("oi-wrapper");
           if (!wrapper) return;
+          wrapper.removeAttribute?.("data-thinker-fixed-workspace");
+          wrapper.style.position = "static";
+          wrapper.style.inset = "auto";
+          wrapper.style.transform = "none";
+          wrapper.style.float = "none";
+          wrapper.style.maxHeight = "none";
+          wrapper.style.overflow = "visible";
           wrapper.style.marginTop = "30px";
           const naturalDocumentTop = wrapper.getBoundingClientRect().top + window.scrollY;
           const board = document.querySelector(

@@ -1,3 +1,4 @@
+import os
 import sys
 import unittest
 from pathlib import Path
@@ -7,6 +8,9 @@ import chess
 import chess.engine
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+TEST_CAPABILITY = "test-capability-token-that-is-long-enough"
+os.environ["THINKER_CAPABILITY_TOKEN"] = TEST_CAPABILITY
+AUTH_HEADERS = {"Authorization": f"Bearer {TEST_CAPABILITY}"}
 import app
 
 
@@ -45,13 +49,13 @@ class AnalyzeEndpointTests(unittest.TestCase):
 
     def test_invalid_fen_does_not_reach_engine(self):
         with patch.object(app.komodo, "analyse") as analyse:
-            response = self.client.post("/analyze", json={"fen": "invalid"})
+            response = self.client.post("/analyze", json={"fen": "invalid"}, headers=AUTH_HEADERS)
         self.assertEqual(response.status_code, 400)
         analyse.assert_not_called()
 
     def test_non_object_json_is_rejected(self):
         with patch.object(app.komodo, "analyse") as analyse:
-            response = self.client.post("/analyze", json=[chess.STARTING_FEN])
+            response = self.client.post("/analyze", json=[chess.STARTING_FEN], headers=AUTH_HEADERS)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {"error": "invalid json object"})
         analyse.assert_not_called()
@@ -59,7 +63,7 @@ class AnalyzeEndpointTests(unittest.TestCase):
     def test_depth_ten_multipv_contract(self):
         lines = [line(chess.engine.Cp(40)), line(chess.engine.Cp(20), "d2d4")]
         with patch.object(app.komodo, "analyse", return_value=lines) as analyse:
-            response = self.client.post("/analyze", json={"fen": chess.STARTING_FEN})
+            response = self.client.post("/analyze", json={"fen": chess.STARTING_FEN}, headers=AUTH_HEADERS)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get_json(), {
             "move": "e2e4",

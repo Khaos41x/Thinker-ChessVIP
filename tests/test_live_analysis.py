@@ -9,11 +9,15 @@ import chess
 import psutil
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+TEST_CAPABILITY = "test-capability-token-that-is-long-enough"
+os.environ["THINKER_CAPABILITY_TOKEN"] = TEST_CAPABILITY
+AUTH_HEADERS = {"Authorization": f"Bearer {TEST_CAPABILITY}"}
 import app
 
 
 class LiveAnalysisTests(unittest.TestCase):
     def setUp(self):
+        app.initialize_engine()
         self.client = app.app.test_client()
 
     def test_real_endpoints_and_memory_budget(self):
@@ -38,7 +42,9 @@ class LiveAnalysisTests(unittest.TestCase):
         sampler = threading.Thread(target=sample_memory, daemon=True)
         sampler.start()
         self.assertTrue(first_sample.wait(timeout=1))
-        analyze = self.client.post("/analyze", json={"fen": chess.STARTING_FEN})
+        analyze = self.client.post(
+            "/analyze", json={"fen": chess.STARTING_FEN}, headers=AUTH_HEADERS
+        )
         stop_sampling.set()
         sampler.join(timeout=1)
         self.assertEqual(analyze.status_code, 200)
@@ -50,12 +56,15 @@ class LiveAnalysisTests(unittest.TestCase):
         getmove = self.client.post(
             "/getmove",
             json={"fen": chess.STARTING_FEN, "elo": 2400, "time": 0.05},
+            headers=AUTH_HEADERS,
         )
         self.assertEqual(getmove.status_code, 200)
         self.assertIsInstance(getmove.get_json(), list)
         self.assertEqual(len(getmove.get_json()), 1)
 
-        evaluate = self.client.post("/eval", json={"fen": chess.STARTING_FEN})
+        evaluate = self.client.post(
+            "/eval", json={"fen": chess.STARTING_FEN}, headers=AUTH_HEADERS
+        )
         self.assertEqual(evaluate.status_code, 200)
         self.assertIn("cp", evaluate.get_json())
         self.assertIn("mate", evaluate.get_json())

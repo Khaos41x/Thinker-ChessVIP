@@ -1,3 +1,4 @@
+import os
 import sys
 import threading
 import unittest
@@ -8,6 +9,9 @@ import chess
 import chess.engine
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+TEST_CAPABILITY = "test-capability-token-that-is-long-enough"
+os.environ["THINKER_CAPABILITY_TOKEN"] = TEST_CAPABILITY
+AUTH_HEADERS = {"Authorization": f"Bearer {TEST_CAPABILITY}"}
 import app
 
 
@@ -24,7 +28,9 @@ class EngineRecoveryTests(unittest.TestCase):
         with patch.object(app.komodo, "_engine", dead), patch.object(
             app.chess.engine.SimpleEngine, "popen_uci", return_value=replacement
         ) as create:
-            response = app.app.test_client().post("/eval", json={"fen": chess.STARTING_FEN})
+            response = app.app.test_client().post(
+                "/eval", json={"fen": chess.STARTING_FEN}, headers=AUTH_HEADERS
+            )
             self.assertEqual(response.get_json(), {"cp": 34, "mate": None, "depth": 6})
             create.assert_called_once_with(app.komodo.executable_path)
             dead.close.assert_called_once()
@@ -33,7 +39,7 @@ class EngineRecoveryTests(unittest.TestCase):
         illegal_fen = "bqp5/8/NKR5/8/8/8/8/8 w - - 0 1"
         with patch.object(app, "play_with_recovery") as play:
             response = app.app.test_client().post(
-                "/getmove", json={"fen": illegal_fen, "elo": 2400, "time": 0}
+                "/getmove", json={"fen": illegal_fen, "elo": 2400, "time": 0}, headers=AUTH_HEADERS
             )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get_json(), [])
@@ -63,7 +69,7 @@ class EngineRecoveryTests(unittest.TestCase):
         try:
             with patch.object(app, "stop_ponder"), patch.object(app, "get_book", return_value=None), patch.object(app, "play_with_recovery", return_value=None):
                 response = app.app.test_client().post(
-                    "/getmove", json={"fen": board.fen(), "elo": 2400, "time": 0}
+                    "/getmove", json={"fen": board.fen(), "elo": 2400, "time": 0}, headers=AUTH_HEADERS
                 )
             self.assertEqual(response.get_json(), [])
             self.assertNotIn(key, app.cache)
@@ -106,14 +112,14 @@ class EngineRecoveryTests(unittest.TestCase):
 
         def send_request():
             response = app.app.test_client().post(
-                "/getmove", json={"fen": board.fen(), "elo": 2400, "time": 0}
+                "/getmove", json={"fen": board.fen(), "elo": 2400, "time": 0}, headers=AUTH_HEADERS
             )
             results.append((response.status_code, response.get_json()))
 
         cache_key = f"{app.get_base_fen(board.fen())}_2400"
         app.cache.pop(cache_key, None)
         with patch.object(app, "get_book", return_value=None), patch.object(
-            app, "play_with_recovery", side_effect=controlled_play
+            app.komodo, "play", side_effect=controlled_play
         ):
             first = threading.Thread(target=send_request, name="first")
             second = threading.Thread(target=send_request, name="second")
@@ -136,7 +142,7 @@ class EngineRecoveryTests(unittest.TestCase):
         board = chess.Board()
         with patch.object(app, "stop_ponder"), patch.object(app, "get_book", return_value="not-a-move"), patch.object(app, "play_with_recovery", return_value=None) as play:
             response = app.app.test_client().post(
-                "/getmove", json={"fen": board.fen(), "elo": 2400, "time": 0}
+                "/getmove", json={"fen": board.fen(), "elo": 2400, "time": 0}, headers=AUTH_HEADERS
             )
         self.assertEqual(response.get_json(), [])
         play.assert_called_once()

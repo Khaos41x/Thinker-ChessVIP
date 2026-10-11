@@ -13,6 +13,7 @@ import functools
 import threading
 import logging
 import subprocess
+import itertools
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -23,6 +24,12 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_socketio import SocketIO
 
+from core.smart_pacing.adapter import KomodoEngineAdapter
+from core.smart_pacing.contracts import ContractValidationError, MovePlanRequest
+from core.smart_pacing.coordinator import CoordinatorDeadlineExceeded, EngineCoordinator, EngineJob
+from core.smart_pacing.security import CapabilityStore, SlidingWindowRateLimiter, require_engine_capability
+from core.smart_pacing.service import MovePlanService
+
 app = Flask(__name__)
 CORS(app)
 
@@ -31,6 +38,13 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading', ping_
 
 log = logging.getLogger("werkzeug")
 log.setLevel(logging.ERROR)
+
+capability_store = CapabilityStore()
+engine_api_auth = require_engine_capability(
+    capability_store,
+    allowed_origins={"https://www.chess.com", "https://chess.com"},
+    rate_limiter=SlidingWindowRateLimiter(limit=240, window_seconds=60),
+)
 
 
 class Colors:
@@ -363,7 +377,17 @@ class KomodoSingleton:
         self.executable_path = str(Path(executable_path).resolve())
         self._engine = None
         self._lock = threading.RLock()
+        self._generation = 0
+        self._ready = False
         self._initialized = True
+
+    @property
+    def generation(self):
+        return f"komodo-14.1:{self._generation}"
+
+    @property
+    def ready(self):
+        return self._ready and self._engine is not None
 
     @property
     def process_pid(self):
@@ -385,10 +409,13 @@ class KomodoSingleton:
             instance.close()
             raise
         self._engine = instance
+        self._generation += 1
+        self._ready = True
 
     def _restart_locked(self):
         previous = self._engine
         self._engine = None
+        self._ready = False
         if previous is not None:
             try:
                 previous.close()
@@ -400,28 +427,42 @@ class KomodoSingleton:
         if "Clear Hash" in self._engine.options:
             self._engine.configure({"Clear Hash": None})
 
-    def analyse(self, board, limit, multipv=None, clear_hash=False):
+    def analyse(
+        self,
+        board,
+        limit,
+        multipv=None,
+        clear_hash=False,
+        root_moves=None,
+        skill_level=20,
+        allow_retry=True,
+    ):
         with self._lock:
-            for attempt in range(2):
+            attempts = 2 if allow_retry else 1
+            for attempt in range(attempts):
                 try:
                     self._start_locked()
-                    self._engine.configure({"Skill": 20})
+                    self._engine.configure({"Skill": skill_level})
                     if clear_hash:
                         self._clear_hash_locked()
                     kwargs = {"multipv": multipv} if multipv is not None else {}
+                    if root_moves is not None:
+                        kwargs["root_moves"] = root_moves
                     result = self._engine.analyse(board, limit, **kwargs)
                     return result if isinstance(result, list) else [result]
                 except Exception as error:
-                    Log.warning(f"Komodo indisponivel; reiniciando ({attempt + 1}/2): {error}")
+                    self._ready = False
+                    Log.warning(f"Komodo indisponivel; reiniciando ({attempt + 1}/{attempts}): {error}")
                     try:
                         self._restart_locked()
                     except Exception as restart_error:
                         Log.error(f"Nao foi possivel reiniciar Komodo: {restart_error}")
             return None
 
-    def play(self, board, limit, skill_level):
+    def play(self, board, limit, skill_level, allow_retry=True):
         with self._lock:
-            for attempt in range(2):
+            attempts = 2 if allow_retry else 1
+            for attempt in range(attempts):
                 try:
                     self._start_locked()
                     self._engine.configure({"Skill": skill_level})
@@ -430,17 +471,42 @@ class KomodoSingleton:
                         raise chess.engine.EngineError("Komodo retornou um lance invalido")
                     return result.move
                 except Exception as error:
-                    Log.warning(f"Komodo indisponivel; reiniciando ({attempt + 1}/2): {error}")
+                    self._ready = False
+                    Log.warning(f"Komodo indisponivel; reiniciando ({attempt + 1}/{attempts}): {error}")
                     try:
                         self._restart_locked()
                     except Exception as restart_error:
                         Log.error(f"Nao foi possivel reiniciar Komodo: {restart_error}")
             return None
 
+    def interrupt(self):
+        current = self._engine
+        if current is None:
+            return
+        try:
+            current.protocol.send_line("stop")
+        except Exception:
+            pass
+
+    def force_terminate(self):
+        current = self._engine
+        self._ready = False
+        self._generation += 1
+        if current is None:
+            return
+        try:
+            current.transport.kill()
+        except Exception:
+            try:
+                current.close()
+            except Exception:
+                pass
+
     def close(self):
         with self._lock:
             current = self._engine
             self._engine = None
+            self._ready = False
             if current is not None:
                 try:
                     current.close()
@@ -459,14 +525,19 @@ def stop_ponder():
     return None
 
 
-Log.engine("Iniciando Komodo 14.1...")
+def initialize_engine():
+    if komodo.ready:
+        return
+    Log.engine("Iniciando Komodo 14.1...")
+    Log.engine("Warmup da engine...")
+    warmup_board = chess.Board()
+    if komodo.play(warmup_board, chess.engine.Limit(depth=10), 20) is None:
+        raise RuntimeError("Komodo falhou durante o warmup")
+    Log.success("Komodo ONLINE!", data={"Threads": 1, "Hash": "128MB", "Skill": 20})
+    Log.success("Warmup completo!")
 
-Log.engine("Warmup da engine...")
-warmup_board = chess.Board()
-if komodo.play(warmup_board, chess.engine.Limit(depth=10), 20) is None:
-    raise RuntimeError("Komodo falhou durante o warmup")
-Log.success("Komodo ONLINE!", data={"Threads": 1, "Hash": "128MB", "Skill": 20})
-Log.success("Warmup completo!")
+engine_adapter = KomodoEngineAdapter(komodo)
+engine_coordinator = EngineCoordinator(engine_adapter)
 
 # Opening Book
 OPENING_BOOK = {
@@ -491,8 +562,34 @@ def get_book(fen):
     return None
 
 
+move_plan_service = MovePlanService(engine_coordinator, book_lookup=get_book)
+_legacy_job_ids = itertools.count(1)
+
+
 def play_with_recovery(board, skill_level, limit):
-    return komodo.play(board, limit, skill_level)
+    budget_ms = max(250, int(((limit.time or 0.2) + 1.0) * 1000))
+    result = engine_coordinator.run(
+        EngineJob(request_id=f"legacy-play-{next(_legacy_job_ids)}", kind="legacy-play"),
+        budget_ms,
+        lambda adapter, _deadline, token: (
+            token.raise_if_cancelled(),
+            adapter.komodo.play(board, limit, skill_level),
+        )[1],
+    )
+    return result.value
+
+
+def analyse_with_recovery(board, limit, **kwargs):
+    budget_ms = max(250, int(((limit.time or 1.0) + 1.0) * 1000))
+    result = engine_coordinator.run(
+        EngineJob(request_id=f"legacy-analysis-{next(_legacy_job_ids)}", kind="legacy-analysis"),
+        budget_ms,
+        lambda adapter, _deadline, token: (
+            token.raise_if_cancelled(),
+            adapter.komodo.analyse(board, limit, **kwargs),
+        )[1],
+    )
+    return result.value
 
 
 def score_to_cp(info, turn):
@@ -830,7 +927,7 @@ def config_load():
 
 @app.route("/getmove", methods=["POST"])
 @app.route("/getMove", methods=["POST"])
-@serialized_engine_request
+@engine_api_auth
 def getmove():
     start_time = time.perf_counter()
     try:
@@ -905,7 +1002,7 @@ def getmove():
         return jsonify([])
 
 @app.route("/eval", methods=["POST"])
-@serialized_engine_request
+@engine_api_auth
 def evaluate():
     try:
         data = request.get_json(force=True, silent=True)
@@ -920,7 +1017,7 @@ def evaluate():
         board = chess.Board(fen)
         if not board.is_valid() or board.is_game_over():
             return jsonify({"cp": 0, "mate": None})
-        lines = komodo.analyse(board, chess.engine.Limit(time=0.05))
+        lines = analyse_with_recovery(board, chess.engine.Limit(time=0.05))
         if not lines:
             return jsonify({"cp": 0, "mate": None})
         info = lines[0]
@@ -942,7 +1039,7 @@ def evaluate():
 
 
 @app.route("/analyze", methods=["POST"])
-@serialized_engine_request
+@engine_api_auth
 def analyze_position():
     data = request.get_json(silent=True)
     if data is None:
@@ -967,7 +1064,7 @@ def analyze_position():
             "complexityMultiplier": 0.15,
             "isForced": True,
         })
-    lines = komodo.analyse(
+    lines = analyse_with_recovery(
         board,
         chess.engine.Limit(depth=ANALYSIS_DEPTH),
         multipv=2,
@@ -987,6 +1084,22 @@ def analyze_position():
         "complexityMultiplier": multiplier,
         "isForced": is_forced,
     })
+
+
+@app.route("/move-plan", methods=["POST"])
+@engine_api_auth
+def move_plan():
+    try:
+        move_plan_request = MovePlanRequest.from_payload(request.get_json(silent=True))
+        plan = move_plan_service.create_plan(move_plan_request)
+        return jsonify(plan)
+    except ContractValidationError as error:
+        return jsonify(error.to_payload()), 400
+    except CoordinatorDeadlineExceeded:
+        return jsonify({"error": "engine_deadline_exceeded"}), 503
+    except Exception as error:
+        Log.error(f"Erro no move-plan: {error}")
+        return jsonify({"error": "move_plan_unavailable"}), 503
 
 from core import rating
 import database
@@ -1053,9 +1166,29 @@ def get_history(username):
 
 @app.route("/health", methods=["GET"])
 def health():
-    return jsonify({"status": "ok", "cache": len(cache)})
+    return jsonify({
+        "status": "ok" if engine_coordinator.ready else "degraded",
+        "ready": engine_coordinator.ready,
+        "engineGeneration": engine_coordinator.generation,
+        "cache": len(cache),
+    })
+
+def print_pairing_instructions():
+    capability = capability_store.ensure()
+    print("=" * 72)
+    print("COLE ESTE TOKEN NO SEU SCRIPT:")
+    print(capability)
+    if os.environ.get("THINKER_CAPABILITY_TOKEN"):
+        print("Token carregado de THINKER_CAPABILITY_TOKEN")
+    else:
+        print(f"Token salvo em: {capability_store.path}")
+    print("=" * 72)
+    return capability
+
 
 if __name__ == "__main__":
+    print_pairing_instructions()
+    initialize_engine()
     Log.banner()
     Log.success("Rodando em http://127.0.0.1:5050")
     app.run(host="127.0.0.1", port=5050, debug=False, threaded=True)
