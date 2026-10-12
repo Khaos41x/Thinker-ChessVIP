@@ -4,6 +4,7 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from hashlib import sha256
+import logging
 from pathlib import Path
 from typing import Callable, Protocol
 
@@ -23,6 +24,15 @@ from .models import (
     PairRecord,
     SubjectColor,
 )
+
+
+class _UciInfoStringFilter(logging.Filter):
+    def filter(self, record: logging.LogRecord) -> bool:
+        message = record.getMessage()
+        return not ("Unexpected engine output: 'info string " in message)
+
+
+chess.engine.LOGGER.addFilter(_UciInfoStringFilter())
 
 
 @dataclass(frozen=True, slots=True)

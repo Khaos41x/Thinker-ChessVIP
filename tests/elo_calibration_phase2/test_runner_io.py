@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import tempfile
 import threading
 import time
@@ -10,7 +11,7 @@ from unittest.mock import patch
 
 from tools.elo_calibration.io import canonical_json_bytes, load_json_bytes, write_canonical_json
 from tools.elo_calibration.models import BenchmarkPlan, MatchCell
-from tools.elo_calibration.run_matches import EngineMove, PairedMatchRunner, decode_plan, pair_id, parse_reference_engines
+from tools.elo_calibration.run_matches import EngineMove, PairedMatchRunner, _UciInfoStringFilter, decode_plan, pair_id, parse_reference_engines
 
 
 class FakeAdapter:
@@ -27,6 +28,13 @@ class FakeAdapter:
 
 
 class RunnerIoTests(unittest.TestCase):
+    def test_known_uci_info_strings_are_suppressed_but_protocol_warnings_remain(self) -> None:
+        output_filter = _UciInfoStringFilter()
+        info_string = logging.LogRecord("chess.engine", logging.WARNING, __file__, 1, "%s: Unexpected engine output: %r", ("<UciProtocol (pid=1)>", "info string Clearing Hash"), None)
+        protocol_error = logging.LogRecord("chess.engine", logging.WARNING, __file__, 1, "%s: Unexpected engine output: %r", ("<UciProtocol (pid=1)>", "nonsense output"), None)
+        self.assertFalse(output_filter.filter(info_string))
+        self.assertTrue(output_filter.filter(protocol_error))
+
     def setUp(self) -> None:
         FakeAdapter.calls = []
         self.cell = MatchCell(3, "fake-ref", 1120.0, "opening-1", "7k/5Q2/6K1/8/8/8/8/8 w - - 0 1")
