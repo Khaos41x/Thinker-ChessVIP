@@ -32,7 +32,7 @@ class EngineRecoveryTests(unittest.TestCase):
                 "/eval", json={"fen": chess.STARTING_FEN}, headers=AUTH_HEADERS
             )
             self.assertEqual(response.get_json(), {"cp": 34, "mate": None, "depth": 6})
-            create.assert_called_once_with(app.komodo.executable_path)
+            create.assert_called_once_with(app.komodo.executable_path, timeout=10.0)
             dead.close.assert_called_once()
 
     def test_illegal_fen_never_reaches_native_engine_or_cache(self):
@@ -57,7 +57,7 @@ class EngineRecoveryTests(unittest.TestCase):
             move = app.play_with_recovery(board, 20, chess.engine.Limit(time=0.02))
             self.assertEqual(move.uci(), "e2e4")
             self.assertIs(app.komodo._engine, replacement)
-            create.assert_called_once_with(app.komodo.executable_path)
+            create.assert_called_once_with(app.komodo.executable_path, timeout=10.0)
             dead.close.assert_called_once()
 
     def test_cached_move_is_checked_against_current_legal_moves(self):

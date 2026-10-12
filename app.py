@@ -14,6 +14,7 @@ import threading
 import logging
 import subprocess
 import itertools
+import hashlib
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -25,10 +26,12 @@ from flask_cors import CORS
 from flask_socketio import SocketIO
 
 from core.smart_pacing.adapter import KomodoEngineAdapter
+from core.smart_pacing.calibration import CalibrationMode, CalibrationRuntime
 from core.smart_pacing.contracts import ContractValidationError, MovePlanRequest
 from core.smart_pacing.coordinator import CoordinatorDeadlineExceeded, EngineCoordinator, EngineJob
 from core.smart_pacing.security import CapabilityStore, SlidingWindowRateLimiter, require_engine_capability
 from core.smart_pacing.service import MovePlanService
+from core.elo_calibration import EloCalibrator, load_artifact
 
 app = Flask(__name__)
 CORS(app)
@@ -287,33 +290,6 @@ def serialized_engine_request(handler):
             return handler(*args, **kwargs)
     return wrapped
 
-def get_target_depth(elo):
-    if elo <= 800:
-        return 2
-    if elo <= 1200:
-        return 4
-    if elo <= 1600:
-        return 6
-    if elo <= 2000:
-        return 8
-    if elo <= 2400:
-        return 10
-    if elo <= 2800:
-        return 14
-    if elo <= 3100:
-        return 18
-    return 24
-
-def get_skill_level(elo):
-    """
-    Mapeia Elo (800 a 3200) para Skill (0 a 25) do Komodo 14
-    """
-    if elo >= 3200:
-        return 25
-    skill = int((elo - 800) / 120)
-    return max(0, min(25, skill))
-
-
 def has_live_python_parent(process):
     try:
         parent = process.parent()
@@ -379,6 +355,7 @@ class KomodoSingleton:
         self._lock = threading.RLock()
         self._generation = 0
         self._ready = False
+        self.expected_binary_sha256 = None
         self._initialized = True
 
     @property
@@ -399,10 +376,38 @@ class KomodoSingleton:
             except (AttributeError, OSError):
                 return None
 
-    def _start_locked(self):
+    @staticmethod
+    def _remaining_timeout(deadline):
+        if deadline is None:
+            return None
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise TimeoutError("engine operation deadline expired")
+        return max(0.001, remaining)
+
+    def _bounded_engine_call(self, callback, deadline, reserved_time=0.0):
+        if deadline is None:
+            return callback()
+        previous_timeout = self._engine.timeout
+        remaining = self._remaining_timeout(deadline) - max(0.0, reserved_time)
+        if remaining <= 0:
+            raise TimeoutError("engine operation cannot fit before deadline")
+        timeout = max(0.001, remaining)
+        self._engine.timeout = min(previous_timeout, timeout) if previous_timeout else timeout
+        try:
+            return callback()
+        finally:
+            self._engine.timeout = previous_timeout
+
+    def _start_locked(self, deadline=None):
         if self._engine is not None:
             return
-        instance = chess.engine.SimpleEngine.popen_uci(self.executable_path)
+        if self.expected_binary_sha256 is not None:
+            actual = hashlib.sha256(Path(self.executable_path).read_bytes()).hexdigest()
+            if actual != self.expected_binary_sha256:
+                raise chess.engine.EngineError("Komodo binary identity changed")
+        timeout = self._remaining_timeout(deadline) if deadline is not None else 10.0
+        instance = chess.engine.SimpleEngine.popen_uci(self.executable_path, timeout=timeout)
         try:
             instance.configure({"Threads": 1, "Hash": 128, "Skill": 20})
         except Exception:
@@ -412,7 +417,7 @@ class KomodoSingleton:
         self._generation += 1
         self._ready = True
 
-    def _restart_locked(self):
+    def _restart_locked(self, deadline=None):
         previous = self._engine
         self._engine = None
         self._ready = False
@@ -421,11 +426,30 @@ class KomodoSingleton:
                 previous.close()
             except Exception:
                 pass
-        self._start_locked()
+        self._start_locked(deadline)
 
-    def _clear_hash_locked(self):
-        if "Clear Hash" in self._engine.options:
-            self._engine.configure({"Clear Hash": None})
+    def _clear_hash_locked(self, deadline=None):
+        if "Clear Hash" not in self._engine.options:
+            raise chess.engine.EngineError("Komodo does not expose Clear Hash")
+        self._bounded_engine_call(
+            lambda: self._engine.configure({"Clear Hash": None}),
+            deadline,
+        )
+
+    def apply_profile(self, options, deadline=None):
+        with self._lock:
+            self._start_locked(deadline)
+            self._bounded_engine_call(
+                lambda: self._engine.configure(dict(options)),
+                deadline,
+            )
+            self._clear_hash_locked(deadline)
+            self._bounded_engine_call(self._engine.ping, deadline)
+            self._ready = True
+            return {
+                "options": dict(options),
+                "generation": self.generation,
+            }
 
     def analyse(
         self,
@@ -436,45 +460,68 @@ class KomodoSingleton:
         root_moves=None,
         skill_level=20,
         allow_retry=True,
+        deadline=None,
     ):
         with self._lock:
             attempts = 2 if allow_retry else 1
             for attempt in range(attempts):
                 try:
-                    self._start_locked()
-                    self._engine.configure({"Skill": skill_level})
+                    self._start_locked(deadline)
+                    if skill_level is not None:
+                        self._bounded_engine_call(
+                            lambda: self._engine.configure({"Skill": skill_level}),
+                            deadline,
+                        )
                     if clear_hash:
-                        self._clear_hash_locked()
+                        self._clear_hash_locked(deadline)
                     kwargs = {"multipv": multipv} if multipv is not None else {}
                     if root_moves is not None:
                         kwargs["root_moves"] = root_moves
-                    result = self._engine.analyse(board, limit, **kwargs)
+                    result = self._bounded_engine_call(
+                        lambda: self._engine.analyse(board, limit, **kwargs),
+                        deadline,
+                        reserved_time=limit.time or 0.0,
+                    )
                     return result if isinstance(result, list) else [result]
                 except Exception as error:
                     self._ready = False
                     Log.warning(f"Komodo indisponivel; reiniciando ({attempt + 1}/{attempts}): {error}")
+                    if not allow_retry:
+                        self.force_terminate()
+                        break
                     try:
-                        self._restart_locked()
+                        self._restart_locked(deadline)
                     except Exception as restart_error:
                         Log.error(f"Nao foi possivel reiniciar Komodo: {restart_error}")
             return None
 
-    def play(self, board, limit, skill_level, allow_retry=True):
+    def play(self, board, limit, skill_level, allow_retry=True, deadline=None):
         with self._lock:
             attempts = 2 if allow_retry else 1
             for attempt in range(attempts):
                 try:
-                    self._start_locked()
-                    self._engine.configure({"Skill": skill_level})
-                    result = self._engine.play(board, limit)
+                    self._start_locked(deadline)
+                    if skill_level is not None:
+                        self._bounded_engine_call(
+                            lambda: self._engine.configure({"Skill": skill_level}),
+                            deadline,
+                        )
+                    result = self._bounded_engine_call(
+                        lambda: self._engine.play(board, limit),
+                        deadline,
+                        reserved_time=limit.time or 0.0,
+                    )
                     if result.move is None or result.move not in board.legal_moves:
                         raise chess.engine.EngineError("Komodo retornou um lance invalido")
                     return result.move
                 except Exception as error:
                     self._ready = False
                     Log.warning(f"Komodo indisponivel; reiniciando ({attempt + 1}/{attempts}): {error}")
+                    if not allow_retry:
+                        self.force_terminate()
+                        break
                     try:
-                        self._restart_locked()
+                        self._restart_locked(deadline)
                     except Exception as restart_error:
                         Log.error(f"Nao foi possivel reiniciar Komodo: {restart_error}")
             return None
@@ -490,6 +537,7 @@ class KomodoSingleton:
 
     def force_terminate(self):
         current = self._engine
+        self._engine = None
         self._ready = False
         self._generation += 1
         if current is None:
@@ -539,6 +587,46 @@ def initialize_engine():
 engine_adapter = KomodoEngineAdapter(komodo)
 engine_coordinator = EngineCoordinator(engine_adapter)
 
+
+def build_calibration_runtime():
+    active = os.environ.get("THINKER_ELO_CALIBRATION_ACTIVE", "").strip().casefold() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+    mode = CalibrationMode.ACTIVE if active else CalibrationMode.SHADOW
+    artifact_path = os.environ.get("THINKER_ELO_CALIBRATION_ARTIFACT", "").strip()
+    if not artifact_path:
+        return CalibrationRuntime(
+            None,
+            mode=mode,
+            active_game_predicate=engine_coordinator.is_game_active,
+        )
+    try:
+        digest = hashlib.sha256(Path(ENGINE_PATH).read_bytes()).hexdigest()
+        calibrator = EloCalibrator(load_artifact(artifact_path), digest)
+        komodo.expected_binary_sha256 = digest
+        payload = calibrator.artifact.payload
+        return CalibrationRuntime(
+            calibrator,
+            mode=mode,
+            default_scale_id=os.environ.get("THINKER_ELO_SCALE_ID") or payload.scale.scale_id,
+            budget_class=os.environ.get("THINKER_ELO_BUDGET_CLASS") or payload.search_policy.budget_class,
+            active_game_predicate=engine_coordinator.is_game_active,
+        )
+    except Exception as error:
+        Log.warning(f"Calibracao Elo V2 indisponivel: {type(error).__name__}")
+        return CalibrationRuntime(
+            None,
+            mode=mode,
+            unavailable_reason=f"CALIBRATION_{type(error).__name__.upper()}",
+            active_game_predicate=engine_coordinator.is_game_active,
+        )
+
+
+calibration_runtime = build_calibration_runtime()
+
 # Opening Book
 OPENING_BOOK = {
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -": ["e2e4", "d2d4", "c2c4", "g1f3"],
@@ -562,7 +650,11 @@ def get_book(fen):
     return None
 
 
-move_plan_service = MovePlanService(engine_coordinator, book_lookup=get_book)
+move_plan_service = MovePlanService(
+    engine_coordinator,
+    book_lookup=get_book,
+    calibration=calibration_runtime,
+)
 _legacy_job_ids = itertools.count(1)
 
 
@@ -979,7 +1071,7 @@ def getmove():
             Log.move("[BOOK]", book_move, elapsed)
             return jsonify([book_move])
         
-        skill_level = get_skill_level(elo)
+        skill_level = engine_adapter.legacy_skill_for_elo(elo)
         
         # Limite de TEMPO DINÂMICO E ESTRITO. Se o time_limit for instantâneo (<= 0.01),
         # usamos um tempo ultra-rápido (0.02s) para a jogada sair de forma imediata.
@@ -1100,6 +1192,19 @@ def move_plan():
     except Exception as error:
         Log.error(f"Erro no move-plan: {error}")
         return jsonify({"error": "move_plan_unavailable"}), 503
+
+
+@app.route("/move-plan/release", methods=["POST"])
+@engine_api_auth
+def release_move_plan_game():
+    payload = request.get_json(silent=True)
+    token = payload.get("runtimeGameToken") if isinstance(payload, dict) else None
+    if not isinstance(token, str) or not token.strip() or len(token) > 128:
+        return jsonify({"error": "invalid_runtime_game_token"}), 400
+    token = token.strip()
+    engine_coordinator.release_game(token)
+    calibration_runtime.release_game(token)
+    return "", 204
 
 from core import rating
 import database

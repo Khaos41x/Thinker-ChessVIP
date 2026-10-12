@@ -6,6 +6,7 @@ import sys
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
+from unittest.mock import patch
 
 import chess
 import chess.engine
@@ -228,6 +229,110 @@ class EngineCoordinatorTests(unittest.TestCase):
         self.assertEqual(result.engine_generation, "fake-2")
         self.assertIn(CoordinatorObsolete, errors)
 
+    def test_superseding_queued_game_does_not_interrupt_lease_owner(self):
+        class LeaseAdapter(FakeEngineAdapter):
+            def stop(self):
+                self.stop_calls += 1
+
+        adapter = LeaseAdapter()
+        coordinator = EngineCoordinator(adapter, cancellation_grace_ms=20)
+        owner_started = threading.Event()
+        owner_release = threading.Event()
+        queued_started = threading.Event()
+        results = []
+        errors = []
+
+        def owner_operation(_adapter, _deadline, _token):
+            owner_started.set()
+            owner_release.wait(timeout=2)
+            return "owner"
+
+        def run_queued():
+            try:
+                coordinator.run(
+                    EngineJob("b1", "move-plan", "game-b", 1),
+                    1500,
+                    lambda _adapter, _deadline, _token: queued_started.set(),
+                )
+            except Exception as error:
+                errors.append(type(error))
+
+        owner = threading.Thread(
+            target=lambda: results.append(
+                coordinator.run(
+                    EngineJob("a1", "move-plan", "game-a", 1),
+                    1500,
+                    owner_operation,
+                ).value
+            )
+        )
+        queued = threading.Thread(target=run_queued)
+        owner.start()
+        self.assertTrue(owner_started.wait(timeout=1))
+        queued.start()
+        for _ in range(100):
+            active = coordinator._active_by_game.get("game-b")
+            if active is not None and active.job.request_id == "b1":
+                break
+            threading.Event().wait(0.005)
+
+        replacement = threading.Thread(
+            target=lambda: results.append(
+                coordinator.run(
+                    EngineJob("b2", "move-plan", "game-b", 2),
+                    1500,
+                    lambda _adapter, _deadline, _token: "replacement",
+                ).value
+            )
+        )
+        replacement.start()
+        threading.Event().wait(0.05)
+        self.assertEqual(adapter.stop_calls, 0)
+        self.assertEqual(adapter.restart_calls, 0)
+        owner_release.set()
+        owner.join(timeout=1)
+        queued.join(timeout=1)
+        replacement.join(timeout=1)
+
+        self.assertFalse(owner.is_alive())
+        self.assertFalse(replacement.is_alive())
+        self.assertIn("owner", results)
+        self.assertIn("replacement", results)
+        self.assertFalse(queued_started.is_set())
+        self.assertIn(CoordinatorObsolete, errors)
+
+    def test_duplicate_active_request_is_rejected_without_stopping_owner(self):
+        adapter = FakeEngineAdapter()
+        coordinator = EngineCoordinator(adapter)
+        entered = threading.Event()
+        release = threading.Event()
+
+        def operation(_adapter, _deadline, _token):
+            entered.set()
+            release.wait(timeout=1)
+
+        thread = threading.Thread(
+            target=lambda: coordinator.run(
+                EngineJob("same", "move-plan", "duplicate-game", 1),
+                1000,
+                operation,
+            )
+        )
+        thread.start()
+        self.assertTrue(entered.wait(timeout=1))
+
+        with self.assertRaises(CoordinatorObsolete):
+            coordinator.run(
+                EngineJob("same", "move-plan", "duplicate-game", 1),
+                1000,
+                operation,
+            )
+
+        self.assertEqual(adapter.stop_calls, 0)
+        release.set()
+        thread.join(timeout=1)
+        self.assertFalse(thread.is_alive())
+
 
 class EvidenceModelTests(unittest.TestCase):
     def snapshot(self, deep_scores):
@@ -317,7 +422,14 @@ class MovePlanServiceTests(unittest.TestCase):
         self.assertEqual(plan["move"], "d2d4")
         self.assertEqual(plan["referenceBestMove"], "e2e4")
         self.assertGreater(plan["evidence"]["selectedMoveRegret"], 0)
-        self.assertEqual([call[0] for call in adapter.calls], ["reference", "selector", "reference"])
+        self.assertEqual(
+            [call[0] for call in adapter.calls],
+            [
+                "apply_profile", "clear_hash", "ready", "reference",
+                "apply_profile", "clear_hash", "ready", "selector",
+                "apply_profile", "clear_hash", "ready", "reference",
+            ],
+        )
 
     def test_partial_plan_is_not_cached(self):
         adapter = FakeEngineAdapter()
@@ -346,7 +458,7 @@ class MovePlanServiceTests(unittest.TestCase):
         second = service.create_plan(request)
         self.assertEqual(second["source"], "cache")
         self.assertEqual(second["evidence"], first["evidence"])
-        self.assertEqual(len(adapter.calls), 3)
+        self.assertEqual(len(adapter.calls), 12)
 
     def test_cache_hit_rebinds_runtime_observation_identity(self):
         adapter = FakeEngineAdapter()
@@ -402,12 +514,28 @@ class MovePlanEndpointTests(unittest.TestCase):
         self.assertIn("ready", data)
         self.assertIn("engineGeneration", data)
 
+    def test_release_endpoint_clears_coordinator_and_calibration_state(self):
+        with patch.object(server_app.engine_coordinator, "release_game") as release_job, patch.object(
+            server_app.calibration_runtime,
+            "release_game",
+        ) as release_profile:
+            response = server_app.app.test_client().post(
+                "/move-plan/release",
+                json={"runtimeGameToken": "finished-game"},
+                headers=AUTH_HEADERS,
+            )
+
+        self.assertEqual(response.status_code, 204)
+        release_job.assert_called_once_with("finished-game")
+        release_profile.assert_called_once_with("finished-game")
+
 
 class CapabilitySecurityTests(unittest.TestCase):
     def test_protected_endpoint_requires_bearer_capability(self):
         client = server_app.app.test_client()
         protected_requests = (
             ("/move-plan", valid_payload()),
+            ("/move-plan/release", {"runtimeGameToken": "game-1"}),
             ("/getmove", {"fen": chess.STARTING_FEN, "elo": 1200, "time": 0.01}),
             ("/analyze", {"fen": chess.STARTING_FEN}),
             ("/eval", {"fen": chess.STARTING_FEN}),

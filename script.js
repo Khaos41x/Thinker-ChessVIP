@@ -2003,9 +2003,26 @@ try {
     return Array.from(bytes, (value) => value.toString(16).padStart(8, "0")).join("");
   };
 
+  const releaseSmartPacingV2Game = (runtimeGameToken) => {
+    if (!runtimeGameToken || !engineCapability) return;
+    try {
+      GM_xmlhttpRequest({
+        method: "POST",
+        url: SERVER_URL + "/move-plan/release",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${engineCapability}`,
+        },
+        data: JSON.stringify({ runtimeGameToken }),
+        timeout: 1000,
+      });
+    } catch (error) {}
+  };
+
   const beginSmartPacingV2Observation = (fen, gameIdentity) => {
     if (smartPacingV2Runtime.gameIdentity !== gameIdentity) {
       try { smartPacingV2Runtime.activeRequest?.abort?.(); } catch (error) {}
+      releaseSmartPacingV2Game(smartPacingV2Runtime.runtimeGameToken);
       smartPacingV2Runtime.gameIdentity = gameIdentity;
       smartPacingV2Runtime.runtimeGameToken = "";
       smartPacingV2Runtime.positionRevision = 0;

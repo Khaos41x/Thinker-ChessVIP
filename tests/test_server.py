@@ -215,9 +215,8 @@ try:
     print(f"  Tabuleiro: {board.fen()[:40]}...")
     print(f"  Peças: {len(board.piece_map())}")
     
-    # Configura skill para ELO 1500
-    app.configure_engine_strength(1500)
-    print("  Skill configurada para ELO 1500")
+    engine.configure({"Skill": 20})
+    print("  Perfil de referência configurado")
     
     # Analisa
     limit = chess.engine.Limit(depth=10, time=0.5)
@@ -273,20 +272,12 @@ try:
 except Exception as e:
     print(f"[ERRO] {e}")
 
-# Teste 8: Testar configure_engine_strength
-print("\n[TESTE 8] Testando configure_engine_strength...")
+# Teste 8: Verificar isolamento da política Elo
+print("\n[TESTE 8] Verificando isolamento da política Elo...")
 try:
-    for elo in [800, 1200, 1800, 2400, 3200]:
-        app.configure_engine_strength(elo)
-        print(f"  [OK] ELO {elo} configurado")
-    
-    # Verifica profundidade
-    for elo, expected_depth in [(600, 3), (1200, 8), (1800, 12), (2400, 16), (3000, 20), (3500, 24)]:
-        depth = app.get_target_depth(elo)
-        if depth == expected_depth:
-            print(f"  [OK] Profundidade ELO {elo}: {depth}")
-        else:
-            print(f"  [ERRO] Profundidade ELO {elo}: {depth} (esperado: {expected_depth})")
+    assert not hasattr(app, "get_target_depth")
+    assert not hasattr(app, "get_skill_level")
+    print("  [OK] Elo não controla Depth/Nodes e os helpers antigos foram removidos")
 except Exception as e:
     print(f"[ERRO] {e}")
 

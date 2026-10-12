@@ -167,6 +167,7 @@ class MovePlanResponse:
     status: str
     evidence: dict
     diagnostics: dict
+    calibration: dict
     schema_version: int = SCHEMA_VERSION
     evidence_model_version: int = EVIDENCE_MODEL_VERSION
 
@@ -191,4 +192,5 @@ class MovePlanResponse:
             "evidenceModelVersion": self.evidence_model_version,
             "evidence": dict(self.evidence),
             "diagnostics": dict(self.diagnostics),
+            "calibration": dict(self.calibration),
         }

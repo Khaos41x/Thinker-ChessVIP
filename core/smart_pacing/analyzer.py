@@ -3,6 +3,9 @@ from dataclasses import dataclass
 
 import chess
 
+from .calibration import CalibrationDecision, CalibrationMode
+from .coordinator import CancellationToken
+
 
 @dataclass(frozen=True)
 class CandidateLine:
@@ -25,6 +28,8 @@ class AnalysisSnapshot:
     shallow_elapsed_ms: int
     selection_elapsed_ms: int
     deep_elapsed_ms: int
+    calibration_status: str = "not_applied"
+    calibration_reason: str | None = None
 
 
 class EngineAnalyzer:
@@ -61,21 +66,51 @@ class EngineAnalyzer:
             )
         return tuple(candidates)
 
-    def analyze(self, adapter, board, request, deadline, token):
+    def analyze(
+        self,
+        adapter,
+        board,
+        request,
+        deadline,
+        token,
+        calibration: CalibrationDecision | None = None,
+    ):
         shallow_depth, deep_depth, multipv = self._TIERS[request.analysis_tier]
         legal_moves = list(board.legal_moves)
         shallow_started = self.monotonic()
         remaining = self._remaining_ms(deadline)
         if remaining <= 0:
             raise TimeoutError("deadline expired before shallow analysis")
-        shallow_raw = adapter.analyse_reference(
-            board,
-            depth=shallow_depth,
-            multipv=min(multipv, len(legal_moves)),
-            time_limit_ms=max(1, int(remaining * 0.38)),
-            root_moves=None,
-            token=token,
-        )
+        try:
+            adapter.prepare_reference(token, deadline)
+            remaining = self._remaining_ms(deadline)
+            if remaining <= 0:
+                raise TimeoutError("deadline expired during reference transition")
+            shallow_raw = adapter.analyse_reference(
+                board,
+                depth=shallow_depth,
+                multipv=min(multipv, len(legal_moves)),
+                time_limit_ms=max(1, int(remaining * 0.38)),
+                root_moves=None,
+                token=token,
+                deadline=deadline,
+            )
+        except Exception:
+            fallback = legal_moves[0].uci()
+            return AnalysisSnapshot(
+                shallow=(),
+                deep=(),
+                selected_move=fallback,
+                reference_best_move=fallback,
+                status="fallback",
+                fallback_reason="REFERENCE_PROFILE_UNAVAILABLE",
+                reason_codes=("ANALYSIS_PARTIAL", "REFERENCE_PROFILE_UNAVAILABLE"),
+                shallow_elapsed_ms=max(0, round((self.monotonic() - shallow_started) * 1000)),
+                selection_elapsed_ms=0,
+                deep_elapsed_ms=0,
+                calibration_status="not_applied",
+                calibration_reason="REFERENCE_PROFILE_UNAVAILABLE",
+            )
         shallow_elapsed_ms = max(0, round((self.monotonic() - shallow_started) * 1000))
         token.raise_if_cancelled()
         shallow = self._candidate_lines(shallow_raw, board.turn, board)
@@ -99,18 +134,39 @@ class EngineAnalyzer:
         reason_codes = []
         selection_started = self.monotonic()
         remaining = self._remaining_ms(deadline)
+        active_v2 = bool(calibration and calibration.mode is CalibrationMode.ACTIVE)
+        calibration_status = "shadow" if calibration and calibration.profile is not None else "not_applied"
+        calibration_reason = calibration.reason if calibration else "CALIBRATION_NOT_CONFIGURED"
         if remaining <= 0:
             fallback_reason = "SELECTOR_FALLBACK_NOT_STARTED"
         else:
             try:
-                selected = adapter.select_move(
-                    board,
-                    move_selection_elo=request.move_selection_elo,
-                    time_limit_ms=max(1, int(remaining * 0.35)),
-                    token=token,
-                )
+                if active_v2:
+                    if calibration.profile is None:
+                        fallback_reason = calibration.reason or "CALIBRATION_PROFILE_UNAVAILABLE"
+                        selected = None
+                    elif not calibration.profile.admits(remaining):
+                        fallback_reason = "CALIBRATION_BUDGET_NOT_ADMITTED"
+                        selected = None
+                    else:
+                        selected = adapter.select_calibrated_move(
+                            board,
+                            profile=calibration.profile,
+                            token=token,
+                            deadline=deadline,
+                        )
+                        calibration_status = "applied"
+                        calibration_reason = None
+                else:
+                    selected = adapter.select_move(
+                        board,
+                        move_selection_elo=request.move_selection_elo,
+                        time_limit_ms=max(1, int(remaining * 0.35)),
+                        token=token,
+                        deadline=deadline,
+                    )
                 if selected is None:
-                    fallback_reason = "SELECTOR_FALLBACK_FAILED"
+                    fallback_reason = fallback_reason or "SELECTOR_FALLBACK_FAILED"
                 elif selected not in board.legal_moves:
                     fallback_reason = "SELECTOR_FALLBACK_INVALID"
                 else:
@@ -125,6 +181,28 @@ class EngineAnalyzer:
         deep_started = self.monotonic()
         deep = ()
         status = "complete"
+        try:
+            adapter.restore_reference(CancellationToken(), deadline)
+        except Exception:
+            return AnalysisSnapshot(
+                shallow=shallow,
+                deep=(),
+                selected_move=reference_best,
+                reference_best_move=reference_best,
+                status="fallback",
+                fallback_reason="REFERENCE_RESTORE_FAILED",
+                reason_codes=tuple(
+                    dict.fromkeys(
+                        (*reason_codes, "ANALYSIS_PARTIAL", "REFERENCE_RESTORE_FAILED")
+                    )
+                ),
+                shallow_elapsed_ms=shallow_elapsed_ms,
+                selection_elapsed_ms=selection_elapsed_ms,
+                deep_elapsed_ms=max(0, round((self.monotonic() - deep_started) * 1000)),
+                calibration_status="not_applied",
+                calibration_reason="REFERENCE_RESTORE_FAILED",
+            )
+        token.raise_if_cancelled()
         remaining = self._remaining_ms(deadline)
         if request.analysis_tier == "survival" or remaining <= 1:
             status = "partial"
@@ -140,6 +218,7 @@ class EngineAnalyzer:
                     time_limit_ms=max(1, remaining - 1),
                     root_moves=root_moves,
                     token=token,
+                    deadline=deadline,
                 )
                 deep = self._candidate_lines(deep_raw, board.turn, board)
                 if not deep:
@@ -148,6 +227,11 @@ class EngineAnalyzer:
             except Exception:
                 status = "partial"
                 reason_codes.append("ANALYSIS_PARTIAL")
+        if fallback_reason:
+            status = "fallback"
+        if active_v2 and fallback_reason:
+            calibration_status = "not_applied"
+            calibration_reason = fallback_reason
         deep_elapsed_ms = max(0, round((self.monotonic() - deep_started) * 1000))
         return AnalysisSnapshot(
             shallow=shallow,
@@ -160,4 +244,6 @@ class EngineAnalyzer:
             shallow_elapsed_ms=shallow_elapsed_ms,
             selection_elapsed_ms=selection_elapsed_ms,
             deep_elapsed_ms=deep_elapsed_ms,
+            calibration_status=calibration_status,
+            calibration_reason=calibration_reason,
         )
