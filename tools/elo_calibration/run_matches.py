@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from hashlib import sha256
 from pathlib import Path
@@ -32,6 +33,7 @@ class EngineMove:
 
 
 class EngineAdapter(Protocol):
+    def identity(self) -> dict[str, str]: ...
     def configure(self, options: dict[str, object]) -> None: ...
     def new_game(self) -> None: ...
     def clear_hash(self) -> None: ...
@@ -45,6 +47,9 @@ class PythonChessUciAdapter:
         self._engine = chess.engine.SimpleEngine.popen_uci(executable)
         self._game: object = object()
         self._ponder = False
+
+    def identity(self) -> dict[str, str]:
+        return {str(key): str(value) for key, value in self._engine.id.items()}
 
     def configure(self, options: dict[str, object]) -> None:
         configured = dict(options)
@@ -177,6 +182,20 @@ def pair_to_bytes(record: PairRecord) -> bytes:
     return canonical_json_bytes({"checksum": content_sha256(payload), "payload": payload, "schema_version": 1})
 
 
+def parse_reference_engines(values: list[str]) -> dict[str, str]:
+    references: dict[str, str] = {}
+    for item in values:
+        if "=" not in item:
+            raise ValueError(f"invalid reference engine value: {item!r}; expected ID=PATH")
+        reference_id, path = item.split("=", 1)
+        if not reference_id or not path:
+            raise ValueError(f"invalid reference engine value: {item!r}; expected non-empty ID=PATH")
+        if reference_id in references:
+            raise ValueError(f"duplicate reference engine ID: {reference_id}")
+        references[reference_id] = path
+    return references
+
+
 def decode_plan(data: bytes) -> BenchmarkPlan:
     raw = load_json_bytes(data)
     required = {"baseline_nps", "cells", "concurrency", "confidence_version", "corpus_sha256", "decimal_precision", "estimator_version", "fit_version", "game_id_version", "hardware_fingerprint", "holdout_fraction", "interval_equivalence_elo", "inverse_convention", "isotonic_weight_version", "manifest_sha256", "maximum_color_score_difference", "maximum_nps_drift_fraction", "maximum_operational_failures", "max_plies", "minimum_pairs_per_cell", "move_time_ms", "numeric_serialization_version", "pair_id_version", "pchip_version", "point_equivalence_elo", "reference_binaries", "reference_options", "reference_protocol", "scale_id", "schema_version", "search_state_policy", "seed_schedule_version", "stopping_rule", "subject_binary_sha256", "subject_id", "subject_options", "tablebase_policy", "tool_versions", "validation_version"}
@@ -286,10 +305,21 @@ class PairedMatchRunner:
 
     def run(self, plan: BenchmarkPlan, output_dir: str | Path) -> tuple[PairRecord, ...]:
         root = Path(output_dir)
-        records: list[PairRecord] = []
+        completed: dict[str, PairRecord] = {}
+        pending: list[MatchCell] = []
+        expected_ids = {pair_id(plan, cell) for cell in plan.cells}
+        existing_json_ids = {path.stem for path in (root / "pairs").glob("*.json")}
+        existing_pgn_ids = {path.stem for path in (root / "pgn").glob("*.pgn")}
+        unexpected = sorted((existing_json_ids | existing_pgn_ids) - expected_ids)
+        if unexpected:
+            raise ValueError(f"unexpected pair output IDs: {unexpected}")
+        orphan_pgn = sorted(existing_pgn_ids - existing_json_ids)
+        if orphan_pgn:
+            raise ValueError(f"orphan pair PGN: {root / 'pgn' / (orphan_pgn[0] + '.pgn')}")
         for cell in plan.cells:
             expected = pair_id(plan, cell)
             json_path = root / "pairs" / f"{expected}.json"
+            pgn_path = root / "pgn" / f"{expected}.pgn"
             if json_path.exists():
                 existing_bytes = json_path.read_bytes()
                 existing = decode_pair(existing_bytes)
@@ -304,18 +334,36 @@ class PairedMatchRunner:
                     or pair_to_bytes(existing) != existing_bytes
                 ):
                     raise ValueError(f"conflicting pair record: {json_path}")
-                pgn_path = root / "pgn" / f"{expected}.pgn"
                 expected_pgn = self._pair_pgn(existing).encode("utf-8")
-                if not pgn_path.exists() or pgn_path.read_bytes() != expected_pgn:
-                    raise ValueError(f"missing or conflicting pair PGN: {pgn_path}")
-                records.append(existing)
+                if not pgn_path.exists():
+                    immutable_write(pgn_path, expected_pgn)
+                elif pgn_path.read_bytes() != expected_pgn:
+                    raise ValueError(f"conflicting pair PGN: {pgn_path}")
+                completed[expected] = existing
                 continue
+            pending.append(cell)
+
+        def execute(cell: MatchCell) -> PairRecord:
+            expected = pair_id(plan, cell)
             record = self.run_pair(plan, cell)
             pgn_bytes = self._pair_pgn(record).encode("utf-8")
+            immutable_write(root / "pairs" / f"{expected}.json", pair_to_bytes(record))
             immutable_write(root / "pgn" / f"{expected}.pgn", pgn_bytes)
-            immutable_write(json_path, pair_to_bytes(record))
-            records.append(record)
-        return tuple(records)
+            return record
+
+        if pending:
+            executor = ThreadPoolExecutor(max_workers=plan.concurrency, thread_name_prefix="elo-pair")
+            futures = [executor.submit(execute, cell) for cell in pending]
+            try:
+                for cell, future in zip(pending, futures):
+                    completed[pair_id(plan, cell)] = future.result()
+            except BaseException:
+                for future in futures:
+                    future.cancel()
+                raise
+            finally:
+                executor.shutdown(wait=True, cancel_futures=True)
+        return tuple(completed[pair_id(plan, cell)] for cell in plan.cells)
 
     @staticmethod
     def _pair_pgn(record: PairRecord) -> str:
@@ -344,11 +392,18 @@ def main() -> int:
     parser.add_argument("--subject-engine", required=True)
     parser.add_argument("--reference-engine", action="append", required=True, metavar="ID=PATH")
     args = parser.parse_args()
-    references = dict(item.split("=", 1) for item in args.reference_engine)
+    try:
+        references = parse_reference_engines(args.reference_engine)
+    except ValueError as error:
+        parser.error(str(error))
     plan = decode_plan(Path(args.plan).read_bytes())
-    missing = sorted({cell.reference_id for cell in plan.cells} - set(references))
+    required_references = {cell.reference_id for cell in plan.cells}
+    missing = sorted(required_references - set(references))
     if missing:
         parser.error(f"missing reference engine paths: {missing}")
+    unexpected = sorted(set(references) - required_references)
+    if unexpected:
+        parser.error(f"unexpected reference engine paths: {unexpected}")
     if _file_sha256(args.subject_engine) != plan.subject_binary_sha256:
         parser.error("subject engine hash does not match the benchmark plan")
     reference_hashes = dict(plan.reference_binaries)

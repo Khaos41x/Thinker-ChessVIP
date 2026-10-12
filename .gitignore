@@ -9,6 +9,10 @@ users.db
 # Engine (binário grande, fornecido localmente)
 engine/
 
+# Elo calibration assets and generated campaigns
+benchmark-assets/
+benchmark-runs/
+
 # Node / opencode local
 node_modules/
 .opencode/node_modules/

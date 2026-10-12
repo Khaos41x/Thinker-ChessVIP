@@ -171,7 +171,13 @@ def validate_artifact(
     holdout_skills = {estimate.skill for estimate in holdout_estimates}
     if holdout_skills != set(range(26)):
         reasons.append("holdout Skill coverage gate failed")
-    if any(estimate.pair_count < gates.minimum_pairs_per_cell for estimate in holdout_estimates):
+    completed_by_cell: dict[tuple[int, str, float], int] = {}
+    for record in all_records:
+        key = (record.skill, record.reference_id, record.reference_rating)
+        completed_by_cell.setdefault(key, 0)
+        if record.estimable:
+            completed_by_cell[key] += 1
+    if any(count < gates.minimum_pairs_per_cell for count in completed_by_cell.values()):
         reasons.append("minimum completed pairs gate failed")
     if max_point is None or max_point > gates.point_equivalence_elo:
         reasons.append("point equivalence gate failed")

@@ -71,13 +71,36 @@ class ValidateTests(unittest.TestCase):
             training,
             tuple(holdout),
             config(),
-            ValidationGates(0.2, 1.0, 1.0, 3, 200000.0, 0.01, 1.0),
+            ValidationGates(0.2, 1.0, 1.0, 4, 200000.0, 0.01, 1.0),
             "owner",
         )
         self.assertFalse(report.passed)
         self.assertIn("minimum completed pairs gate failed", report.reasons)
         self.assertIn("interval equivalence gate failed", report.reasons)
         self.assertIn("NPS drift gate failed", report.reasons)
+
+    def test_minimum_pairs_gate_counts_combined_pairs_per_exact_cell(self) -> None:
+        training = tuple(pair(skill, f"train-overall-{skill}") for skill in range(26))
+        holdout = tuple(pair(skill, f"holdout-overall-{skill}") for skill in range(26))
+        artifact, _ = build_artifact_from_estimates(estimate_cells(training), config())
+        report, _ = validate_artifact(
+            artifact_to_bytes(artifact),
+            training,
+            holdout,
+            config(),
+            ValidationGates(0.2, 1.0, 1000.0, 2, 100000.0, 0.01, 0.0),
+            "owner",
+        )
+        self.assertTrue(report.passed, report.reasons)
+        failed, _ = validate_artifact(
+            artifact_to_bytes(artifact),
+            training,
+            holdout,
+            config(),
+            ValidationGates(0.2, 1.0, 1000.0, 3, 100000.0, 0.01, 0.0),
+            "owner",
+        )
+        self.assertIn("minimum completed pairs gate failed", failed.reasons)
 
     def test_manifest_overlap_and_holdout_coverage_fail_closed(self) -> None:
         training = tuple(pair(skill, f"train-contract-{skill}") for skill in range(26))

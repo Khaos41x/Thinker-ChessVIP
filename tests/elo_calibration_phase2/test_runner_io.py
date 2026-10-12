@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 import tempfile
+import threading
+import time
 import unittest
 from dataclasses import replace
 from pathlib import Path
+from unittest.mock import patch
 
 from tools.elo_calibration.io import canonical_json_bytes, load_json_bytes, write_canonical_json
 from tools.elo_calibration.models import BenchmarkPlan, MatchCell
-from tools.elo_calibration.run_matches import EngineMove, PairedMatchRunner, decode_plan, pair_id
+from tools.elo_calibration.run_matches import EngineMove, PairedMatchRunner, decode_plan, pair_id, parse_reference_engines
 
 
 class FakeAdapter:
@@ -96,6 +99,20 @@ class RunnerIoTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "conflicting pair PGN"):
                 runner.run(self.plan, directory)
 
+    def test_resume_repairs_missing_pgn_but_rejects_orphan(self) -> None:
+        runner = PairedMatchRunner(lambda skill: FakeAdapter(), lambda reference: FakeAdapter())
+        with tempfile.TemporaryDirectory(dir=Path.cwd()) as directory:
+            expected = runner.run(self.plan, directory)
+            pgn_path = next((Path(directory) / "pgn").glob("*.pgn"))
+            pgn_path.unlink()
+            FakeAdapter.calls = []
+            self.assertEqual(runner.run(self.plan, directory), expected)
+            self.assertEqual(FakeAdapter.calls, [])
+            json_path = next((Path(directory) / "pairs").glob("*.json"))
+            json_path.unlink()
+            with self.assertRaisesRegex(ValueError, "orphan pair PGN"):
+                runner.run(self.plan, directory)
+
     def test_duplicate_schedule_and_invalid_fen_fail_preflight(self) -> None:
         with self.assertRaisesRegex(ValueError, "duplicate cells"):
             replace(self.plan, cells=(self.cell, self.cell))
@@ -118,6 +135,88 @@ class RunnerIoTests(unittest.TestCase):
             baseline,
             pair_id(replace(self.plan, move_time_ms=11), self.cell),
         )
+
+    def test_concurrency_is_bounded_and_reference_cli_is_strict(self) -> None:
+        replace(self.plan, concurrency=4)
+        with self.assertRaisesRegex(ValueError, "concurrency"):
+            replace(self.plan, concurrency=5)
+        with self.assertRaisesRegex(ValueError, "Threads=1"):
+            replace(self.plan, subject_options=(("Threads", 2), ("Hash", 32), ("MultiPV", 1), ("Ponder", False)))
+        self.assertEqual(parse_reference_engines(["one=C:/one.exe", "two=C:/two.exe"])["two"], "C:/two.exe")
+        with self.assertRaisesRegex(ValueError, "duplicate"):
+            parse_reference_engines(["one=C:/one.exe", "one=C:/other.exe"])
+
+    def test_concurrent_run_preserves_manifest_order_and_prevalidates_resume(self) -> None:
+        class ConcurrentAdapter(FakeAdapter):
+            lock = threading.Lock()
+            active = 0
+            peak = 0
+
+            def play(self, board, move_time_ms):
+                with self.lock:
+                    type(self).active += 1
+                    type(self).peak = max(type(self).peak, type(self).active)
+                time.sleep(0.02)
+                try:
+                    return super().play(board, move_time_ms)
+                finally:
+                    with self.lock:
+                        type(self).active -= 1
+
+        cells = tuple(replace(self.cell, opening_id=f"opening-{index}") for index in range(6))
+        plan = replace(self.plan, concurrency=4, cells=cells)
+        runner = PairedMatchRunner(lambda skill: ConcurrentAdapter(), lambda reference: ConcurrentAdapter())
+        with tempfile.TemporaryDirectory(dir=Path.cwd()) as directory:
+            records = runner.run(plan, directory)
+            self.assertEqual(tuple(record.opening_id for record in records), tuple(cell.opening_id for cell in cells))
+            self.assertGreaterEqual(ConcurrentAdapter.peak, 2)
+            self.assertLessEqual(ConcurrentAdapter.peak, 4)
+            first_json = Path(directory) / "pairs" / f"{pair_id(plan, cells[0])}.json"
+            raw = load_json_bytes(first_json.read_bytes())
+            raw["payload"]["skill"] = 4
+            write_canonical_json(first_json, raw)
+            last_json = Path(directory) / "pairs" / f"{pair_id(plan, cells[-1])}.json"
+            last_pgn = Path(directory) / "pgn" / f"{pair_id(plan, cells[-1])}.pgn"
+            last_json.unlink()
+            last_pgn.unlink()
+            FakeAdapter.calls = []
+            with self.assertRaisesRegex(ValueError, "checksum mismatch"):
+                runner.run(plan, directory)
+            self.assertEqual(FakeAdapter.calls, [])
+
+    def test_fatal_worker_exception_cancels_pending_futures(self) -> None:
+        class Future:
+            def __init__(self, fail=False):
+                self.fail = fail
+                self.cancelled = False
+            def result(self):
+                if self.fail:
+                    raise RuntimeError("persist failed")
+                return None
+            def cancel(self):
+                self.cancelled = True
+                return True
+
+        class Executor:
+            instance = None
+            def __init__(self, **kwargs):
+                type(self).instance = self
+                self.futures = []
+                self.shutdown_args = None
+            def submit(self, function, cell):
+                future = Future(fail=not self.futures)
+                self.futures.append(future)
+                return future
+            def shutdown(self, **kwargs):
+                self.shutdown_args = kwargs
+
+        plan = replace(self.plan, cells=(self.cell, replace(self.cell, opening_id="opening-2")))
+        runner = PairedMatchRunner(lambda skill: FakeAdapter(), lambda reference: FakeAdapter())
+        with tempfile.TemporaryDirectory(dir=Path.cwd()) as directory, patch("tools.elo_calibration.run_matches.ThreadPoolExecutor", Executor):
+            with self.assertRaisesRegex(RuntimeError, "persist failed"):
+                runner.run(plan, directory)
+        self.assertTrue(all(future.cancelled for future in Executor.instance.futures))
+        self.assertEqual(Executor.instance.shutdown_args, {"wait": True, "cancel_futures": True})
 
 
 if __name__ == "__main__":

@@ -53,7 +53,7 @@ print(canonical_json_bytes(proof).hex())
         self.assertEqual(outputs[0], outputs[1])
 
     def test_all_cli_modules_have_offline_help(self) -> None:
-        for module in ("run_matches", "estimate", "fit_curve", "validate"):
+        for module in ("run_matches", "estimate", "fit_curve", "validate", "prepare_benchmark", "preflight"):
             completed = subprocess.run(
                 [sys.executable, "-m", f"tools.elo_calibration.{module}", "--help"],
                 capture_output=True,

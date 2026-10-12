@@ -117,8 +117,8 @@ class BenchmarkPlan:
             _digest(digest, "reference_binaries.sha256")
         if any(isinstance(v, bool) or not isinstance(v, int) or v <= 0 for v in (self.move_time_ms, self.max_plies, self.concurrency)):
             raise ValueError("move_time_ms, max_plies, and concurrency must be positive integers")
-        if self.concurrency != 1:
-            raise ValueError("the python-chess runner supports concurrency=1")
+        if not 1 <= self.concurrency <= 4:
+            raise ValueError("concurrency must be in [1, 4]")
         if not isinstance(self.cells, tuple) or not self.cells or not all(isinstance(c, MatchCell) for c in self.cells):
             raise ValueError("cells must be a non-empty immutable tuple")
         if len(set(self.cells)) != len(self.cells):
@@ -197,8 +197,8 @@ class BenchmarkPlan:
         required_subject = {"Threads", "Hash", "MultiPV", "Ponder"}
         if required_subject - set(subject):
             raise ValueError("subject_options is missing required fixed options")
-        if subject["MultiPV"] != 1 or subject["Ponder"] is not False:
-            raise ValueError("subject_options requires MultiPV=1 and Ponder=false")
+        if subject["Threads"] != 1 or subject["MultiPV"] != 1 or subject["Ponder"] is not False:
+            raise ValueError("subject_options requires Threads=1, MultiPV=1, and Ponder=false")
         if any(isinstance(subject[name], bool) or not isinstance(subject[name], int) or subject[name] <= 0 for name in ("Threads", "Hash")):
             raise ValueError("subject Threads and Hash must be positive integers")
         forbidden = {"skill", "depth", "nodes", "movetime"}
@@ -217,8 +217,8 @@ class BenchmarkPlan:
             fixed = dict(options)
             if {"Threads", "Hash", "MultiPV", "Ponder"} - set(fixed):
                 raise ValueError("reference options are missing required fixed options")
-            if fixed["MultiPV"] != 1 or fixed["Ponder"] is not False:
-                raise ValueError("reference options require MultiPV=1 and Ponder=false")
+            if fixed["Threads"] != 1 or fixed["MultiPV"] != 1 or fixed["Ponder"] is not False:
+                raise ValueError("reference options require Threads=1, MultiPV=1, and Ponder=false")
             if any(isinstance(fixed[name], bool) or not isinstance(fixed[name], int) or fixed[name] <= 0 for name in ("Threads", "Hash")):
                 raise ValueError("reference Threads and Hash must be positive integers")
             if {"depth", "nodes", "movetime"} & {name.casefold() for name in fixed}:
