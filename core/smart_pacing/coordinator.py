@@ -3,6 +3,8 @@ import time
 from dataclasses import dataclass
 from typing import Any, Callable, Protocol
 
+from core.elo_calibration.telemetry import NoopEngineTelemetry
+
 
 class CoordinatorError(RuntimeError):
     pass
@@ -61,6 +63,8 @@ class EngineJob:
     kind: str
     runtime_game_token: str | None = None
     position_revision: int | None = None
+    target_elo: int | None = None
+    applied_skill: int | None = None
 
 
 @dataclass(frozen=True)
@@ -79,10 +83,20 @@ class _Admission:
 
 
 class EngineCoordinator:
-    def __init__(self, adapter: EngineAdapter, *, cancellation_grace_ms=250, monotonic=time.monotonic):
+    def __init__(
+        self,
+        adapter: EngineAdapter,
+        *,
+        cancellation_grace_ms=250,
+        monotonic=time.monotonic,
+        telemetry=None,
+        slot="0",
+    ):
         self.adapter = adapter
         self.cancellation_grace_ms = max(0, int(cancellation_grace_ms))
         self.monotonic = monotonic
+        self.telemetry = telemetry or NoopEngineTelemetry()
+        self.slot = str(slot)
         self._engine_lock = threading.Lock()
         self._registry_lock = threading.Lock()
         self._latest_revision = {}
@@ -171,12 +185,19 @@ class EngineCoordinator:
         if previous_owned_lease:
             self._stop_if_owner(previous)
         acquired = False
+        slot_started = False
         try:
             self._acquire(deadline, previous if previous_owned_lease else None)
             acquired = True
             with self._registry_lock:
                 admission.owns_lease = True
                 self._lease_owner = admission
+            self.telemetry.begin_slot(
+                slot=self.slot,
+                target_elo=job.target_elo,
+                applied_skill=job.applied_skill,
+            )
+            slot_started = True
             admitted_at = self.monotonic()
             admission.token.raise_if_cancelled()
             if admitted_at >= deadline:
@@ -192,7 +213,16 @@ class EngineCoordinator:
                 queue_elapsed_ms=max(0, round((admitted_at - started) * 1000)),
                 total_elapsed_ms=max(0, round((finished - started) * 1000)),
             )
+        except CoordinatorDeadlineExceeded:
+            self.telemetry.record_timeout("unknown")
+            raise
+        except Exception:
+            self.telemetry.record_failure("coordinator")
+            raise
         finally:
+            if slot_started:
+                self.telemetry.end_slot(slot=self.slot)
+            self.telemetry.set_engine_status("ready" if self.adapter.ready else "degraded")
             if acquired:
                 with self._registry_lock:
                     admission.owns_lease = False

@@ -15,23 +15,24 @@ import logging
 import subprocess
 import itertools
 import hashlib
+from decimal import Decimal, InvalidOperation
 
 sys.stdout.reconfigure(encoding='utf-8')
 
 import chess
 import chess.engine
 import psutil
-from flask import Flask, request, jsonify
+from flask import Flask, Response, request, jsonify
 from flask_cors import CORS
 from flask_socketio import SocketIO
 
 from core.smart_pacing.adapter import KomodoEngineAdapter
-from core.smart_pacing.calibration import CalibrationMode, CalibrationRuntime
+from core.smart_pacing.calibration import CalibrationMode, CalibrationRuntime, RolloutPolicy
 from core.smart_pacing.contracts import ContractValidationError, MovePlanRequest
 from core.smart_pacing.coordinator import CoordinatorDeadlineExceeded, EngineCoordinator, EngineJob
 from core.smart_pacing.security import CapabilityStore, SlidingWindowRateLimiter, require_engine_capability
 from core.smart_pacing.service import MovePlanService
-from core.elo_calibration import EloCalibrator, load_artifact
+from core.elo_calibration import EloCalibrator, EngineTelemetry, load_artifact
 
 app = Flask(__name__)
 CORS(app)
@@ -48,6 +49,14 @@ engine_api_auth = require_engine_capability(
     allowed_origins={"https://www.chess.com", "https://chess.com"},
     rate_limiter=SlidingWindowRateLimiter(limit=240, window_seconds=60),
 )
+metrics_auth = require_engine_capability(
+    capability_store,
+    allowed_origins={"https://www.chess.com", "https://chess.com"},
+    rate_limiter=SlidingWindowRateLimiter(limit=120, window_seconds=60),
+    max_payload_bytes=1024,
+    concurrency_limit=2,
+)
+engine_telemetry = EngineTelemetry()
 
 
 class Colors:
@@ -337,6 +346,8 @@ def cleanup_stale_komodo(engine_path):
 
 
 class KomodoSingleton:
+    records_restart_metrics = True
+
     _instance = None
     _instance_lock = threading.Lock()
 
@@ -356,6 +367,8 @@ class KomodoSingleton:
         self._generation = 0
         self._ready = False
         self.expected_binary_sha256 = None
+        self._last_search_stats = {}
+        self._last_search_error = None
         self._initialized = True
 
     @property
@@ -375,6 +388,16 @@ class KomodoSingleton:
                 return self._engine.transport.get_pid()
             except (AttributeError, OSError):
                 return None
+
+    @property
+    def last_search_stats(self):
+        with self._lock:
+            return dict(self._last_search_stats)
+
+    @property
+    def last_search_error(self):
+        with self._lock:
+            return self._last_search_error
 
     @staticmethod
     def _remaining_timeout(deadline):
@@ -416,6 +439,7 @@ class KomodoSingleton:
         self._engine = instance
         self._generation += 1
         self._ready = True
+        engine_telemetry.set_engine_status("ready")
 
     def _restart_locked(self, deadline=None):
         previous = self._engine
@@ -426,6 +450,7 @@ class KomodoSingleton:
                 previous.close()
             except Exception:
                 pass
+        engine_telemetry.record_restart("engine_failure")
         self._start_locked(deadline)
 
     def _clear_hash_locked(self, deadline=None):
@@ -463,6 +488,8 @@ class KomodoSingleton:
         deadline=None,
     ):
         with self._lock:
+            self._last_search_stats = {}
+            self._last_search_error = None
             attempts = 2 if allow_retry else 1
             for attempt in range(attempts):
                 try:
@@ -482,8 +509,21 @@ class KomodoSingleton:
                         deadline,
                         reserved_time=limit.time or 0.0,
                     )
-                    return result if isinstance(result, list) else [result]
+                    lines = result if isinstance(result, list) else [result]
+                    pairs = []
+                    for line in lines:
+                        if not isinstance(line, dict):
+                            continue
+                        nodes = line.get("nodes")
+                        seconds = line.get("time")
+                        if isinstance(nodes, int) and not isinstance(nodes, bool) and nodes >= 0 and isinstance(seconds, (int, float)) and not isinstance(seconds, bool) and seconds > 0:
+                            pairs.append((nodes, float(seconds)))
+                    if pairs:
+                        nodes, seconds = max(pairs, key=lambda pair: pair[0])
+                        self._last_search_stats = {"nodes": nodes, "time": seconds}
+                    return lines
                 except Exception as error:
+                    self._last_search_error = error
                     self._ready = False
                     Log.warning(f"Komodo indisponivel; reiniciando ({attempt + 1}/{attempts}): {error}")
                     if not allow_retry:
@@ -497,6 +537,8 @@ class KomodoSingleton:
 
     def play(self, board, limit, skill_level, allow_retry=True, deadline=None):
         with self._lock:
+            self._last_search_stats = {}
+            self._last_search_error = None
             attempts = 2 if allow_retry else 1
             for attempt in range(attempts):
                 try:
@@ -507,14 +549,20 @@ class KomodoSingleton:
                             deadline,
                         )
                     result = self._bounded_engine_call(
-                        lambda: self._engine.play(board, limit),
+                        lambda: self._engine.play(board, limit, info=chess.engine.INFO_BASIC),
                         deadline,
                         reserved_time=limit.time or 0.0,
                     )
                     if result.move is None or result.move not in board.legal_moves:
                         raise chess.engine.EngineError("Komodo retornou um lance invalido")
+                    info = result.info if isinstance(result.info, dict) else {}
+                    nodes = info.get("nodes")
+                    seconds = info.get("time")
+                    if isinstance(nodes, int) and not isinstance(nodes, bool) and nodes >= 0 and isinstance(seconds, (int, float)) and not isinstance(seconds, bool) and seconds > 0:
+                        self._last_search_stats = {"nodes": nodes, "time": float(seconds)}
                     return result.move
                 except Exception as error:
+                    self._last_search_error = error
                     self._ready = False
                     Log.warning(f"Komodo indisponivel; reiniciando ({attempt + 1}/{attempts}): {error}")
                     if not allow_retry:
@@ -535,11 +583,13 @@ class KomodoSingleton:
         except Exception:
             pass
 
-    def force_terminate(self):
+    def force_terminate(self, restart_reason="engine_failure"):
         current = self._engine
         self._engine = None
         self._ready = False
         self._generation += 1
+        engine_telemetry.record_restart(restart_reason)
+        engine_telemetry.set_engine_status("degraded")
         if current is None:
             return
         try:
@@ -555,6 +605,7 @@ class KomodoSingleton:
             current = self._engine
             self._engine = None
             self._ready = False
+            engine_telemetry.set_engine_status("degraded")
             if current is not None:
                 try:
                     current.close()
@@ -584,23 +635,51 @@ def initialize_engine():
     Log.success("Komodo ONLINE!", data={"Threads": 1, "Hash": "128MB", "Skill": 20})
     Log.success("Warmup completo!")
 
-engine_adapter = KomodoEngineAdapter(komodo)
-engine_coordinator = EngineCoordinator(engine_adapter)
+engine_adapter = KomodoEngineAdapter(komodo, telemetry=engine_telemetry)
+engine_coordinator = EngineCoordinator(engine_adapter, telemetry=engine_telemetry)
+engine_telemetry.set_engine_status("degraded")
 
 
-def build_calibration_runtime():
-    active = os.environ.get("THINKER_ELO_CALIBRATION_ACTIVE", "").strip().casefold() in {
+def build_rollout_policy():
+    legacy_active = os.environ.get("THINKER_ELO_CALIBRATION_ACTIVE", "").strip().casefold() in {
         "1",
         "true",
         "yes",
         "on",
     }
-    mode = CalibrationMode.ACTIVE if active else CalibrationMode.SHADOW
+    raw_mode = os.environ.get("THINKER_ELO_CALIBRATION_MODE", "").strip().casefold()
+    try:
+        mode = CalibrationMode(raw_mode) if raw_mode else (
+            CalibrationMode.ACTIVE if legacy_active else CalibrationMode.SHADOW
+        )
+        raw_percent = os.environ.get("THINKER_ELO_CALIBRATION_CANARY_PERCENT", "0").strip()
+        percent = Decimal(raw_percent or "0")
+        if not percent.is_finite() or percent < 0 or percent > 100:
+            raise ValueError("canary percent must be between 0 and 100")
+        basis_points = int(percent * 100)
+        if percent != Decimal(basis_points) / 100:
+            raise ValueError("canary percent supports at most two decimal places")
+        explicit_keys = frozenset(
+            key.strip()
+            for key in os.environ.get("THINKER_ELO_CALIBRATION_CANARY_KEYS", "").split(",")
+            if key.strip()
+        )
+        return RolloutPolicy(mode, basis_points, explicit_keys)
+    except (InvalidOperation, ValueError):
+        engine_telemetry.record_failure("configuration")
+        return RolloutPolicy(CalibrationMode.SHADOW)
+
+
+def build_calibration_runtime():
+    rollout_policy = build_rollout_policy()
+    mode = rollout_policy.mode
     artifact_path = os.environ.get("THINKER_ELO_CALIBRATION_ARTIFACT", "").strip()
     if not artifact_path:
         return CalibrationRuntime(
             None,
             mode=mode,
+            rollout_policy=rollout_policy,
+            telemetry=engine_telemetry,
             active_game_predicate=engine_coordinator.is_game_active,
         )
     try:
@@ -608,19 +687,29 @@ def build_calibration_runtime():
         calibrator = EloCalibrator(load_artifact(artifact_path), digest)
         komodo.expected_binary_sha256 = digest
         payload = calibrator.artifact.payload
+        engine_telemetry.set_artifact(
+            version=payload.artifact_version,
+            scale_id=payload.scale.scale_id,
+            budget_class=payload.search_policy.budget_class,
+        )
         return CalibrationRuntime(
             calibrator,
             mode=mode,
             default_scale_id=os.environ.get("THINKER_ELO_SCALE_ID") or payload.scale.scale_id,
             budget_class=os.environ.get("THINKER_ELO_BUDGET_CLASS") or payload.search_policy.budget_class,
+            rollout_policy=rollout_policy,
+            telemetry=engine_telemetry,
             active_game_predicate=engine_coordinator.is_game_active,
         )
     except Exception as error:
+        engine_telemetry.record_failure("invalid_artifact")
         Log.warning(f"Calibracao Elo V2 indisponivel: {type(error).__name__}")
         return CalibrationRuntime(
             None,
             mode=mode,
             unavailable_reason=f"CALIBRATION_{type(error).__name__.upper()}",
+            rollout_policy=rollout_policy,
+            telemetry=engine_telemetry,
             active_game_predicate=engine_coordinator.is_game_active,
         )
 
@@ -654,8 +743,44 @@ move_plan_service = MovePlanService(
     engine_coordinator,
     book_lookup=get_book,
     calibration=calibration_runtime,
+    telemetry=engine_telemetry,
 )
 _legacy_job_ids = itertools.count(1)
+
+
+def _legacy_search(operation):
+    started = time.monotonic()
+    try:
+        result = operation()
+    except Exception as error:
+        status = "timeout" if isinstance(error, TimeoutError) else "error"
+        engine_telemetry.record_search(
+            slot="0",
+            stage="legacy",
+            status=status,
+            duration_seconds=max(0.0, time.monotonic() - started),
+        )
+        if isinstance(error, TimeoutError):
+            engine_telemetry.record_timeout("legacy")
+        else:
+            engine_telemetry.record_failure("search")
+        raise
+    error = komodo.last_search_error
+    stats = komodo.last_search_stats
+    status = "timeout" if isinstance(error, TimeoutError) else "error" if error or result is None else "ok"
+    engine_telemetry.record_search(
+        slot="0",
+        stage="legacy",
+        status=status,
+        duration_seconds=max(0.0, time.monotonic() - started),
+        nodes=stats.get("nodes"),
+        engine_seconds=stats.get("time"),
+    )
+    if isinstance(error, TimeoutError):
+        engine_telemetry.record_timeout("legacy")
+    elif error is not None:
+        engine_telemetry.record_failure("search")
+    return result
 
 
 def play_with_recovery(board, skill_level, limit):
@@ -665,7 +790,7 @@ def play_with_recovery(board, skill_level, limit):
         budget_ms,
         lambda adapter, _deadline, token: (
             token.raise_if_cancelled(),
-            adapter.komodo.play(board, limit, skill_level),
+            _legacy_search(lambda: adapter.komodo.play(board, limit, skill_level)),
         )[1],
     )
     return result.value
@@ -678,7 +803,7 @@ def analyse_with_recovery(board, limit, **kwargs):
         budget_ms,
         lambda adapter, _deadline, token: (
             token.raise_if_cancelled(),
-            adapter.komodo.analyse(board, limit, **kwargs),
+            _legacy_search(lambda: adapter.komodo.analyse(board, limit, **kwargs)),
         )[1],
     )
     return result.value
@@ -1277,6 +1402,12 @@ def health():
         "engineGeneration": engine_coordinator.generation,
         "cache": len(cache),
     })
+
+
+@app.route("/metrics", methods=["GET"])
+@metrics_auth
+def metrics():
+    return Response(engine_telemetry.render(), content_type=engine_telemetry.content_type)
 
 def print_pairing_instructions():
     capability = capability_store.ensure()

@@ -1,5 +1,5 @@
 from .contracts import ContractValidationError, MovePlanRequest, MovePlanResponse
-from .calibration import CalibrationDecision, CalibrationMode, CalibrationRuntime
+from .calibration import CalibrationDecision, CalibrationMode, CalibrationRuntime, RolloutPolicy
 from .coordinator import (
     CancellationToken,
     CoordinatorDeadlineExceeded,
@@ -14,6 +14,7 @@ __all__ = [
     "CalibrationDecision",
     "CalibrationMode",
     "CalibrationRuntime",
+    "RolloutPolicy",
     "ContractValidationError",
     "CoordinatorDeadlineExceeded",
     "CoordinatorObsolete",

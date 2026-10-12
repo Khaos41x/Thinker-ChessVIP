@@ -92,6 +92,8 @@ class MovePlanRequest:
     client_budget_ms: int
     analysis_budget_version: int
     evidence_model_version: int
+    move_selection_elo_clamped: bool = False
+    perception_elo_clamped: bool = False
 
     @classmethod
     def from_payload(cls, raw_payload):
@@ -136,6 +138,8 @@ class MovePlanRequest:
             minimum=EVIDENCE_MODEL_VERSION,
             maximum=EVIDENCE_MODEL_VERSION,
         )
+        clamped_move_selection_elo = max(600, min(3200, move_selection_elo))
+        clamped_perception_elo = max(600, min(3200, perception_elo))
         return cls(
             schema_version=schema_version,
             request_id=request_id,
@@ -146,12 +150,14 @@ class MovePlanRequest:
             fen=normalized_fen,
             last_move=last_move,
             history_digest=history_digest,
-            move_selection_elo=max(600, min(3200, move_selection_elo)),
-            perception_elo=max(600, min(3200, perception_elo)),
+            move_selection_elo=clamped_move_selection_elo,
+            perception_elo=clamped_perception_elo,
             analysis_tier=analysis_tier,
             client_budget_ms=max(25, min(5_000, raw_budget)),
             analysis_budget_version=analysis_budget_version,
             evidence_model_version=evidence_model_version,
+            move_selection_elo_clamped=clamped_move_selection_elo != move_selection_elo,
+            perception_elo_clamped=clamped_perception_elo != perception_elo,
         )
 
 

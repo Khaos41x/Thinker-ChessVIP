@@ -83,6 +83,8 @@ class EngineAnalyzer:
             raise TimeoutError("deadline expired before shallow analysis")
         try:
             adapter.prepare_reference(token, deadline)
+            if hasattr(adapter, "set_reference_stage"):
+                adapter.set_reference_stage("reference_shallow")
             remaining = self._remaining_ms(deadline)
             if remaining <= 0:
                 raise TimeoutError("deadline expired during reference transition")
@@ -211,6 +213,8 @@ class EngineAnalyzer:
             root_uci = list(dict.fromkeys([line.move for line in shallow] + [selected_move]))
             root_moves = [chess.Move.from_uci(move) for move in root_uci]
             try:
+                if hasattr(adapter, "set_reference_stage"):
+                    adapter.set_reference_stage("reference_deep")
                 deep_raw = adapter.analyse_reference(
                     board,
                     depth=deep_depth,

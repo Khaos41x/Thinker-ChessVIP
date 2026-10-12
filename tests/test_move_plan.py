@@ -18,6 +18,7 @@ os.environ["THINKER_CAPABILITY_TOKEN"] = TEST_CAPABILITY
 AUTH_HEADERS = {"Authorization": f"Bearer {TEST_CAPABILITY}"}
 
 from core.smart_pacing.cache import BoundedPlanCache
+from core.smart_pacing.calibration import CalibrationMode
 from core.smart_pacing.contracts import ContractValidationError, MovePlanRequest
 from core.smart_pacing.coordinator import CoordinatorObsolete, EngineCoordinator, EngineJob
 from core.smart_pacing.identities import (
@@ -531,6 +532,38 @@ class MovePlanEndpointTests(unittest.TestCase):
 
 
 class CapabilitySecurityTests(unittest.TestCase):
+    def test_metrics_requires_loopback_bearer_and_exposes_prometheus(self):
+        client = server_app.app.test_client()
+        missing = client.get("/metrics")
+        remote = client.get(
+            "/metrics",
+            headers=AUTH_HEADERS,
+            environ_base={"REMOTE_ADDR": "10.0.0.8"},
+        )
+        authorized = client.get("/metrics", headers=AUTH_HEADERS)
+
+        self.assertEqual(missing.status_code, 401)
+        self.assertEqual(remote.status_code, 403)
+        self.assertEqual(remote.get_json(), {"error": "loopback_required"})
+        self.assertEqual(authorized.status_code, 200)
+        self.assertTrue(authorized.content_type.startswith("text/plain"))
+        self.assertIn(b"thinker_engine_search_nodes_total", authorized.data)
+        self.assertNotIn(TEST_CAPABILITY.encode("utf-8"), authorized.data)
+
+    def test_invalid_rollout_configuration_fails_to_shadow(self):
+        with patch.dict(
+            os.environ,
+            {
+                "THINKER_ELO_CALIBRATION_MODE": "canary",
+                "THINKER_ELO_CALIBRATION_CANARY_PERCENT": "100.001",
+            },
+            clear=False,
+        ):
+            policy = server_app.build_rollout_policy()
+
+        self.assertEqual(policy.mode, CalibrationMode.SHADOW)
+        self.assertEqual(policy.canary_basis_points, 0)
+
     def test_protected_endpoint_requires_bearer_capability(self):
         client = server_app.app.test_client()
         protected_requests = (

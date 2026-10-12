@@ -36,6 +36,7 @@ from .models import (
     Side,
     SkillResolution,
 )
+from .telemetry import EngineTelemetry, NoopEngineTelemetry
 
 __all__ = [
     "ArtifactChecksumMismatch",
@@ -52,9 +53,11 @@ __all__ = [
     "EngineIdentity",
     "EngineIdentityMismatch",
     "EngineProfile",
+    "EngineTelemetry",
     "ExperimentManifest",
     "InjectedUciFailure",
     "PchipSegment",
+    "NoopEngineTelemetry",
     "ScriptedSearchResult",
     "SearchLimit",
     "SearchPolicy",

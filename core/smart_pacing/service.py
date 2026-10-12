@@ -4,6 +4,7 @@ import logging
 import chess
 
 from core.elo_calibration import Side
+from core.elo_calibration.telemetry import NoopEngineTelemetry
 
 from .analyzer import EngineAnalyzer
 from .cache import BoundedPlanCache
@@ -25,6 +26,7 @@ class MovePlanService:
         calibration=None,
         monotonic=time.monotonic,
         logger=None,
+        telemetry=None,
     ):
         self.coordinator = coordinator
         self.book_lookup = book_lookup or (lambda _fen: None)
@@ -33,6 +35,7 @@ class MovePlanService:
         self.calibration = calibration or CalibrationRuntime(None)
         self.monotonic = monotonic
         self.logger = logger or logging.getLogger(__name__)
+        self.telemetry = telemetry or NoopEngineTelemetry()
 
     def _plan_cache_key(self, request, calibration):
         return contextual_plan_cache_key(
@@ -66,6 +69,10 @@ class MovePlanService:
 
     def create_plan(self, request):
         started = self.monotonic()
+        if request.move_selection_elo_clamped:
+            self.telemetry.record_clamp("move_selection_elo")
+        if request.perception_elo_clamped:
+            self.telemetry.record_clamp("perception_elo")
         board = chess.Board(request.fen)
         side = Side.WHITE if board.turn == chess.WHITE else Side.BLACK
         calibration = self.calibration.resolve(
@@ -155,6 +162,12 @@ class MovePlanService:
             kind="move-plan",
             runtime_game_token=request.runtime_game_token,
             position_revision=request.position_revision,
+            target_elo=request.move_selection_elo,
+            applied_skill=(
+                calibration.profile.applied_skill
+                if calibration.executes_v2 and calibration.profile is not None
+                else None
+            ),
         )
         try:
             coordinated = self.coordinator.run_transaction(
@@ -196,6 +209,15 @@ class MovePlanService:
             status=snapshot.calibration_status,
             reason=snapshot.calibration_reason,
         )
+        if calibration.profile is not None and snapshot.calibration_status in {"applied", "shadow"}:
+            self.telemetry.observe_selection(
+                target_elo=calibration.profile.target_elo,
+                applied_skill=calibration.profile.applied_skill,
+                scale_id=calibration.profile.scale_id,
+                status=snapshot.calibration_status,
+            )
+        if snapshot.status in {"fallback", "partial"}:
+            self.telemetry.record_degraded(snapshot.status)
         self.logger.info("move_plan_calibration", extra=calibration_payload)
         response = self._response(
             request,
@@ -212,6 +234,7 @@ class MovePlanService:
         return response
 
     def _typed_fallback(self, request, board, move, reason, started, calibration):
+        self.telemetry.record_degraded("fallback")
         evidence = static_evidence(board, reason_codes=("ANALYSIS_PARTIAL", reason))
         return self._response(
             request,

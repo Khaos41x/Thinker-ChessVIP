@@ -141,7 +141,7 @@ class CoordinatorCalibrationContractTests(unittest.TestCase):
         with self.assertRaises(ProfileTransitionError):
             adapter.prepare_reference(CancellationToken())
 
-        komodo.force_terminate.assert_called_once_with()
+        komodo.force_terminate.assert_called_once_with("uncertain_state")
 
     def test_shadow_mode_profiles_v2_but_executes_v1_selector(self):
         adapter = FakeEngineAdapter()
