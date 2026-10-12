@@ -43,6 +43,37 @@ def _pchip_derivatives(anchors: tuple[CalibrationAnchor, ...]) -> tuple[float, .
     return tuple(derivatives)
 
 
+def build_pchip_segments(
+    anchors: tuple[CalibrationAnchor, ...],
+) -> tuple[PchipSegment, ...]:
+    if len(anchors) != 26 or tuple(anchor.skill for anchor in anchors) != tuple(range(26)):
+        raise ArtifactValidationError("anchors", "must contain every integral Skill from 0 to 25")
+    if any(right.rating < left.rating for left, right in zip(anchors, anchors[1:])):
+        raise ArtifactValidationError("anchors.rating", "must be nondecreasing")
+    derivatives = _pchip_derivatives(anchors)
+    segments = tuple(
+        PchipSegment(
+            left_skill=index,
+            right_skill=index + 1,
+            c0=float(anchors[index].rating),
+            c1=derivatives[index],
+            c2=(
+                3.0 * (anchors[index + 1].rating - anchors[index].rating)
+                - 2.0 * derivatives[index]
+                - derivatives[index + 1]
+            ),
+            c3=(
+                derivatives[index]
+                + derivatives[index + 1]
+                - 2.0 * (anchors[index + 1].rating - anchors[index].rating)
+            ),
+        )
+        for index in range(25)
+    )
+    validate_curve(anchors, segments)
+    return segments
+
+
 def validate_curve(
     anchors: tuple[CalibrationAnchor, ...], segments: tuple[PchipSegment, ...]
 ) -> None:

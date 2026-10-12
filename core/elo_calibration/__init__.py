@@ -6,6 +6,7 @@ from .artifact import (
     payload_checksum,
 )
 from .calibrator import EloCalibrator
+from .interpolation import build_pchip_segments
 from .errors import (
     ArtifactChecksumMismatch,
     ArtifactValidationError,
@@ -64,6 +65,7 @@ __all__ = [
     "UnsupportedRatingRange",
     "ValidationError",
     "artifact_to_bytes",
+    "build_pchip_segments",
     "create_artifact",
     "load_artifact",
     "load_artifact_bytes",
