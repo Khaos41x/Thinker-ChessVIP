@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0d0f" />
+    <meta name="description" content="Laboratório local de análise de xadrez do Thinker Chess" />
+    <title>Thinker Analysis Lab</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Thinker Analysis Lab">
+          <span class="brand-mark" aria-hidden="true">TC</span>
+          <span><strong>THINKER</strong><small>ANALYSIS LAB</small></span>
+        </a>
+        <div class="engine-summary" aria-live="polite">
+          <span id="engine-dot" class="status-dot" data-state="idle"></span>
+          <span id="engine-label">Engine desligada</span>
+        </div>
+        <div class="topbar-actions">
+          <button id="import-open" class="button ghost" type="button">Importar</button>
+          <button id="engine-toggle" class="button primary" type="button">Iniciar engine</button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="board-column" aria-label="Tabuleiro de análise">
+          <div class="board-stage">
+            <div class="eval-rail" aria-label="Avaliação da posição">
+              <div id="eval-fill" class="eval-fill"></div>
+              <span id="eval-score" class="eval-score">0.0</span>
+            </div>
+            <div id="board" class="board" role="grid" aria-label="Tabuleiro de xadrez"></div>
+          </div>
+          <div class="board-footer">
+            <div>
+              <span id="turn-label" class="eyebrow">BRANCAS JOGAM</span>
+              <strong id="position-label">Posição inicial</strong>
+            </div>
+            <button id="copy-fen" class="icon-button" type="button" aria-label="Copiar FEN">FEN</button>
+          </div>
+        </section>
+
+        <aside class="analysis-column">
+          <section class="panel engine-panel">
+            <div class="panel-header">
+              <div>
+                <span class="eyebrow">AVALIAÇÃO LOCAL</span>
+                <h1 id="main-eval">0.00</h1>
+              </div>
+              <span id="search-state" class="badge">PRONTO</span>
+            </div>
+            <div class="metrics" aria-label="Telemetria da engine">
+              <div><span>Prof.</span><strong id="metric-depth">—</strong></div>
+              <div><span>Nós</span><strong id="metric-nodes">—</strong></div>
+              <div><span>NPS</span><strong id="metric-nps">—</strong></div>
+              <div><span>Tempo</span><strong id="metric-time">—</strong></div>
+            </div>
+            <div id="engine-alert" class="alert" hidden></div>
+            <ol id="pv-list" class="pv-list" aria-label="Linhas principais">
+              <li class="empty-state">Inicie a engine para analisar no navegador.</li>
+            </ol>
+          </section>
+
+          <section class="panel moves-panel">
+            <div class="panel-header compact">
+              <div>
+                <span class="eyebrow">LINHA PRINCIPAL</span>
+                <strong id="move-count">0 lances</strong>
+              </div>
+              <button id="flip-board" class="button ghost small" type="button">Girar</button>
+            </div>
+            <div id="move-list" class="move-list" aria-label="Lista de lances"></div>
+            <div class="transport" aria-label="Navegação da partida">
+              <button type="button" data-nav="first" aria-label="Primeira posição">|‹</button>
+              <button type="button" data-nav="prev" aria-label="Lance anterior">‹</button>
+              <span id="ply-counter">0 / 0</span>
+              <button type="button" data-nav="next" aria-label="Próximo lance">›</button>
+              <button type="button" data-nav="last" aria-label="Última posição">›|</button>
+            </div>
+          </section>
+
+          <section class="panel settings-panel">
+            <div class="panel-header compact">
+              <div>
+                <span class="eyebrow">RECURSOS</span>
+                <strong>Limites locais</strong>
+              </div>
+              <span id="isolation-badge" class="badge muted">VERIFICANDO</span>
+            </div>
+            <div class="settings-grid">
+              <label>Threads <input id="threads" type="number" min="1" value="1" /></label>
+              <label>Hash <select id="hash"><option>16</option><option>32</option><option selected>64</option><option>128</option><option>256</option></select></label>
+              <label>Linhas <select id="multipv"><option>1</option><option selected>2</option><option>3</option></select></label>
+              <label>Tempo <select id="movetime"><option value="1000">1 s</option><option value="3000" selected>3 s</option><option value="8000">8 s</option><option value="15000">15 s</option></select></label>
+            </div>
+          </section>
+        </aside>
+      </main>
+
+      <footer class="footer">
+        <span>Stockfish 19 · WebAssembly · execução local</span>
+        <span id="footer-fen">startpos</span>
+      </footer>
+
+      <dialog id="import-dialog" class="import-dialog">
+        <form method="dialog">
+          <div class="dialog-header">
+            <div><span class="eyebrow">NOVA ANÁLISE</span><h2>Importar posição</h2></div>
+            <button class="icon-button" value="cancel" aria-label="Fechar">×</button>
+          </div>
+          <div class="tabs" role="tablist">
+            <button id="tab-pgn" class="tab active" type="button" role="tab">PGN</button>
+            <button id="tab-fen" class="tab" type="button" role="tab">FEN</button>
+          </div>
+          <textarea id="import-value" rows="10" placeholder="Cole uma partida em PGN..."></textarea>
+          <p id="import-error" class="form-error" role="alert"></p>
+          <div class="dialog-actions">
+            <button class="button ghost" value="cancel">Cancelar</button>
+            <button id="import-submit" class="button primary" type="button">Carregar análise</button>
+          </div>
+        </form>
+      </dialog>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
