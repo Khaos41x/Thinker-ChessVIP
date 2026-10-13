@@ -11,6 +11,7 @@
     "dev": "npm run prepare:engine && vite",
     "build": "npm run prepare:engine && vite build",
     "smoke:engine": "npm run prepare:engine && node scripts/smoke-engine.mjs",
+    "smoke:scholar": "npm run prepare:engine && node scripts/smoke-engine.mjs --scholar",
     "preview": "vite preview",
     "test": "vitest run"
   },

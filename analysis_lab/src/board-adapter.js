@@ -3,9 +3,11 @@ import { Chess } from 'chess.js';
 const UCI_MOVE = /^[a-h][1-8][a-h][1-8][qrbn]?$/;
 
 export const recommendationBrushes = {
-  green: { key: 'best', color: '#629924', opacity: 0.92, lineWidth: 11 },
-  blue: { key: 'reply', color: '#3692e7', opacity: 0.88, lineWidth: 10 },
+  green: { key: 'best', color: '#629924', opacity: 0.82, lineWidth: 9 },
+  blue: { key: 'reply', color: '#4b96d1', opacity: 0.48, lineWidth: 7 },
 };
+
+const SIDE_NAMES = { w: 'Brancas', b: 'Pretas' };
 
 export function legalDestinations(chess) {
   const destinations = new Map();
@@ -50,15 +52,33 @@ export function projectPrimaryPv(fen, pv) {
       break;
     }
     if (!played) break;
-    moves.push({ uci, san: played.san });
+    moves.push({ uci, san: played.san, color: played.color, side: SIDE_NAMES[played.color] });
     shapes.push({
       orig: uci.slice(0, 2),
       dest: uci.slice(2, 4),
       brush: index === 0 ? 'green' : 'blue',
-      label: { text: String(index + 1), fill: '#ffffff' },
     });
   }
   return { moves, shapes };
+}
+
+export function guidanceForPosition(fen, projected) {
+  let turn = 'w';
+  try {
+    turn = new Chess(fen).turn();
+  } catch {
+    return { currentPrefix: 'Brancas agora', currentSan: null, replyPrefix: 'Pretas depois', replySan: null };
+  }
+  const currentSide = SIDE_NAMES[turn];
+  const replySide = SIDE_NAMES[turn === 'w' ? 'b' : 'w'];
+  const current = projected.moves[0];
+  const reply = projected.moves[1];
+  return {
+    currentPrefix: `${current?.side ?? currentSide} agora`,
+    currentSan: current?.san ?? null,
+    replyPrefix: current ? `${reply?.side ?? replySide} depois de ${current.san}` : `${replySide} depois`,
+    replySan: reply?.san ?? null,
+  };
 }
 
 export function chessgroundConfig(chess, { focusSquare, lastMove, onMove, orientation = 'white', shapes = [] } = {}) {
@@ -70,7 +90,7 @@ export function chessgroundConfig(chess, { focusSquare, lastMove, onMove, orient
     check: chess.isCheck(),
     lastMove: lastMoveSquares(lastMove),
     coordinates: true,
-    coordinatesOnSquares: true,
+    coordinatesOnSquares: false,
     highlight: {
       lastMove: true,
       check: true,

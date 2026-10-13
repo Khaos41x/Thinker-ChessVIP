@@ -26,6 +26,22 @@
 
       <main class="workspace">
         <section class="board-column" aria-label="Tabuleiro de análise">
+          <section class="move-guidance" aria-label="Sequência recomendada pela engine" aria-live="polite">
+            <div class="turn-summary">
+              <span id="turn-label" class="turn-label">BRANCAS JOGAM</span>
+              <span id="position-label" class="position-label">Posição inicial</span>
+            </div>
+            <ol class="recommendation-sequence">
+              <li class="recommendation-step current">
+                <span class="sequence-line" aria-hidden="true"></span>
+                <span id="recommendation-now">Brancas agora: <strong>—</strong></span>
+              </li>
+              <li class="recommendation-step reply">
+                <span class="sequence-line" aria-hidden="true"></span>
+                <span id="recommendation-reply">Pretas depois: <strong>—</strong></span>
+              </li>
+            </ol>
+          </section>
           <div class="board-stage">
             <div class="eval-rail" aria-label="Avaliação da posição">
               <div id="eval-fill" class="eval-fill"></div>
@@ -35,15 +51,8 @@
             <p id="board-keyboard-help" class="visually-hidden">Use as setas para percorrer as casas, Enter ou Espaço para selecionar e mover, e Escape para cancelar.</p>
             <p id="board-keyboard-status" class="visually-hidden" aria-live="polite"></p>
           </div>
-          <div class="recommendation-legend" aria-label="Legenda das recomendações da engine">
-            <span><b class="legend-marker best">1</b>Melhor lance</span>
-            <span><b class="legend-marker reply">2</b>Resposta prevista</span>
-          </div>
           <div class="board-footer">
-            <div>
-              <span id="turn-label" class="eyebrow">BRANCAS JOGAM</span>
-              <strong id="position-label">Posição inicial</strong>
-            </div>
+            <span>As setas mostram uma sequência, não duas opções simultâneas.</span>
             <button id="copy-fen" class="icon-button" type="button" aria-label="Copiar FEN">FEN</button>
           </div>
         </section>

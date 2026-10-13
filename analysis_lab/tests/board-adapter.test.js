@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Chess } from 'chess.js';
-import { chessgroundConfig, lastMoveSquares, legalDestinations, projectPrimaryPv, promotionForMove } from '../src/board-adapter.js';
+import { chessgroundConfig, guidanceForPosition, lastMoveSquares, legalDestinations, projectPrimaryPv, promotionForMove } from '../src/board-adapter.js';
 
 describe('board adapter', () => {
   it('maps legal moves into Chessground destinations', () => {
@@ -50,18 +50,19 @@ describe('board adapter', () => {
   it('projects the first two sequential legal plies from one primary PV', () => {
     const projected = projectPrimaryPv(new Chess().fen(), ['e2e4', 'e7e5', 'g1f3']);
     expect(projected.moves).toEqual([
-      { uci: 'e2e4', san: 'e4' },
-      { uci: 'e7e5', san: 'e5' },
+      { uci: 'e2e4', san: 'e4', color: 'w', side: 'Brancas' },
+      { uci: 'e7e5', san: 'e5', color: 'b', side: 'Pretas' },
     ]);
     expect(projected.shapes).toMatchObject([
-      { orig: 'e2', dest: 'e4', brush: 'green', label: { text: '1' } },
-      { orig: 'e7', dest: 'e5', brush: 'blue', label: { text: '2' } },
+      { orig: 'e2', dest: 'e4', brush: 'green' },
+      { orig: 'e7', dest: 'e5', brush: 'blue' },
     ]);
+    expect(projected.shapes.every(shape => !('label' in shape))).toBe(true);
   });
 
   it('omits an invalid reply and never skips ahead in the PV', () => {
     const projected = projectPrimaryPv(new Chess().fen(), ['e2e4', 'e2e3', 'e7e5']);
-    expect(projected.moves).toEqual([{ uci: 'e2e4', san: 'e4' }]);
+    expect(projected.moves).toEqual([{ uci: 'e2e4', san: 'e4', color: 'w', side: 'Brancas' }]);
     expect(projected.shapes).toHaveLength(1);
   });
 
@@ -71,5 +72,35 @@ describe('board adapter', () => {
     expect(projectPrimaryPv(new Chess().fen(), []).shapes).toEqual([]);
     expect(projectPrimaryPv(new Chess().fen(), ['not-a-move']).shapes).toEqual([]);
     expect(projectPrimaryPv('invalid', ['e2e4']).shapes).toEqual([]);
+  });
+
+  it('identifies Nf6 as Black move now and Nc3 as White reply in the reported position', () => {
+    const fen = 'rnbqkbnr/1ppp1pp1/p6p/4p3/2B1P3/P4Q2/1PPP1PPP/RNB1K1NR b KQkq - 1 4';
+    const projected = projectPrimaryPv(fen, ['g8f6', 'b1c3']);
+
+    expect(projected.moves).toEqual([
+      { uci: 'g8f6', san: 'Nf6', color: 'b', side: 'Pretas' },
+      { uci: 'b1c3', san: 'Nc3', color: 'w', side: 'Brancas' },
+    ]);
+    const afterDefense = new Chess(fen);
+    afterDefense.move('Nf6');
+    expect(afterDefense.moves({ verbose: true })).not.toContainEqual(expect.objectContaining({ from: 'f3', to: 'f7' }));
+    expect(chessgroundConfig(new Chess(fen)).coordinatesOnSquares).toBe(false);
+  });
+
+  it('builds explicit current/reply copy and clears a missing reply', () => {
+    const fen = 'rnbqkbnr/1ppp1pp1/p6p/4p3/2B1P3/P4Q2/1PPP1PPP/RNB1K1NR b KQkq - 1 4';
+    expect(guidanceForPosition(fen, projectPrimaryPv(fen, ['g8f6', 'b1c3']))).toEqual({
+      currentPrefix: 'Pretas agora',
+      currentSan: 'Nf6',
+      replyPrefix: 'Brancas depois de Nf6',
+      replySan: 'Nc3',
+    });
+    expect(guidanceForPosition(fen, projectPrimaryPv(fen, []))).toEqual({
+      currentPrefix: 'Pretas agora',
+      currentSan: null,
+      replyPrefix: 'Brancas depois',
+      replySan: null,
+    });
   });
 });

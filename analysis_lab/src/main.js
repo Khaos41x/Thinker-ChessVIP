@@ -1,11 +1,12 @@
 import './styles.css';
 import { Chessground } from '@lichess-org/chessground';
 import { invalidateEvaluation } from './analysis-state.js';
-import { chessgroundConfig, legalDestinations, projectPrimaryPv, promotionForMove } from './board-adapter.js';
+import { chessgroundConfig, guidanceForPosition, legalDestinations, projectPrimaryPv, promotionForMove } from './board-adapter.js';
 import { ChessSession } from './chess-session.js';
 import { browserEngineSupport, StockfishAdapter } from './engine/stockfish-adapter.js';
 
 const session = new ChessSession();
+const orthodoxStartFen = session.current.fen;
 const ui = Object.fromEntries([...document.querySelectorAll('[id]')].map(element => [element.id, element]));
 const state = {
   orientation: 'white',
@@ -187,10 +188,27 @@ function pvToSan(fen, pv) {
   return san.join(' ');
 }
 
+function recommendationText(element, prefix, san) {
+  const signature = `${prefix}\u0000${san ?? ''}`;
+  if (element.dataset.signature === signature) return;
+  const move = document.createElement('strong');
+  move.textContent = san ?? '—';
+  element.replaceChildren(`${prefix}: `, move);
+  element.dataset.signature = signature;
+}
+
+function renderGuidance(projected) {
+  const guidance = guidanceForPosition(session.current.fen, projected);
+  recommendationText(ui['recommendation-now'], guidance.currentPrefix, guidance.currentSan);
+  recommendationText(ui['recommendation-reply'], guidance.replyPrefix, guidance.replySan);
+}
+
 function renderEvaluation() {
   const evaluation = state.evaluation;
   const primary = evaluation?.lines?.[0] ?? evaluation;
-  board.setAutoShapes(projectPrimaryPv(session.current.fen, primary?.pv).shapes);
+  const projected = projectPrimaryPv(session.current.fen, primary?.pv);
+  board.setAutoShapes(projected.shapes);
+  renderGuidance(projected);
   ui['main-eval'].textContent = scoreLabel(primary, true);
   ui['eval-score'].textContent = scoreLabel(primary);
   ui['metric-depth'].textContent = primary?.depth ?? '—';
@@ -238,9 +256,14 @@ function renderEngineState() {
 
 function renderPositionMeta() {
   const chess = session.chess;
-  ui['turn-label'].textContent = chess.turn() === 'w' ? 'BRANCAS JOGAM' : 'PRETAS JOGAM';
+  ui['turn-label'].textContent = chess.isCheckmate()
+    ? 'XEQUE-MATE'
+    : chess.isGameOver()
+      ? 'PARTIDA ENCERRADA'
+      : chess.turn() === 'w' ? 'BRANCAS JOGAM AGORA' : 'PRETAS JOGAM AGORA';
   const matchup = session.headers.White && session.headers.Black ? `${session.headers.White} × ${session.headers.Black}` : null;
-  ui['position-label'].textContent = matchup ?? (session.index ? `Após ${session.current.san}` : 'Posição inicial');
+  const rootLabel = session.current.fen === orthodoxStartFen ? 'Posição inicial' : 'Posição importada';
+  ui['position-label'].textContent = matchup ?? (session.index ? `Após ${session.current.san}` : rootLabel);
   ui['footer-fen'].textContent = session.current.fen;
 }
 
