@@ -31,7 +31,13 @@
               <div id="eval-fill" class="eval-fill"></div>
               <span id="eval-score" class="eval-score">0.0</span>
             </div>
-            <div id="board" class="board" role="grid" aria-label="Tabuleiro de xadrez"></div>
+            <div id="board" class="board" role="application" tabindex="0" aria-label="Tabuleiro de xadrez interativo" aria-describedby="board-keyboard-help"></div>
+            <p id="board-keyboard-help" class="visually-hidden">Use as setas para percorrer as casas, Enter ou Espaço para selecionar e mover, e Escape para cancelar.</p>
+            <p id="board-keyboard-status" class="visually-hidden" aria-live="polite"></p>
+          </div>
+          <div class="recommendation-legend" aria-label="Legenda das recomendações da engine">
+            <span><b class="legend-marker best">1</b>Melhor lance</span>
+            <span><b class="legend-marker reply">2</b>Resposta prevista</span>
           </div>
           <div class="board-footer">
             <div>

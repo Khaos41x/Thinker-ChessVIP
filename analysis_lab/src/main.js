@@ -1,18 +1,16 @@
 import './styles.css';
+import { Chessground } from '@lichess-org/chessground';
+import { invalidateEvaluation } from './analysis-state.js';
+import { chessgroundConfig, legalDestinations, projectPrimaryPv, promotionForMove } from './board-adapter.js';
 import { ChessSession } from './chess-session.js';
 import { browserEngineSupport, StockfishAdapter } from './engine/stockfish-adapter.js';
-
-const pieces = {
-  wp: '♙', wn: '♘', wb: '♗', wr: '♖', wq: '♕', wk: '♔',
-  bp: '♟', bn: '♞', bb: '♝', br: '♜', bq: '♛', bk: '♚',
-};
 
 const session = new ChessSession();
 const ui = Object.fromEntries([...document.querySelectorAll('[id]')].map(element => [element.id, element]));
 const state = {
   orientation: 'white',
-  selected: null,
-  legalTargets: [],
+  keyboardSquare: null,
+  keyboardSelected: null,
   engineEnabled: false,
   engineState: 'idle',
   searchId: 0,
@@ -20,6 +18,20 @@ const state = {
   terminalMessage: null,
   importMode: 'pgn',
 };
+
+function playBoardMove(from, to) {
+  const chess = session.chess;
+  const promotion = promotionForMove(chess, from, to);
+  try {
+    session.play({ from, to, promotion });
+    state.keyboardSelected = null;
+    positionChanged();
+  } catch {
+    renderBoard();
+  }
+}
+
+const board = Chessground(ui.board, chessgroundConfig(session.chess, { onMove: playBoardMove }));
 
 const adapter = new StockfishAdapter({
   onEvaluation: evaluation => {
@@ -34,50 +46,68 @@ const adapter = new StockfishAdapter({
   onError: error => showEngineError(error.message),
 });
 
-function squareOrder() {
-  const ranks = state.orientation === 'white' ? [8, 7, 6, 5, 4, 3, 2, 1] : [1, 2, 3, 4, 5, 6, 7, 8];
-  const files = state.orientation === 'white' ? ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] : ['h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
-  return ranks.flatMap(rank => files.map(file => `${file}${rank}`));
+function renderBoard() {
+  board.set(chessgroundConfig(session.chess, {
+    focusSquare: state.keyboardSquare,
+    lastMove: session.current.uci,
+    onMove: playBoardMove,
+    orientation: state.orientation,
+    shapes: projectPrimaryPv(session.current.fen, state.evaluation?.lines?.[0]?.pv).shapes,
+  }));
 }
 
-function renderBoard() {
-  const chess = session.chess;
-  const currentMove = session.current.uci;
-  const lastSquares = currentMove ? [currentMove.slice(0, 2), currentMove.slice(2, 4)] : [];
-  ui.board.replaceChildren();
-  for (const square of squareOrder()) {
-    const file = square.charCodeAt(0) - 97;
-    const rank = Number(square[1]);
-    const piece = chess.get(square);
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = `square ${(file + rank) % 2 ? 'light' : 'dark'}`;
-    button.dataset.square = square;
-    button.setAttribute('role', 'gridcell');
-    button.setAttribute('aria-label', piece ? `${square}, ${piece.color === 'w' ? 'branca' : 'preta'} ${piece.type}` : square);
-    if (state.selected === square) button.classList.add('selected');
-    if (state.legalTargets.includes(square)) button.classList.add('legal');
-    if (lastSquares.includes(square)) button.classList.add('last-move');
-    if (piece) {
-      const token = document.createElement('span');
-      token.className = `piece ${piece.color === 'w' ? 'white-piece' : 'black-piece'}`;
-      token.textContent = pieces[`${piece.color}${piece.type}`];
-      button.append(token);
+function announceBoard(message) {
+  ui['board-keyboard-status'].textContent = '';
+  requestAnimationFrame(() => { ui['board-keyboard-status'].textContent = message; });
+}
+
+function initialKeyboardSquare() {
+  return legalDestinations(session.chess).keys().next().value ?? (session.chess.turn() === 'w' ? 'e1' : 'e8');
+}
+
+function moveKeyboardSquare(key) {
+  if (!state.keyboardSquare) state.keyboardSquare = initialKeyboardSquare();
+  const file = state.keyboardSquare.charCodeAt(0) - 97;
+  const rank = Number(state.keyboardSquare[1]) - 1;
+  const direction = state.orientation === 'white' ? 1 : -1;
+  const deltas = {
+    ArrowLeft: [-direction, 0],
+    ArrowRight: [direction, 0],
+    ArrowUp: [0, direction],
+    ArrowDown: [0, -direction],
+  };
+  const [fileDelta, rankDelta] = deltas[key];
+  const nextFile = Math.max(0, Math.min(7, file + fileDelta));
+  const nextRank = Math.max(0, Math.min(7, rank + rankDelta));
+  state.keyboardSquare = `${String.fromCharCode(97 + nextFile)}${nextRank + 1}`;
+  renderBoard();
+  announceBoard(`Casa ${state.keyboardSquare}`);
+}
+
+function activateKeyboardSquare() {
+  if (!state.keyboardSquare) state.keyboardSquare = initialKeyboardSquare();
+  const destinations = legalDestinations(session.chess);
+  if (!state.keyboardSelected) {
+    if (!destinations.has(state.keyboardSquare)) {
+      announceBoard(`Casa ${state.keyboardSquare} sem peça disponível para mover`);
+      return;
     }
-    if ((state.orientation === 'white' && square[0] === 'a') || (state.orientation === 'black' && square[0] === 'h')) {
-      const rankLabel = document.createElement('span');
-      rankLabel.className = 'coordinate rank-coordinate';
-      rankLabel.textContent = square[1];
-      button.append(rankLabel);
-    }
-    if ((state.orientation === 'white' && square[1] === '1') || (state.orientation === 'black' && square[1] === '8')) {
-      const fileLabel = document.createElement('span');
-      fileLabel.className = 'coordinate file-coordinate';
-      fileLabel.textContent = square[0];
-      button.append(fileLabel);
-    }
-    ui.board.append(button);
+    state.keyboardSelected = state.keyboardSquare;
+    board.selectSquare(state.keyboardSquare, true);
+    announceBoard(`Peça em ${state.keyboardSquare} selecionada`);
+    return;
   }
+  if (destinations.get(state.keyboardSelected)?.includes(state.keyboardSquare)) {
+    board.selectSquare(state.keyboardSquare, true);
+    return;
+  }
+  if (destinations.has(state.keyboardSquare)) {
+    state.keyboardSelected = state.keyboardSquare;
+    board.selectSquare(state.keyboardSquare, true);
+    announceBoard(`Peça em ${state.keyboardSquare} selecionada`);
+    return;
+  }
+  announceBoard(`Lance de ${state.keyboardSelected} para ${state.keyboardSquare} não permitido`);
 }
 
 function renderMoves() {
@@ -160,6 +190,7 @@ function pvToSan(fen, pv) {
 function renderEvaluation() {
   const evaluation = state.evaluation;
   const primary = evaluation?.lines?.[0] ?? evaluation;
+  board.setAutoShapes(projectPrimaryPv(session.current.fen, primary?.pv).shapes);
   ui['main-eval'].textContent = scoreLabel(primary, true);
   ui['eval-score'].textContent = scoreLabel(primary);
   ui['metric-depth'].textContent = primary?.depth ?? '—';
@@ -231,9 +262,8 @@ function engineSettings() {
   };
 }
 
-function analyzeCurrentPosition() {
-  state.searchId += 1;
-  state.evaluation = null;
+function analyzeCurrentPosition({ invalidate = true } = {}) {
+  if (invalidate) invalidateEvaluation(state);
   const chess = session.chess;
   state.terminalMessage = null;
   if (chess.isGameOver()) {
@@ -255,45 +285,29 @@ function analyzeCurrentPosition() {
 }
 
 function positionChanged() {
-  state.selected = null;
-  state.legalTargets = [];
+  invalidateEvaluation(state);
+  state.keyboardSelected = null;
+  board.selectSquare(null);
   renderAll();
-  analyzeCurrentPosition();
+  analyzeCurrentPosition({ invalidate: false });
 }
 
 function showEngineError(message) {
+  invalidateEvaluation(state);
   adapter.destroy();
   state.engineState = 'error';
   state.engineEnabled = false;
   ui['engine-alert'].hidden = false;
   ui['engine-alert'].textContent = `${message}. Rode “npm run prepare:engine” e abra o site pelo servidor Vite.`;
+  renderEvaluation();
   renderEngineState();
-}
-
-function selectSquare(square) {
-  const chess = session.chess;
-  const piece = chess.get(square);
-  if (state.selected && state.legalTargets.includes(square)) {
-    const movingPiece = chess.get(state.selected);
-    const promotion = movingPiece?.type === 'p' && ['1', '8'].includes(square[1]) ? 'q' : undefined;
-    session.play({ from: state.selected, to: square, promotion });
-    positionChanged();
-    return;
-  }
-  if (piece?.color === chess.turn()) {
-    state.selected = square;
-    state.legalTargets = chess.moves({ square, verbose: true }).map(move => move.to);
-  } else {
-    state.selected = null;
-    state.legalTargets = [];
-  }
-  renderBoard();
 }
 
 async function toggleEngine() {
   ui['engine-alert'].hidden = true;
   if (state.engineEnabled) {
     state.engineEnabled = false;
+    invalidateEvaluation(state);
     adapter.destroy();
     state.engineState = 'idle';
     renderEngineState();
@@ -357,10 +371,6 @@ function configureCapabilities() {
   }
 }
 
-ui.board.addEventListener('click', event => {
-  const square = event.target.closest('[data-square]')?.dataset.square;
-  if (square) selectSquare(square);
-});
 ui['move-list'].addEventListener('click', event => {
   const ply = event.target.closest('[data-ply]')?.dataset.ply;
   if (ply !== undefined) {
@@ -379,6 +389,31 @@ ui['engine-toggle'].addEventListener('click', toggleEngine);
 ui['flip-board'].addEventListener('click', () => {
   state.orientation = state.orientation === 'white' ? 'black' : 'white';
   renderBoard();
+});
+ui.board.addEventListener('focus', () => {
+  if (!state.keyboardSquare) state.keyboardSquare = initialKeyboardSquare();
+  renderBoard();
+  announceBoard(`Casa ${state.keyboardSquare}`);
+});
+ui.board.addEventListener('keydown', event => {
+  if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+    event.preventDefault();
+    event.stopPropagation();
+    moveKeyboardSquare(event.key);
+    return;
+  }
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    event.stopPropagation();
+    activateKeyboardSquare();
+    return;
+  }
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    state.keyboardSelected = null;
+    board.selectSquare(null);
+    announceBoard('Seleção cancelada');
+  }
 });
 ui['import-open'].addEventListener('click', () => ui['import-dialog'].showModal());
 ui['tab-pgn'].addEventListener('click', () => setImportMode('pgn'));
@@ -407,7 +442,10 @@ window.addEventListener('keydown', event => {
     positionChanged();
   }
 });
-window.addEventListener('beforeunload', () => adapter.destroy());
+window.addEventListener('beforeunload', () => {
+  board.destroy();
+  adapter.destroy();
+});
 
 configureCapabilities();
 renderAll();

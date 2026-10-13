@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '..');
 const source = resolve(root, 'node_modules', '@lichess-org', 'stockfish-web');
+const chessgroundSource = resolve(root, 'node_modules', '@lichess-org', 'chessground');
 const target = resolve(root, 'public', 'engine');
 const assets = ['sf_19_smallnet.js', 'sf_19_smallnet.wasm'];
 const network = 'nn-61e7af4bb97d.nnue';
@@ -36,6 +37,7 @@ for (const asset of assets) {
   await copyFile(resolve(source, asset), resolve(target, asset));
 }
 await copyFile(resolve(root, 'THIRD_PARTY_NOTICES.txt'), resolve(target, 'THIRD_PARTY_NOTICES.txt'));
+await copyFile(resolve(chessgroundSource, 'LICENSE'), resolve(target, 'chessground-GPL-3.0.txt'));
 
 const networkPath = resolve(target, network);
 if (!(await validNetwork(networkPath))) {

@@ -1,6 +1,6 @@
 # Thinker Analysis Lab
 
-MVP local de uma área de análise inspirada no fluxo de trabalho do Lichess. O tabuleiro, a navegação PGN/FEN e o Stockfish rodam no navegador; nenhuma posição é enviada para uma API de análise.
+MVP local de uma área de análise inspirada no fluxo de trabalho do Lichess. O tabuleiro usa o Chessground oficial com tema marrom e peças Cburnett; a navegação PGN/FEN e o Stockfish rodam no navegador, sem enviar posições para uma API de análise.
 
 ## Executar
 
@@ -31,6 +31,7 @@ O build inclui `dist/_headers` para hosts estáticos compatíveis com esse forma
 interface/main.js
       │
       ├── ChessSession ── valida FEN/PGN e mantém a linha principal
+      ├── BoardAdapter ── sincroniza Chessground e valida as setas da PV
       │
       └── StockfishAdapter ── carrega WASM + NNUE e detecta capacidades
                     │
@@ -38,6 +39,8 @@ interface/main.js
 ```
 
 `UciProtocol.compute()` mantém no máximo uma busca ativa. Quando a posição muda, envia `stop`, descarta informações da busca interrompida e só inicia o trabalho mais recente após `bestmove`. Além disso, cada resultado carrega um `searchId`; a interface rejeita qualquer resultado que não corresponda à posição atual.
+
+O `BoardAdapter` mantém o `chess.js` como fonte de verdade para posição e legalidade. A seta verde `1` é o melhor lance da linha principal atual; a azul `2` é a resposta prevista depois dele. Os dois lances são validados em sequência em uma cópia da posição, e qualquer trecho inválido ou obsoleto é omitido imediatamente.
 
 ## O que o Lichess faz atualmente
 
@@ -58,4 +61,4 @@ O desenho é eficiente porque separa três problemas: execução pesada fora da 
 
 ## Licenças
 
-O código do laboratório é parte do Thinker Chess. Stockfish e `@lichess-org/stockfish-web` possuem licenças próprias de software livre. O build inclui `THIRD_PARTY_NOTICES.txt` junto dos assets, com licença, versão, origem e hash da NNUE; qualquer distribuição pública deve preservar esse aviso e cumprir os termos aplicáveis. Os binários preparados localmente não são versionados neste repositório.
+O Chessground 10.4.2 é licenciado sob GPL-3.0-or-later. Uma distribuição do laboratório combinada com ele precisa preservar os avisos, disponibilizar o código-fonte correspondente conforme exigido pela GPL e usar termos compatíveis com a GPL para o trabalho coberto. Stockfish e `@lichess-org/stockfish-web` também possuem licenças próprias de software livre. Consulte `THIRD_PARTY_NOTICES.txt` antes de distribuir; o arquivo registra versões, origens e o hash da NNUE. Os binários preparados localmente não são versionados neste repositório.

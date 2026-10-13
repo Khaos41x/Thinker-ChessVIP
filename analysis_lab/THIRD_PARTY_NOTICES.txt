@@ -1,4 +1,17 @@
-Thinker Analysis Lab third-party engine notices
+Thinker Analysis Lab third-party notices
+
+@lichess-org/chessground 10.4.2
+License: GNU General Public License v3.0 or later
+License text: https://www.gnu.org/licenses/gpl-3.0.txt
+Bundled license: engine/chessground-GPL-3.0.txt
+Source: https://github.com/lichess-org/chessground/tree/v10.4.2
+Package: https://www.npmjs.com/package/@lichess-org/chessground/v/10.4.2
+Use: Interactive chessboard plus the official base, brown-board, and Cburnett-piece CSS assets.
+
+Chessground is GPL-3.0-or-later. Distribution of a combined or modified work must preserve
+copyright and license notices, provide the corresponding source as required by the GPL, and
+license the covered combined work under GPL-compatible terms. Obtain legal advice before any
+distribution model whose compatibility with these obligations is uncertain.
 
 @lichess-org/stockfish-web 0.5.0
 License: GNU Affero General Public License v3.0 or later
