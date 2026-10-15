@@ -78,6 +78,128 @@ try {
     };
   })();
 
+  const sessionControlBridge = (() => {
+    let controller = null;
+    let contextProvider = null;
+    let rollout = { schemaVersion: 1, stage: "DISABLED" };
+    let rolloutLoaded = false;
+    let warningCode = "ROLLOUT_DISABLED";
+    let telemetry = null;
+    const context = () => {
+      try {
+        return typeof contextProvider === "function" ? contextProvider() || {} : {};
+      } catch (_) {
+        return {};
+      }
+    };
+    return Object.freeze({
+      install(nextController, nextContextProvider, options) {
+        if (!nextController || typeof nextController.isActive !== "function") throw new TypeError("invalid session controller");
+        controller = nextController;
+        contextProvider = nextContextProvider;
+        const settings = options || {};
+        rollout = globalThis.ThinkerSessionControl.validateRollout(settings.rollout || { schemaVersion: 1, stage: "ACTIVE_DDA" });
+        rolloutLoaded = true;
+        telemetry = settings.telemetry || nextController.telemetry || new globalThis.ThinkerSessionControl.BoundedTelemetry();
+        warningCode = null;
+      },
+      clear() {
+        controller = null;
+        contextProvider = null;
+        rollout = { schemaVersion: 1, stage: "DISABLED" };
+        rolloutLoaded = false;
+        warningCode = "ROLLOUT_DISABLED";
+        telemetry = null;
+      },
+      configureRollout(value) {
+        rollout = globalThis.ThinkerSessionControl.validateRollout(value);
+        rolloutLoaded = true;
+        warningCode = rollout.stage === "DISABLED" ? "ROLLOUT_DISABLED" : warningCode === "ROLLOUT_DISABLED" ? null : warningCode;
+        return rollout;
+      },
+      ownsQueue() {
+        return Boolean(controller && controller.isActive() && ["AUTO_QUEUE_CANARY", "ACTIVE_DDA"].includes(rollout.stage));
+      },
+      isActive() {
+        return Boolean(controller && controller.isActive() && rollout.stage === "ACTIVE_DDA");
+      },
+      suspendsLegacyAutoAdjust() {
+        return Boolean(rollout.stage === "ACTIVE_DDA" && controller && controller.legacyAutoAdjustSuspended());
+      },
+      moveSelectionElo(fallbackElo) {
+        return controller ? controller.moveSelectionElo(fallbackElo) : fallbackElo;
+      },
+      prepareMovePlan(fen) {
+        return controller ? controller.observePosition(fen) : Promise.resolve(null);
+      },
+      acceptMovePlan(plan, movePlanContext) {
+        return controller ? controller.acceptMovePlanResponse(plan, movePlanContext) : Promise.resolve({ allowed: true, reason: "LEGACY" });
+      },
+      pinCalibration(capability) {
+        return controller ? controller.pinCalibration(capability) : Promise.resolve({ allowed: false, reason: "SESSION_INACTIVE" });
+      },
+      queueGate(userAutoQueue) {
+        return this.ownsQueue() ? controller.queueGate({ ...(context().queue || {}), userAutoQueue }) : { allowed: true, reason: "LEGACY" };
+      },
+      executeQueue(userAutoQueue, effect) {
+        return controller.executeQueueEffect({ ...(context().queue || {}), userAutoQueue }, effect);
+      },
+      captureMove(userAutoMove) {
+        if (!controller) return null;
+        const input = { ...(context().move || {}), userAutoMove };
+        return Object.freeze({ epoch: controller.captureEffectEpoch(), input, gate: controller.autoMoveGate(input) });
+      },
+      movePrecheck(captured) {
+        return Boolean(captured && controller && controller.isEffectEpochCurrent(captured.epoch) && controller.autoMoveGate(captured.input).allowed);
+      },
+      executeMove(captured, effect) {
+        return controller.executeAutoMoveEffect(captured.input, captured.epoch, effect);
+      },
+      autoMoveChanged(enabled) {
+        if (!enabled && controller) return controller.pauseForDisabledAutoMove();
+        return Promise.resolve({ allowed: false, reason: "NO_CHANGE" });
+      },
+      async start(config) {
+        if (!controller) throw new Error("SESSION_RUNTIME_UNAVAILABLE");
+        if (rollout.stage === "DISABLED") throw new Error("ROLLOUT_DISABLED");
+        const start = context().start || {};
+        if (!start.accountKey || !start.authorizationDecision) throw new Error("ACCOUNT_CONTEXT_UNAVAILABLE");
+        const snapshot = await controller.startSession({ accountKey: start.accountKey, authorizationDecision: start.authorizationDecision, config });
+        warningCode = null;
+        return snapshot;
+      },
+      async gracefulStop() {
+        if (!controller) return { allowed: false, reason: "SESSION_RUNTIME_UNAVAILABLE" };
+        const result = await controller.requestGracefulStop();
+        warningCode = result.allowed ? null : result.reason;
+        return result;
+      },
+      status() {
+        const api = globalThis.ThinkerSessionControl;
+        if (!rolloutLoaded && typeof GM_getValue === "function") {
+          try {
+            rollout = api.validateRollout(GM_getValue("thinker.sessionControl.rollout.v1", { schemaVersion: 1, stage: "DISABLED" }));
+            warningCode = rollout.stage === "DISABLED" ? "ROLLOUT_DISABLED" : controller ? null : "SESSION_RUNTIME_UNAVAILABLE";
+          } catch (_) {
+            rollout = { schemaVersion: 1, stage: "DISABLED" };
+            warningCode = "ROLLOUT_CONFIG_INVALID";
+          }
+          rolloutLoaded = true;
+        }
+        return api.buildStatusView(controller ? controller.snapshot : null, { nowEpochMs: Date.now(), isLeader: Boolean(controller && controller.isLeader()), rollout, warningCode });
+      },
+      setWarning(code) {
+        warningCode = code || null;
+      },
+      exportDiagnostic() {
+        const api = globalThis.ThinkerSessionControl;
+        const events = telemetry && typeof telemetry.list === "function" ? telemetry.list() : [];
+        return api.diagnosticExport(this.status(), events, Date.now());
+      },
+    });
+  })();
+  Object.defineProperty(window, "krypbotSessionControlBridge", { configurable: false, enumerable: false, writable: false, value: sessionControlBridge });
+
   function debug(method, ...args) {
     if (!DEBUG) return;
     const logger = console[method];
@@ -1470,7 +1592,7 @@ try {
       this.lastOpponent = username;
       this.currentEntry = null;
       this.hide();
-      if (autoAdjust.isEnabled()) {
+      if (isLegacyAutoAdjustEffective()) {
         setTimeout(() => {
           if (username !== this.lastOpponent) return;
           const rating = getOpponentRating();
@@ -1550,6 +1672,10 @@ try {
   };
 
   let autoAdjust = new AutoAdjustRating(chessBot.elo);
+
+  function isLegacyAutoAdjustEffective() {
+    return autoAdjust.isEnabled() && !sessionControlBridge.suspendsLegacyAutoAdjust();
+  }
 
   function log(msg) {
     debug("log", "[KrypBot]", msg);
@@ -1874,6 +2000,40 @@ try {
     }
     return true;
   };
+  const requestCalibrationEndpoint = (path, payload) => new Promise((resolve, reject) => {
+    let settled = false;
+    GM_xmlhttpRequest({
+      method: "POST",
+      url: SERVER_URL + path,
+      headers: engineRequestHeaders(),
+      data: JSON.stringify(payload),
+      timeout: 3000,
+      onload: (response) => {
+        if (settled) return;
+        settled = true;
+        if (handleEngineUnauthorized(response)) return reject(new Error("calibration endpoint nao autenticado"));
+        if (Number(response.status) >= 400) return reject(new Error(`calibration endpoint HTTP ${response.status}`));
+        try { resolve(JSON.parse(response.responseText)); } catch (error) { reject(error); }
+      },
+      onerror: () => { if (!settled) { settled = true; reject(new Error("calibration endpoint indisponivel")); } },
+      ontimeout: () => { if (!settled) { settled = true; reject(new Error("calibration endpoint timeout")); } },
+      onabort: () => { if (!settled) { settled = true; reject(new DOMException("Request cancelado", "AbortError")); } },
+    });
+  });
+  if (typeof window !== "undefined") Object.defineProperty(window, "krypbotCalibrationApi", {
+    configurable: false,
+    enumerable: false,
+    writable: false,
+    value: Object.freeze({
+      readiness: (payload) => requestCalibrationEndpoint("/calibration-readiness", payload),
+      capability: async (payload) => {
+        const capability = await requestCalibrationEndpoint("/calibration-capability", payload);
+        const pinned = await sessionControlBridge.pinCalibration(capability);
+        if (!pinned.allowed) throw new Error(`calibration pin rejeitado: ${pinned.reason}`);
+        return capability;
+      },
+    }),
+  });
   const smartPacingAnalysisPending = new Map();
   let smartPacingObservedFen = "";
   let smartPacingObservedAt = 0;
@@ -2050,15 +2210,12 @@ try {
     };
   };
 
-  const smartPacingV2Keys = async (fen, observation) => {
+  const smartPacingV2Keys = async (fen, observation, schemaVersion = 1) => {
     const fields = String(fen || "").trim().split(/\s+/);
     if (fields.length !== 6) throw new TypeError("FEN invalida para Smart Pacing V2");
-    const observationHash = await smartPacingV2Digest("observation-v1", {
-      schemaVersion: 1,
-      runtimeGameToken: observation.runtimeGameToken,
-      positionRevision: observation.positionRevision,
-      exactFullFen: fields.join(" "),
-    });
+    const observationHash = schemaVersion === 2
+      ? await sha256Hex(stableJson({ fen: fields.join(" "), positionRevision: observation.positionRevision, runtimeGameToken: observation.runtimeGameToken, schemaVersion: 2 }))
+      : await smartPacingV2Digest("observation-v1", { schemaVersion: 1, runtimeGameToken: observation.runtimeGameToken, positionRevision: observation.positionRevision, exactFullFen: fields.join(" ") });
     const analysisHash = await smartPacingV2Digest("analysis-v1", {
       boardFen: fields[0],
       sideToMove: fields[1],
@@ -2068,7 +2225,7 @@ try {
       historyDigestOrUnknown: "unknown",
     });
     return {
-      observationKey: `obs1:${observationHash}`,
+      observationKey: `obs${schemaVersion}:${observationHash}`,
       analysisPositionKey: `ana1:${analysisHash}`,
     };
   };
@@ -2157,29 +2314,34 @@ try {
   };
 
   const requestSmartPacingV2Plan = async ({ fen, elo, clockValues, observation }) => {
-    const keys = await smartPacingV2Keys(fen, observation);
-    if (observation.positionRevision !== smartPacingV2Runtime.positionRevision) {
+    const sessionMovePlan = sessionControlBridge.isActive() ? await sessionControlBridge.prepareMovePlan(fen) : null;
+    if (sessionControlBridge.isActive() && !sessionMovePlan) throw new DOMException("Posicao ainda nao estabilizada", "AbortError");
+    const effectiveObservation = sessionMovePlan || observation;
+    const schemaVersion = sessionMovePlan ? 2 : 1;
+    const keys = await smartPacingV2Keys(fen, effectiveObservation, schemaVersion);
+    if (!sessionMovePlan && observation.positionRevision !== smartPacingV2Runtime.positionRevision) {
       throw new DOMException("Posicao obsoleta", "AbortError");
     }
     const budget = smartPacingV2ClockBudget(clockValues);
-    const requestId = `${observation.runtimeGameToken}-${observation.positionRevision}`;
+    const requestId = `${effectiveObservation.runtimeGameToken}-${effectiveObservation.positionRevision}`;
     const payload = {
-      schemaVersion: 1,
+      schemaVersion,
       requestId,
-      runtimeGameToken: observation.runtimeGameToken,
-      positionRevision: observation.positionRevision,
+      runtimeGameToken: effectiveObservation.runtimeGameToken,
+      positionRevision: effectiveObservation.positionRevision,
       observationKey: keys.observationKey,
       analysisPositionKey: keys.analysisPositionKey,
       fen,
       lastMove: null,
       historyDigest: null,
-      moveSelectionElo: Math.round(elo),
-      perceptionElo: Math.round(elo),
+      moveSelectionElo: Math.round(sessionMovePlan ? sessionMovePlan.moveSelectionElo : elo),
+      perceptionElo: Math.round(sessionMovePlan ? sessionMovePlan.perceptionElo : elo),
       analysisTier: budget.analysisTier,
       clientBudgetMs: budget.clientBudgetMs,
       analysisBudgetVersion: 1,
       evidenceModelVersion: 1,
     };
+    if (sessionMovePlan) payload.calibrationRequirement = sessionMovePlan.calibrationRequirement;
     return new Promise((resolve, reject) => {
       let settled = false;
       const handle = GM_xmlhttpRequest({
@@ -2188,7 +2350,7 @@ try {
         headers: engineRequestHeaders(),
         data: JSON.stringify(payload),
         timeout: Math.max(1000, budget.clientBudgetMs + 750),
-        onload: (response) => {
+        onload: async (response) => {
           if (settled) return;
           settled = true;
           if (handleEngineUnauthorized(response)) return reject(new Error("move-plan nao autenticado"));
@@ -2196,14 +2358,16 @@ try {
           try {
             const plan = JSON.parse(response.responseText);
             if (
-              plan.schemaVersion !== 1 ||
+              plan.schemaVersion !== schemaVersion ||
               plan.requestId !== requestId ||
               plan.observationKey !== keys.observationKey ||
-              plan.positionRevision !== observation.positionRevision ||
+              plan.positionRevision !== effectiveObservation.positionRevision ||
               (plan.move !== null && !/^[a-h][1-8][a-h][1-8][qrbn]?$/.test(plan.move))
             ) {
               throw new TypeError("Contrato move-plan invalido");
             }
+            const acceptance = await sessionControlBridge.acceptMovePlan(plan, sessionMovePlan);
+            if (!acceptance.allowed) throw new Error(`move-plan rejeitado: ${acceptance.reason}`);
             resolve({ plan, budget });
           } catch (error) {
             reject(error);
@@ -2744,7 +2908,7 @@ try {
     }
   }
 
-  function clickAutoQueueTarget(target) {
+  function clickAutoQueueTarget(target, allowFallback = true) {
     if (!target) return;
     try {
       target.scrollIntoView({ block: "center", inline: "center" });
@@ -2770,6 +2934,7 @@ try {
       return;
     }
 
+    if (!allowFallback) return;
     const clickUrl = window.location.href;
     auto_queue_fallback_timer = setTimeout(() => {
       auto_queue_fallback_timer = null;
@@ -2801,6 +2966,7 @@ try {
 
   function clickNewGame() {
     if (!auto_queue) return;
+    if (sessionControlBridge.ownsQueue() && !sessionControlBridge.queueGate(auto_queue).allowed) return;
     const targets = getSearchTargets();
     refreshAutoQueueGameState(targets);
     if (queueTriggered || auto_queue_pending) return;
@@ -2822,6 +2988,14 @@ try {
       const latestButton = findNewGameButton(latestTargets, latestRoot);
       const target = latestButton || (isElementVisible(button) ? button : null);
       if (!target) return;
+      if (sessionControlBridge.ownsQueue()) {
+        sessionControlBridge.executeQueue(auto_queue, () => {
+          queueTriggered = true;
+          auto_queue_completed_fen = getAutoQueueFen();
+          clickAutoQueueTarget(target, false);
+        }).catch((error) => log("Session Control Auto Queue: " + error));
+        return;
+      }
       queueTriggered = true;
       auto_queue_completed_fen = getAutoQueueFen();
       clickAutoQueueTarget(target);
@@ -3021,6 +3195,7 @@ try {
       pacingDecision = null,
       promotion = null,
       onOutcome = null,
+      dispatchEffect = (effect) => effect(),
       positionObservedAt = null,
       clockValues = null,
     } = {},
@@ -3056,28 +3231,16 @@ try {
         return null;
       }
     };
-    const executeMove = () => {
+    const executeMove = () => dispatchEffect(() => {
       const game = getGame();
       if (game !== scheduledGame || !shouldExecute()) return false;
-      if (
-        expectedFen !== null &&
-        (typeof game.getFEN !== "function" || game.getFEN() !== expectedFen)
-      ) {
-        return false;
-      }
+      if (expectedFen !== null && (typeof game.getFEN !== "function" || game.getFEN() !== expectedFen)) return false;
       const move = findMove(game);
       if (!move || typeof game.move !== "function") return false;
-      game.move({
-        ...move,
-        promotion: normalizedPromotion || "q",
-        animate: false,
-        userGenerated: true,
-      });
-      if (typeof onOutcome === "function") {
-        onOutcome({ outcome: "executed", pacingDecision });
-      }
+      game.move({ ...move, promotion: normalizedPromotion || "q", animate: false, userGenerated: true });
+      if (typeof onOutcome === "function") onOutcome({ outcome: "executed", pacingDecision });
       return true;
-    };
+    });
 
     const game = scheduledGame;
     const legalMoves =
@@ -3304,14 +3467,16 @@ try {
       if (fen === checkfen) return;
 
       const puzzleElo = 3200;
-      const currentElo = isPuzzleMode
+      const legacyElo = isPuzzleMode
         ? puzzleElo
-        : autoAdjust.isEnabled()
+        : isLegacyAutoAdjustEffective()
           ? autoAdjust.getCurrentDifficulty()
           : chessBot.elo;
+      const currentElo = isPuzzleMode ? legacyElo : sessionControlBridge.moveSelectionElo(legacyElo);
       const cacheKey = fen + "_" + currentElo;
       const currentCache = isPuzzleMode ? puzzleMoveCache : moveCache;
-      const isAutoMove = isPuzzleMode ? puzzleAutoMove : auto_move;
+      const capturedSessionMove = !isPuzzleMode && sessionControlBridge.isActive() ? sessionControlBridge.captureMove(auto_move) : null;
+      const isAutoMove = isPuzzleMode ? puzzleAutoMove : capturedSessionMove ? capturedSessionMove.gate.allowed : auto_move;
       const clockValues = getSmartPacerClockValues();
       const autoMoveOptions = {
         expectedFen: fen,
@@ -3320,12 +3485,14 @@ try {
         positionObservedAt,
         clockValues,
         shouldExecute: () =>
-          isPuzzleMode ? puzzleAutoMove : auto_move && gameMode !== "puzzle",
+          isPuzzleMode ? puzzleAutoMove : capturedSessionMove ? sessionControlBridge.movePrecheck(capturedSessionMove) : auto_move && gameMode !== "puzzle",
+        dispatchEffect: (effect) => capturedSessionMove ? sessionControlBridge.executeMove(capturedSessionMove, effect) : effect(),
       };
-      const v2Observation = !isPuzzleMode && (smartPacingV2Enabled || smartPacingV2ShadowEnabled)
+      const sessionV2Active = !isPuzzleMode && sessionControlBridge.isActive();
+      const v2Observation = !isPuzzleMode && (smartPacingV2Enabled || smartPacingV2ShadowEnabled || sessionV2Active)
         ? beginSmartPacingV2Observation(fen, game)
         : null;
-      if (v2Observation && smartPacingV2ShadowEnabled && !smartPacingV2Enabled) {
+      if (v2Observation && smartPacingV2ShadowEnabled && !smartPacingV2Enabled && !sessionV2Active) {
         requestSmartPacingV2Plan({ fen, elo: currentElo, clockValues, observation: v2Observation })
           .then(({ plan, budget }) => {
             const decision = decideSmartPacingV2(plan, budget, v2Observation.observedAtMonoMs);
@@ -3361,7 +3528,7 @@ try {
         return analysisPromise;
       };
 
-      if (v2Observation && smartPacingV2Enabled) {
+      if (v2Observation && (smartPacingV2Enabled || sessionV2Active)) {
         checkfen = fen;
         can_interval = false;
         requestSmartPacingV2Plan({ fen, elo: currentElo, clockValues, observation: v2Observation })
@@ -4076,6 +4243,21 @@ try {
         #krypbot-container .kb-color-input {
           width: 19px; height: 19px; border: 0; border-radius: 6px; padding: 0; overflow: hidden;
         }
+        #krypbot-container .kb-session-panel { border-top:1px solid #24262c; padding:12px 0 2px; display:flex; flex-direction:column; gap:9px; }
+        #krypbot-container .kb-session-title { display:flex; justify-content:space-between; align-items:center; color:#f4f5f7; font-size:11px; font-weight:800; }
+        #krypbot-container .kb-session-rollout { color:#858b97; font-size:8px; font-weight:700; }
+        #krypbot-container .kb-session-fields { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
+        #krypbot-container .kb-session-field { display:flex; flex-direction:column; gap:3px; color:#858b97; font-size:8px; }
+        #krypbot-container .kb-session-field input { width:100%; height:27px; box-sizing:border-box; border:1px solid #303238; border-radius:7px; background:#1a1b20; color:#fff; padding:4px 6px; font-size:10px; }
+        #krypbot-container .kb-session-actions { display:grid; grid-template-columns:1fr 1fr auto; gap:6px; }
+        #krypbot-container .kb-session-button { height:28px; border:0; border-radius:7px; background:#2ad36f; color:#0c1710; font-size:9px; font-weight:800; cursor:pointer; }
+        #krypbot-container .kb-session-button[data-action="stop"] { background:#31343b; color:#f4f5f7; }
+        #krypbot-container .kb-session-button[data-action="export"] { width:31px; background:#202228; color:#aeb3bc; }
+        #krypbot-container .kb-session-button:disabled { opacity:.45; cursor:not-allowed; }
+        #krypbot-container .kb-session-status { display:grid; grid-template-columns:1fr 1fr; gap:5px 8px; padding:8px; border-radius:8px; background:#18191e; }
+        #krypbot-container .kb-session-metric { display:flex; justify-content:space-between; gap:4px; color:#858b97; font-size:8px; }
+        #krypbot-container .kb-session-metric strong { color:#f4f5f7; font-size:9px; }
+        #krypbot-container .kb-session-warning { min-height:12px; color:#ffbd59; font-size:8px; line-height:12px; overflow-wrap:anywhere; }
       </style>
     `;
 
@@ -4182,6 +4364,34 @@ try {
             </div>
           </div>
         </div>
+
+        <section class="kb-session-panel" id="kb-session-panel" aria-label="Session Control">
+          <div class="kb-session-title"><span>Session Control</span><span class="kb-session-rollout" id="kb-session-rollout">DISABLED</span></div>
+          <div class="kb-session-fields">
+            <label class="kb-session-field">Duration (min)<input id="kb-session-duration" type="number" min="1" max="1440" step="1" value="120"></label>
+            <label class="kb-session-field">Min win %<input id="kb-session-min-rate" type="number" min="1" max="98" step="1" value="75"></label>
+            <label class="kb-session-field">Max win %<input id="kb-session-max-rate" type="number" min="2" max="99" step="1" value="82"></label>
+          </div>
+          <div class="kb-session-actions">
+            <button class="kb-session-button" id="kb-session-start" data-action="start" type="button">START</button>
+            <button class="kb-session-button" id="kb-session-stop" data-action="stop" type="button">DRAIN</button>
+            <button class="kb-session-button" id="kb-session-export" data-action="export" type="button" aria-label="Export diagnostic">⇩</button>
+          </div>
+          <div class="kb-session-status" aria-live="polite">
+            <div class="kb-session-metric"><span>Phase</span><strong id="kb-session-phase">IDLE</strong></div>
+            <div class="kb-session-metric"><span>Role</span><strong id="kb-session-role">FOLLOWER</strong></div>
+            <div class="kb-session-metric"><span>TTL</span><strong id="kb-session-ttl">00:00:00</strong></div>
+            <div class="kb-session-metric"><span>Drain</span><strong id="kb-session-drain">—</strong></div>
+            <div class="kb-session-metric"><span>Observed</span><strong id="kb-session-observed">0-0-0</strong></div>
+            <div class="kb-session-metric"><span>Eligible</span><strong id="kb-session-control">0-0-0</strong></div>
+            <div class="kb-session-metric"><span>Raw win</span><strong id="kb-session-raw">0.00%</strong></div>
+            <div class="kb-session-metric"><span>Posterior</span><strong id="kb-session-posterior">50.00%</strong></div>
+            <div class="kb-session-metric"><span>Band</span><strong id="kb-session-band">75-82%</strong></div>
+            <div class="kb-session-metric"><span>DDA</span><strong id="kb-session-dda">BOOST +200</strong></div>
+            <div class="kb-session-metric"><span>Target</span><strong id="kb-session-target">—</strong></div>
+          </div>
+          <div class="kb-session-warning" id="kb-session-warning">ROLLOUT_DISABLED</div>
+        </section>
 
         <div class="kb-footer">
           <div style="display:flex; align-items:center; gap:10px;">
@@ -4400,9 +4610,10 @@ try {
             );
           }
 
-          const displayElo = autoAdjust.isEnabled()
+          const legacyDisplayElo = isLegacyAutoAdjustEffective()
             ? autoAdjust.getCurrentDifficulty()
             : chessBot.elo;
+          const displayElo = sessionControlBridge.moveSelectionElo(legacyDisplayElo);
           $("#kb-elo-val").text(displayElo);
           $("#kb-elo-slider").val(displayElo);
           $("#kb-color-picker").val(current_color);
@@ -4418,6 +4629,101 @@ try {
             if (onInput) group.setAttribute("aria-checked", onInput.checked ? "true" : "false");
           });
         };
+
+        function sessionConfigFromUi() {
+          const api = globalThis.ThinkerSessionControl;
+          const durationMinutes = Number.parseInt($("#kb-session-duration").val(), 10);
+          const minimumPercent = Number.parseFloat($("#kb-session-min-rate").val());
+          const maximumPercent = Number.parseFloat($("#kb-session-max-rate").val());
+          return api.validateSessionConfig({
+            schemaVersion: 1,
+            durationMs: durationMinutes * 60000,
+            minWinRate: minimumPercent / 100,
+            maxWinRate: maximumPercent / 100,
+            boostOffsetElo: 200,
+            correctionOffsetElo: -200,
+            minCompletedGames: 5,
+            perceptionElo: Number.isInteger(chessBot.elo) ? chessBot.elo : 1700,
+            scaleId: "stockfish-uci-elo-v1",
+            estimatorVersion: api.ESTIMATOR_VERSION,
+            controllerVersion: api.CONTROLLER_VERSION,
+            minimumAdmissionHeadroomMs: 30000,
+            queueObservationTimeoutMs: 30000,
+            maximumDrainMs: 900000,
+            maximumConsecutiveSaturatedGames: 3,
+          });
+        }
+
+        function updateSessionPanel() {
+          try {
+            const api = globalThis.ThinkerSessionControl;
+            if (!api) return;
+            const status = sessionControlBridge.status();
+            const counts = (value) => `${value.wins}-${value.draws}-${value.losses}`;
+            const offset = status.offsetElo >= 0 ? `+${status.offsetElo}` : String(status.offsetElo);
+            $("#kb-session-rollout").text(status.rolloutStage);
+            $("#kb-session-phase").text(status.phase);
+            $("#kb-session-role").text(status.role);
+            $("#kb-session-ttl").text(api.formatDuration(status.remainingTtlMs));
+            const drain = status.drainDeadlineEpochMs === null ? "—" : `${new Date(status.drainDeadlineEpochMs).toLocaleTimeString()} (${api.formatDuration(status.drainRemainingMs)})`;
+            $("#kb-session-drain").text(drain);
+            $("#kb-session-observed").text(counts(status.observedCounts));
+            $("#kb-session-control").text(counts(status.controlCounts));
+            $("#kb-session-raw").text(`${status.rawWinRate.toFixed(2)}%`);
+            $("#kb-session-posterior").text(`${status.posteriorWinRate.toFixed(2)}%`);
+            $("#kb-session-band").text(status.minWinRate === null ? "—" : `${status.minWinRate.toFixed(0)}-${status.maxWinRate.toFixed(0)}%`);
+            $("#kb-session-dda").text(`${status.controllerMode} ${offset}`);
+            $("#kb-session-target").text(status.effectiveTargetElo === null ? "—" : `${status.opponentRating} → ${status.effectiveTargetElo}${status.targetSaturated ? " SAT" : ""}`);
+            $("#kb-session-warning").text(status.warningCode || "");
+            const terminal = ["IDLE", "COMPLETED", "ABORTED"].includes(status.phase);
+            $("#kb-session-start").prop("disabled", status.rolloutStage === "DISABLED" || !terminal);
+            $("#kb-session-stop").prop("disabled", terminal);
+          } catch (error) {
+            $("#kb-session-warning").text(error && error.message ? error.message : "STATUS_UNAVAILABLE");
+          }
+        }
+
+        $("#kb-session-start").on("click", async function (event) {
+          event.stopPropagation();
+          try {
+            await sessionControlBridge.start(sessionConfigFromUi());
+            sessionControlBridge.setWarning(null);
+          } catch (error) {
+            sessionControlBridge.setWarning(error && error.message ? error.message : "SESSION_START_FAILED");
+          }
+          updateSessionPanel();
+        });
+
+        $("#kb-session-stop").on("click", async function (event) {
+          event.stopPropagation();
+          try {
+            await sessionControlBridge.gracefulStop();
+          } catch (error) {
+            sessionControlBridge.setWarning(error && error.message ? error.message : "GRACEFUL_STOP_FAILED");
+          }
+          updateSessionPanel();
+        });
+
+        $("#kb-session-export").on("click", function (event) {
+          event.stopPropagation();
+          try {
+            const diagnostic = sessionControlBridge.exportDiagnostic();
+            const blob = new Blob([JSON.stringify(diagnostic, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `thinker-session-diagnostic-${Date.now()}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+          } catch (error) {
+            sessionControlBridge.setWarning(error && error.message ? error.message : "DIAGNOSTIC_EXPORT_FAILED");
+          }
+          updateSessionPanel();
+        });
+
+        window.krypbotSessionControlUI = Object.freeze({ update: updateSessionPanel, readConfig: sessionConfigFromUi });
+        window.setInterval(updateSessionPanel, 1000);
+        updateSessionPanel();
 
         // Push current menu state to server so config panel reads correct values
         function pushToServer() {
@@ -4490,6 +4796,10 @@ try {
 
         $('input[name="kb-auto-move"]').on("change", function () {
           auto_move = $(this).val() == "1";
+          if (!auto_move) {
+            smartPacer.cancel();
+            sessionControlBridge.autoMoveChanged(false).catch((error) => debug("error", "[Session Control] Auto Move pause failed", error));
+          }
           window.krypbotUpdateUI();
           pushToServer();
         });
@@ -4657,7 +4967,7 @@ try {
             resetAutoQueueTrigger();
             OpponentIntel.reset();
             setTimeout(() => OpponentIntel.checkOpponent(), 150);
-            if (autoAdjust.isEnabled()) {
+            if (isLegacyAutoAdjustEffective()) {
               autoAdjust.resetToBase();
             }
             detectGameMode();
@@ -4673,7 +4983,7 @@ try {
                 text.includes("vitória")
               ) {
                 updateMySession("W");
-                if (gameMode === "play") autoAdjust.recordResult("W");
+                if (gameMode === "play" && isLegacyAutoAdjustEffective()) autoAdjust.recordResult("W");
               } else if (text.includes("draw") || text.includes("empate")) {
                 updateMySession("D");
               } else if (
@@ -4682,7 +4992,7 @@ try {
                 text.includes("derrota")
               ) {
                 updateMySession("L");
-                if (gameMode === "play") autoAdjust.recordResult("L");
+                if (gameMode === "play" && isLegacyAutoAdjustEffective()) autoAdjust.recordResult("L");
               }
             }
           }
@@ -4781,6 +5091,10 @@ try {
           if (typeof s.autoMove === "boolean" && auto_move !== s.autoMove) {
             auto_move = s.autoMove;
             $('input[name="kb-auto-move"][value="' + (auto_move ? "1" : "0") + '"]').prop("checked", true);
+            if (!auto_move) {
+              smartPacer.cancel();
+              sessionControlBridge.autoMoveChanged(false).catch((error) => debug("error", "[Session Control] Auto Move pause failed", error));
+            }
           }
           // Auto Queue
           if (typeof s.autoQueue === "boolean" && auto_queue !== s.autoQueue) {
@@ -4952,3 +5266,7 @@ try {
     installThinkerRouteBootstrap();
   }
 })();
+
+/* THINKER_SESSION_CONTROL_GENERATED_START */
+globalThis.ThinkerSessionControlReady=(async()=>{const b=atob("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"),u=Uint8Array.from(b,x=>x.charCodeAt(0));const s=new Blob([u]).stream().pipeThrough(new DecompressionStream("gzip"));(0,eval)(await new Response(s).text());return globalThis.ThinkerSessionControl;})();
+/* THINKER_SESSION_CONTROL_GENERATED_END */

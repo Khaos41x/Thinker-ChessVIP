@@ -5,6 +5,7 @@ __pycache__/
 
 # Banco de dados local
 users.db
+move_plan_idempotency.db*
 
 # Engine (binário grande, fornecido localmente)
 engine/

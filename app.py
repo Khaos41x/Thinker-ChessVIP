@@ -15,7 +15,9 @@ import logging
 import subprocess
 import itertools
 import hashlib
+import json
 from decimal import Decimal, InvalidOperation
+from pathlib import Path
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -28,10 +30,12 @@ from flask_socketio import SocketIO
 
 from core.smart_pacing.adapter import KomodoEngineAdapter
 from core.smart_pacing.calibration import CalibrationMode, CalibrationRuntime, RolloutPolicy
+from core.smart_pacing.capability import CalibrationCapabilityError, CalibrationCapabilityService, RatingScaleTranslator
 from core.smart_pacing.contracts import ContractValidationError, MovePlanRequest
 from core.smart_pacing.coordinator import CoordinatorDeadlineExceeded, EngineCoordinator, EngineJob
 from core.smart_pacing.security import CapabilityStore, SlidingWindowRateLimiter, require_engine_capability
 from core.smart_pacing.service import MovePlanService
+from core.smart_pacing.idempotency import MovePlanIdempotencyStore
 from core.elo_calibration import EloCalibrator, EngineTelemetry, load_artifact
 
 app = Flask(__name__)
@@ -716,6 +720,19 @@ def build_calibration_runtime():
 
 calibration_runtime = build_calibration_runtime()
 
+
+def build_rating_scale_translator():
+    try:
+        return RatingScaleTranslator.from_path(os.environ.get("THINKER_RATING_SCALE_MAPPING_ARTIFACT", "").strip())
+    except Exception as error:
+        engine_telemetry.record_failure("invalid_artifact")
+        Log.warning(f"Mapeamento de escala indisponivel: {type(error).__name__}")
+        return RatingScaleTranslator()
+
+
+rating_scale_translator = build_rating_scale_translator()
+calibration_capability_service = CalibrationCapabilityService(calibration_runtime, rating_scale_translator)
+
 # Opening Book
 OPENING_BOOK = {
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -": ["e2e4", "d2d4", "c2c4", "g1f3"],
@@ -744,6 +761,10 @@ move_plan_service = MovePlanService(
     book_lookup=get_book,
     calibration=calibration_runtime,
     telemetry=engine_telemetry,
+    capability_service=calibration_capability_service,
+)
+move_plan_idempotency_store = MovePlanIdempotencyStore(
+    os.environ.get("THINKER_MOVE_PLAN_IDEMPOTENCY_DB", str(Path(__file__).with_name("move_plan_idempotency.db")))
 )
 _legacy_job_ids = itertools.count(1)
 
@@ -1303,18 +1324,78 @@ def analyze_position():
     })
 
 
+@app.route("/calibration-readiness", methods=["POST"])
+@engine_api_auth
+def calibration_readiness():
+    try:
+        return jsonify(calibration_capability_service.readiness(request.get_json(silent=True)))
+    except CalibrationCapabilityError as error:
+        return jsonify({"error": error.code}), error.status
+
+
+@app.route("/calibration-capability", methods=["POST"])
+@engine_api_auth
+def calibration_capability():
+    try:
+        return jsonify(calibration_capability_service.pin(request.get_json(silent=True)))
+    except CalibrationCapabilityError as error:
+        return jsonify({"error": error.code}), error.status
+
+
 @app.route("/move-plan", methods=["POST"])
 @engine_api_auth
 def move_plan():
+    claim = None
+    move_plan_request = None
     try:
-        move_plan_request = MovePlanRequest.from_payload(request.get_json(silent=True))
+        raw_payload = request.get_json(silent=True)
+        move_plan_request = MovePlanRequest.from_payload(raw_payload)
+        move_plan_service.validate_request(move_plan_request)
+        capability_expiry = calibration_capability_service.expiry_for(move_plan_request.runtime_game_token)
+        retention_expiry = (capability_expiry or int(time.time() * 1000)) + 86_400_000
+        claim = move_plan_idempotency_store.claim(
+            move_plan_request.runtime_game_token,
+            move_plan_request.request_id,
+            raw_payload,
+            retention_expiry,
+        )
+        if claim["status"] == "conflict":
+            return jsonify({"error": "REQUEST_ID_CONFLICT"}), 409
+        if claim["status"] == "pending":
+            response = jsonify({"error": "REQUEST_IN_PROGRESS"})
+            response.status_code = 202
+            response.headers["Retry-After"] = "1"
+            return response
+        if claim["status"] == "indeterminate":
+            return jsonify({"error": "REQUEST_OUTCOME_INDETERMINATE"}), 503
+        if claim["status"] == "capacity":
+            return jsonify({"error": "IDEMPOTENCY_CAPACITY"}), 503
+        if claim["status"] == "complete":
+            return Response(claim["response"], status=200, mimetype="application/json")
         plan = move_plan_service.create_plan(move_plan_request)
-        return jsonify(plan)
+        encoded = json.dumps(plan, ensure_ascii=True, separators=(",", ":"), sort_keys=True).encode("utf-8")
+        move_plan_idempotency_store.complete(
+            move_plan_request.runtime_game_token,
+            move_plan_request.request_id,
+            claim["owner"],
+            encoded,
+        )
+        return Response(encoded, status=200, mimetype="application/json")
     except ContractValidationError as error:
+        if claim and claim.get("status") == "claimed" and move_plan_request is not None:
+            move_plan_idempotency_store.mark_indeterminate(move_plan_request.runtime_game_token, move_plan_request.request_id, claim["owner"])
         return jsonify(error.to_payload()), 400
+    except CalibrationCapabilityError as error:
+        if claim and claim.get("status") == "claimed" and move_plan_request is not None:
+            move_plan_idempotency_store.mark_indeterminate(move_plan_request.runtime_game_token, move_plan_request.request_id, claim["owner"])
+        return jsonify({"error": error.code}), error.status
     except CoordinatorDeadlineExceeded:
+        if claim and claim.get("status") == "claimed":
+            move_plan_idempotency_store.mark_indeterminate(move_plan_request.runtime_game_token, move_plan_request.request_id, claim["owner"])
         return jsonify({"error": "engine_deadline_exceeded"}), 503
     except Exception as error:
+        if claim and claim.get("status") == "claimed" and move_plan_request is not None:
+            move_plan_idempotency_store.mark_indeterminate(move_plan_request.runtime_game_token, move_plan_request.request_id, claim["owner"])
         Log.error(f"Erro no move-plan: {error}")
         return jsonify({"error": "move_plan_unavailable"}), 503
 

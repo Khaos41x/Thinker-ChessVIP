@@ -567,6 +567,8 @@ class CapabilitySecurityTests(unittest.TestCase):
     def test_protected_endpoint_requires_bearer_capability(self):
         client = server_app.app.test_client()
         protected_requests = (
+            ("/calibration-readiness", {"schemaVersion": 1, "opponentRatingScaleId": "x", "targetScaleId": "y", "requiredMode": "active"}),
+            ("/calibration-capability", {"schemaVersion": 1}),
             ("/move-plan", valid_payload()),
             ("/move-plan/release", {"runtimeGameToken": "game-1"}),
             ("/getmove", {"fen": chess.STARTING_FEN, "elo": 1200, "time": 0.01}),

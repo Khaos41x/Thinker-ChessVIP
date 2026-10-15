@@ -35,6 +35,21 @@ def normalize_full_fen(fen):
 
 def observation_key(runtime_game_token, position_revision, fen, schema_version=1):
     normalized = normalize_full_fen(fen)
+    if int(schema_version) == 2:
+        encoded = json.dumps(
+            {
+                "fen": normalized,
+                "positionRevision": int(position_revision),
+                "runtimeGameToken": str(runtime_game_token),
+                "schemaVersion": 2,
+            },
+            ensure_ascii=True,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("utf-8")
+        return f"obs2:{hashlib.sha256(encoded).hexdigest()}"
+    if int(schema_version) != 1:
+        raise ValueError("unsupported observation schema version")
     value = _digest(
         f"observation-v{OBSERVATION_KEY_VERSION}",
         {

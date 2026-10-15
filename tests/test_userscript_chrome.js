@@ -163,6 +163,7 @@ function createCdpClient(webSocketUrl) {
         return ({
         readyState: document.readyState,
         menu: Boolean(document.getElementById("krypbot-container")),
+        sessionPanel: Boolean(document.getElementById("kb-session-panel")),
         banner: Boolean(document.getElementById("thinker-chess-banner")),
         wrapper: Boolean(document.getElementById("oi-wrapper")),
         documentHeight: Math.max(document.body.scrollHeight, document.documentElement.scrollHeight),
@@ -180,8 +181,80 @@ function createCdpClient(webSocketUrl) {
     });
     const state = result.result.value;
 
+    const module14Smoke = await client.send("Runtime.evaluate", {
+      expression: `(async () => { try {
+        const api = globalThis.ThinkerSessionControl;
+        if (!api) return { ok: false, reason: "namespace-missing" };
+        const repository = new api.IndexedDbRepository({ indexedDB: globalThis.indexedDB, crypto: globalThis.crypto });
+        const event = {
+          schemaVersion: 1,
+          eventId: "session:start",
+          sessionId: "11111111111111111111111111111111",
+          authorityEpoch: 1,
+          expectedRevision: 0,
+          sequence: 1,
+          occurredAtEpochMs: Date.now(),
+          type: "SESSION_STARTED",
+          payload: { accountKey: "chrome-smoke", authorizationDecision: { schemaVersion: 1, allowed: true, reason: "OPAQUE_POLICY_MATCH" }, config: {
+            schemaVersion: 1, durationMs: 60000, minWinRate: 0.25, maxWinRate: 0.75,
+            boostOffsetElo: 200, correctionOffsetElo: -200, minCompletedGames: 2,
+            perceptionElo: 1700, scaleId: "opaque-scale-v1",
+            estimatorVersion: api.ESTIMATOR_VERSION, controllerVersion: api.CONTROLLER_VERSION,
+            minimumAdmissionHeadroomMs: 5000, queueObservationTimeoutMs: 10000,
+            maximumDrainMs: 60000, maximumConsecutiveSaturatedGames: 2,
+          } },
+          reducerVersion: api.REDUCER_VERSION,
+        };
+        const snapshot = api.reduce(null, event).nextState;
+        const commit = await repository.commit(event, snapshot);
+        const restored = await repository.loadSession(snapshot.sessionId);
+        const duplicate = await repository.commit(event, snapshot);
+        const locks = navigator.locks;
+        const clock = { now: () => Date.now() };
+        const first = new api.LeaderCoordinator({ repository, locks, clock });
+        const second = new api.LeaderCoordinator({ repository, locks, clock });
+        const [a, b] = await Promise.all([
+          first.acquire({ authorityEpoch: 1, sessionId: snapshot.sessionId, ownerTabId: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }),
+          second.acquire({ authorityEpoch: 1, sessionId: snapshot.sessionId, ownerTabId: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" }),
+        ]);
+        const winner = a.status === "acquired"
+          ? { leader: first, ownerTabId: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", lease: a.lease }
+          : { leader: second, ownerTabId: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", lease: b.lease };
+        const controller = new api.SessionControlController({ repository, leader: winner.leader, clock, ownerTabId: winner.ownerTabId, idFactory: () => "cccccccccccccccccccccccccccccccc" });
+        controller.setSnapshot(restored);
+        controller.setLease(winner.lease);
+        const bridge = window.krypbotSessionControlBridge;
+        bridge.install(controller, () => ({ queue: {
+          calibrationReadiness: { active: true, opponentRatingScaleId: "opaque-scale-v1", expiresAtEpochMs: Date.now() + 30000 },
+          intendedQueueScaleId: "opaque-scale-v1",
+        } }));
+        const queueGate = bridge.queueGate(true);
+        const legacySuspended = bridge.suspendsLegacyAutoAdjust();
+        window.krypbotSessionControlUI.update();
+        const status = bridge.status();
+        const diagnosticText = JSON.stringify(bridge.exportDiagnostic());
+        const ui = {
+          phase: document.getElementById("kb-session-phase")?.textContent,
+          role: document.getElementById("kb-session-role")?.textContent,
+          observed: document.getElementById("kb-session-observed")?.textContent,
+          dda: document.getElementById("kb-session-dda")?.textContent,
+        };
+        bridge.clear();
+        repository.close();
+        return { ok: commit.status === "committed" && restored.revision === 1 && duplicate.status === "duplicate" && a.status === "acquired" && b.status === "contended" && queueGate.allowed && legacySuspended && status.phase === "QUEUEING" && ui.phase === "QUEUEING" && ui.role === "LEADER" && !diagnosticText.includes("chrome-smoke") && !diagnosticText.includes("runtimeGameToken") && !diagnosticText.includes("lastFen"), commit: commit.status, recoveryRevision: restored.revision, duplicate: duplicate.status, leases: [a.status, b.status], queueGate, legacySuspended, status, ui };
+        } catch (error) {
+          return { ok: false, name: error.name, code: error.code, message: error.message, causeName: error.cause?.name, causeMessage: error.cause?.message, stack: error.stack };
+        }
+      })()`,
+      awaitPromise: true,
+      returnByValue: true,
+    });
+    const module14 = module14Smoke.result.value;
+
     assert(exceptions.length === 0, `Userscript exception: ${exceptions[0]?.text || "unknown"}`);
+    assert(module14.ok, `Module 14 browser smoke failed: ${JSON.stringify(module14)}`);
     assert(state.menu, "configuration menu was not mounted");
+    assert(state.sessionPanel, "session control panel was not mounted");
     assert(state.banner, "banner was not mounted");
     assert(state.wrapper, "scout panel wrapper was not mounted");
     assert(
@@ -197,7 +270,7 @@ function createCdpClient(webSocketUrl) {
       `page cannot scroll to the configuration menu: ${state.documentHeight}px document / ${state.viewportHeight}px viewport`,
     );
     assert(state.bannerLayout.display === "flex", "banner is still hidden on a desktop viewport");
-    console.log(JSON.stringify({ state, consoleErrors }, null, 2));
+    console.log(JSON.stringify({ state, module14, consoleErrors }, null, 2));
     console.log(liveChess ? "Live Chess.com userscript bootstrap passed." : "Chrome userscript bootstrap passed.");
   } finally {
     client?.close();

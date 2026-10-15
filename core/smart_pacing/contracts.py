@@ -6,6 +6,7 @@ from .identities import analysis_position_key, normalize_full_fen, observation_k
 
 
 SCHEMA_VERSION = 1
+LATEST_SCHEMA_VERSION = 2
 ANALYSIS_BUDGET_VERSION = 1
 EVIDENCE_MODEL_VERSION = 1
 ANALYSIS_TIERS = frozenset({"survival", "fast", "standard", "deep"})
@@ -70,9 +71,61 @@ class HistoryDigest:
             return None
         if not isinstance(payload, dict):
             raise ContractValidationError("historyDigest", "must be an object")
+        if set(payload) != {"value", "confidence"}:
+            raise ContractValidationError("historyDigest", "contains invalid fields")
         value = _string(payload, "value", maximum=128)
         confidence = _number(payload.get("confidence"), "historyDigest.confidence", minimum=0, maximum=1)
         return cls(value=value, confidence=confidence)
+
+
+@dataclass(frozen=True)
+class CalibrationRequirement:
+    required_mode: str
+    scale_id: str
+    artifact_version: str
+    artifact_checksum: str
+    cohort: str
+    rollout_version: str
+    seed_policy_version: str
+    budget_class: str
+    rating_scale_mapping_version: str
+    rating_scale_mapping_checksum: str
+
+    @classmethod
+    def from_payload(cls, payload):
+        if not isinstance(payload, dict):
+            raise ContractValidationError("calibrationRequirement", "must be an object")
+        expected = {
+            "requiredMode", "scaleId", "artifactVersion", "artifactChecksum", "cohort",
+            "rolloutVersion", "seedPolicyVersion", "budgetClass",
+            "ratingScaleMappingVersion", "ratingScaleMappingChecksum",
+        }
+        if set(payload) != expected:
+            raise ContractValidationError("calibrationRequirement", "contains invalid fields")
+        if payload.get("requiredMode") != "active":
+            raise ContractValidationError("calibrationRequirement.requiredMode", "must equal active")
+        values = {field: _string(payload, field, maximum=128) for field in expected}
+        for field in ("artifactChecksum", "ratingScaleMappingChecksum"):
+            if not re.fullmatch(r"[0-9a-f]{64}", values[field]):
+                raise ContractValidationError(f"calibrationRequirement.{field}", "must be lowercase SHA-256")
+        return cls(
+            required_mode=values["requiredMode"], scale_id=values["scaleId"],
+            artifact_version=values["artifactVersion"], artifact_checksum=values["artifactChecksum"],
+            cohort=values["cohort"], rollout_version=values["rolloutVersion"],
+            seed_policy_version=values["seedPolicyVersion"], budget_class=values["budgetClass"],
+            rating_scale_mapping_version=values["ratingScaleMappingVersion"],
+            rating_scale_mapping_checksum=values["ratingScaleMappingChecksum"],
+        )
+
+    def to_payload(self):
+        return {
+            "requiredMode": self.required_mode, "scaleId": self.scale_id,
+            "artifactVersion": self.artifact_version, "artifactChecksum": self.artifact_checksum,
+            "cohort": self.cohort, "rolloutVersion": self.rollout_version,
+            "seedPolicyVersion": self.seed_policy_version, "budgetClass": self.budget_class,
+            "ratingScaleMappingVersion": self.rating_scale_mapping_version,
+            "ratingScaleMappingChecksum": self.rating_scale_mapping_checksum,
+        }
 
 
 @dataclass(frozen=True)
@@ -92,13 +145,23 @@ class MovePlanRequest:
     client_budget_ms: int
     analysis_budget_version: int
     evidence_model_version: int
+    calibration_requirement: CalibrationRequirement | None = None
     move_selection_elo_clamped: bool = False
     perception_elo_clamped: bool = False
 
     @classmethod
     def from_payload(cls, raw_payload):
         payload = _object(raw_payload)
-        schema_version = _integer(payload, "schemaVersion", minimum=SCHEMA_VERSION, maximum=SCHEMA_VERSION)
+        schema_version = _integer(payload, "schemaVersion", minimum=SCHEMA_VERSION, maximum=LATEST_SCHEMA_VERSION)
+        expected = {
+            "schemaVersion", "requestId", "runtimeGameToken", "positionRevision", "observationKey",
+            "analysisPositionKey", "fen", "lastMove", "historyDigest", "moveSelectionElo",
+            "perceptionElo", "analysisTier", "clientBudgetMs", "analysisBudgetVersion", "evidenceModelVersion",
+        }
+        if schema_version == 2:
+            expected.add("calibrationRequirement")
+        if set(payload) != expected:
+            raise ContractValidationError("body", "contains invalid fields")
         request_id = _string(payload, "requestId", maximum=128)
         runtime_game_token = _string(payload, "runtimeGameToken", maximum=128)
         position_revision = _integer(payload, "positionRevision", minimum=0, maximum=2_147_483_647)
@@ -138,6 +201,13 @@ class MovePlanRequest:
             minimum=EVIDENCE_MODEL_VERSION,
             maximum=EVIDENCE_MODEL_VERSION,
         )
+        calibration_requirement = None
+        if schema_version == 2:
+            if not re.fullmatch(r"[0-9a-f]{32}", runtime_game_token):
+                raise ContractValidationError("runtimeGameToken", "must be 128-bit lowercase hex")
+            if request_id != f"{runtime_game_token}-{position_revision}":
+                raise ContractValidationError("requestId", "must match runtime token and position revision")
+            calibration_requirement = CalibrationRequirement.from_payload(payload.get("calibrationRequirement"))
         clamped_move_selection_elo = max(600, min(3200, move_selection_elo))
         clamped_perception_elo = max(600, min(3200, perception_elo))
         return cls(
@@ -156,6 +226,7 @@ class MovePlanRequest:
             client_budget_ms=max(25, min(5_000, raw_budget)),
             analysis_budget_version=analysis_budget_version,
             evidence_model_version=evidence_model_version,
+            calibration_requirement=calibration_requirement,
             move_selection_elo_clamped=clamped_move_selection_elo != move_selection_elo,
             perception_elo_clamped=clamped_perception_elo != perception_elo,
         )
@@ -174,6 +245,7 @@ class MovePlanResponse:
     evidence: dict
     diagnostics: dict
     calibration: dict
+    origin_source: str | None = None
     schema_version: int = SCHEMA_VERSION
     evidence_model_version: int = EVIDENCE_MODEL_VERSION
 
@@ -185,6 +257,9 @@ class MovePlanResponse:
         for field, move in (("move", self.move), ("referenceBestMove", self.reference_best_move)):
             if move is not None and not UCI_PATTERN.fullmatch(move):
                 raise ContractValidationError(field, "must be normalized UCI")
+        origin_source = self.origin_source or self.source
+        if origin_source not in PLAN_SOURCES or origin_source == "cache":
+            raise ContractValidationError("originSource", "is not supported")
         return {
             "schemaVersion": self.schema_version,
             "requestId": self.request_id,
@@ -194,6 +269,7 @@ class MovePlanResponse:
             "move": self.move,
             "referenceBestMove": self.reference_best_move,
             "source": self.source,
+            "originSource": origin_source,
             "status": self.status,
             "evidenceModelVersion": self.evidence_model_version,
             "evidence": dict(self.evidence),

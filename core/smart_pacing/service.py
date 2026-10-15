@@ -27,6 +27,7 @@ class MovePlanService:
         monotonic=time.monotonic,
         logger=None,
         telemetry=None,
+        capability_service=None,
     ):
         self.coordinator = coordinator
         self.book_lookup = book_lookup or (lambda _fen: None)
@@ -36,6 +37,25 @@ class MovePlanService:
         self.monotonic = monotonic
         self.logger = logger or logging.getLogger(__name__)
         self.telemetry = telemetry or NoopEngineTelemetry()
+        self.capability_service = capability_service
+
+    def validate_request(self, request):
+        if request.schema_version == 2:
+            if self.capability_service is None:
+                from .capability import CalibrationCapabilityError
+                raise CalibrationCapabilityError("CALIBRATION_CAPABILITY_REQUIRED", "schema v2 capability service is unavailable", 503)
+            return self.capability_service.validate_move_plan(request)
+        return None
+
+    def _bind_capability_identity(self, request, calibration):
+        payload = dict(calibration)
+        capability = self.validate_request(request)
+        if capability is not None:
+            payload.update({
+                "ratingScaleMappingVersion": capability["ratingScaleMappingVersion"],
+                "ratingScaleMappingChecksum": capability["ratingScaleMappingChecksum"],
+            })
+        return payload
 
     def _plan_cache_key(self, request, calibration):
         return contextual_plan_cache_key(
@@ -69,6 +89,7 @@ class MovePlanService:
 
     def create_plan(self, request):
         started = self.monotonic()
+        self.validate_request(request)
         if request.move_selection_elo_clamped:
             self.telemetry.record_clamp("move_selection_elo")
         if request.perception_elo_clamped:
@@ -124,10 +145,12 @@ class MovePlanService:
             payload["analysisPositionKey"] = request.analysis_position_key
             payload["positionRevision"] = request.position_revision
             payload["source"] = "cache"
+            payload["originSource"] = payload.get("originSource") or cached.get("source")
             payload["calibration"] = dict(
                 payload["calibration"],
                 profilePinned=calibration.pinned,
             )
+            payload["calibration"] = self._bind_capability_identity(request, payload["calibration"])
             payload["diagnostics"] = dict(
                 payload["diagnostics"],
                 cacheHit=True,
@@ -284,10 +307,12 @@ class MovePlanService:
             status=status,
             evidence=evidence,
             diagnostics=merged_diagnostics,
-            calibration=calibration or {
+            calibration=self._bind_capability_identity(request, calibration or {
                 "calibrationMode": "shadow",
                 "calibrationStatus": "not_applied",
                 "calibrationReason": "CALIBRATION_NOT_CONFIGURED",
-            },
+            }),
+            origin_source=source,
+            schema_version=request.schema_version,
             evidence_model_version=request.evidence_model_version,
         ).to_payload()
