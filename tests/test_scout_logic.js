@@ -297,7 +297,9 @@ if (
   !/OpponentIntel\.ensureScoutWrapper\(\);\s+scheduleThinkerWorkspaceLayout\(\);\s+OpponentIntel\.startObserver\(\);/.test(source) ||
   source.includes('addEventListener("scroll", scheduleThinkerBannerPosition') ||
   reconcileSource.includes("\n    scheduleThinkerBannerPosition();") ||
-  !source.includes("object-fit:cover;object-position:center center")
+  !source.includes("THINKER_BANNER_MIN_WIDTH_PX = 96") ||
+  !source.includes("viewportRight - width") ||
+  !source.includes("object-fit:contain!important;object-position:center center")
 ) {
   throw new Error("viewport-safe banner, Ghost recovery, or workspace layout markers are missing");
 }
@@ -480,13 +482,17 @@ assert(
   bannerLayout &&
     bannerLayout.left === 1103 &&
     bannerLayout.top === 16 &&
-    bannerLayout.width === 171 &&
+    bannerLayout.width === 170 &&
     bannerLayout.height === 688,
   "document-anchored banner geometry is incorrect",
 );
+const narrowBannerLayout = context.calculateBannerLayout(sidebarRect, 1160, 0, 0, false);
 assert(
-  context.calculateBannerLayout(sidebarRect, 1160, 0, 0, false) === null,
-  "banner was not hidden for an unsafe narrow slot",
+  narrowBannerLayout &&
+    narrowBannerLayout.left === 984 &&
+    narrowBannerLayout.width === 170 &&
+    narrowBannerLayout.left + narrowBannerLayout.width === 1154,
+  "narrow banner fallback did not clamp to viewportRight",
 );
 assert(
   context.calculateBannerLayout(sidebarRect, 1280, 0, 0, true) === null,
@@ -513,7 +519,10 @@ assert(
   "absolute banner geometry did not convert viewport coordinates to document coordinates",
 );
 const narrowLayout = context.calculateBannerLayout(sidebarRect, 1160, 0, 0, false);
-assert(narrowLayout === null, "unsafe narrow viewport exposed the banner");
+assert(
+  narrowLayout && narrowLayout.left === 984 && narrowLayout.width === 170,
+  "unsafe narrow viewport was not resolved by the bounded fallback",
+);
 assert(
   context.calculateWorkspaceMargin(836, 895) === 121 &&
     context.calculateWorkspaceMargin(836, 1080) === 306,

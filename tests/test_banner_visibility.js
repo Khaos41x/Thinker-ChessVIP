@@ -79,6 +79,32 @@ assert(banner.style.top === "637px", "banner top did not use sidebar top plus sc
 assert(banner.style.left === "1263px", "banner left did not use sidebar right plus the 15px gap");
 assert(banner.style.height === "742px", "banner height did not mirror the sidebar exactly");
 assert(banner.style.width === "164px", "banner width did not use the remaining safe viewport space");
+
+const roomyLayout = context.calculate(sidebarRect, 1600, 0, 500, false);
+assert(roomyLayout.left === 1263, "roomy viewport did not preserve the 15px sidebar gap");
+assert(roomyLayout.width === 170, "roomy viewport did not use the preferred banner width");
+assert(roomyLayout.left + roomyLayout.width <= 1594, "roomy banner exceeded viewportRight");
+
+const constrainedLayout = context.calculate(sidebarRect, 1390, 0, 500, false);
+assert(constrainedLayout.left === 1263, "constrained viewport did not preserve the 15px sidebar gap");
+assert(constrainedLayout.width === 121, "constrained viewport did not shrink to availableWidth");
+assert(constrainedLayout.left + constrainedLayout.width === 1384,
+  "constrained banner did not end at viewportRight");
+
+const fallbackLayout = context.calculate(sidebarRect, 1330, 0, 500, false);
+assert(fallbackLayout.width === 170, "extreme viewport did not preserve readable banner width");
+assert(fallbackLayout.left === 1154, "extreme viewport did not shift the banner left");
+assert(fallbackLayout.left + fallbackLayout.width === 1324,
+  "extreme fallback banner did not end at viewportRight");
+
+const scrolledFallbackLayout = context.calculate(sidebarRect, 1330, 50, 500, false);
+assert(scrolledFallbackLayout.left === 1204,
+  "horizontal scroll offset was not included in the viewport clamp");
+assert(scrolledFallbackLayout.left + scrolledFallbackLayout.width === 1374,
+  "scrolled fallback banner exceeded document-space viewportRight");
+
+assert(context.calculate(sidebarRect, 100, 0, 500, false) === null,
+  "unsafe viewport narrower than the minimum readable width was accepted");
 const geometryBeforeScroll = JSON.stringify(banner.style);
 window.scrollY = 700;
 assert(JSON.stringify(banner.style) === geometryBeforeScroll, "scrolling alone wrote banner geometry");
@@ -131,11 +157,16 @@ for (const marker of [
   "if (!shouldShowThinkerBanner()) banner.style.display = \"none\";",
   "position:absolute!important",
   "transition:none!important",
+  "object-fit:contain",
 ]) {
   assert(source.includes(marker), `banner lifecycle gate missing: ${marker}`);
 }
 assert(!source.includes("function positionThinkerBannerFallback"), "viewport fallback still exists");
 assert(!source.includes('addEventListener("scroll", scheduleThinkerBannerPosition'), "scroll still schedules banner geometry");
+const bannerMarkupStart = source.indexOf('const bannerHtml = `');
+const bannerMarkupEnd = source.indexOf("`;", bannerMarkupStart);
+const bannerMarkup = source.slice(bannerMarkupStart, bannerMarkupEnd);
+assert(!bannerMarkup.includes("object-fit:cover"), "banner artwork still uses cropping object-fit:cover");
 const observerStart = source.indexOf("thinkerBannerLayoutObserver.observe(document.body");
 const observerEnd = source.indexOf("});", observerStart) + 3;
 const observerOptions = source.slice(observerStart, observerEnd);
