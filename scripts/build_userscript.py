@@ -24,6 +24,7 @@ MODULES = (
     "leader",
     "status",
     "telemetry",
+    "ui",
     "index",
 )
 

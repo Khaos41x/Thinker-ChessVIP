@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 
 from core.elo_calibration.artifact import load_artifact_bytes
-from tools.elo_calibration.io import atomic_write, write_canonical_json
+from tools.elo_calibration.io import atomic_write, load_json_bytes, write_canonical_json
 from tools.elo_calibration.run_matches import pair_to_bytes
 
 from helpers import config, pair
@@ -66,14 +66,13 @@ print(canonical_json_bytes(proof).hex())
     def test_estimate_and_fit_cli_generate_phase1_artifact(self) -> None:
         with tempfile.TemporaryDirectory(dir=Path.cwd()) as directory:
             root = Path(directory)
-            records = []
             for skill in range(26):
                 path = root / f"pair-{skill}.json"
                 atomic_write(path, pair_to_bytes(pair(skill, f"cli-{skill}")))
-                records.append(str(path))
             estimates_path = root / "estimates.json"
-            estimate_command = [sys.executable, "-m", "tools.elo_calibration.estimate", *records, "--output", str(estimates_path)]
+            estimate_command = [sys.executable, "-m", "tools.elo_calibration.estimate", str(root), "--output", str(estimates_path)]
             subprocess.run(estimate_command, check=True, capture_output=True, text=True)
+            self.assertEqual(load_json_bytes(estimates_path.read_bytes())["recordCount"], 26)
             config_path = root / "config.json"
             write_canonical_json(config_path, config())
             artifact_path = root / "artifact.json"

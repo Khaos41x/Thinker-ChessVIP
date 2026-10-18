@@ -14,6 +14,17 @@ ESTIMATOR_VERSION = "pentanomial-delta-v1"
 _Z_975 = 1.959963984540054
 
 
+def expand_record_paths(paths: list[str] | tuple[str, ...]) -> tuple[Path, ...]:
+    expanded: list[Path] = []
+    for value in paths:
+        path = Path(value)
+        if path.is_dir():
+            expanded.extend(sorted(path.glob("*.json"), key=lambda item: item.as_posix()))
+        else:
+            expanded.append(path)
+    return tuple(expanded)
+
+
 def _subject_points(pair: PairRecord) -> float:
     total = 0.0
     for game in pair.games:
@@ -100,7 +111,7 @@ def main() -> int:
     parser.add_argument("records", nargs="+")
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
-    records = tuple(decode_pair(Path(path).read_bytes()) for path in args.records)
+    records = tuple(decode_pair(path.read_bytes()) for path in expand_record_paths(args.records))
     write_canonical_json(
         args.output,
         {

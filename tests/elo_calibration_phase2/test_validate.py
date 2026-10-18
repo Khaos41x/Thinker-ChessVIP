@@ -141,6 +141,27 @@ class ValidateTests(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 write_validation_outputs(report_path, attestation_path, report, attestation)
 
+    def test_operational_failure_gate_uses_ten_percent_of_all_records(self) -> None:
+        training = tuple(pair(skill, f"train-tolerance-{skill}") for skill in range(26))
+        base_holdout = tuple(pair(skill, f"holdout-tolerance-{skill}") for skill in range(26))
+        artifact, _ = build_artifact_from_estimates(estimate_cells(training), config())
+        failures = tuple(pair(0, f"failure-tolerance-{index}", estimable=False) for index in range(5))
+        gates = ValidationGates(0.2, 1.0, 1000.0, 1, 100000.0, 0.01, 0.0)
+        report, _ = validate_artifact(
+            artifact_to_bytes(artifact), training, base_holdout + failures, config(), gates, "owner"
+        )
+        self.assertNotIn("operational failure gate failed", report.reasons)
+        self.assertEqual(report.maximum_operational_failures, 5)
+        rejected, _ = validate_artifact(
+            artifact_to_bytes(artifact),
+            training,
+            base_holdout + failures + (pair(0, "failure-tolerance-5", estimable=False),),
+            config(),
+            gates,
+            "owner",
+        )
+        self.assertIn("operational failure gate failed", rejected.reasons)
+
 
 if __name__ == "__main__":
     unittest.main()

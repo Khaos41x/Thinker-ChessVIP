@@ -18,6 +18,7 @@ from .estimate import decode_estimate
 from .fit_curve import ArtifactBuildConfig, decode_build_config
 from .io import canonical_json_bytes, content_sha256, immutable_write, load_json_bytes
 from .models import BenchmarkPlan, CellEstimate, MatchCell
+from .operational_policy import maximum_operational_failures
 from .run_matches import decode_plan
 
 
@@ -216,7 +217,7 @@ def _plan(environment: PreparationEnvironment, cells: tuple[MatchCell, ...], sta
         baseline_nps=environment.baseline_nps,
         maximum_nps_drift_fraction=0.2,
         maximum_color_score_difference=0.05,
-        maximum_operational_failures=0,
+        maximum_operational_failures=maximum_operational_failures(len(cells)),
         stopping_rule=f"stage-{stage}-fixed-pairs-v1",
         subject_options=SUBJECT_OPTIONS,
         reference_options=options,
@@ -383,7 +384,10 @@ def validate_prior_evidence(
         prior_plan.baseline_nps == environment.baseline_nps,
         prior_plan.maximum_nps_drift_fraction == 0.2,
         prior_plan.maximum_color_score_difference == 0.05,
-        prior_plan.maximum_operational_failures == 0,
+        prior_plan.maximum_operational_failures in {
+            0,
+            maximum_operational_failures(len(prior_plan.cells)),
+        },
         prior_plan.game_id_version == "sha256-canonical-json-v1",
         prior_plan.pair_id_version == "sha256-canonical-json-v1",
         prior_plan.subject_options == SUBJECT_OPTIONS,

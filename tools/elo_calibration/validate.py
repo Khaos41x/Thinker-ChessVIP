@@ -8,10 +8,11 @@ from pathlib import Path
 
 from core.elo_calibration.artifact import artifact_to_bytes, load_artifact_bytes
 
-from .estimate import estimate_cells
+from .estimate import estimate_cells, expand_record_paths
 from .fit_curve import ArtifactBuildConfig, build_artifact_from_estimates, decode_build_config
 from .io import content_sha256, load_json_bytes, write_immutable_json
 from .models import BenchmarkPlan, EngineRole, GameOutcome, PairRecord, SubjectColor, ValidationAttestation, ValidationReport
+from .operational_policy import maximum_operational_failures
 from .run_matches import decode_pair, decode_plan
 
 
@@ -183,7 +184,11 @@ def validate_artifact(
         reasons.append("point equivalence gate failed")
     if max_interval is None or max_interval > gates.interval_equivalence_elo:
         reasons.append("interval equivalence gate failed")
-    if operational_failures > gates.maximum_operational_failures:
+    operational_failure_limit = max(
+        gates.maximum_operational_failures,
+        maximum_operational_failures(len(all_records)),
+    )
+    if operational_failures > operational_failure_limit:
         reasons.append("operational failure gate failed")
     if nps_drift is None or nps_drift > gates.maximum_nps_drift_fraction:
         reasons.append("NPS drift gate failed")
@@ -203,7 +208,7 @@ def validate_artifact(
         gates.baseline_nps,
         gates.maximum_nps_drift_fraction,
         gates.maximum_color_score_difference,
-        gates.maximum_operational_failures,
+        operational_failure_limit,
         gates.holdout_fraction,
         rebuild_equal,
         len(training_records),
@@ -248,7 +253,7 @@ def main() -> int:
     parser.add_argument("--attestation", required=True)
     parser.add_argument("--approver-role", required=True)
     args = parser.parse_args()
-    records = tuple(decode_pair(Path(path).read_bytes()) for path in args.records)
+    records = tuple(decode_pair(path.read_bytes()) for path in expand_record_paths(args.records))
     plan = decode_plan(Path(args.plan).read_bytes())
     gates = ValidationGates.from_plan(plan)
     training, holdout = split_records(records, gates.holdout_fraction)

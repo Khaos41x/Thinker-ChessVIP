@@ -12,6 +12,7 @@ const suites = [
   ["platform-chesscom", require("./platform-chesscom.test")],
   ["phase3", require("./phase3.test")],
   ["phase4", require("./phase4.test")],
+  ["ui", require("./ui.test")],
   ["build", require("./build.test")],
 ];
 

@@ -12,4 +12,5 @@ module.exports = Object.freeze({
   ...require("./statistics"),
   ...require("./status"),
   ...require("./telemetry"),
+  ...require("./ui"),
 });

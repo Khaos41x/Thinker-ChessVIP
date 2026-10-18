@@ -14,6 +14,7 @@ from .io import immutable_write, write_immutable_json
 from .io import load_json_bytes
 from .estimate import decode_estimate
 from .models import CellEstimate, FitReport
+from .operational_policy import validate_operational_failures
 
 
 FIT_VERSION = "weighted-pava-pchip-v1"
@@ -158,6 +159,10 @@ def main() -> int:
     raw_estimates = load_json_bytes(Path(args.estimates).read_bytes())
     if set(raw_estimates) != {"estimatorVersion", "estimates", "operationalFailures", "recordCount"} or raw_estimates["estimatorVersion"] != "pentanomial-delta-v1":
         parser.error("unsupported estimates document")
+    try:
+        validate_operational_failures(raw_estimates["operationalFailures"], raw_estimates["recordCount"])
+    except ValueError as error:
+        parser.error(str(error))
     estimates = tuple(decode_estimate(item) for item in raw_estimates["estimates"])
     config = decode_build_config(load_json_bytes(Path(args.config).read_bytes()))
     artifact, report = build_artifact_from_estimates(estimates, config)

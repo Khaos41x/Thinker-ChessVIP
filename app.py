@@ -17,6 +17,7 @@ import itertools
 import hashlib
 import json
 from decimal import Decimal, InvalidOperation
+from math import ceil, floor
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding='utf-8')
@@ -36,7 +37,7 @@ from core.smart_pacing.coordinator import CoordinatorDeadlineExceeded, EngineCoo
 from core.smart_pacing.security import CapabilityStore, SlidingWindowRateLimiter, require_engine_capability
 from core.smart_pacing.service import MovePlanService
 from core.smart_pacing.idempotency import MovePlanIdempotencyStore
-from core.elo_calibration import EloCalibrator, EngineTelemetry, load_artifact
+from core.elo_calibration import CalibrationRequest, EloCalibrator, EngineTelemetry, Side, load_artifact
 
 app = Flask(__name__)
 CORS(app)
@@ -645,17 +646,9 @@ engine_telemetry.set_engine_status("degraded")
 
 
 def build_rollout_policy():
-    legacy_active = os.environ.get("THINKER_ELO_CALIBRATION_ACTIVE", "").strip().casefold() in {
-        "1",
-        "true",
-        "yes",
-        "on",
-    }
     raw_mode = os.environ.get("THINKER_ELO_CALIBRATION_MODE", "").strip().casefold()
     try:
-        mode = CalibrationMode(raw_mode) if raw_mode else (
-            CalibrationMode.ACTIVE if legacy_active else CalibrationMode.SHADOW
-        )
+        mode = CalibrationMode(raw_mode) if raw_mode else CalibrationMode.ACTIVE
         raw_percent = os.environ.get("THINKER_ELO_CALIBRATION_CANARY_PERCENT", "0").strip()
         percent = Decimal(raw_percent or "0")
         if not percent.is_finite() or percent < 0 or percent > 100:
@@ -671,13 +664,14 @@ def build_rollout_policy():
         return RolloutPolicy(mode, basis_points, explicit_keys)
     except (InvalidOperation, ValueError):
         engine_telemetry.record_failure("configuration")
-        return RolloutPolicy(CalibrationMode.SHADOW)
+        return RolloutPolicy(CalibrationMode.ACTIVE)
 
 
 def build_calibration_runtime():
     rollout_policy = build_rollout_policy()
     mode = rollout_policy.mode
-    artifact_path = os.environ.get("THINKER_ELO_CALIBRATION_ARTIFACT", "").strip()
+    default_artifact_path = Path(__file__).resolve().parent / "benchmark-runs" / "official-v1" / "stage3" / "calibration-artifact.json"
+    artifact_path = os.environ.get("THINKER_ELO_CALIBRATION_ARTIFACT", "").strip() or str(default_artifact_path)
     if not artifact_path:
         return CalibrationRuntime(
             None,
@@ -1163,6 +1157,28 @@ def config_save():
 def config_load():
     return jsonify(_external_config)
 
+
+def resolve_getmove_engine_parameters(elo, time_limit, board, runtime_game_token=None):
+    calibrator = calibration_runtime.calibrator
+    if calibration_runtime.mode is CalibrationMode.ACTIVE and calibrator is not None:
+        payload = calibrator.artifact.payload
+        minimum_elo = ceil(float(payload.anchors[0].rating))
+        maximum_elo = floor(float(payload.anchors[-1].rating))
+        target_elo = max(minimum_elo, min(maximum_elo, elo))
+        token = runtime_game_token if isinstance(runtime_game_token, str) and runtime_game_token.strip() else "legacy-getmove"
+        profile = calibrator.interpolate_uci_params(
+            CalibrationRequest(
+                target_elo=target_elo,
+                scale_id=payload.scale.scale_id,
+                budget_class=payload.search_policy.budget_class,
+                runtime_game_token=token,
+                side=Side.WHITE if board.turn is chess.WHITE else Side.BLACK,
+            )
+        )
+        return profile.applied_skill, profile.move_time_ms / 1000.0
+    actual_time = 0.5 if time_limit <= 0 else max(0.05, min(0.5, time_limit))
+    return engine_adapter.legacy_skill_for_elo(elo), actual_time
+
 @app.route("/getmove", methods=["POST"])
 @app.route("/getMove", methods=["POST"])
 @engine_api_auth
@@ -1217,11 +1233,13 @@ def getmove():
             Log.move("[BOOK]", book_move, elapsed)
             return jsonify([book_move])
         
-        skill_level = engine_adapter.legacy_skill_for_elo(elo)
-        
-        # Limite de TEMPO DINÂMICO E ESTRITO. Se o time_limit for instantâneo (<= 0.01),
-        # usamos um tempo ultra-rápido (0.02s) para a jogada sair de forma imediata.
-        actual_time = 0.02 if time_limit <= 0.01 else max(0.05, min(0.2, time_limit))
+        runtime_game_token = data.get("runtimeGameToken") or data.get("gameId")
+        skill_level, actual_time = resolve_getmove_engine_parameters(
+            elo,
+            time_limit,
+            board,
+            runtime_game_token,
+        )
         limit = chess.engine.Limit(time=actual_time)
             
         move_obj = play_with_recovery(board, skill_level, limit)

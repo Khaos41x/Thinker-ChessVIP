@@ -3,6 +3,7 @@ import sys
 import threading
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 import chess
@@ -16,6 +17,64 @@ import app
 
 
 class EngineRecoveryTests(unittest.TestCase):
+    def test_getmove_v2_uses_calibrated_skill_and_budget(self):
+        calibrator = Mock()
+        calibrator.artifact.payload = SimpleNamespace(
+            anchors=(SimpleNamespace(rating=780.4), SimpleNamespace(rating=3060.9)),
+            scale=SimpleNamespace(scale_id="scale-v2"),
+            search_policy=SimpleNamespace(budget_class="calibration-500ms-v1"),
+        )
+        calibrator.interpolate_uci_params.return_value = SimpleNamespace(
+            applied_skill=17,
+            move_time_ms=500,
+        )
+        with patch.object(app.calibration_runtime, "mode", app.CalibrationMode.ACTIVE), patch.object(
+            app.calibration_runtime, "calibrator", calibrator
+        ):
+            skill, seconds = app.resolve_getmove_engine_parameters(
+                3200, 0.01, chess.Board(), "game-v2"
+            )
+        self.assertEqual((skill, seconds), (17, 0.5))
+        calibration_request = calibrator.interpolate_uci_params.call_args.args[0]
+        self.assertEqual(calibration_request.target_elo, 3060)
+        self.assertEqual(calibration_request.runtime_game_token, "game-v2")
+        self.assertEqual(calibration_request.side, app.Side.WHITE)
+
+    def test_getmove_without_v2_uses_legacy_skill_and_500ms_ceiling(self):
+        with patch.object(app.calibration_runtime, "calibrator", None):
+            skill, default_seconds = app.resolve_getmove_engine_parameters(
+                2300, 0, chess.Board()
+            )
+            _, capped_seconds = app.resolve_getmove_engine_parameters(
+                2300, 4.0, chess.Board()
+            )
+        self.assertEqual(skill, app.engine_adapter.legacy_skill_for_elo(2300))
+        self.assertEqual(default_seconds, 0.5)
+        self.assertEqual(capped_seconds, 0.5)
+
+    def test_getmove_keeps_legacy_response_shape_with_v2_parameters(self):
+        board = chess.Board()
+        cache_key = f"{app.get_base_fen(board.fen())}_2300"
+        app.cache.pop(cache_key, None)
+        try:
+            with patch.object(app, "get_book", return_value=None), patch.object(
+                app, "resolve_getmove_engine_parameters", return_value=(17, 0.5)
+            ) as resolve, patch.object(
+                app, "play_with_recovery", return_value=chess.Move.from_uci("e2e4")
+            ) as play:
+                response = app.app.test_client().post(
+                    "/getMove",
+                    json={"fen": board.fen(), "elo": 2300, "time": 0.01},
+                    headers=AUTH_HEADERS,
+                )
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.get_json(), ["e2e4"])
+            resolve.assert_called_once()
+            self.assertEqual(play.call_args.args[1], 17)
+            self.assertEqual(play.call_args.args[2].time, 0.5)
+        finally:
+            app.cache.pop(cache_key, None)
+
     def test_eval_recovers_dead_engine(self):
         dead = Mock()
         dead.analyse.side_effect = chess.engine.EngineTerminatedError("engine event loop dead")

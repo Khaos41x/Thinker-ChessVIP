@@ -5,6 +5,7 @@ import unittest
 from core.elo_calibration.artifact import artifact_to_bytes, load_artifact_bytes
 from core.elo_calibration.interpolation import build_pchip_segments
 from tools.elo_calibration.fit_curve import build_artifact_from_estimates, weighted_pava
+from tools.elo_calibration.operational_policy import maximum_operational_failures, validate_operational_failures
 
 from helpers import config, estimates
 
@@ -34,6 +35,12 @@ class FitPipelineTests(unittest.TestCase):
             build_artifact_from_estimates(duplicated, config())
         with self.assertRaisesRegex(ValueError, "overflow"):
             weighted_pava((1e308, 1e308), (1e308, 1e308))
+
+    def test_operational_failure_policy_allows_ten_percent_inclusively(self) -> None:
+        self.assertEqual(maximum_operational_failures(6760), 676)
+        self.assertEqual(validate_operational_failures(676, 6760), 676)
+        with self.assertRaisesRegex(ValueError, "exceeds 10%"):
+            validate_operational_failures(677, 6760)
 
 
 if __name__ == "__main__":

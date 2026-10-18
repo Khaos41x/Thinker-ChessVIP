@@ -550,7 +550,7 @@ class CapabilitySecurityTests(unittest.TestCase):
         self.assertIn(b"thinker_engine_search_nodes_total", authorized.data)
         self.assertNotIn(TEST_CAPABILITY.encode("utf-8"), authorized.data)
 
-    def test_invalid_rollout_configuration_fails_to_shadow(self):
+    def test_invalid_rollout_configuration_falls_back_to_active(self):
         with patch.dict(
             os.environ,
             {
@@ -561,8 +561,14 @@ class CapabilitySecurityTests(unittest.TestCase):
         ):
             policy = server_app.build_rollout_policy()
 
-        self.assertEqual(policy.mode, CalibrationMode.SHADOW)
+        self.assertEqual(policy.mode, CalibrationMode.ACTIVE)
         self.assertEqual(policy.canary_basis_points, 0)
+
+    def test_rollout_defaults_to_active(self):
+        with patch.dict(os.environ, {}, clear=True):
+            policy = server_app.build_rollout_policy()
+
+        self.assertEqual(policy.mode, CalibrationMode.ACTIVE)
 
     def test_protected_endpoint_requires_bearer_capability(self):
         client = server_app.app.test_client()

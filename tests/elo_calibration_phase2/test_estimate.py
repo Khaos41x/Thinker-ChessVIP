@@ -1,13 +1,34 @@
 from __future__ import annotations
 
 import unittest
+import tempfile
+from pathlib import Path
 
-from tools.elo_calibration.estimate import estimate_cell, estimate_cells
+from tools.elo_calibration.estimate import estimate_cell, estimate_cells, expand_record_paths
+from tools.elo_calibration import validate
 
 from helpers import pair
 
 
 class EstimateTests(unittest.TestCase):
+    def test_validation_reuses_record_path_expansion(self) -> None:
+        self.assertIs(validate.expand_record_paths, expand_record_paths)
+
+    def test_record_directories_expand_json_files_in_deterministic_order(self) -> None:
+        with tempfile.TemporaryDirectory(dir=Path.cwd()) as directory:
+            root = Path(directory)
+            nested = root / "nested"
+            nested.mkdir()
+            for name in ("z.json", "a.json", "ignored.txt"):
+                (root / name).write_text(name, encoding="utf-8")
+            (nested / "nested.json").write_text("nested", encoding="utf-8")
+            explicit = root / "explicit.record"
+            explicit.write_text("explicit", encoding="utf-8")
+            self.assertEqual(
+                expand_record_paths((str(explicit), str(root))),
+                (explicit, root / "a.json", root / "z.json"),
+            )
+
     def test_pentanomial_order_and_operational_exclusion(self) -> None:
         records = (pair(0, "normal"), pair(0, "failure", False))
         estimate = estimate_cells(records)[0]
