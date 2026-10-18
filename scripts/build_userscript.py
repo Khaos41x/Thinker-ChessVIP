@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import base64
-import gzip
 from pathlib import Path
 import sys
 
@@ -107,11 +105,11 @@ def bundle_source() -> str:
 
 
 def generated_region() -> str:
-    payload = base64.b64encode(gzip.compress(bundle_source().encode("utf-8"), compresslevel=9, mtime=0)).decode("ascii")
     loader = (
-        'globalThis.ThinkerSessionControlReady=(async()=>{const b=atob("' + payload + '"),u=Uint8Array.from(b,x=>x.charCodeAt(0));'
-        'const s=new Blob([u]).stream().pipeThrough(new DecompressionStream("gzip"));'
-        '(0,eval)(await new Response(s).text());return globalThis.ThinkerSessionControl;})();'
+        "globalThis.ThinkerSessionControlReady=(async()=>{\n"
+        + bundle_source()
+        + "return globalThis.ThinkerSessionControl;\n"
+        + "})();"
     )
     return f"{START}\n{loader}\n{END}\n"
 
