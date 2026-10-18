@@ -8,6 +8,13 @@ const FIELD_IDS = Object.freeze({
 
 const TERMINAL_PHASES = Object.freeze(["IDLE", "COMPLETED", "ABORTED"]);
 
+function reasonCode(error, fallback) {
+  if (error && typeof error.code === "string" && error.code) return error.code;
+  if (error && typeof error.reason === "string" && error.reason) return error.reason;
+  if (error && typeof error.message === "string" && /^[A-Z][A-Z0-9_]+$/.test(error.message)) return error.message;
+  return fallback;
+}
+
 function findById(panel, id) {
   return panel && typeof panel.querySelector === "function" ? panel.querySelector(`#${id}`) : null;
 }
@@ -31,7 +38,7 @@ function availability(status) {
   return Object.freeze({
     start: status.rolloutStage === "DISABLED"
       ? "ROLLOUT_DISABLED"
-      : terminal ? null : "SESSION_ALREADY_ACTIVE",
+      : terminal ? null : "ACTIVE_SESSION_EXISTS",
     stop: terminal ? "SESSION_NOT_ACTIVE" : null,
   });
 }
@@ -97,7 +104,15 @@ function createSessionControlPresenter(options) {
     const value = code || "STATUS_UNAVAILABLE";
     if (typeof options.setWarning === "function") options.setWarning(value);
     if (panel) setText(panel, "kb-session-warning", value);
+    if (typeof options.notify === "function") options.notify(value, { transient: true });
     emit("warning", { code: value });
+  }
+
+  function success(code) {
+    if (typeof options.setWarning === "function") options.setWarning(null);
+    if (panel) setText(panel, "kb-session-warning", "");
+    if (typeof options.notify === "function") options.notify(code, { transient: true, success: true });
+    emit("success", { code });
   }
 
   function captureDraft(nextPanel) {
@@ -133,11 +148,25 @@ function createSessionControlPresenter(options) {
     emit("dispatch", { action });
     try {
       if (action === "start") {
-        await options.start(readConfig());
-        if (typeof options.setWarning === "function") options.setWarning(null);
-      } else if (action === "stop") await options.stop();
+        let config;
+        try {
+          config = readConfig();
+        } catch (error) {
+          warning(reasonCode(error, "SESSION_CONFIG_INVALID"));
+          return;
+        }
+        await options.start(config);
+        success("SESSION_STARTED");
+      } else if (action === "stop") {
+        const result = await options.stop();
+        if (!result || result.allowed !== true) {
+          warning(reasonCode(result, "GRACEFUL_STOP_FAILED"));
+          return;
+        }
+        success(reasonCode(result, "SESSION_STOPPED"));
+      }
     } catch (error) {
-      warning(error && error.message ? error.message : action === "start" ? "SESSION_START_FAILED" : "GRACEFUL_STOP_FAILED");
+      warning(reasonCode(error, action === "start" ? "SESSION_START_FAILED" : "GRACEFUL_STOP_FAILED"));
     } finally {
       inFlight.delete(action);
       update();
@@ -150,7 +179,7 @@ function createSessionControlPresenter(options) {
       const diagnostic = options.exportDiagnostic();
       options.downloadDiagnostic(diagnostic);
     } catch (error) {
-      warning(error && error.message ? error.message : "DIAGNOSTIC_EXPORT_FAILED");
+      warning(reasonCode(error, "DIAGNOSTIC_EXPORT_FAILED"));
     }
     update();
   }
@@ -195,7 +224,7 @@ function createSessionControlPresenter(options) {
       currentAvailability = presentStatus(panel, status, options.formatDuration);
       return status;
     } catch (error) {
-      warning(error && error.message ? error.message : "STATUS_UNAVAILABLE");
+      warning(reasonCode(error, "STATUS_UNAVAILABLE"));
       return null;
     }
   }
@@ -209,4 +238,4 @@ function createSessionControlPresenter(options) {
   return Object.freeze({ bind, dispose, readConfig, readDraft, update });
 }
 
-module.exports = { FIELD_IDS, createSessionControlPresenter, presentStatus };
+module.exports = { FIELD_IDS, createSessionControlPresenter, presentStatus, reasonCode };

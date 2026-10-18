@@ -13,6 +13,7 @@ const suites = [
   ["phase3", require("./phase3.test")],
   ["phase4", require("./phase4.test")],
   ["ui", require("./ui.test")],
+  ["runtime", require("./runtime.test")],
   ["build", require("./build.test")],
 ];
 

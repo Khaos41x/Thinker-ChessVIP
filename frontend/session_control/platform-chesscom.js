@@ -3,6 +3,16 @@
 const { canonicalStringify, exactKeys } = require("./models");
 
 const ASCII_USERNAME = /^[A-Za-z0-9_-]{1,50}$/;
+const LIVE_TIME_CLASSES = Object.freeze(["bullet", "blitz", "rapid"]);
+const ACTIVE_QUEUE_SELECTORS = Object.freeze([
+  '[aria-selected="true"]',
+  '[aria-checked="true"]',
+  '[data-active="true"]',
+  '[data-state="active"]',
+  '[data-state="selected"]',
+  '[role="tab"].active',
+  '[role="radio"].active',
+]);
 
 function isEligibleTopLevelContext(locationObject, windowObject) {
   if (!locationObject || !windowObject) return false;
@@ -35,6 +45,48 @@ function canonicalGameIdFromUrl(value) {
   if (url.origin !== "https://www.chess.com") return null;
   const match = url.pathname.match(/^\/game\/(?:live|daily)\/([A-Za-z0-9_-]+)\/?$/);
   return match ? match[1] : null;
+}
+
+function timeClassesInText(value) {
+  const text = String(value || "").normalize("NFKC").toLowerCase();
+  return LIVE_TIME_CLASSES.filter((timeClass) => new RegExp(`(^|[^a-z])${timeClass}([^a-z]|$)`).test(text));
+}
+
+function elementTimeClasses(element) {
+  if (!element || typeof element !== "object") return [];
+  const values = [];
+  for (const name of ["data-time-class", "data-time-control", "data-category", "data-tab", "aria-label", "title"]) {
+    if (typeof element.getAttribute === "function") values.push(element.getAttribute(name));
+  }
+  if (typeof element.className === "string") values.push(element.className);
+  if (typeof element.textContent === "string") values.push(element.textContent);
+  return Array.from(new Set(values.flatMap(timeClassesInText)));
+}
+
+function activeTimeClassCandidates(root) {
+  if (!root || typeof root.querySelectorAll !== "function") return [];
+  const nodes = [];
+  for (const selector of ACTIVE_QUEUE_SELECTORS) {
+    try { nodes.push(...root.querySelectorAll(selector)); } catch (_) {}
+  }
+  return Array.from(new Set(nodes.flatMap(elementTimeClasses)));
+}
+
+function observeQueueContext(target) {
+  if (!target || !["modal", "sidebar-start-game", "sidebar-new-game", "sidebar-plus"].includes(target.source) || !target.button) return null;
+  const localRoot = target.root || target.button.parentElement;
+  const candidates = activeTimeClassCandidates(localRoot);
+  if (candidates.length !== 1) return null;
+  const timeClass = candidates[0];
+  const scopeId = `chesscom-live-${timeClass}-v1`;
+  return Object.freeze({
+    schemaVersion: 1,
+    timeClass,
+    contextClass: `chesscom-queue-${target.source}-v1`,
+    poolId: scopeId,
+    opponentRatingScaleId: scopeId,
+    sourceVersion: "chesscom-queue-context-v1",
+  });
 }
 
 function validatePlatformObservation(input) {
@@ -82,4 +134,4 @@ class StableEvidenceTracker {
   }
 }
 
-module.exports = { StableEvidenceTracker, accountKeyForUsername, canonicalGameIdFromUrl, isEligibleTopLevelContext, normalizeUsername, validatePlatformObservation, validateTerminalObservation };
+module.exports = { LIVE_TIME_CLASSES, StableEvidenceTracker, accountKeyForUsername, canonicalGameIdFromUrl, isEligibleTopLevelContext, normalizeUsername, observeQueueContext, validatePlatformObservation, validateTerminalObservation };

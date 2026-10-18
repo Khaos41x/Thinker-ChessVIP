@@ -22,6 +22,7 @@ MODULES = (
     "ports",
     "platform-chesscom",
     "leader",
+    "runtime",
     "status",
     "telemetry",
     "ui",

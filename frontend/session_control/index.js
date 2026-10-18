@@ -9,6 +9,7 @@ module.exports = Object.freeze({
   ...require("./platform-chesscom"),
   ...require("./reducer"),
   ...require("./repository"),
+  ...require("./runtime"),
   ...require("./statistics"),
   ...require("./status"),
   ...require("./telemetry"),

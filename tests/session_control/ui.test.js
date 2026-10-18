@@ -135,14 +135,16 @@ async function run() {
   let stops = 0;
   let exports = 0;
   const warnings = [];
+  const notifications = [];
   const presenter = createSessionControlPresenter({
     getPanel: () => panel,
     readStatus: () => currentStatus,
     formatDuration: (value) => String(value),
     createConfig: (draft) => ({ ...draft }),
     start: async () => { starts += 1; },
-    stop: async () => { stops += 1; },
+    stop: async () => { stops += 1; return { allowed: true, reason: "DRAINING" }; },
     setWarning: (code) => warnings.push(code),
+    notify: (code) => notifications.push(code),
     exportDiagnostic: () => ({ ok: true }),
     downloadDiagnostic: () => { exports += 1; },
   });
@@ -172,6 +174,7 @@ async function run() {
   panel.dispatch("click", panel.querySelector("#kb-session-stop"));
   await tick();
   assert.equal(stops, 1, "DRAIN dispatched more than once after repeated binding");
+  assert(notifications.includes("DRAINING"));
 
   currentStatus = status({ rolloutStage: "DISABLED", phase: "IDLE", warningCode: "ROLLOUT_DISABLED" });
   presenter.update();
@@ -184,6 +187,7 @@ async function run() {
   assert.equal(start.getAttribute("data-disabled-reason"), "ROLLOUT_DISABLED");
   assert.equal(panel.querySelector("#kb-session-warning").textContent, "ROLLOUT_DISABLED");
   assert(warnings.includes("ROLLOUT_DISABLED"));
+  assert(notifications.includes("ROLLOUT_DISABLED"));
 
   panel.dispatch("click", panel.querySelector("#kb-session-export"));
   assert.equal(exports, 1);
@@ -202,7 +206,7 @@ async function run() {
 
   const root = path.resolve(__dirname, "../..");
   const source = fs.readFileSync(path.join(root, "script.js"), "utf8");
-  assert.equal(sourceHash(source, "    const menuHtml = `", "    const bannerHtml = `"), "d11d71f664734c1d49e45cef55a425872c12711719057a702ffa76856c0214c1", "TC159 menuHtml changed");
+  assert.equal(sourceHash(source, "    const menuHtml = `", "    const bannerHtml = `"), "0be662e779674c572ae3f4528fc7a8a6cbc8dd4b5af5721bd9cd88208a72a451", "Session Control menuHtml changed");
   const wrapperCss = sourceBlock(source, "        #oi-wrapper {", "        #oi-wrapper > * {");
   for (const declaration of [
     "position: absolute !important",

@@ -181,6 +181,30 @@ function createCdpClient(webSocketUrl) {
     });
     const state = result.result.value;
 
+    const productionStartSmokeResult = await client.send("Runtime.evaluate", {
+      expression: `(async () => {
+        const bootstrap = window.krypbotSessionControlBootstrap;
+        const button = document.getElementById("kb-session-start");
+        if (!bootstrap || !button) return { ok: false, reason: "production-wiring-missing" };
+        button.click();
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        const warning = document.getElementById("kb-session-warning")?.textContent || "";
+        const toast = document.getElementById("kb-session-toast")?.textContent || "";
+        const bootstrapState = bootstrap.state();
+        return {
+          ok: !button.hasAttribute("disabled") && Boolean(warning) && warning === toast,
+          warning,
+          toast,
+          ariaDisabled: button.getAttribute("aria-disabled"),
+          bootstrapPhase: bootstrapState.phase,
+          bootstrapReason: bootstrapState.reasonCode,
+        };
+      })()`,
+      awaitPromise: true,
+      returnByValue: true,
+    });
+    const productionStart = productionStartSmokeResult.result.value;
+
     const module14Smoke = await client.send("Runtime.evaluate", {
       expression: `(async () => { try {
         const api = globalThis.ThinkerSessionControl;
@@ -252,6 +276,8 @@ function createCdpClient(webSocketUrl) {
     const module14 = module14Smoke.result.value;
 
     assert(exceptions.length === 0, `Userscript exception: ${exceptions[0]?.text || "unknown"}`);
+    assert(productionStart.ok, `Production START wiring smoke failed: ${JSON.stringify(productionStart)}`);
+    if (!liveChess) assert(productionStart.warning === "UNSUPPORTED_BROWSER_CAPABILITY", `Fixture preflight reason changed: ${JSON.stringify(productionStart)}`);
     assert(module14.ok, `Module 14 browser smoke failed: ${JSON.stringify(module14)}`);
     assert(state.menu, "configuration menu was not mounted");
     assert(state.sessionPanel, "session control panel was not mounted");
@@ -270,7 +296,7 @@ function createCdpClient(webSocketUrl) {
       `page cannot scroll to the configuration menu: ${state.documentHeight}px document / ${state.viewportHeight}px viewport`,
     );
     assert(state.bannerLayout.display === "flex", "banner is still hidden on a desktop viewport");
-    console.log(JSON.stringify({ state, module14, consoleErrors }, null, 2));
+    console.log(JSON.stringify({ state, productionStart, module14, consoleErrors }, null, 2));
     console.log(liveChess ? "Live Chess.com userscript bootstrap passed." : "Chrome userscript bootstrap passed.");
   } finally {
     client?.close();

@@ -43,6 +43,66 @@ function evaluateAuthorization(policyInput, observation) {
   return Object.freeze({ schemaVersion: 1, allowed, reason: allowed ? "EXACT_MATCH" : "NOT_AUTHORIZED" });
 }
 
+function policyIsFullyEmpty(policy) {
+  return policy.accounts.length === 0 && policy.contexts.length === 0 && policy.pools.length === 0;
+}
+
+function authorizationError(code, message, cause) {
+  return new SessionControlError(code, message, cause);
+}
+
+async function resolveAuthorizationPolicy(storagePort, observationInput) {
+  const missingPolicy = `__THINKER_SESSION_CONTROL_POLICY_MISSING_V1__:${Date.now()}:${Math.random()}`;
+  let observation;
+  try {
+    exactKeys(observationInput, ["account", "context", "pool"], [], "authorizationObservation");
+    observation = Object.freeze({
+      account: normalizeToken(observationInput.account, "authorizationObservation.account"),
+      context: normalizeToken(observationInput.context, "authorizationObservation.context"),
+      pool: normalizeToken(observationInput.pool, "authorizationObservation.pool"),
+    });
+  } catch (error) {
+    throw authorizationError("ACCOUNT_CONTEXT_UNAVAILABLE", "Authorization observation is unavailable", error);
+  }
+  let rawPolicy;
+  try {
+    rawPolicy = await storagePort.readPolicyValue(missingPolicy);
+  } catch (error) {
+    throw authorizationError("AUTHORIZATION_STORAGE_UNAVAILABLE", "Authorization policy could not be read", error);
+  }
+  const missing = rawPolicy === missingPolicy || rawPolicy === null;
+  let policy;
+  if (!missing) {
+    try {
+      policy = validateAuthorizationPolicy(rawPolicy);
+    } catch (error) {
+      throw authorizationError("AUTHORIZATION_POLICY_INVALID", "Authorization policy is invalid", error);
+    }
+  }
+  const shouldBootstrap = missing || policyIsFullyEmpty(policy);
+  if (shouldBootstrap) {
+    const exactPolicy = { schemaVersion: 1, accounts: [observation.account], contexts: [observation.context], pools: [observation.pool] };
+    try {
+      await storagePort.writePolicy(exactPolicy);
+      rawPolicy = await storagePort.readPolicyValue(missingPolicy);
+    } catch (error) {
+      throw authorizationError("AUTHORIZATION_STORAGE_UNAVAILABLE", "Authorization policy could not be persisted", error);
+    }
+    if (rawPolicy === missingPolicy || rawPolicy === null) throw authorizationError("AUTHORIZATION_STORAGE_UNAVAILABLE", "Authorization policy read-back is unavailable");
+    try {
+      policy = validateAuthorizationPolicy(rawPolicy);
+    } catch (error) {
+      throw authorizationError("AUTHORIZATION_BOOTSTRAP_CONFLICT", "Authorization policy changed during bootstrap", error);
+    }
+    const readBack = evaluateAuthorization(policy, observation);
+    if (!readBack.allowed) throw authorizationError("AUTHORIZATION_BOOTSTRAP_CONFLICT", "Authorization policy changed during bootstrap");
+    return Object.freeze({ schemaVersion: 1, allowed: true, reason: "BOOTSTRAPPED_EXACT_CONTEXT" });
+  }
+  const decision = evaluateAuthorization(policy, observation);
+  if (!decision.allowed) throw authorizationError("NOT_AUTHORIZED", "Authorization policy does not match the current context");
+  return decision;
+}
+
 function validateRecoveryPointer(input) {
   exactKeys(input, ["schemaVersion", "sessionId", "revision", "deadlineEpochMs", "dbName"], [], "recovery");
   if (input.schemaVersion !== 1) throw new TypeError("recovery.schemaVersion is unsupported");
@@ -72,8 +132,12 @@ class GmStoragePort {
   }
 
   async readPolicy(defaultValue) {
-    const value = await Promise.resolve(this.getValue(POLICY_KEY, defaultValue));
+    const value = await this.readPolicyValue(defaultValue);
     return validateAuthorizationPolicy(value);
+  }
+
+  async readPolicyValue(defaultValue) {
+    return Promise.resolve(this.getValue(POLICY_KEY, defaultValue));
   }
 
   async writePolicy(value) {
@@ -101,6 +165,7 @@ function preflightCapabilities(environment) {
   if (!environment || !environment.navigator || !environment.navigator.locks || typeof environment.navigator.locks.request !== "function") missing.push("webLocks");
   if (!environment || typeof environment.BroadcastChannel !== "function") missing.push("broadcastChannel");
   if (!environment || !environment.crypto || !environment.crypto.subtle || typeof environment.crypto.subtle.digest !== "function") missing.push("webCryptoSha256");
+  if (!environment || !environment.crypto || typeof environment.crypto.getRandomValues !== "function") missing.push("webCryptoRandom");
   if (!environment || typeof environment.GM_getValue !== "function" || typeof environment.GM_setValue !== "function") missing.push("gmStorage");
   if (missing.length) throw new SessionControlError("UNSUPPORTED_BROWSER_CAPABILITY", `Missing capabilities: ${missing.join(",")}`);
   return Object.freeze({ ok: true });
@@ -121,6 +186,7 @@ module.exports = {
   assertCanonicalOrigin,
   evaluateAuthorization,
   normalizeToken,
+  resolveAuthorizationPolicy,
   preflightCapabilities,
   validateAuthorizationPolicy,
   validateRecoveryPointer,

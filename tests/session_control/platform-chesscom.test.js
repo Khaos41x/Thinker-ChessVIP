@@ -1,7 +1,7 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { StableEvidenceTracker, canonicalGameIdFromUrl, isEligibleTopLevelContext, normalizeUsername, validatePlatformObservation, validateTerminalObservation } = require("../../frontend/session_control");
+const { StableEvidenceTracker, canonicalGameIdFromUrl, isEligibleTopLevelContext, normalizeUsername, observeQueueContext, validatePlatformObservation, validateTerminalObservation } = require("../../frontend/session_control");
 
 function run() {
   assert.equal(normalizeUsername("User_Name-1"), "user_name-1");
@@ -14,6 +14,21 @@ function run() {
   assert.equal(isEligibleTopLevelContext({ protocol: "https:", hostname: "www.chess.com", origin: "https://www.chess.com" }, topLevel), true);
   assert.equal(isEligibleTopLevelContext({ protocol: "https:", hostname: "chess.com", origin: "https://chess.com" }, topLevel), false);
   assert.equal(isEligibleTopLevelContext({ protocol: "https:", hostname: "www.chess.com", origin: "https://www.chess.com" }, { self: {}, top: {} }), false);
+  const button = { parentElement: null, getAttribute: () => null, className: "", textContent: "Start Game" };
+  const rapidTab = { getAttribute: (name) => name === "aria-label" ? "Rapid" : null, className: "active", textContent: "Rapid" };
+  const rapidRoot = { querySelectorAll: () => [rapidTab] };
+  const rapid = observeQueueContext({ source: "sidebar-start-game", root: rapidRoot, button }, null);
+  assert.deepEqual(rapid, {
+    schemaVersion: 1,
+    timeClass: "rapid",
+    contextClass: "chesscom-queue-sidebar-start-game-v1",
+    poolId: "chesscom-live-rapid-v1",
+    opponentRatingScaleId: "chesscom-live-rapid-v1",
+    sourceVersion: "chesscom-queue-context-v1",
+  });
+  const ambiguousRoot = { querySelectorAll: () => [rapidTab, { ...rapidTab, getAttribute: (name) => name === "aria-label" ? "Blitz" : null, textContent: "Blitz" }] };
+  assert.equal(observeQueueContext({ source: "modal", root: ambiguousRoot, button }, null), null);
+  assert.equal(observeQueueContext({ source: "sidebar-start-game", root: { querySelectorAll: () => [] }, button }, null), null);
   const base = {
     schemaVersion: 1,
     canonicalPlatformGameId: "game",
