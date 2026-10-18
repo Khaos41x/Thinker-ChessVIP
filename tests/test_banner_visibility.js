@@ -76,9 +76,9 @@ assert(context.shouldShow() === true, "active game did not qualify for the banne
 context.position();
 assert(banner.style.display === "flex", "active game did not display the banner");
 assert(banner.style.top === "637px", "banner top did not use sidebar top plus scrollY");
-assert(banner.style.left === "1263px", "banner left did not use sidebar right plus the 15px gap");
+assert(banner.style.left === "1257px", "banner left did not clamp its preferred width to viewportRight");
 assert(banner.style.height === "742px", "banner height did not mirror the sidebar exactly");
-assert(banner.style.width === "164px", "banner width did not use the remaining safe viewport space");
+assert(banner.style.width === "170px", "banner did not preserve its preferred width");
 
 const roomyLayout = context.calculate(sidebarRect, 1600, 0, 500, false);
 assert(roomyLayout.left === 1263, "roomy viewport did not preserve the 15px sidebar gap");
@@ -86,8 +86,8 @@ assert(roomyLayout.width === 170, "roomy viewport did not use the preferred bann
 assert(roomyLayout.left + roomyLayout.width <= 1594, "roomy banner exceeded viewportRight");
 
 const constrainedLayout = context.calculate(sidebarRect, 1390, 0, 500, false);
-assert(constrainedLayout.left === 1263, "constrained viewport did not preserve the 15px sidebar gap");
-assert(constrainedLayout.width === 121, "constrained viewport did not shrink to availableWidth");
+assert(constrainedLayout.left === 1214, "constrained viewport did not shift the banner left");
+assert(constrainedLayout.width === 170, "constrained viewport changed the preferred banner width");
 assert(constrainedLayout.left + constrainedLayout.width === 1384,
   "constrained banner did not end at viewportRight");
 
@@ -157,7 +157,8 @@ for (const marker of [
   "if (!shouldShowThinkerBanner()) banner.style.display = \"none\";",
   "position:absolute!important",
   "transition:none!important",
-  "object-fit:contain",
+  "THINKER_BANNER_ARTWORK_SCALE = 3.4",
+  "align-items:center",
 ]) {
   assert(source.includes(marker), `banner lifecycle gate missing: ${marker}`);
 }
@@ -166,7 +167,11 @@ assert(!source.includes('addEventListener("scroll", scheduleThinkerBannerPositio
 const bannerMarkupStart = source.indexOf('const bannerHtml = `');
 const bannerMarkupEnd = source.indexOf("`;", bannerMarkupStart);
 const bannerMarkup = source.slice(bannerMarkupStart, bannerMarkupEnd);
-assert(!bannerMarkup.includes("object-fit:cover"), "banner artwork still uses cropping object-fit:cover");
+assert(bannerMarkup.includes("width:${THINKER_BANNER_ARTWORK_SCALE * 100}%"),
+  "banner artwork is not scaled independently from sidebar height");
+assert(bannerMarkup.includes("height:auto") && bannerMarkup.includes("max-width:none"),
+  "banner artwork does not preserve its intrinsic aspect ratio");
+assert(!bannerMarkup.includes("object-fit:"), "banner artwork still depends on object-fit cropping");
 const observerStart = source.indexOf("thinkerBannerLayoutObserver.observe(document.body");
 const observerEnd = source.indexOf("});", observerStart) + 3;
 const observerOptions = source.slice(observerStart, observerEnd);

@@ -20,17 +20,17 @@ viewportRight = window.scrollX + document.documentElement.clientWidth - safeView
 idealLeft = sidebarRect.right + window.scrollX + preferredGap
 availableWidth = viewportRight - idealLeft
 
-if availableWidth >= minimumReadableWidth:
-    width = min(preferredBannerWidth, availableWidth)
+width = min(preferredBannerWidth, viewportRight - viewportLeft)
+
+if availableWidth >= width:
     documentLeft = idealLeft
 else:
-    width = min(preferredBannerWidth, viewportRight - viewportLeft)
     documentLeft = max(viewportLeft, viewportRight - width)
 
 height = sidebarRect.height
 ```
 
-The invariant is `documentLeft >= viewportLeft` and `documentLeft + width <= viewportRight`. The preferred constants are 15 CSS pixels for the sidebar gap, 170 CSS pixels for banner width, and 96 CSS pixels for minimum readable width. The update is rejected and the banner is hidden only when the sidebar is absent, invisible, too small, or even the safe viewport cannot contain the minimum geometry. There is no viewport-positioning fallback and no host layout mutation.
+The invariant is `documentLeft >= viewportLeft` and `documentLeft + width <= viewportRight`. The preferred constants are 15 CSS pixels for the sidebar gap, 170 CSS pixels for banner width, and 96 CSS pixels for minimum readable width. The preferred width remains stable whenever the safe viewport is at least 170 CSS pixels wide; constrained right-side space is handled by shifting left. The update is rejected and the banner is hidden only when the sidebar is absent, invisible, too small, or even the safe viewport cannot contain the minimum geometry. There is no viewport-positioning fallback and no host layout mutation.
 
 ## Lifecycle
 
@@ -56,16 +56,16 @@ transition: none;
 
 Keep its image, z-index, pointer behavior, border, shadow, and visibility gate unchanged.
 
-Change the inner image from `object-fit:cover` to `object-fit:contain`, retaining its existing source, centering, and full-box sizing. The banner lettering is part of the image asset, so CSS text overflow cannot protect it from `cover` cropping.
+The source JPEG is 1122 by 1402 pixels, while its visible logo and lettering occupy the central horizontal interval from approximately pixel 419 through 702. Render the image at 3.4 times the banner width, preserve its intrinsic aspect ratio with `height:auto`, center it on both axes, and let the banner clip only the decorative outer background. This keeps the measured central artwork within the banner independently of sidebar height. Both `cover` and `contain` are prohibited because they couple scale to the changing container aspect ratio.
 
 ## Hermetic verification
 
 - Given sidebar `{top: 137, right: 1248, height: 742}`, `scrollX: 0`, and `scrollY: 500`, the banner receives `top: 637px`, `left: 1263px`, and `height: 742px`.
 - With at least 170 CSS pixels available after the preferred gap, width is 170 CSS pixels and the left edge remains exactly 15 CSS pixels after the sidebar.
-- With 120 CSS pixels available after the preferred gap, width is 120 CSS pixels and the right edge remains inside the safe viewport boundary.
-- With less than 96 CSS pixels available after the preferred gap, the banner keeps a readable bounded width and shifts left so its right edge equals the safe viewport boundary.
+- With 120 CSS pixels available after the preferred gap, width remains 170 CSS pixels and the banner shifts left so its right edge equals the safe viewport boundary.
+- With less than 96 CSS pixels available after the preferred gap, the banner still keeps its readable bounded width and shifts farther left.
 - Every geometry result satisfies `left >= viewportLeft` and `left + width <= viewportRight`.
-- The inner image uses `object-fit:contain`; static checks reject `object-fit:cover` for the banner artwork.
+- Static checks require intrinsic-ratio artwork scaling and reject any `object-fit` dependency.
 - Changing scroll offsets without invoking an approved lifecycle trigger produces zero banner style writes.
 - Repeated DOM mutations with the same sidebar instance produce zero geometry updates.
 - Sidebar resize produces one coalesced update.
@@ -85,6 +85,6 @@ Change the inner image from `object-fit:cover` to `object-fit:contain`, retainin
 
 The user approved execution on 2026-10-18. The implementation and deterministic build completed, and the banner, Session Control, Auto Rating, Auto Queue, Scout, syntax, and build checks passed.
 
-The user approved the fullscreen boundary refinement on 2026-10-18. The implementation now enforces the right-edge invariant, preserves readable width through the approved left-shift fallback, and renders the artwork with `object-fit:contain`.
+The user approved the fullscreen boundary refinement on 2026-10-18. Visual validation showed that `object-fit:contain` compressed the complete composition, while `object-fit:cover` still cropped its lettering as sidebar height increased. The final implementation enforces the right-edge invariant, preserves the 170 CSS pixel design width through the left-shift fallback, and scales the measured central artwork from banner width with intrinsic height.
 
-The banner geometry, visibility, Session Control, Auto Rating, Auto Queue, Scout, syntax, and generated-region checks passed. Two consecutive deterministic builds produced the same `script.js` SHA-256: `573A45CB34B50AFB868D940FC87364F8036563A069D6A6314F71A22D2D06B9CC`.
+The banner geometry, visibility, Session Control, Auto Rating, Auto Queue, Scout, syntax, and generated-region checks passed. Two consecutive deterministic builds produced the same `script.js` SHA-256: `789555F802AEDA21C9EE261E4418BDD8A98B915B13DD2580B7A8A278F93A09DE`.

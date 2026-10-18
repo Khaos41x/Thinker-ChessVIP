@@ -25,7 +25,7 @@ The banner currently appears to jitter during page scrolling and does not exactl
 
 - **CAP-3**
   - **intent:** The complete banner artwork remains visible in fullscreen and laterally expanded host layouts.
-  - **success:** The banner's document-space right edge never exceeds `scrollX + document.documentElement.clientWidth - safeRightEdge`; the 15 CSS pixel gap is preserved while at least the minimum readable width remains, and the embedded logo and lettering are not cropped when the banner narrows.
+  - **success:** The banner's document-space right edge never exceeds `scrollX + document.documentElement.clientWidth - safeRightEdge`; its 170 CSS pixel design width is preserved whenever the safe viewport supports it, and constrained layouts shift the complete banner left instead of shrinking its artwork.
 
 ## Constraints
 
@@ -35,8 +35,8 @@ The banner currently appears to jitter during page scrolling and does not exactl
 - Global DOM observation may detect sidebar replacement but must not observe style/class attributes or reposition when the sidebar identity is unchanged.
 - Set `transition:none` for banner geometry so `top`, `left`, `width`, and `height` do not animate.
 - Use named constants for the preferred 15 CSS pixel gap, safe viewport edge, 170 CSS pixel preferred width, and 96 CSS pixel minimum readable width.
-- Prefer the 15 CSS pixel sidebar gap. If the available right-side width is between the preferred and minimum widths, shrink the banner to the available width. If it is below the minimum width, keep a readable width and shift the banner left until its right edge is inside the safe viewport boundary.
-- Render the existing banner artwork with `object-fit:contain` so narrowing cannot crop its embedded lettering.
+- Prefer the 15 CSS pixel sidebar gap. If the preferred banner width does not fit after that gap, keep the width and shift the banner left until its right edge is inside the safe viewport boundary.
+- Scale the existing artwork from banner width rather than sidebar height. Use a 3.4 width multiplier, intrinsic image aspect ratio, and centered overflow clipping so the artwork's measured central content stays inside the banner at every sidebar height.
 - Preserve the existing visibility contract for review, post-game, Ghost Mode, active games, and `/play/online`.
 - Preserve the Thinker panel, Scout layout, `menuHtml`, host grid, and DOM injection topology.
 

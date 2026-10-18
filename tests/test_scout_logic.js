@@ -69,7 +69,7 @@ const nativeMountContext = {
   setInterval: (callback) => { mountCallback = callback; return 1; },
 };
 vm.runInNewContext(
-  "let thinkerUiBound=false, thinkerMountTimer=null, thinkerMenuNode=null, thinkerBannerNode=null, thinkerBannerFrame=null, scheduleThinkerBannerPosition=()=>{}, $=null;\n" +
+  "const THINKER_BANNER_ARTWORK_SCALE=3.4; let thinkerUiBound=false, thinkerMountTimer=null, thinkerMenuNode=null, thinkerBannerNode=null, thinkerBannerFrame=null, scheduleThinkerBannerPosition=()=>{}, $=null;\n" +
     source.slice(nativeMountStart, nativeMountEnd) + "\nglobalThis.mount=createMenu;",
   nativeMountContext,
 );
@@ -87,6 +87,7 @@ let reconcileCount = 0;
 let shellsPresent = false;
 let shellWatchStarts = 0;
 let backgroundIntervalStarts = 0;
+let rootScrollbarHidden = null;
 const recoveryContext = {
   document: {
     body: {},
@@ -105,6 +106,7 @@ const recoveryContext = {
     return backgroundIntervalStarts;
   },
   isThinkerSupportedRoute: () => true,
+  setThinkerPageScrollbarHidden: (hidden) => { rootScrollbarHidden = hidden; },
   ensureThinkerLauncher() {},
   positionThinkerLauncher() {},
   positionThinkerBannerShell() {},
@@ -131,6 +133,7 @@ vm.runInNewContext(
   recoveryContext,
 );
 if (!recoveryCallback) throw new Error("UI recovery watchdog did not start after a mount failure");
+if (rootScrollbarHidden !== true) throw new Error("supported startup did not suppress the root scrollbar");
 const lifecycleCounts = [shellWatchStarts, backgroundIntervalStarts];
 recoveryContext.startUserscript();
 if (shellWatchStarts !== lifecycleCounts[0] || backgroundIntervalStarts !== lifecycleCounts[1]) {
@@ -299,7 +302,8 @@ if (
   reconcileSource.includes("\n    scheduleThinkerBannerPosition();") ||
   !source.includes("THINKER_BANNER_MIN_WIDTH_PX = 96") ||
   !source.includes("viewportRight - width") ||
-  !source.includes("object-fit:contain!important;object-position:center center")
+  !source.includes("THINKER_BANNER_ARTWORK_SCALE = 3.4") ||
+  !source.includes("width:${THINKER_BANNER_ARTWORK_SCALE * 100}%;height:auto;max-width:none")
 ) {
   throw new Error("viewport-safe banner, Ghost recovery, or workspace layout markers are missing");
 }
@@ -507,9 +511,9 @@ const reportedLayout = context.calculateBannerLayout(
 );
 assert(
   reportedLayout &&
-    reportedLayout.left === 1263 &&
+    reportedLayout.left === 1257 &&
     reportedLayout.top === 637 &&
-    reportedLayout.width === 164 &&
+    reportedLayout.width === 170 &&
     reportedLayout.height === 742,
   "banner geometry does not match the reported Chess.com viewport",
 );
