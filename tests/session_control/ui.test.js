@@ -205,29 +205,24 @@ async function run() {
   assert.equal(sourceHash(source, "    const menuHtml = `", "    const bannerHtml = `"), "d11d71f664734c1d49e45cef55a425872c12711719057a702ffa76856c0214c1", "TC159 menuHtml changed");
   const wrapperCss = sourceBlock(source, "        #oi-wrapper {", "        #oi-wrapper > * {");
   for (const declaration of [
-    "position: relative !important",
-    "width: 100% !important",
+    "position: absolute !important",
+    "top: calc(100vh + 32px) !important",
+    "left: 10px !important",
+    "width: max-content !important",
     "display: flex !important",
-    "justify-content: center !important",
     "align-items: flex-start !important",
-    "flex-wrap: wrap !important",
-    "gap: 20px !important",
-    "padding: 50px 20px !important",
-    "margin-top: 50px !important",
-    "box-sizing: border-box !important",
-    "z-index: 999999 !important",
+    "gap: 10px !important",
+    "z-index: 2147483647 !important",
     "pointer-events: none !important",
-    "background: #161512 !important",
-  ]) assert(wrapperCss.includes(declaration), `footer wrapper is missing ${declaration}`);
-  for (const property of ["top", "bottom", "left", "max-height", "overflow"]) assert(!new RegExp(`^\\s*${property}\\s*:`, "m").test(wrapperCss), `footer wrapper retained ${property}`);
+  ]) assert(wrapperCss.includes(declaration), `workspace wrapper is missing ${declaration}`);
+  for (const property of ["bottom", "max-height", "overflow"]) assert(!new RegExp(`^\\s*${property}\\s*:`, "m").test(wrapperCss), `workspace wrapper retained ${property}`);
   assert(!wrapperCss.includes("position: fixed"));
-  assert(!wrapperCss.includes("position: absolute"));
   const childCss = sourceBlock(source, "        #oi-wrapper > * {", "        #krypbot-container {");
   assert(childCss.includes("pointer-events: auto !important"));
   const workspaceLayout = sourceBlock(source, "        function updateWorkspaceLayout() {", "        scheduleThinkerWorkspaceLayout = () => {");
   assert(workspaceLayout.includes("document.body.appendChild(wrapper)"));
-  assert(!workspaceLayout.includes("setProperty(\"top\""));
-  assert(!workspaceLayout.includes("setProperty(\"left\""));
+  assert(workspaceLayout.includes("setProperty(\"top\""));
+  assert(workspaceLayout.includes("setProperty(\"left\""));
   assert(/document\.body\.appendChild\(wrapper\);\r?\n\s+if \(!document\.getElementById\("krypbot-container"\)\) wrapper\.insertAdjacentHTML/.test(source));
 }
 

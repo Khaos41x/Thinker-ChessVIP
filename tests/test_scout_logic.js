@@ -39,20 +39,27 @@ if (nativeMountStart < 0 || nativeMountEnd < 0) throw new Error("native UI mount
 let mountCallback = null;
 let mountedMenu = false;
 let mountedBanner = false;
+let mountedWrapper = null;
 let bannerPositioned = false;
 let shellReconcilerStarted = false;
 const nativeMountContext = {
   document: {
     head: { insertAdjacentHTML() {} },
-    body: { insertAdjacentHTML() { mountedBanner = true; } },
+    body: {
+      insertAdjacentHTML() { mountedBanner = true; },
+      appendChild(node) { mountedWrapper = node; },
+    },
+    createElement: () => ({ insertAdjacentHTML() { mountedMenu = true; } }),
     getElementById(id) {
       if (id === "krypbot-container") return mountedMenu ? {} : null;
       if (id === "thinker-chess-banner") return mountedBanner ? {} : null;
+      if (id === "oi-wrapper") return mountedWrapper;
       return null;
     },
   },
   getThinkerMountHost: () => ({ insertAdjacentHTML() { mountedMenu = true; } }),
   positionThinkerBannerShell: () => { bannerPositioned = true; },
+  requestAnimationFrame: (callback) => { callback(); return 1; },
   startThinkerUiReconciler: () => { shellReconcilerStarted = true; },
   ensureThinkerLauncher: () => ({}),
   clearThinkerMountFailure() {},
@@ -62,7 +69,7 @@ const nativeMountContext = {
   setInterval: (callback) => { mountCallback = callback; return 1; },
 };
 vm.runInNewContext(
-  "let thinkerUiBound=false, thinkerMountTimer=null, thinkerMenuNode=null, thinkerBannerNode=null, $=null;\n" +
+  "let thinkerUiBound=false, thinkerMountTimer=null, thinkerMenuNode=null, thinkerBannerNode=null, thinkerBannerFrame=null, scheduleThinkerBannerPosition=()=>{}, $=null;\n" +
     source.slice(nativeMountStart, nativeMountEnd) + "\nglobalThis.mount=createMenu;",
   nativeMountContext,
 );
@@ -111,6 +118,7 @@ const recoveryContext = {
     return true;
   },
   reconcileThinkerUiShells: () => { reconcileCount++; },
+  shouldShowThinkerBanner: () => true,
   positionThinkerBannerShell() {},
   removeAds() {},
   handleAutoQueue() {},
@@ -229,7 +237,7 @@ const racedPoll = capturedPoll;
 pollContext.markLocalChange();
 pollContext.clearLocalPending();
 racedPoll.onload({ status: 200, responseText: '{"hint":false}' });
-if (Buffer.byteLength(source, "utf8") > 400000) {
+if (Buffer.byteLength(source, "utf8") > 450000) {
   throw new Error("userscript payload is too large for reliable Tampermonkey startup");
 }
 const start = source.indexOf("  const SCOUT_CACHE_TTL");
@@ -282,11 +290,9 @@ if (
   source.includes("thinker-chess-launcher") ||
   !source.includes('control.id = "kb-ghost-recovery"') ||
   !source.includes("pointer-events:none") ||
-  !/thinker-chess-banner[^`]+position:fixed[^`]+z-index:214748\d+/s.test(source) ||
+  !/thinker-chess-banner[^`]+position:absolute!important[^`]+z-index:214748\d+[^`]+transition:none!important/s.test(source) ||
   !source.includes("function calculateThinkerBannerLayout") ||
   !source.includes("function calculateThinkerWorkspaceMargin") ||
-  !source.includes("grid-template-columns:268px 296px") ||
-  !source.includes("margin-left:clamp(0px,calc(100% - 578px),44px)") ||
   !source.includes('container.style.width = "268px"') ||
   !/OpponentIntel\.ensureScoutWrapper\(\);\s+scheduleThinkerWorkspaceLayout\(\);\s+OpponentIntel\.startObserver\(\);/.test(source) ||
   source.includes('addEventListener("scroll", scheduleThinkerBannerPosition') ||
@@ -468,44 +474,45 @@ context.document.querySelector = () => null;
 context.document.querySelectorAll = () => [hiddenKnownSidebar, offViewportKnownSidebar];
 assert(context.findSidebar() === null, "sidebar selection accepted only hidden or off-viewport controls");
 
-const sidebarRect = { left: 788, top: 16, right: 1088, bottom: 704 };
-const bannerLayout = context.calculateBannerLayout(sidebarRect, 1280, 720, false);
+const sidebarRect = { left: 788, top: 16, right: 1088, bottom: 704, width: 300, height: 688 };
+const bannerLayout = context.calculateBannerLayout(sidebarRect, 1280, 0, 0, false);
 assert(
   bannerLayout &&
-    bannerLayout.left === 1096 &&
+    bannerLayout.left === 1103 &&
     bannerLayout.top === 16 &&
-    bannerLayout.width === 178 &&
+    bannerLayout.width === 171 &&
     bannerLayout.height === 688,
-  "full-height banner geometry is incorrect",
+  "document-anchored banner geometry is incorrect",
 );
 assert(
-  context.calculateBannerLayout(sidebarRect, 1160, 720, false) === null,
+  context.calculateBannerLayout(sidebarRect, 1160, 0, 0, false) === null,
   "banner was not hidden for an unsafe narrow slot",
 );
 assert(
-  context.calculateBannerLayout(sidebarRect, 1280, 720, true) === null,
+  context.calculateBannerLayout(sidebarRect, 1280, 0, 0, true) === null,
   "Ghost Mode did not suppress banner layout",
 );
 const reportedLayout = context.calculateBannerLayout(
-  { left: 900, top: 137, right: 1248, bottom: 879 },
+  { left: 900, top: 137, right: 1248, bottom: 879, width: 348, height: 742 },
   1433,
-  895,
+  0,
+  500,
   false,
 );
 assert(
   reportedLayout &&
-    reportedLayout.left === 1256 &&
-    reportedLayout.top === 137 &&
-    reportedLayout.width === 171 &&
+    reportedLayout.left === 1263 &&
+    reportedLayout.top === 637 &&
+    reportedLayout.width === 164 &&
     reportedLayout.height === 742,
   "banner geometry does not match the reported Chess.com viewport",
 );
-const scrolledLayout = context.calculateBannerLayout(sidebarRect, 1280, 720, false, 0, 500);
+const scrolledLayout = context.calculateBannerLayout(sidebarRect, 1280, 25, 500, false);
 assert(
-  scrolledLayout && scrolledLayout.top === 16,
-  "fixed banner geometry changed with document scroll",
+  scrolledLayout && scrolledLayout.left === 1128 && scrolledLayout.top === 516 && scrolledLayout.height === 688,
+  "absolute banner geometry did not convert viewport coordinates to document coordinates",
 );
-const narrowLayout = context.calculateBannerLayout(sidebarRect, 1160, 720, false);
+const narrowLayout = context.calculateBannerLayout(sidebarRect, 1160, 0, 0, false);
 assert(narrowLayout === null, "unsafe narrow viewport exposed the banner");
 assert(
   context.calculateWorkspaceMargin(836, 895) === 121 &&
@@ -516,7 +523,7 @@ assert(
 const recoveryControl = { style: {}, dataset: {}, title: "" };
 const shellMenu = { isConnected: false, style: {} };
 const shellBanner = { isConnected: false, style: {} };
-const shellWrapper = { style: {} };
+const shellWrapper = { style: { setProperty(name, value) { this[name] = value; } } };
 const shellScoutPrimary = { style: {} };
 const shellScoutSecondary = { style: {} };
 const shellHud = { style: {} };
@@ -569,10 +576,10 @@ assert(menuMounts === 0 && bannerMounts === 1,
   "viewport shells did not mount before the delayed Chess.com host");
 activeShellHost = shellHost;
 context.reconcileShells();
-assert(menuMounts === 1 && bannerMounts === 1,
-  "delayed host did not preserve exactly one of every UI shell");
+assert(menuMounts === 0 && bannerMounts === 1,
+  "reconciliation moved the menu outside its managed wrapper");
 context.reconcileShells();
-assert(menuMounts === 1 && bannerMounts === 1,
+assert(menuMounts === 0 && bannerMounts === 1,
   "idempotent reconciliation duplicated UI shells");
 shellMenu.isConnected = false;
 shellBanner.isConnected = false;
@@ -584,10 +591,10 @@ activeShellHost = {
   },
 };
 context.reconcileShells();
-assert(menuMounts === 2 && bannerMounts === 2,
-  "full SPA host replacement did not remount every UI shell exactly once");
+assert(menuMounts === 0 && bannerMounts === 2,
+  "full SPA host replacement did not remount the banner exactly once");
 context.reconcileShells();
-assert(menuMounts === 2 && bannerMounts === 2,
+assert(menuMounts === 0 && bannerMounts === 2,
   "post-replacement reconciliation duplicated UI shells");
 
 context.applyGhost(true);
@@ -897,12 +904,20 @@ const relocatedWrapper = {
 };
 const relocatedContainer = { id: "krypbot-container", parentNode: liveParent, style: {} };
 const originalGetElementById = context.document.getElementById;
+const originalDocumentBody = context.document.body;
+const liveBody = {
+  appendChild(node) {
+    node.parentNode = this;
+  },
+};
+context.document.body = liveBody;
 context.document.getElementById = (id) =>
   id === "krypbot-container" ? relocatedContainer : id === "oi-wrapper" ? relocatedWrapper : null;
 context.scout.ensureScoutWrapper();
-assert(relocatedWrapper.parentNode === liveParent, "stale Scout wrapper was not relocated");
+assert(relocatedWrapper.parentNode === liveBody, "stale Scout wrapper was not relocated to document.body");
 assert(relocatedContainer.parentNode === relocatedWrapper, "Thinker panel was not reunited with Scout");
 context.document.getElementById = originalGetElementById;
+context.document.body = originalDocumentBody;
 
 let loadingRestored = false;
 const originalRenderLoading = context.scout.renderLoading;

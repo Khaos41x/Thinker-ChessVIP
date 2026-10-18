@@ -22,14 +22,16 @@ function element(rect, text = "") {
 }
 
 const board = element({ left: 200, top: 100, right: 840, bottom: 740, width: 640, height: 640 });
-const sidebar = element({ left: 850, top: 100, right: 1150, bottom: 740, width: 300, height: 640 }, "Moves");
+let sidebarRect = { left: 900, top: 137, right: 1248, bottom: 879, width: 348, height: 742 };
+const sidebar = element(sidebarRect, "Moves");
+sidebar.getBoundingClientRect = () => sidebarRect;
 const gameOver = element({ left: 350, top: 180, right: 750, bottom: 580, width: 400, height: 400 });
 const banner = { style: {} };
 let gameOverVisible = false;
 
 const document = {
   body: {},
-  documentElement: { clientWidth: 1400, clientHeight: 900 },
+  documentElement: { clientWidth: 1433, clientHeight: 900 },
   getElementById: (id) => id === "thinker-chess-banner" ? banner : null,
   querySelector: (selector) => selector.includes("wc-chess-board") ? board : null,
   querySelectorAll(selector) {
@@ -40,8 +42,10 @@ const document = {
 };
 const window = {
   innerHeight: 900,
-  innerWidth: 1400,
+  innerWidth: 1433,
   location: { pathname: "/game/live/185503745104" },
+  scrollX: 0,
+  scrollY: 500,
   getComputedStyle: () => ({ display: "block", visibility: "visible", opacity: "1" }),
   removeEventListener() {},
 };
@@ -56,8 +60,10 @@ vm.createContext(context);
 vm.runInContext(
   "let _ghostModeActive = false; const SERVER_URL = 'http://127.0.0.1:5050';\n" +
     source.slice(start, end) +
+    "\nglobalThis.calculate = calculateThinkerBannerLayout;" +
     "\nglobalThis.shouldShow = shouldShowThinkerBanner;" +
     "\nglobalThis.position = positionThinkerBannerShell;" +
+    "\nglobalThis.setObservedSidebar = (value) => { thinkerObservedBannerSidebar = value; };" +
     "\nglobalThis.setGhost = (value) => { _ghostModeActive = value; };",
   context,
 );
@@ -69,6 +75,22 @@ function assert(condition, message) {
 assert(context.shouldShow() === true, "active game did not qualify for the banner");
 context.position();
 assert(banner.style.display === "flex", "active game did not display the banner");
+assert(banner.style.top === "637px", "banner top did not use sidebar top plus scrollY");
+assert(banner.style.left === "1263px", "banner left did not use sidebar right plus the 15px gap");
+assert(banner.style.height === "742px", "banner height did not mirror the sidebar exactly");
+assert(banner.style.width === "164px", "banner width did not use the remaining safe viewport space");
+const geometryBeforeScroll = JSON.stringify(banner.style);
+window.scrollY = 700;
+assert(JSON.stringify(banner.style) === geometryBeforeScroll, "scrolling alone wrote banner geometry");
+window.scrollY = 500;
+context.setObservedSidebar(sidebar);
+sidebarRect = { left: 900, top: -200, right: 1248, bottom: 542, width: 348, height: 742 };
+window.scrollY = 837;
+context.position();
+assert(banner.style.top === "637px" && banner.style.height === "742px",
+  "observed sidebar lost its document anchoring after leaving the viewport");
+sidebarRect = { left: 900, top: 137, right: 1248, bottom: 879, width: 348, height: 742 };
+window.scrollY = 500;
 
 window.location.pathname = "/play/online";
 assert(context.shouldShow() === true, "/play/online did not qualify for the banner");
@@ -105,12 +127,29 @@ context.position();
 assert(banner.style.display === "none", "Ghost Mode did not hide the banner");
 
 for (const marker of [
-  "function positionThinkerBannerFallback",
   "function positionThinkerBannerShell",
-  "function updateBannerPosition",
   "if (!shouldShowThinkerBanner()) banner.style.display = \"none\";",
+  "position:absolute!important",
+  "transition:none!important",
 ]) {
   assert(source.includes(marker), `banner lifecycle gate missing: ${marker}`);
 }
+assert(!source.includes("function positionThinkerBannerFallback"), "viewport fallback still exists");
+assert(!source.includes('addEventListener("scroll", scheduleThinkerBannerPosition'), "scroll still schedules banner geometry");
+const observerStart = source.indexOf("thinkerBannerLayoutObserver.observe(document.body");
+const observerEnd = source.indexOf("});", observerStart) + 3;
+const observerOptions = source.slice(observerStart, observerEnd);
+assert(observerOptions.includes("childList: true") && observerOptions.includes("subtree: true"),
+  "sidebar replacement observer is not child-list scoped");
+assert(!observerOptions.includes("attributes") && !observerOptions.includes("attributeFilter"),
+  "sidebar replacement observer still watches global attributes");
+const reconcileStart = source.indexOf("function reconcileThinkerUiShells");
+const reconcileEnd = source.indexOf("function startThinkerUiReconciler", reconcileStart);
+assert(!source.slice(reconcileStart, reconcileEnd).includes("scheduleThinkerBannerPosition"),
+  "periodic reconciler still schedules banner geometry");
+const watchdogStart = source.indexOf("thinkerShellWatchTimer = window.setInterval");
+const watchdogEnd = source.indexOf("}, 1000);", watchdogStart);
+assert(!source.slice(watchdogStart, watchdogEnd).includes("positionThinkerBannerShell"),
+  "periodic watchdog still writes banner geometry");
 
 console.log("banner visibility tests: ok");
