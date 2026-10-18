@@ -14,9 +14,26 @@ function run() {
   assert.equal(isEligibleTopLevelContext({ protocol: "https:", hostname: "www.chess.com", origin: "https://www.chess.com" }, topLevel), true);
   assert.equal(isEligibleTopLevelContext({ protocol: "https:", hostname: "chess.com", origin: "https://chess.com" }, topLevel), false);
   assert.equal(isEligibleTopLevelContext({ protocol: "https:", hostname: "www.chess.com", origin: "https://www.chess.com" }, { self: {}, top: {} }), false);
-  const button = { parentElement: null, getAttribute: () => null, className: "", textContent: "Start Game" };
-  const rapidTab = { getAttribute: (name) => name === "aria-label" ? "Rapid" : null, className: "active", textContent: "Rapid" };
-  const rapidRoot = { querySelectorAll: () => [rapidTab] };
+  const control = (text, attributes = {}, properties = {}) => ({
+    parentElement: null,
+    className: attributes.class || "",
+    textContent: text,
+    getAttribute: (name) => Object.prototype.hasOwnProperty.call(attributes, name) ? attributes[name] : null,
+    ...properties,
+  });
+  const rootWith = ({ active = [], controls = [] }) => ({
+    querySelectorAll: (selector) => selector.includes("active") || selector.includes('="true"') || selector.includes('data-state=') ? active : controls,
+  });
+  const assertContext = (text, timeClass) => {
+    const button = control("Start Game");
+    const observed = observeQueueContext({ source: "sidebar-start-game", root: rootWith({ controls: [control(text)] }), button });
+    assert.equal(observed.timeClass, timeClass);
+    assert.equal(observed.poolId, `chesscom-live-${timeClass}-v1`);
+    assert.equal(observed.opponentRatingScaleId, `chesscom-live-${timeClass}-v1`);
+  };
+  const button = control("Start Game");
+  const rapidTab = control("Rapid", { "aria-label": "Rapid", class: "active" });
+  const rapidRoot = rootWith({ active: [rapidTab] });
   const rapid = observeQueueContext({ source: "sidebar-start-game", root: rapidRoot, button }, null);
   assert.deepEqual(rapid, {
     schemaVersion: 1,
@@ -26,9 +43,48 @@ function run() {
     opponentRatingScaleId: "chesscom-live-rapid-v1",
     sourceVersion: "chesscom-queue-context-v1",
   });
-  const ambiguousRoot = { querySelectorAll: () => [rapidTab, { ...rapidTab, getAttribute: (name) => name === "aria-label" ? "Blitz" : null, textContent: "Blitz" }] };
+  assertContext("10 min (Rapid)", "rapid");
+  assertContext("1 min (Bullet)", "bullet");
+  assertContext("3 min (Blitz)", "blitz");
+  assertContext("10 | 5 (Rapid)", "rapid");
+  assertContext("0:30 (Bullet)", "bullet");
+  const blitzTab = control("Blitz", { "aria-label": "Blitz", class: "active" });
+  const ambiguousRoot = rootWith({ active: [rapidTab, blitzTab] });
   assert.equal(observeQueueContext({ source: "modal", root: ambiguousRoot, button }, null), null);
-  assert.equal(observeQueueContext({ source: "sidebar-start-game", root: { querySelectorAll: () => [] }, button }, null), null);
+  const conflictingRoot = rootWith({ active: [rapidTab], controls: [control("3 min (Blitz)")] });
+  assert.equal(observeQueueContext({ source: "sidebar-start-game", root: conflictingRoot, button }, null), null);
+  const duplicateRoot = rootWith({ controls: [control("10 min (Rapid)"), control("10 min (Rapid)")] });
+  assert.equal(observeQueueContext({ source: "sidebar-start-game", root: duplicateRoot, button }, null), null);
+  const maskedConflictRoot = rootWith({ active: [rapidTab], controls: [control("3 min (Blitz)"), control("1 min (Bullet)")] });
+  assert.equal(observeQueueContext({ source: "sidebar-start-game", root: maskedConflictRoot, button }, null), null);
+  const maskedDuplicateRoot = rootWith({ active: [rapidTab], controls: [control("10 min (Rapid)"), control("10 min (Rapid)")] });
+  assert.equal(observeQueueContext({ source: "sidebar-start-game", root: maskedDuplicateRoot, button }, null), null);
+  const maskedUnsupportedRoot = rootWith({ active: [rapidTab], controls: [control("10 min (Custom Rapid)")] });
+  assert.equal(observeQueueContext({ source: "sidebar-start-game", root: maskedUnsupportedRoot, button }, null), null);
+  for (const text of ["Rapid", "10 min", "Rapid 10 min", "Join a 10 min Rapid tournament", "10 min (Rapid Blitz)", "10 min (Daily Rapid)", "10 min (Custom Rapid)", "10 min (rapidă)", "10 min (Rapid960)", "181 min Rapid / 3+0", "181 min (Rapid)", "3 | 61 (Blitz)", "0:00 (Bullet)"]) {
+    assert.equal(observeQueueContext({ source: "sidebar-start-game", root: rootWith({ controls: [control(text)] }), button }, null), null, text);
+  }
+  for (const hidden of [
+    control("10 min (Rapid)", { hidden: "" }),
+    control("10 min (Rapid)", { "aria-hidden": "true" }),
+    control("10 min (Rapid)", { style: "display: none" }),
+    control("10 min (Rapid)", { style: "opacity: 0" }),
+    control("10 min (Rapid)", { "aria-disabled": "true" }),
+    control("10 min (Rapid)", {}, { hidden: true }),
+    control("10 min (Rapid)", {}, { disabled: true }),
+    control("10 min (Rapid)", {}, { parentElement: control("", { style: "visibility: hidden" }) }),
+    control("10 min (Rapid)", {}, { isConnected: true, getClientRects: () => [] }),
+  ]) {
+    assert.equal(observeQueueContext({ source: "sidebar-start-game", root: rootWith({ controls: [hidden] }), button }, null), null);
+  }
+  assert.equal(observeQueueContext({ source: "sidebar-start-game", root: rootWith({ controls: [button, control("10 min (Rapid)")] }), button }, null).timeClass, "rapid");
+  const nestedStartControl = control("10 min (Rapid)");
+  const containingButton = { ...button, contains: (node) => node === nestedStartControl };
+  assert.equal(observeQueueContext({ source: "sidebar-start-game", root: rootWith({ controls: [nestedStartControl] }), button: containingButton }, null), null);
+  assert.equal(observeQueueContext({ source: "sidebar-start-game", root: rootWith({ controls: [] }), button }, null), null);
+  assert.equal(observeQueueContext({ source: "sidebar-start-game", root: { textContent: "10 min (Rapid)", querySelectorAll: () => [] }, button }, null), null);
+  assert.equal(observeQueueContext({ source: "unknown", root: rootWith({ controls: [control("10 min (Rapid)")] }), button }, null), null);
+  assert.equal(observeQueueContext({ source: "sidebar-start-game", root: rootWith({ controls: [control("10 min (Rapid)")] }), button: null }, null), null);
   const base = {
     schemaVersion: 1,
     canonicalPlatformGameId: "game",

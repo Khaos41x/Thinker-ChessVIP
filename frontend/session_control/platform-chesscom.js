@@ -13,6 +13,12 @@ const ACTIVE_QUEUE_SELECTORS = Object.freeze([
   '[role="tab"].active',
   '[role="radio"].active',
 ]);
+const SUMMARY_CONTROL_SELECTORS = Object.freeze([
+  "button",
+  '[role="button"]',
+  '[aria-haspopup="listbox"]',
+  '[aria-haspopup="menu"]',
+]);
 
 function isEligibleTopLevelContext(locationObject, windowObject) {
   if (!locationObject || !windowObject) return false;
@@ -72,10 +78,74 @@ function activeTimeClassCandidates(root) {
   return Array.from(new Set(nodes.flatMap(elementTimeClasses)));
 }
 
+function normalizedControlText(element) {
+  if (!element || typeof element !== "object") return "";
+  const values = [element.textContent, element.value];
+  if (typeof element.getAttribute === "function") {
+    for (const name of ["aria-label", "title", "value"]) values.push(element.getAttribute(name));
+  }
+  const value = values.find((candidate) => typeof candidate === "string" && candidate.trim());
+  return typeof value === "string" ? value.normalize("NFKC").replace(/\s+/g, " ").trim().toLowerCase() : "";
+}
+
+function parseSummaryTimeClass(text) {
+  const minuteMatch = text.match(/^(\d{1,3})\s*(?:min(?:ute)?s?)\s*\(\s*(bullet|blitz|rapid)\s*\)$/);
+  if (minuteMatch && Number(minuteMatch[1]) >= 1 && Number(minuteMatch[1]) <= 180) return minuteMatch[2];
+  const incrementMatch = text.match(/^(\d{1,3})\s*[|+]\s*(\d{1,2})\s*\(\s*(bullet|blitz|rapid)\s*\)$/);
+  if (incrementMatch && Number(incrementMatch[1]) >= 1 && Number(incrementMatch[1]) <= 180 && Number(incrementMatch[2]) <= 60) return incrementMatch[3];
+  const clockMatch = text.match(/^(\d{1,2}):(\d{2})\s*\(\s*(bullet|blitz|rapid)\s*\)$/);
+  if (clockMatch && Number(clockMatch[2]) <= 59 && Number(clockMatch[1]) + Number(clockMatch[2]) > 0) return clockMatch[3];
+  return null;
+}
+
+function hasClockLikeText(text) {
+  return /\d{1,3}\s*(?:min(?:ute)?s?|[|+]\s*\d{1,2})|\d{1,2}:\d{2}/.test(text);
+}
+
+function isHiddenControl(element) {
+  if (!element || typeof element !== "object") return true;
+  for (let node = element; node && typeof node === "object"; node = node.parentElement) {
+    if (node.hidden === true || node.disabled === true) return true;
+    if (typeof node.getAttribute === "function") {
+      if (node.getAttribute("hidden") !== null || node.getAttribute("disabled") !== null || node.getAttribute("inert") !== null) return true;
+      if (["aria-hidden", "aria-disabled"].some((name) => String(node.getAttribute(name) || "").toLowerCase() === "true")) return true;
+      if (String(node.getAttribute("type") || "").toLowerCase() === "hidden") return true;
+      if (/(?:^|;)\s*(?:display\s*:\s*none|visibility\s*:\s*(?:hidden|collapse)|content-visibility\s*:\s*hidden|opacity\s*:\s*0)(?:\s*!important)?\s*(?:;|$)/i.test(String(node.getAttribute("style") || ""))) return true;
+    }
+    const view = node.ownerDocument && node.ownerDocument.defaultView;
+    if (view && typeof view.getComputedStyle === "function") {
+      const style = view.getComputedStyle(node);
+      if (style && (style.display === "none" || ["hidden", "collapse"].includes(style.visibility) || style.contentVisibility === "hidden" || Number(style.opacity) === 0)) return true;
+    }
+  }
+  return element.isConnected === true && typeof element.getClientRects === "function" && element.getClientRects().length === 0;
+}
+
+function summaryTimeClassEvidence(root, targetButton) {
+  if (!root || typeof root.querySelectorAll !== "function") return { valid: true, candidates: [] };
+  const nodes = [];
+  for (const selector of SUMMARY_CONTROL_SELECTORS) {
+    try { nodes.push(...root.querySelectorAll(selector)); } catch (_) {}
+  }
+  const candidates = [];
+  for (const node of new Set(nodes)) {
+    const overlapsTarget = node === targetButton || (typeof targetButton.contains === "function" && targetButton.contains(node)) || (typeof node.contains === "function" && node.contains(targetButton));
+    if (overlapsTarget || isHiddenControl(node)) continue;
+    const text = normalizedControlText(node);
+    if (!text || text.length > 80 || !hasClockLikeText(text)) continue;
+    const timeClass = parseSummaryTimeClass(text);
+    if (!timeClass) return { valid: false, candidates: [] };
+    candidates.push(timeClass);
+  }
+  return { valid: candidates.length <= 1, candidates };
+}
+
 function observeQueueContext(target) {
   if (!target || !["modal", "sidebar-start-game", "sidebar-new-game", "sidebar-plus"].includes(target.source) || !target.button) return null;
   const localRoot = target.root || target.button.parentElement;
-  const candidates = activeTimeClassCandidates(localRoot);
+  const summaryEvidence = summaryTimeClassEvidence(localRoot, target.button);
+  if (!summaryEvidence.valid) return null;
+  const candidates = Array.from(new Set([...activeTimeClassCandidates(localRoot), ...summaryEvidence.candidates]));
   if (candidates.length !== 1) return null;
   const timeClass = candidates[0];
   const scopeId = `chesscom-live-${timeClass}-v1`;
