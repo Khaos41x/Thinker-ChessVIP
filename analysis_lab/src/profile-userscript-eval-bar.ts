@@ -1,5 +1,9 @@
 import '../src/ui/eval-bar.css';
-import { createUserscriptEvalBar, type EvalRequest } from '../../frontend/eval_bar/userscript-adapter';
+import {
+  createUserscriptEvalBar,
+  resolveChessComEvalAuthorization,
+  type EvalRequest,
+} from '../../frontend/eval_bar/userscript-adapter';
 
 const nextFrame = (): Promise<number> => new Promise(resolve => requestAnimationFrame(resolve));
 const waitFrames = async (count = 8): Promise<void> => {
@@ -11,14 +15,18 @@ async function runUserscriptEvalBarBrowserTest() {
   const shell = document.createElement('div');
   const board = document.createElement('div');
   board.id = 'board-fixture';
-  Object.assign(shell.style, { display: 'block', width: '640px', height: '640px' });
+  Object.assign(shell.style, { display: 'grid', position: 'relative', width: '640px', height: '640px' });
   Object.assign(board.style, { width: '600px', height: '600px' });
   shell.append(board);
   document.body.append(shell);
+  const originalParent = board.parentElement;
+  const originalParentStyle = shell.getAttribute('style');
+  const originalBoardRect = board.getBoundingClientRect();
 
   let fen = 'fen-a';
   let orientation: 'white' | 'black' = 'white';
-  let authorized = true;
+  let cacheContext = 'engine-a|white-cp-mate-v1';
+  let now = 0;
   const requests: EvalRequest[] = [];
   let abortCount = 0;
   let pendingFrames = 0;
@@ -47,21 +55,36 @@ async function runUserscriptEvalBarBrowserTest() {
     getFen: () => fen,
     getBoard: () => board,
     getOrientation: () => orientation,
-    authorize: () => authorized ? 'analysis' : null,
+    getCacheContext: () => cacheContext,
+    authorize: () => resolveChessComEvalAuthorization(window.location, document),
     requestEvaluation: request => {
       requests.push(request);
       return { abort: () => { abortCount += 1; } };
     },
     addStyle: css => {
       const style = document.createElement('style');
-      style.textContent = css || '.thinker-eval-v2-rail{contain:layout paint}';
+      style.textContent = css;
       document.head.append(style);
       return style;
     },
     pollIntervalMs: 60000,
-    refreshIntervalMs: 60000,
+    refreshIntervalMs: 100,
+    now: () => now,
   });
   adapter.start(true);
+  const root = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')!;
+  const mountedBoardRect = board.getBoundingClientRect();
+  const mountedRailRect = root.getBoundingClientRect();
+  const domPreserved = board.parentElement === originalParent
+    && shell.getAttribute('style') === originalParentStyle
+    && mountedBoardRect.width === originalBoardRect.width
+    && mountedBoardRect.height === originalBoardRect.height
+    && root.parentElement === document.body
+    && getComputedStyle(root).pointerEvents === 'none';
+  const overlayAligned = Math.abs(mountedRailRect.top - mountedBoardRect.top) < 1
+    && Math.abs(mountedRailRect.height - mountedBoardRect.height) < 1
+    && (mountedRailRect.right <= mountedBoardRect.left || mountedRailRect.left >= mountedBoardRect.right);
+
   const firstRequest = requests.at(-1)!;
   fen = 'fen-b';
   adapter.pollNow();
@@ -73,40 +96,82 @@ async function runUserscriptEvalBarBrowserTest() {
   await waitFrames(12);
   const negativeLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
   const negativeTransform = document.querySelector<HTMLElement>('.thinker-eval-v2-fill')?.style.transform;
+
   orientation = 'black';
   adapter.pollNow();
   await waitFrames(4);
   const orientationCacheLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
-  secondRequest.onResult({ mate: 3, depth: 20 });
+
+  now = 101;
+  adapter.pollNow();
+  const sameFenOldRequest = requests.at(-1)!;
+  now = 202;
+  adapter.pollNow();
+  const sameFenLatestRequest = requests.at(-1)!;
+  const beforeSameFenRace = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
+  sameFenOldRequest.onResult({ cp: 900, depth: 20 });
+  sameFenOldRequest.onError(new Error('obsolete request'));
+  await waitFrames(2);
+  const afterSameFenRace = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
+  const oldSameFenCallbacksRejected = beforeSameFenRace === afterSameFenRace
+    && adapter.snapshot().requestActive
+    && sameFenLatestRequest.requestId > sameFenOldRequest.requestId;
+
+  sameFenLatestRequest.onResult({ mate: 3, depth: 20 });
   await waitFrames(4);
   const mateBlackLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
-  secondRequest.onResult({ mate: -2, depth: 20 });
+  now = 303;
+  adapter.pollNow();
+  requests.at(-1)!.onResult({ mate: -2, depth: 20 });
   await waitFrames(4);
   const negativeMateBlackLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
-  secondRequest.onResult({ cp: 0, depth: 20 });
+  now = 404;
+  adapter.pollNow();
+  requests.at(-1)!.onResult({ cp: 0, depth: 20 });
   await waitFrames(4);
   const neutralLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
-  const beforeCacheMiss = document.querySelector<HTMLElement>('.thinker-eval-v2-fill')?.style.transform;
+
+  const beforeContextMiss = document.querySelector<HTMLElement>('.thinker-eval-v2-fill')?.style.transform;
+  cacheContext = 'engine-b|white-cp-mate-v1';
+  adapter.pollNow();
+  const contextRequest = requests.at(-1)!;
+  const afterContextMiss = document.querySelector<HTMLElement>('.thinker-eval-v2-fill')?.style.transform;
+  const contextMissState = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.state;
+  requests.at(-2)!.onResult({ cp: 800, depth: 21 });
+  await waitFrames(2);
+  const oldContextRejected = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent === '0.0'
+    && adapter.snapshot().requestActive;
+  contextRequest.onResult({ cp: 125, depth: 21 });
+  await waitFrames(4);
+  cacheContext = 'engine-a|white-cp-mate-v1';
+  adapter.pollNow();
+  await waitFrames(4);
+  const contextCacheSeparated = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent === '0.0'
+    && document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.state === 'fresh';
+
+  const beforeFenMiss = document.querySelector<HTMLElement>('.thinker-eval-v2-fill')?.style.transform;
   fen = 'fen-c';
   adapter.pollNow();
-  const afterCacheMiss = document.querySelector<HTMLElement>('.thinker-eval-v2-fill')?.style.transform;
-  const staleState = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.state;
+  const afterFenMiss = document.querySelector<HTMLElement>('.thinker-eval-v2-fill')?.style.transform;
+  const fenMissState = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.state;
   fen = 'fen-b';
   adapter.pollNow();
-  const cacheState = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.state;
+  const cacheHitState = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.state;
   await waitFrames(4);
 
-  authorized = false;
+  history.replaceState({}, '', '/play/online');
   window.dispatchEvent(new PopStateEvent('popstate'));
   await waitFrames(2);
   const unmountedWhenUnauthorized = !document.getElementById('thinker-eval-v2-rail');
-  authorized = true;
+  const requestsBeforeUnauthorizedPoll = requests.length;
+  adapter.pollNow();
+  const noRequestWhenUnauthorized = requests.length === requestsBeforeUnauthorizedPoll;
+  history.replaceState({}, '', '/analysis/fixture');
   window.dispatchEvent(new PopStateEvent('popstate'));
   await waitFrames(2);
   const remountedAfterSpaRoute = Boolean(document.getElementById('thinker-eval-v2-rail'));
   adapter.destroy();
 
-  authorized = true;
   for (let index = 0; index < 40; index += 1) {
     const instance = createUserscriptEvalBar({
       window,
@@ -114,6 +179,7 @@ async function runUserscriptEvalBarBrowserTest() {
       getFen: () => `remount-${index}`,
       getBoard: () => board,
       getOrientation: () => 'white',
+      getCacheContext: () => 'engine-a|white-cp-mate-v1',
       authorize: () => 'analysis',
       requestEvaluation: () => null,
       pollIntervalMs: 60000,
@@ -123,21 +189,32 @@ async function runUserscriptEvalBarBrowserTest() {
   }
   const rootsAfterDestroy = document.querySelectorAll('#thinker-eval-v2-rail').length;
   const styleMarkers = document.querySelectorAll('#thinker-eval-v2-style').length;
+  const parentPreservedAfterDestroy = board.parentElement === originalParent
+    && shell.getAttribute('style') === originalParentStyle;
   window.requestAnimationFrame = nativeRequestFrame;
   window.cancelAnimationFrame = nativeCancelFrame;
   shell.remove();
 
   return {
+    domPreserved,
+    overlayAligned,
+    parentPreservedAfterDestroy,
     staleRejected: staleLabel === '0.0',
     negativeRendered: Boolean(negativeLabel?.startsWith('-')) && Boolean(negativeTransform?.startsWith('scaleY(')),
     cachedOrientationRendered: orientationCacheLabel === '+2.4',
+    oldSameFenCallbacksRejected,
+    requestIdsMonotonic: requests.every((request, index) => index === 0 || request.requestId > requests[index - 1].requestId),
     matePerspectiveRendered: mateBlackLabel === '#-3',
     negativeMatePerspectiveRendered: negativeMateBlackLabel === '#2',
     neutralRendered: neutralLabel === '0.0',
-    cacheMissPreservedVisual: beforeCacheMiss === afterCacheMiss && staleState === 'stale',
-    cacheHitMarkedFresh: cacheState === 'fresh',
+    contextMissPreservedVisual: beforeContextMiss === afterContextMiss && contextMissState === 'stale',
+    oldContextRejected,
+    contextCacheSeparated,
+    cacheMissPreservedVisual: beforeFenMiss === afterFenMiss && fenMissState === 'stale',
+    cacheHitMarkedFresh: cacheHitState === 'fresh',
     abortCount,
     unmountedWhenUnauthorized,
+    noRequestWhenUnauthorized,
     remountedAfterSpaRoute,
     rootsAfterDestroy,
     styleMarkers,

@@ -15,6 +15,8 @@ export type EvalTransportResult = Readonly<{
 export type EvalRequest = Readonly<{
   fen: string;
   generation: number;
+  requestId: number;
+  cacheContext: string;
   onResult: (result: EvalTransportResult) => void;
   onError: (error: unknown) => void;
 }>;
@@ -27,6 +29,7 @@ export type UserscriptEvalBarOptions = Readonly<{
   getFen: () => string | null;
   getBoard: () => HTMLElement | null;
   getOrientation: () => 'white' | 'black';
+  getCacheContext: () => string;
   authorize: () => EvalAuthorization;
   requestEvaluation: (request: EvalRequest) => EvalRequestHandle | null | undefined;
   addStyle?: (css: string) => unknown;
@@ -49,7 +52,7 @@ const DEFAULT_POLL_INTERVAL_MS = 500;
 const DEFAULT_REFRESH_INTERVAL_MS = 5000;
 
 const ANALYSIS_ROUTE = /^\/analysis(?:\/|$)/;
-const REVIEW_ROUTE = /(?:^|\/)review(?:\/|$)/;
+const GAME_REVIEW_ROUTE = /^\/game\/(?:live\/|daily\/)?[^/]+\/review(?:\/|$)/;
 const POST_GAME_TEXT = /(game review|an[aá]lise da partida|revis[aã]o da partida)/i;
 const TERMINAL_SELECTORS = [
   '[data-cy="game-over-modal"]',
@@ -79,7 +82,7 @@ export function resolveChessComEvalAuthorization(
   document: Pick<Document, 'querySelectorAll'>,
 ): EvalAuthorization {
   const path = String(location.pathname || '').toLowerCase();
-  if (ANALYSIS_ROUTE.test(path) || REVIEW_ROUTE.test(path)) return 'analysis';
+  if (ANALYSIS_ROUTE.test(path) || GAME_REVIEW_ROUTE.test(path)) return 'analysis';
   if (!isGameRoute(path)) return null;
   if (Array.from(document.querySelectorAll(TERMINAL_SELECTORS)).some(isVisible)) return 'post-game';
   const reviewNodes = document.querySelectorAll(
@@ -140,20 +143,22 @@ export class UserscriptEvalBar {
   private started = false;
   private enabled = false;
   private generation = 0;
+  private requestSequence = 0;
+  private activeRequestId = 0;
   private currentFen = '';
+  private currentCacheContext = '';
   private currentOrientation: 'white' | 'black' = 'white';
   private lastRequestAt = -Infinity;
   private request: EvalRequestHandle | null = null;
   private controller: EvalBarController | null = null;
   private root: HTMLElement | null = null;
   private board: HTMLElement | null = null;
-  private container: HTMLElement | null = null;
-  private containerDisplay = '';
-  private containerAlignItems = '';
+  private resizeObserver: ResizeObserver | null = null;
   private observer: MutationObserver | null = null;
   private interval: number | null = null;
   private reconcileQueued = false;
   private readonly routeListener = (): void => this.queueReconcile();
+  private readonly geometryListener = (): void => this.syncGeometry();
 
   constructor(private readonly options: UserscriptEvalBarOptions) {
     this.cache = new BoundedLruCache(options.cacheCapacity ?? DEFAULT_CACHE_CAPACITY);
@@ -207,40 +212,58 @@ export class UserscriptEvalBar {
       return;
     }
     if (!this.controller || this.board !== board || !this.root?.isConnected) this.mount(board);
+    this.syncGeometry();
     const fen = this.options.getFen();
     if (!fen) return;
+    const cacheContext = this.readCacheContext();
+    if (!cacheContext) {
+      this.abortRequest();
+      if (this.root) this.root.dataset.state = 'stale';
+      return;
+    }
     const orientation = this.options.getOrientation();
     this.controller?.setOrientation(orientation);
     const orientationChanged = orientation !== this.currentOrientation;
     this.currentOrientation = orientation;
-    const changed = fen !== this.currentFen;
+    const changed = fen !== this.currentFen || cacheContext !== this.currentCacheContext;
     if (changed) {
       this.generation += 1;
       this.abortRequest();
       this.currentFen = fen;
+      this.currentCacheContext = cacheContext;
       this.lastRequestAt = -Infinity;
-      const cached = this.cache.get(this.cacheKey(fen));
+      const cached = this.cache.get(this.cacheKey(fen, cacheContext));
       if (this.root) this.root.dataset.state = cached ? 'fresh' : 'stale';
       this.controller?.beginSearch(this.generation, cached ? this.sample(cached, orientation) : null);
     } else if (orientationChanged) {
-      const cached = this.cache.get(this.cacheKey(fen));
+      const cached = this.cache.get(this.cacheKey(fen, cacheContext));
       if (cached) this.controller?.publish(this.sample(cached, orientation));
     }
     if (this.now() - this.lastRequestAt < (this.options.refreshIntervalMs ?? DEFAULT_REFRESH_INTERVAL_MS)) return;
     this.lastRequestAt = this.now();
     this.abortRequest();
     const generation = this.generation;
+    const requestId = ++this.requestSequence;
+    this.activeRequestId = requestId;
+    let callbackSettled = false;
     try {
-      this.request = this.options.requestEvaluation({
+      const request = this.options.requestEvaluation({
         fen,
         generation,
-        onResult: result => this.acceptResult(fen, generation, result),
+        requestId,
+        cacheContext,
+        onResult: result => {
+          callbackSettled = true;
+          this.acceptResult(fen, generation, requestId, cacheContext, result);
+        },
         onError: () => {
-          if (generation === this.generation) this.request = null;
+          callbackSettled = true;
+          if (requestId === this.activeRequestId && generation === this.generation) this.request = null;
         },
       }) ?? null;
+      if (!callbackSettled && requestId === this.activeRequestId) this.request = request;
     } catch {
-      this.request = null;
+      if (requestId === this.activeRequestId) this.request = null;
     }
   }
 
@@ -263,6 +286,8 @@ export class UserscriptEvalBar {
     mounted: boolean;
     polling: boolean;
     requestActive: boolean;
+    activeRequestId: number;
+    cacheContext: string;
   }> {
     return Object.freeze({
       enabled: this.enabled,
@@ -272,16 +297,27 @@ export class UserscriptEvalBar {
       mounted: Boolean(this.root?.isConnected),
       polling: this.interval !== null,
       requestActive: this.request !== null,
+      activeRequestId: this.activeRequestId,
+      cacheContext: this.currentCacheContext,
     });
   }
 
-  private acceptResult(fen: string, generation: number, result: EvalTransportResult): void {
+  private acceptResult(
+    fen: string,
+    generation: number,
+    requestId: number,
+    cacheContext: string,
+    result: EvalTransportResult,
+  ): void {
     if (
       !this.enabled ||
       !this.options.authorize() ||
       generation !== this.generation ||
+      requestId !== this.activeRequestId ||
       fen !== this.currentFen ||
-      this.options.getFen() !== fen
+      this.options.getFen() !== fen ||
+      cacheContext !== this.currentCacheContext ||
+      this.readCacheContext() !== cacheContext
     ) return;
     let evaluation: CachedEvaluation;
     try {
@@ -290,7 +326,7 @@ export class UserscriptEvalBar {
       return;
     }
     this.request = null;
-    this.cache.set(this.cacheKey(fen), evaluation);
+    this.cache.set(this.cacheKey(fen, cacheContext), evaluation);
     if (this.root) this.root.dataset.state = 'fresh';
     this.controller?.publish(this.sample(evaluation, this.options.getOrientation()));
   }
@@ -307,7 +343,7 @@ export class UserscriptEvalBar {
     this.unmount();
     const root = this.options.document.createElement('div');
     root.id = ROOT_ID;
-    root.className = 'thinker-eval-v2-rail';
+    root.className = 'thinker-eval-v2-rail thinker-eval-v2-overlay';
     root.dataset.orientation = this.options.getOrientation();
     root.dataset.state = 'stale';
     root.setAttribute('aria-label', 'Position evaluation');
@@ -317,20 +353,16 @@ export class UserscriptEvalBar {
     label.className = 'thinker-eval-v2-score';
     label.textContent = '0.0';
     root.append(fill, label);
-    const container = board.parentElement;
-    if (!container) return;
-    this.container = container;
-    this.containerDisplay = container.style.display;
-    this.containerAlignItems = container.style.alignItems;
-    container.style.display = 'flex';
-    container.style.alignItems = 'stretch';
-    container.insertBefore(root, board);
+    const host = this.options.document.body || this.options.document.documentElement;
+    host.append(root);
     this.board = board;
     this.root = root;
+    this.installGeometryTracking(board);
+    this.syncGeometry();
     this.controller = new EvalBarController({ root, fill, label });
     this.controller.setOrientation(this.options.getOrientation());
     if (this.currentFen) {
-      const cached = this.cache.get(this.cacheKey(this.currentFen));
+      const cached = this.cache.get(this.cacheKey(this.currentFen, this.currentCacheContext));
       root.dataset.state = cached ? 'fresh' : 'stale';
       this.controller.beginSearch(this.generation, cached ? this.sample(cached, this.options.getOrientation()) : null);
     }
@@ -342,13 +374,7 @@ export class UserscriptEvalBar {
     this.root?.remove();
     this.root = null;
     this.board = null;
-    if (this.container) {
-      this.container.style.display = this.containerDisplay;
-      this.container.style.alignItems = this.containerAlignItems;
-    }
-    this.container = null;
-    this.containerDisplay = '';
-    this.containerAlignItems = '';
+    this.removeGeometryTracking();
   }
 
   private deactivate(): void {
@@ -356,6 +382,7 @@ export class UserscriptEvalBar {
     this.abortRequest();
     this.stopPolling();
     this.currentFen = '';
+    this.currentCacheContext = '';
     this.lastRequestAt = -Infinity;
     if (wasActive) this.generation += 1;
     this.unmount();
@@ -416,8 +443,54 @@ export class UserscriptEvalBar {
     (this.options.document.head || this.options.document.documentElement).append(style);
   }
 
-  private cacheKey(fen: string): string {
-    return `${this.options.cacheNamespace ?? 'komodo-local-eval-v1'}|white|${fen}`;
+  private installGeometryTracking(board: HTMLElement): void {
+    this.removeGeometryTracking();
+    const Observer = this.options.document.defaultView?.ResizeObserver ?? globalThis.ResizeObserver;
+    if (Observer) {
+      this.resizeObserver = new Observer(() => this.syncGeometry());
+      this.resizeObserver.observe(board);
+    }
+    this.options.window.addEventListener('resize', this.geometryListener);
+    this.options.window.addEventListener('scroll', this.geometryListener, true);
+  }
+
+  private removeGeometryTracking(): void {
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
+    this.options.window.removeEventListener('resize', this.geometryListener);
+    this.options.window.removeEventListener('scroll', this.geometryListener, true);
+  }
+
+  private syncGeometry(): void {
+    if (!this.root || !this.board?.isConnected) return;
+    const rect = this.board.getBoundingClientRect();
+    const width = 28;
+    const gap = 6;
+    const leftCandidate = rect.left - width - gap;
+    const rightCandidate = rect.right + gap;
+    const viewportWidth = this.options.window.innerWidth;
+    const left = leftCandidate >= 0
+      ? leftCandidate
+      : rightCandidate + width <= viewportWidth
+        ? rightCandidate
+        : Math.max(0, rect.left);
+    this.root.hidden = rect.width <= 0 || rect.height <= 0;
+    this.root.dataset.placement = left === leftCandidate ? 'left' : left === rightCandidate ? 'right' : 'overlay';
+    this.root.style.left = `${left}px`;
+    this.root.style.top = `${rect.top}px`;
+    this.root.style.height = `${rect.height}px`;
+  }
+
+  private readCacheContext(): string {
+    try {
+      return String(this.options.getCacheContext() || '').trim();
+    } catch {
+      return '';
+    }
+  }
+
+  private cacheKey(fen: string, cacheContext: string): string {
+    return `${this.options.cacheNamespace ?? 'eval-bar-v2'}|${cacheContext}|white|${fen}`;
   }
 }
 

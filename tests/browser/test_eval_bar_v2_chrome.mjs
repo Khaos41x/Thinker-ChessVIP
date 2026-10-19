@@ -141,11 +141,15 @@ try {
   console.log(JSON.stringify(result, null, 2));
   const behavior = result.behavior;
   if (
-    !behavior.staleRejected || !behavior.negativeRendered || !behavior.cachedOrientationRendered
+    !behavior.domPreserved || !behavior.overlayAligned || !behavior.parentPreservedAfterDestroy
+    || !behavior.staleRejected || !behavior.negativeRendered || !behavior.cachedOrientationRendered
+    || !behavior.oldSameFenCallbacksRejected || !behavior.requestIdsMonotonic
     || !behavior.matePerspectiveRendered || !behavior.negativeMatePerspectiveRendered
     || !behavior.neutralRendered
+    || !behavior.contextMissPreservedVisual || !behavior.oldContextRejected || !behavior.contextCacheSeparated
     || !behavior.cacheMissPreservedVisual || !behavior.cacheHitMarkedFresh
-    || !behavior.unmountedWhenUnauthorized || !behavior.remountedAfterSpaRoute
+    || !behavior.unmountedWhenUnauthorized || !behavior.noRequestWhenUnauthorized
+    || !behavior.remountedAfterSpaRoute
     || behavior.rootsAfterDestroy !== 0
     || behavior.styleMarkers !== 1 || behavior.maximumPendingFramesDuringBurst > 1
     || result.retainedHeapDeltaBytes > 1_500_000

@@ -19,6 +19,13 @@ function visibleNode(textContent = '') {
   };
 }
 
+function hiddenNode(textContent = 'Game Review') {
+  return {
+    ...visibleNode(textContent),
+    getAttribute: (name: string) => name === 'aria-hidden' ? 'true' : null,
+  };
+}
+
 describe('userscript Eval Bar authorization', () => {
   it('allows analysis and review routes', () => {
     expect(resolveChessComEvalAuthorization({ pathname: '/analysis/game/abc' } as Location, documentWith())).toBe('analysis');
@@ -34,9 +41,16 @@ describe('userscript Eval Bar authorization', () => {
   });
 
   it('fails closed on play, home and malformed routes', () => {
-    for (const pathname of ['/play/online', '/', '/game/live/', '/puzzles']) {
+    for (const pathname of ['/play/online', '/', '/game/live/', '/puzzles', '/clubs/review/archive']) {
       expect(resolveChessComEvalAuthorization({ pathname } as Location, documentWith([visibleNode('Game Review')]))).toBeNull();
     }
+  });
+
+  it('rejects hidden post-game evidence', () => {
+    expect(resolveChessComEvalAuthorization(
+      { pathname: '/game/live/abc' } as Location,
+      documentWith([hiddenNode()]),
+    )).toBeNull();
   });
 });
 

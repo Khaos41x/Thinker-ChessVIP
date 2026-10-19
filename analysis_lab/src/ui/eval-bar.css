@@ -13,6 +13,15 @@
   margin-right: 6px;
 }
 
+.thinker-eval-v2-overlay {
+  position: fixed;
+  min-height: 0;
+  margin: 0;
+  flex: none;
+  pointer-events: none;
+  z-index: 30;
+}
+
 .thinker-eval-v2-fill {
   position: absolute;
   inset: 0;

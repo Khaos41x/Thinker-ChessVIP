@@ -26,5 +26,6 @@ describe('Eval Bar V2 userscript artifact', () => {
     expect(userscript).toContain('globalThis.krypbotSetEvalBarV2');
     expect(userscript).toContain('if (evalBarV2Enabled) {');
     expect(userscript).toContain('function injectEvalBarDOM()');
+    expect(userscript).not.toContain('container.style.display = "flex"');
   });
 });

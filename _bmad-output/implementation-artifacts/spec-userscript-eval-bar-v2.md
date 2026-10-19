@@ -82,4 +82,6 @@ The adapter owns position identity and visual lifecycle while `script.js` retain
 - The legacy renderer remains available through `evalBarV2=false` and is governed by the same runtime authorization gate.
 - Vitest, TypeScript, Vite production build, deterministic bundle checks, Chromium integration, and Chromium profiling passed on 2026-10-19.
 - The Chromium integration uses a controlled Chess.com shaped DOM fixture; final selector compatibility on the live Chess.com analysis UI remains an operator smoke test because no authenticated Chess.com browser session was available in this environment.
+- Final hardening adds a monotonic request identity independent of FEN generations, cache partitioning by engine/protocol context, strict current-request error handling, and a fixed noninteractive overlay that never rewrites the board parent layout.
+- Browser regression coverage verifies same-FEN request races, engine-context cache isolation, parent DOM preservation, fixed vertical alignment, and authorized-to-prohibited SPA transitions.
 
