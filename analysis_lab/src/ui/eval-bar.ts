@@ -82,6 +82,16 @@ export class EvalBarController {
     this.elements.root.dataset.orientation = orientation;
   }
 
+  reset(fraction = 0.5, label = '—'): void {
+    this.cancelScheduledFrame();
+    this.mailbox = null;
+    this.lastTimestamp = null;
+    this.current = clampFraction(fraction);
+    this.target = this.current;
+    this.elements.label.textContent = label;
+    this.commitTransform();
+  }
+
   destroy(): void {
     this.cancelScheduledFrame();
     this.mailbox = null;

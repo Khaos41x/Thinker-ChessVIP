@@ -94,6 +94,44 @@ class EngineRecoveryTests(unittest.TestCase):
             create.assert_called_once_with(app.komodo.executable_path, timeout=10.0)
             dead.close.assert_called_once()
 
+    def test_eval_echoes_request_identity_with_white_pov_score(self):
+        result = {
+            "score": chess.engine.PovScore(chess.engine.Cp(-57), chess.WHITE),
+            "depth": 9,
+        }
+        payload = {
+            "fen": chess.STARTING_FEN,
+            "requestId": "eval-v2:17",
+            "generation": 4,
+            "cacheContext": "komodo-test",
+        }
+        with patch.object(app, "analyse_with_recovery", return_value=[result]):
+            response = app.app.test_client().post("/eval", json=payload, headers=AUTH_HEADERS)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json(), {
+            "cp": -57,
+            "mate": None,
+            "depth": 9,
+            "requestId": "eval-v2:17",
+            "generation": 4,
+            "cacheContext": "komodo-test",
+        })
+
+    def test_eval_reports_invalid_fen_and_engine_failure(self):
+        invalid = app.app.test_client().post(
+            "/eval", json={"fen": "not-a-fen", "requestId": "eval-v2:18"}, headers=AUTH_HEADERS
+        )
+        self.assertEqual(invalid.status_code, 200)
+        self.assertEqual(invalid.get_json()["requestId"], "eval-v2:18")
+        self.assertEqual(invalid.get_json()["error"], "invalid fen")
+        self.assertEqual(invalid.get_json()["cp"], 0)
+        with patch.object(app, "analyse_with_recovery", return_value=[]):
+            unavailable = app.app.test_client().post(
+                "/eval", json={"fen": chess.STARTING_FEN}, headers=AUTH_HEADERS
+            )
+        self.assertEqual(unavailable.status_code, 200)
+        self.assertEqual(unavailable.get_json()["error"], "engine returned no analysis")
+
     def test_illegal_fen_never_reaches_native_engine_or_cache(self):
         illegal_fen = "bqp5/8/NKR5/8/8/8/8/8 w - - 0 1"
         with patch.object(app, "play_with_recovery") as play:

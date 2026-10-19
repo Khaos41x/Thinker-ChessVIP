@@ -24,6 +24,9 @@ describe('Eval Bar V2 userscript artifact', () => {
     expect(userscript).toContain('localStorage.getItem("evalBarV2") !== "false"');
     expect(userscript).toContain('if (!evalBarAuthorization()) return null;');
     expect(userscript).toContain('globalThis.krypbotSetEvalBarV2');
+    expect(userscript).toContain('globalThis.krypbotEvalBarDiagnostics');
+    expect(userscript).toContain('shouldDisplay: evalBarPresentationAllowed');
+    expect(userscript).toContain('readChessComFen?.(board)');
     expect(userscript).toContain('if (evalBarV2Enabled) {');
     expect(userscript).toContain('function injectEvalBarDOM()');
     expect(userscript).not.toContain('container.style.display = "flex"');

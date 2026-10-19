@@ -57,6 +57,8 @@ async function runUserscriptEvalBarBrowserTest() {
     getOrientation: () => orientation,
     getCacheContext: () => cacheContext,
     authorize: () => resolveChessComEvalAuthorization(window.location, document),
+    shouldDisplay: () => /^\/(?:analysis|play)(?:\/|$)/.test(window.location.pathname),
+    getRoute: () => window.location.pathname,
     requestEvaluation: request => {
       requests.push(request);
       return { abort: () => { abortCount += 1; } };
@@ -72,6 +74,8 @@ async function runUserscriptEvalBarBrowserTest() {
     now: () => now,
   });
   adapter.start(true);
+  adapter.start(true);
+  const singleRootAfterRepeatedStart = document.querySelectorAll('#thinker-eval-v2-rail').length === 1;
   const root = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')!;
   const mountedBoardRect = board.getBoundingClientRect();
   const mountedRailRect = root.getBoundingClientRect();
@@ -139,7 +143,7 @@ async function runUserscriptEvalBarBrowserTest() {
   const contextMissState = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.state;
   requests.at(-2)!.onResult({ cp: 800, depth: 21 });
   await waitFrames(2);
-  const oldContextRejected = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent === '0.0'
+  const oldContextRejected = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent === '…'
     && adapter.snapshot().requestActive;
   contextRequest.onResult({ cp: 125, depth: 21 });
   await waitFrames(4);
@@ -159,15 +163,35 @@ async function runUserscriptEvalBarBrowserTest() {
   const cacheHitState = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.state;
   await waitFrames(4);
 
+  const requestsBeforeMissingFen = requests.length;
+  fen = '';
+  adapter.pollNow();
+  const missingFenWaiting = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.state === 'waiting'
+    && document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent === '…'
+    && requests.length === requestsBeforeMissingFen;
+  fen = 'fen-b';
+  adapter.pollNow();
+  const labelBeforeBackendFailure = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
+  requests.at(-1)!.onError(new Error('backend offline'));
+  const backendFailureVisible = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.state === 'error'
+    && adapter.snapshot().lastError === 'backend offline'
+    && document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent === labelBeforeBackendFailure;
+
+  board.style.display = 'none';
+  adapter.pollNow();
+  const hiddenWhenBoardHidden = Boolean(document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.hidden);
+  board.style.display = 'block';
+  adapter.pollNow();
+  const visibleAfterBoardReturns = !document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.hidden;
+
   history.replaceState({}, '', '/play/online');
-  window.dispatchEvent(new PopStateEvent('popstate'));
   await waitFrames(2);
-  const unmountedWhenUnauthorized = !document.getElementById('thinker-eval-v2-rail');
+  const mountedBlockedWhenUnauthorized = document.getElementById('thinker-eval-v2-rail')?.dataset.state === 'blocked'
+    && document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent === '—';
   const requestsBeforeUnauthorizedPoll = requests.length;
   adapter.pollNow();
   const noRequestWhenUnauthorized = requests.length === requestsBeforeUnauthorizedPoll;
   history.replaceState({}, '', '/analysis/fixture');
-  window.dispatchEvent(new PopStateEvent('popstate'));
   await waitFrames(2);
   const remountedAfterSpaRoute = Boolean(document.getElementById('thinker-eval-v2-rail'));
   adapter.destroy();
@@ -197,9 +221,10 @@ async function runUserscriptEvalBarBrowserTest() {
 
   return {
     domPreserved,
+    singleRootAfterRepeatedStart,
     overlayAligned,
     parentPreservedAfterDestroy,
-    staleRejected: staleLabel === '0.0',
+    staleRejected: staleLabel === '…',
     negativeRendered: Boolean(negativeLabel?.startsWith('-')) && Boolean(negativeTransform?.startsWith('scaleY(')),
     cachedOrientationRendered: orientationCacheLabel === '+2.4',
     oldSameFenCallbacksRejected,
@@ -207,13 +232,17 @@ async function runUserscriptEvalBarBrowserTest() {
     matePerspectiveRendered: mateBlackLabel === '#-3',
     negativeMatePerspectiveRendered: negativeMateBlackLabel === '#2',
     neutralRendered: neutralLabel === '0.0',
-    contextMissPreservedVisual: beforeContextMiss === afterContextMiss && contextMissState === 'stale',
+    contextMissPreservedVisual: beforeContextMiss === afterContextMiss && contextMissState === 'loading',
     oldContextRejected,
     contextCacheSeparated,
-    cacheMissPreservedVisual: beforeFenMiss === afterFenMiss && fenMissState === 'stale',
+    cacheMissPreservedVisual: beforeFenMiss === afterFenMiss && fenMissState === 'loading',
     cacheHitMarkedFresh: cacheHitState === 'fresh',
+    missingFenWaiting,
+    backendFailureVisible,
+    hiddenWhenBoardHidden,
+    visibleAfterBoardReturns,
     abortCount,
-    unmountedWhenUnauthorized,
+    mountedBlockedWhenUnauthorized,
     noRequestWhenUnauthorized,
     remountedAfterSpaRoute,
     rootsAfterDestroy,

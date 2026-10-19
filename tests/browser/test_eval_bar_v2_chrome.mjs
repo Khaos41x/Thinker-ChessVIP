@@ -26,7 +26,7 @@ const port = () => new Promise((resolvePort, reject) => {
 const waitJson = async url => {
   for (let attempt = 0; attempt < 100; attempt += 1) {
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, { signal: AbortSignal.timeout(500) });
       if (response.ok) return response.json();
     } catch {}
     await delay(100);
@@ -36,7 +36,7 @@ const waitJson = async url => {
 const waitAvailable = async url => {
   for (let attempt = 0; attempt < 100; attempt += 1) {
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, { signal: AbortSignal.timeout(500) });
       if (response.ok) return;
     } catch {}
     await delay(100);
@@ -98,7 +98,9 @@ let browser;
 let cdp;
 
 try {
+  console.log('eval-bar browser: waiting for fixture');
   await waitAvailable(url);
+  console.log('eval-bar browser: fixture ready');
   browser = spawn(browserPath, [
     '--headless=new',
     '--js-flags=--expose-gc',
@@ -109,9 +111,11 @@ try {
     'about:blank',
   ], { stdio: 'ignore', windowsHide: true });
   await waitJson(`http://${host}:${debugPort}/json/version`);
+  console.log('eval-bar browser: chromium ready');
   const targetResponse = await fetch(`http://${host}:${debugPort}/json/new?${encodeURIComponent(url)}`, { method: 'PUT' });
   const target = await targetResponse.json();
   cdp = await connect(target.webSocketDebuggerUrl);
+  console.log('eval-bar browser: CDP connected');
   await cdp.send('Runtime.enable');
   await cdp.send('HeapProfiler.enable');
   for (let attempt = 0; attempt < 100; attempt += 1) {
@@ -123,10 +127,14 @@ try {
     if (attempt === 99) throw new Error('browser fixture did not become ready');
     await delay(100);
   }
+  console.log('eval-bar browser: running fixture');
   await cdp.send('HeapProfiler.collectGarbage');
   const before = await cdp.send('Runtime.getHeapUsage');
   const evaluated = await cdp.send('Runtime.evaluate', {
-    expression: 'runUserscriptEvalBarBrowserTest()',
+    expression: `Promise.race([
+      runUserscriptEvalBarBrowserTest(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('browser fixture timeout')), 15000)),
+    ])`,
     awaitPromise: true,
     returnByValue: true,
   });
@@ -141,14 +149,17 @@ try {
   console.log(JSON.stringify(result, null, 2));
   const behavior = result.behavior;
   if (
-    !behavior.domPreserved || !behavior.overlayAligned || !behavior.parentPreservedAfterDestroy
+    !behavior.domPreserved || !behavior.singleRootAfterRepeatedStart
+    || !behavior.overlayAligned || !behavior.parentPreservedAfterDestroy
     || !behavior.staleRejected || !behavior.negativeRendered || !behavior.cachedOrientationRendered
     || !behavior.oldSameFenCallbacksRejected || !behavior.requestIdsMonotonic
     || !behavior.matePerspectiveRendered || !behavior.negativeMatePerspectiveRendered
     || !behavior.neutralRendered
     || !behavior.contextMissPreservedVisual || !behavior.oldContextRejected || !behavior.contextCacheSeparated
     || !behavior.cacheMissPreservedVisual || !behavior.cacheHitMarkedFresh
-    || !behavior.unmountedWhenUnauthorized || !behavior.noRequestWhenUnauthorized
+    || !behavior.missingFenWaiting || !behavior.backendFailureVisible
+    || !behavior.hiddenWhenBoardHidden || !behavior.visibleAfterBoardReturns
+    || !behavior.mountedBlockedWhenUnauthorized || !behavior.noRequestWhenUnauthorized
     || !behavior.remountedAfterSpaRoute
     || behavior.rootsAfterDestroy !== 0
     || behavior.styleMarkers !== 1 || behavior.maximumPendingFramesDuringBurst > 1

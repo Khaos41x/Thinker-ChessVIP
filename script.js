@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-19.1
+// @version      2026-10-19.2
 // @description  Chess Bot com Servidor Local
 // @author       You
 // @match        https://www.chess.com/*
@@ -26,7 +26,7 @@ try {
 } catch (_) {}
 
 /* THINKER_EVAL_BAR_V2_GENERATED_START */
-var ThinkerEvalBarV2Bundle=(()=>{var f=Object.defineProperty;var T=Object.getOwnPropertyDescriptor;var _=Object.getOwnPropertyNames;var L=Object.prototype.hasOwnProperty;var O=(n,e)=>{for(var t in e)f(n,t,{get:e[t],enumerable:!0})},I=(n,e,t,r)=>{if(e&&typeof e=="object"||typeof e=="function")for(let i of _(e))!L.call(n,i)&&i!==t&&f(n,i,{get:()=>e[i],enumerable:!(r=T(e,i))||r.enumerable});return n};var q=n=>I(f({},"__esModule",{value:!0}),n);var Q={};O(Q,{BoundedLruCache:()=>p,UserscriptEvalBar:()=>v,createUserscriptEvalBar:()=>Y,resolveChessComEvalAuthorization:()=>U});var J=Object.freeze({version:"thinker-fair-play-v1",authorizedContexts:["post-game","offline-analysis"],prohibitedContexts:["live-game","active-game-assistance"],statement:"Analysis output is authorized only after a game or in an offline analysis workspace."}),h=Object.freeze({evaluation:"lichess-winning-chances-0.00368208-v1",classification:"chesscom-published-ep-bands-thinker-heuristics-v1",accuracy:"lichess-accuracy-percent-power-mean-v1",evalBar:"thinker-latest-wins-tau-110-v1"}),Z=Object.freeze({evaluation:"Lichess lila winningChances.ts and scalachess WinPercent",classification:"Chess.com Classification V2 published Expected Points bands with Thinker-owned special heuristics",accuracy:"Lichess AccuracyPercent.scala volatility-weighted mean and harmonic power mean"});var y=1e3,A=-.00368208,w=(n,e,t)=>Math.max(e,Math.min(t,n)),u=(n,e)=>{if(!Number.isFinite(n))throw new TypeError(`${e} must be finite`)};function S(n){let e=n.cp!==void 0&&n.cp!==null,t=n.mate!==void 0&&n.mate!==null;if(e===t)throw new TypeError("exactly one of cp or mate is required");if(t){if(u(n.mate,"mate"),!Number.isSafeInteger(n.mate))throw new RangeError("mate must be an integer");if(n.mate===0)throw new RangeError("mate must not be zero");return Object.freeze({kind:"mate",mate:n.mate})}return u(n.cp,"cp"),Object.freeze({kind:"cp",cp:n.cp})}function M(n){let e;if(n.kind==="mate"){if(u(n.mate,"mate"),n.mate===0)throw new RangeError("mate must not be zero");e=Math.sign(n.mate)*(21-Math.min(10,Math.abs(n.mate)))*100}else u(n.cp,"cp"),e=w(n.cp,-y,y);return w(2/(1+Math.exp(A*e))-1,-1,1)}function C(n){let e=M(n),t=50+50*e,r=t/100;return Object.freeze({modelVersion:h.evaluation,score:n,whiteWinningChances:e,whiteWinPercent:t,whiteExpectedPoints:r,whiteVisualFraction:r})}function g(n,e=1){if(n.kind==="mate")return`#${n.mate}`;let t=n.cp/100;return`${t>0?"+":""}${t.toFixed(e)}`}var F=110,k={now:()=>performance.now(),requestFrame:n=>requestAnimationFrame(n),cancelFrame:n=>cancelAnimationFrame(n)},E=n=>{if(!Number.isFinite(n))throw new TypeError("eval bar fraction must be finite");return Math.max(0,Math.min(1,n))},d=class{modelVersion=h.evalBar;elements;scheduler;reducedMotion;activeSearchId=0;mailbox=null;frameHandle=null;lastTimestamp=null;current=.5;target=.5;constructor(e,t={}){this.elements=e,this.scheduler=t.scheduler??k,this.reducedMotion=t.reducedMotion??globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches??!1,this.current=E(t.initialFraction??.5),this.target=this.current,this.commitTransform()}beginSearch(e,t=null){if(!Number.isSafeInteger(e)||e<0)throw new RangeError("searchId must be a non-negative safe integer");this.cancelScheduledFrame(),this.activeSearchId=e,this.mailbox=null,this.target=this.current,this.lastTimestamp=null,t&&this.publish(t)}publish(e){return e.searchId!==this.activeSearchId?!1:(E(e.fraction),this.mailbox=e,this.frameHandle===null&&(this.lastTimestamp=this.scheduler.now(),this.frameHandle=this.scheduler.requestFrame(t=>this.animate(t))),!0)}setOrientation(e){this.elements.root.dataset.orientation=e}destroy(){this.cancelScheduledFrame(),this.mailbox=null}snapshot(){return Object.freeze({activeSearchId:this.activeSearchId,current:this.current,target:this.target,hasPendingSample:this.mailbox!==null,hasScheduledFrame:this.frameHandle!==null})}animate(e){this.frameHandle=null;let t=this.mailbox;this.mailbox=null,t&&(this.target=E(t.fraction),this.elements.label.textContent=t.label);let r=this.lastTimestamp??e,i=Math.max(0,e-r);if(this.lastTimestamp=e,this.reducedMotion)this.current=this.target;else{let s=1-Math.exp(-i/F);this.current+=(this.target-this.current)*s}if(Math.abs(this.target-this.current)<=1e-4&&this.mailbox===null){this.current=this.target,this.commitTransform(),this.lastTimestamp=null;return}this.commitTransform(),this.frameHandle=this.scheduler.requestFrame(s=>this.animate(s))}commitTransform(){this.elements.fill.style.transform=`scaleY(${this.current})`}cancelScheduledFrame(){this.frameHandle!==null&&this.scheduler.cancelFrame(this.frameHandle),this.frameHandle=null}};var z="thinker-eval-v2-rail",m="thinker-eval-v2-style",B=64,N=500,H=5e3,V=/^\/analysis(?:\/|$)/,P=/^\/game\/(?:live\/|daily\/)?[^/]+\/review(?:\/|$)/,G=/(game review|an[aá]lise da partida|revis[aã]o da partida)/i,D=['[data-cy="game-over-modal"]','[data-test-element="game-over-modal"]','[data-cy="game-over-dialog"]',".game-over-modal",'[class*="game-over-modal"]','[class*="modal-game-over"]'].join(",");function K(n){let e=n.split("/").filter(Boolean);return e[0]!=="game"?!1:e.length===2?!["live","daily"].includes(e[1]):e.length===3&&["live","daily"].includes(e[1])&&!!e[2]}function R(n){if(!n.isConnected||n.getAttribute("aria-hidden")==="true")return!1;let e=n.getBoundingClientRect?.();return!!(e&&e.width>0&&e.height>0)}function U(n,e){let t=String(n.pathname||"").toLowerCase();if(V.test(t)||P.test(t))return"analysis";if(!K(t))return null;if(Array.from(e.querySelectorAll(D)).some(R))return"post-game";let r=e.querySelectorAll('[data-cy*="review"], [data-test-element*="review"], [class*="game-review"], [class*="post-game"]');return Array.from(r).some(i=>R(i)&&G.test(i.textContent||""))?"post-game":null}var p=class{constructor(e){this.capacity=e;if(!Number.isSafeInteger(e)||e<1)throw new RangeError("cache capacity must be a positive safe integer")}capacity;values=new Map;get(e){let t=this.values.get(e);if(t!==void 0)return this.values.delete(e),this.values.set(e,t),t}set(e,t){for(this.values.delete(e),this.values.set(e,t);this.values.size>this.capacity;)this.values.delete(this.values.keys().next().value)}get size(){return this.values.size}};function W(n,e){return e==="white"?g(n):g(n.kind==="cp"?{kind:"cp",cp:-n.cp}:{kind:"mate",mate:-n.mate})}function $(n){let e=S({cp:n.cp,mate:n.mate});return Object.freeze({score:e,fraction:C(e).whiteVisualFraction})}function j(){return`.thinker-eval-v2-rail {
+var ThinkerEvalBarV2Bundle=(()=>{var T=Object.defineProperty;var V=Object.getOwnPropertyDescriptor;var P=Object.getOwnPropertyNames;var D=Object.prototype.hasOwnProperty;var K=(n,e)=>{for(var t in e)T(n,t,{get:e[t],enumerable:!0})},$=(n,e,t,i)=>{if(e&&typeof e=="object"||typeof e=="function")for(let r of P(e))!D.call(n,r)&&r!==t&&T(n,r,{get:()=>e[r],enumerable:!(i=V(e,r))||i.enumerable});return n};var G=n=>$(T({},"__esModule",{value:!0}),n);var ve={};K(ve,{BoundedLruCache:()=>C,UserscriptEvalBar:()=>R,createUserscriptEvalBar:()=>pe,findChessComBoard:()=>F,isValidChessFen:()=>H,readChessComFen:()=>ce,resolveChessComEvalAuthorization:()=>oe,resolveChessComEvalPresentation:()=>ae});var be=Object.freeze({version:"thinker-fair-play-v1",authorizedContexts:["post-game","offline-analysis"],prohibitedContexts:["live-game","active-game-assistance"],statement:"Analysis output is authorized only after a game or in an offline analysis workspace."}),f=Object.freeze({evaluation:"lichess-winning-chances-0.00368208-v1",classification:"chesscom-published-ep-bands-thinker-heuristics-v1",accuracy:"lichess-accuracy-percent-power-mean-v1",evalBar:"thinker-latest-wins-tau-110-v1"}),ge=Object.freeze({evaluation:"Lichess lila winningChances.ts and scalachess WinPercent",classification:"Chess.com Classification V2 published Expected Points bands with Thinker-owned special heuristics",accuracy:"Lichess AccuracyPercent.scala volatility-weighted mean and harmonic power mean"});var M=1e3,W=-.00368208,O=(n,e,t)=>Math.max(e,Math.min(t,n)),b=(n,e)=>{if(!Number.isFinite(n))throw new TypeError(`${e} must be finite`)};function q(n){let e=n.cp!==void 0&&n.cp!==null,t=n.mate!==void 0&&n.mate!==null;if(e===t)throw new TypeError("exactly one of cp or mate is required");if(t){if(b(n.mate,"mate"),!Number.isSafeInteger(n.mate))throw new RangeError("mate must be an integer");if(n.mate===0)throw new RangeError("mate must not be zero");return Object.freeze({kind:"mate",mate:n.mate})}return b(n.cp,"cp"),Object.freeze({kind:"cp",cp:n.cp})}function j(n){let e;if(n.kind==="mate"){if(b(n.mate,"mate"),n.mate===0)throw new RangeError("mate must not be zero");e=Math.sign(n.mate)*(21-Math.min(10,Math.abs(n.mate)))*100}else b(n.cp,"cp"),e=O(n.cp,-M,M);return O(2/(1+Math.exp(W*e))-1,-1,1)}function I(n){let e=j(n),t=50+50*e,i=t/100;return Object.freeze({modelVersion:f.evaluation,score:n,whiteWinningChances:e,whiteWinPercent:t,whiteExpectedPoints:i,whiteVisualFraction:i})}function k(n,e=1){if(n.kind==="mate")return`#${n.mate}`;let t=n.cp/100;return`${t>0?"+":""}${t.toFixed(e)}`}var U=110,Q={now:()=>performance.now(),requestFrame:n=>requestAnimationFrame(n),cancelFrame:n=>cancelAnimationFrame(n)},g=n=>{if(!Number.isFinite(n))throw new TypeError("eval bar fraction must be finite");return Math.max(0,Math.min(1,n))},E=class{modelVersion=f.evalBar;elements;scheduler;reducedMotion;activeSearchId=0;mailbox=null;frameHandle=null;lastTimestamp=null;current=.5;target=.5;constructor(e,t={}){this.elements=e,this.scheduler=t.scheduler??Q,this.reducedMotion=t.reducedMotion??globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches??!1,this.current=g(t.initialFraction??.5),this.target=this.current,this.commitTransform()}beginSearch(e,t=null){if(!Number.isSafeInteger(e)||e<0)throw new RangeError("searchId must be a non-negative safe integer");this.cancelScheduledFrame(),this.activeSearchId=e,this.mailbox=null,this.target=this.current,this.lastTimestamp=null,t&&this.publish(t)}publish(e){return e.searchId!==this.activeSearchId?!1:(g(e.fraction),this.mailbox=e,this.frameHandle===null&&(this.lastTimestamp=this.scheduler.now(),this.frameHandle=this.scheduler.requestFrame(t=>this.animate(t))),!0)}setOrientation(e){this.elements.root.dataset.orientation=e}reset(e=.5,t="\u2014"){this.cancelScheduledFrame(),this.mailbox=null,this.lastTimestamp=null,this.current=g(e),this.target=this.current,this.elements.label.textContent=t,this.commitTransform()}destroy(){this.cancelScheduledFrame(),this.mailbox=null}snapshot(){return Object.freeze({activeSearchId:this.activeSearchId,current:this.current,target:this.target,hasPendingSample:this.mailbox!==null,hasScheduledFrame:this.frameHandle!==null})}animate(e){this.frameHandle=null;let t=this.mailbox;this.mailbox=null,t&&(this.target=g(t.fraction),this.elements.label.textContent=t.label);let i=this.lastTimestamp??e,r=Math.max(0,e-i);if(this.lastTimestamp=e,this.reducedMotion)this.current=this.target;else{let s=1-Math.exp(-r/U);this.current+=(this.target-this.current)*s}if(Math.abs(this.target-this.current)<=1e-4&&this.mailbox===null){this.current=this.target,this.commitTransform(),this.lastTimestamp=null;return}this.commitTransform(),this.frameHandle=this.scheduler.requestFrame(s=>this.animate(s))}commitTransform(){this.elements.fill.style.transform=`scaleY(${this.current})`}cancelScheduledFrame(){this.frameHandle!==null&&this.scheduler.cancelFrame(this.frameHandle),this.frameHandle=null}};var Y="thinker-eval-v2-rail",y="thinker-eval-v2-style",X=64,Z=500,J=5e3,w="thinker-eval-bar-route-change",S=new WeakMap,ee=/^\/analysis(?:\/|$)/,te=/^\/game\/(?:live\/|daily\/)?[^/]+\/review(?:\/|$)/,ne=/^\/(?:analysis|game|play|puzzles?|practice|lessons?)(?:\/|$)/,ie=/(game review|an[aá]lise da partida|revis[aã]o da partida)/i,re=['[data-cy="game-over-modal"]','[data-test-element="game-over-modal"]','[data-cy="game-over-dialog"]',".game-over-modal",'[class*="game-over-modal"]','[class*="modal-game-over"]'].join(",");function se(n){let e=n.split("/").filter(Boolean);return e[0]==="play"?e.length>=2:e[0]!=="game"?!1:e.length===2?!["live","daily"].includes(e[1]):e.length===3&&["live","daily"].includes(e[1])&&!!e[2]}function ae(n){return ne.test(String(n.pathname||"").toLowerCase())}function L(n){if(!n.isConnected||n.getAttribute("aria-hidden")==="true")return!1;let e=n.ownerDocument?.defaultView?.getComputedStyle?.(n);if(e&&(e.display==="none"||e.visibility==="hidden"||e.opacity==="0"))return!1;let t=n.getBoundingClientRect?.();if(!t||t.width<=0||t.height<=0)return!1;let i=n.ownerDocument?.defaultView;return!i||![t.top,t.right,t.bottom,t.left].every(Number.isFinite)?!0:t.bottom>0&&t.right>0&&t.top<i.innerHeight&&t.left<i.innerWidth}function oe(n,e){let t=String(n.pathname||"").toLowerCase();if(ee.test(t)||te.test(t))return"analysis";if(!se(t))return null;let i=F(e),r=i,s=[r?.game,r?.gameManager?.game];if(!!!(i&&(i.getAttribute("data-game-over")==="true"||i.getAttribute("game-over")==="true"||s.some(o=>{if(!o||typeof o!="object")return!1;let u=o;try{if(typeof u.isGameOver=="function"&&u.isGameOver())return!0}catch{}return/(?:finished|complete|checkmate|resigned|timeout|draw|aborted)/i.test(String(u.status||""))}))))return null;if(Array.from(e.querySelectorAll(re)).some(L))return"post-game";let l=e.querySelectorAll('[data-cy*="review"], [data-test-element*="review"], [class*="game-review"], [class*="post-game"]');return Array.from(l).some(o=>L(o)&&ie.test(o.textContent||""))?"post-game":null}var le=["wc-chess-board","chess-board","wc-board",'[data-cy="board"]','[data-test-element="board"]',"[data-board]",".chess-board",".board",'[class*="board-component"]'].join(",");function F(n){let e=Array.from(n.querySelectorAll(le)),t=null,i=-1/0;for(let r of e){if(!r?.isConnected)continue;let s=r.getBoundingClientRect?.();if(!s)continue;let a=Math.max(0,s.width)*Math.max(0,s.height),l=s.height>0?s.width/s.height:0,o=L(r)&&s.width>=200&&s.height>=200,u=l>=.8&&l<=1.25;if(!o||!u)continue;let h=(/^(WC-CHESS-BOARD|CHESS-BOARD|WC-BOARD)$/.test(r.tagName||"")?1e6:0)+Math.min(a,999999);h>i&&(t=r,i=h)}return t}function B(n){if(typeof n!="string")return null;let e=n.trim();return H(e)?e:null}function H(n){if(typeof n!="string")return!1;let e=n.trim().split(/\s+/);if(e.length!==6)return!1;let[t,i,r,s,a,l]=e,o=t.split("/");if(o.length!==8)return!1;let u=0,c=0,h=0,A=0,m=-1,p=-1;for(let[x,N]of o.entries()){let v=0;for(let d of N)if(/^[1-8]$/.test(d))v+=Number(d);else if(/^[prnbqkPRNBQK]$/.test(d)){if((x===0||x===7)&&/[pP]/.test(d))return!1;let _=x*8+v;v+=1,/[A-Z]/.test(d)?h+=1:A+=1,d==="K"&&(u+=1,m=_),d==="k"&&(c+=1,p=_)}else return!1;if(v!==8)return!1}let z=m>=0&&p>=0&&Math.abs(Math.floor(m/8)-Math.floor(p/8))<=1&&Math.abs(m%8-p%8)<=1;return u===1&&c===1&&h<=16&&A<=16&&!z&&/^[wb]$/.test(i)&&(r==="-"||/^(?:K?Q?k?q?)$/.test(r))&&(s==="-"||/^[a-h][36]$/.test(s))&&/^\d+$/.test(a)&&/^[1-9]\d*$/.test(l)}function ce(n){if(!n)return null;let e=[],t=n,i=s=>{if(!s||typeof s!="object")return;let a=s.getFEN;if(typeof a=="function")try{e.push(a.call(s))}catch{}e.push(s.fen)};i(t.game),i(t.gameManager?.game),e.push(t.fen,t.position);for(let s of["fen","data-fen","data-position"])e.push(n.getAttribute(s));let r=n.querySelector?.("[data-fen], [fen]");r&&e.push(r.getAttribute("data-fen"),r.getAttribute("fen"));for(let s of e){let a=B(s);if(a)return a;if(s&&typeof s=="object"){let l=B(s.fen);if(l)return l}}return null}var C=class{constructor(e){this.capacity=e;if(!Number.isSafeInteger(e)||e<1)throw new RangeError("cache capacity must be a positive safe integer")}capacity;values=new Map;get(e){let t=this.values.get(e);if(t!==void 0)return this.values.delete(e),this.values.set(e,t),t}set(e,t){for(this.values.delete(e),this.values.set(e,t);this.values.size>this.capacity;)this.values.delete(this.values.keys().next().value)}get size(){return this.values.size}};function ue(n,e){return e==="white"?k(n):k(n.kind==="cp"?{kind:"cp",cp:-n.cp}:{kind:"mate",mate:-n.mate})}function he(n){let e=q({cp:n.cp,mate:n.mate});return Object.freeze({score:e,fraction:I(e).whiteVisualFraction})}function de(){return`.thinker-eval-v2-rail {
   border-radius: 4px;
   position: relative;
   background: #161513;
@@ -76,8 +76,22 @@ var ThinkerEvalBarV2Bundle=(()=>{var f=Object.defineProperty;var T=Object.getOwn
   mix-blend-mode: difference;
 }
 
-.thinker-eval-v2-rail[data-state="stale"] .thinker-eval-v2-score {
+.thinker-eval-v2-rail[data-state="stale"] .thinker-eval-v2-score,
+.thinker-eval-v2-rail[data-state="waiting"] .thinker-eval-v2-score,
+.thinker-eval-v2-rail[data-state="loading"] .thinker-eval-v2-score,
+.thinker-eval-v2-rail[data-state="blocked"] .thinker-eval-v2-score {
   opacity: .58;
+}
+
+.thinker-eval-v2-rail[data-state="waiting"] .thinker-eval-v2-fill,
+.thinker-eval-v2-rail[data-state="loading"] .thinker-eval-v2-fill,
+.thinker-eval-v2-rail[data-state="blocked"] .thinker-eval-v2-fill,
+.thinker-eval-v2-rail[data-state="error"] .thinker-eval-v2-fill {
+  opacity: .72;
+}
+
+.thinker-eval-v2-rail[data-state="error"] {
+  box-shadow: inset 0 0 0 2px #b94a48, 0 4px 16px rgba(0, 0, 0, .28);
 }
 
 .thinker-eval-v2-rail[data-orientation="black"] .thinker-eval-v2-score {
@@ -85,7 +99,7 @@ var ThinkerEvalBarV2Bundle=(()=>{var f=Object.defineProperty;var T=Object.getOwn
   bottom: auto;
   transform: translateX(-50%);
 }
-`}var v=class{constructor(e){this.options=e;this.cache=new p(e.cacheCapacity??B),this.now=e.now??(()=>Date.now())}options;cache;now;started=!1;enabled=!1;generation=0;requestSequence=0;activeRequestId=0;currentFen="";currentCacheContext="";currentOrientation="white";lastRequestAt=-1/0;request=null;controller=null;root=null;board=null;resizeObserver=null;observer=null;interval=null;reconcileQueued=!1;routeListener=()=>this.queueReconcile();geometryListener=()=>this.syncGeometry();start(e=!0){if(this.enabled=e,this.started){this.reconcile();return}this.started=!0,this.installStyle(),this.installObserver(),this.options.window.addEventListener("popstate",this.routeListener),this.options.window.addEventListener("hashchange",this.routeListener),this.reconcile()}setEnabled(e){this.enabled!==e&&(this.enabled=e,this.reconcile())}reconcile(){if(this.reconcileQueued=!1,!this.enabled||!this.options.authorize()){this.deactivate();return}let e=this.options.getBoard();if(!e?.isConnected||!e.parentElement){this.deactivate();return}(!this.controller||this.board!==e||!this.root?.isConnected)&&this.mount(e),this.ensurePolling(),this.pollNow()}pollNow(){if(!this.enabled||!this.options.authorize()){this.deactivate();return}let e=this.options.getBoard();if(!e?.isConnected||!e.parentElement){this.deactivate();return}(!this.controller||this.board!==e||!this.root?.isConnected)&&this.mount(e),this.syncGeometry();let t=this.options.getFen();if(!t)return;let r=this.readCacheContext();if(!r){this.abortRequest(),this.root&&(this.root.dataset.state="stale");return}let i=this.options.getOrientation();this.controller?.setOrientation(i);let s=i!==this.currentOrientation;if(this.currentOrientation=i,t!==this.currentFen||r!==this.currentCacheContext){this.generation+=1,this.abortRequest(),this.currentFen=t,this.currentCacheContext=r,this.lastRequestAt=-1/0;let o=this.cache.get(this.cacheKey(t,r));this.root&&(this.root.dataset.state=o?"fresh":"stale"),this.controller?.beginSearch(this.generation,o?this.sample(o,i):null)}else if(s){let o=this.cache.get(this.cacheKey(t,r));o&&this.controller?.publish(this.sample(o,i))}if(this.now()-this.lastRequestAt<(this.options.refreshIntervalMs??H))return;this.lastRequestAt=this.now(),this.abortRequest();let l=this.generation,c=++this.requestSequence;this.activeRequestId=c;let b=!1;try{let o=this.options.requestEvaluation({fen:t,generation:l,requestId:c,cacheContext:r,onResult:x=>{b=!0,this.acceptResult(t,l,c,r,x)},onError:()=>{b=!0,c===this.activeRequestId&&l===this.generation&&(this.request=null)}})??null;!b&&c===this.activeRequestId&&(this.request=o)}catch{c===this.activeRequestId&&(this.request=null)}}destroy(){this.started&&(this.started=!1,this.enabled=!1,this.deactivate(),this.observer?.disconnect(),this.observer=null,this.options.window.removeEventListener("popstate",this.routeListener),this.options.window.removeEventListener("hashchange",this.routeListener))}snapshot(){return Object.freeze({enabled:this.enabled,generation:this.generation,currentFen:this.currentFen,cacheSize:this.cache.size,mounted:!!this.root?.isConnected,polling:this.interval!==null,requestActive:this.request!==null,activeRequestId:this.activeRequestId,cacheContext:this.currentCacheContext})}acceptResult(e,t,r,i,s){if(!this.enabled||!this.options.authorize()||t!==this.generation||r!==this.activeRequestId||e!==this.currentFen||this.options.getFen()!==e||i!==this.currentCacheContext||this.readCacheContext()!==i)return;let a;try{a=$(s)}catch{return}this.request=null,this.cache.set(this.cacheKey(e,i),a),this.root&&(this.root.dataset.state="fresh"),this.controller?.publish(this.sample(a,this.options.getOrientation()))}sample(e,t){return Object.freeze({searchId:this.generation,fraction:e.fraction,label:W(e.score,t)})}mount(e){this.unmount();let t=this.options.document.createElement("div");t.id=z,t.className="thinker-eval-v2-rail thinker-eval-v2-overlay",t.dataset.orientation=this.options.getOrientation(),t.dataset.state="stale",t.setAttribute("aria-label","Position evaluation");let r=this.options.document.createElement("div");r.className="thinker-eval-v2-fill";let i=this.options.document.createElement("span");if(i.className="thinker-eval-v2-score",i.textContent="0.0",t.append(r,i),(this.options.document.body||this.options.document.documentElement).append(t),this.board=e,this.root=t,this.installGeometryTracking(e),this.syncGeometry(),this.controller=new d({root:t,fill:r,label:i}),this.controller.setOrientation(this.options.getOrientation()),this.currentFen){let a=this.cache.get(this.cacheKey(this.currentFen,this.currentCacheContext));t.dataset.state=a?"fresh":"stale",this.controller.beginSearch(this.generation,a?this.sample(a,this.options.getOrientation()):null)}}unmount(){this.controller?.destroy(),this.controller=null,this.root?.remove(),this.root=null,this.board=null,this.removeGeometryTracking()}deactivate(){let e=!!(this.request||this.interval!==null||this.root||this.currentFen);this.abortRequest(),this.stopPolling(),this.currentFen="",this.currentCacheContext="",this.lastRequestAt=-1/0,e&&(this.generation+=1),this.unmount()}abortRequest(){try{this.request?.abort()}catch{}this.request=null}ensurePolling(){this.interval===null&&(this.interval=this.options.window.setInterval(()=>this.pollNow(),this.options.pollIntervalMs??N))}stopPolling(){this.interval!==null&&this.options.window.clearInterval(this.interval),this.interval=null}installObserver(){if(this.observer||!this.options.document.body)return;let e=this.options.document.defaultView?.MutationObserver??globalThis.MutationObserver;if(!e)return;let t=new e(()=>this.queueReconcile());t.observe(this.options.document.body,{childList:!0,subtree:!0}),this.observer=t}queueReconcile(){this.reconcileQueued||(this.reconcileQueued=!0,queueMicrotask(()=>this.reconcile()))}installStyle(){if(this.options.document.getElementById(m))return;let e=j();if(!e)return;if(this.options.addStyle){let r=this.options.addStyle(e);if(r?.nodeType===1)r.id=m;else{let i=this.options.document.createElement("meta");i.id=m,(this.options.document.head||this.options.document.documentElement).append(i)}return}let t=this.options.document.createElement("style");t.id=m,t.textContent=e,(this.options.document.head||this.options.document.documentElement).append(t)}installGeometryTracking(e){this.removeGeometryTracking();let t=this.options.document.defaultView?.ResizeObserver??globalThis.ResizeObserver;t&&(this.resizeObserver=new t(()=>this.syncGeometry()),this.resizeObserver.observe(e)),this.options.window.addEventListener("resize",this.geometryListener),this.options.window.addEventListener("scroll",this.geometryListener,!0)}removeGeometryTracking(){this.resizeObserver?.disconnect(),this.resizeObserver=null,this.options.window.removeEventListener("resize",this.geometryListener),this.options.window.removeEventListener("scroll",this.geometryListener,!0)}syncGeometry(){if(!this.root||!this.board?.isConnected)return;let e=this.board.getBoundingClientRect(),t=28,r=6,i=e.left-t-r,s=e.right+r,a=this.options.window.innerWidth,l=i>=0?i:s+t<=a?s:Math.max(0,e.left);this.root.hidden=e.width<=0||e.height<=0,this.root.dataset.placement=l===i?"left":l===s?"right":"overlay",this.root.style.left=`${l}px`,this.root.style.top=`${e.top}px`,this.root.style.height=`${e.height}px`}readCacheContext(){try{return String(this.options.getCacheContext()||"").trim()}catch{return""}}cacheKey(e,t){return`${this.options.cacheNamespace??"eval-bar-v2"}|${t}|white|${e}`}};function Y(n){return new v(n)}return q(Q);})();
+`}function me(n){let e=S.get(n);if(!e){let i=n.history,r=i.pushState,s=i.replaceState;i.pushState=function(...a){Reflect.apply(r,i,a),n.dispatchEvent(new Event(w))},i.replaceState=function(...a){Reflect.apply(s,i,a),n.dispatchEvent(new Event(w))},e={references:0,pushState:r,replaceState:s},S.set(n,e)}e.references+=1;let t=!1;return()=>{if(t)return;t=!0;let i=S.get(n);i&&(i.references-=1,!(i.references>0)&&(n.history.pushState=i.pushState,n.history.replaceState=i.replaceState,S.delete(n)))}}var R=class{constructor(e){this.options=e;this.cache=new C(e.cacheCapacity??X),this.now=e.now??(()=>Date.now())}options;cache;now;started=!1;enabled=!1;generation=0;requestSequence=0;activeRequestId=0;currentFen="";currentCacheContext="";currentOrientation="white";lastRequestAt=-1/0;request=null;controller=null;root=null;label=null;board=null;resizeObserver=null;observer=null;interval=null;reconcileQueued=!1;removeHistoryHook=null;connectionState="idle";lastEvaluation=null;lastError=null;geometry=null;routeListener=()=>{this.deactivate(),this.queueReconcile()};geometryListener=()=>this.syncGeometry();start(e=!0){if(this.enabled=e,this.started){this.reconcile();return}this.started=!0,this.installStyle(),this.installObserver(),this.options.window.addEventListener("popstate",this.routeListener),this.options.window.addEventListener("hashchange",this.routeListener),this.options.window.addEventListener(w,this.routeListener),this.removeHistoryHook=me(this.options.window),this.reconcile()}setEnabled(e){this.enabled!==e&&(this.enabled=e,this.reconcile())}reconcile(){if(this.reconcileQueued=!1,!this.enabled||!this.shouldDisplay()){this.deactivate();return}let e=this.options.getBoard();if(!e?.isConnected||!e.parentElement){this.deactivate();return}(!this.controller||this.board!==e||!this.root?.isConnected)&&this.mount(e),this.ensurePolling(),this.pollNow()}pollNow(){if(!this.enabled||!this.shouldDisplay()){this.deactivate();return}let e=this.options.getBoard();if(!e?.isConnected||!e.parentElement){this.deactivate();return}if((!this.controller||this.board!==e||!this.root?.isConnected)&&this.mount(e),this.syncGeometry(),!this.options.authorize()){this.clearPosition("blocked","\u2014");return}let t=this.options.getFen();if(!t){this.clearPosition("waiting","\u2026");return}let i=this.readCacheContext();if(!i){this.abortRequest(),this.setVisualState("error","!","Evaluation cache context is unavailable");return}let r=this.options.getOrientation();this.controller?.setOrientation(r);let s=r!==this.currentOrientation;if(this.currentOrientation=r,t!==this.currentFen||i!==this.currentCacheContext){this.generation+=1,this.abortRequest(),this.currentFen=t,this.currentCacheContext=i,this.lastRequestAt=-1/0;let c=this.cache.get(this.cacheKey(t,i));this.setVisualState(c?"connected":"waiting",c?void 0:"\u2026"),this.controller?.beginSearch(this.generation,c?this.sample(c,r):null)}else if(s){let c=this.cache.get(this.cacheKey(t,i));c&&this.controller?.publish(this.sample(c,r))}if(this.now()-this.lastRequestAt<(this.options.refreshIntervalMs??J))return;this.lastRequestAt=this.now(),this.abortRequest(),this.root?.dataset.state!=="fresh"&&this.setVisualState("loading","\u2026");let l=this.generation,o=++this.requestSequence;this.activeRequestId=o;let u=!1;try{let c=this.options.requestEvaluation({fen:t,generation:l,requestId:o,cacheContext:i,onResult:h=>{u=!0,this.acceptResult(t,l,o,i,h)},onError:h=>{u=!0,o===this.activeRequestId&&l===this.generation&&(this.request=null,this.reportError(h))}})??null;!u&&o===this.activeRequestId&&(this.request=c)}catch(c){o===this.activeRequestId&&(this.request=null,this.reportError(c))}}destroy(){this.started&&(this.started=!1,this.enabled=!1,this.deactivate(),this.observer?.disconnect(),this.observer=null,this.options.window.removeEventListener("popstate",this.routeListener),this.options.window.removeEventListener("hashchange",this.routeListener),this.options.window.removeEventListener(w,this.routeListener),this.removeHistoryHook?.(),this.removeHistoryHook=null)}snapshot(){return Object.freeze({enabled:this.enabled,generation:this.generation,currentFen:this.currentFen,cacheSize:this.cache.size,mounted:!!this.root?.isConnected,polling:this.interval!==null,requestActive:this.request!==null,activeRequestId:this.activeRequestId,cacheContext:this.currentCacheContext,route:this.safeRead(()=>this.options.getRoute?.()??"",""),authorization:this.safeRead(()=>this.options.authorize(),null),boardFound:this.safeRead(()=>!!this.options.getBoard(),!1),fenAvailable:this.safeRead(()=>!!this.options.getFen(),!1),state:this.connectionState,geometry:this.geometry,lastEvaluation:this.lastEvaluation,lastError:this.lastError})}acceptResult(e,t,i,r,s){if(!this.enabled||!this.options.authorize()||t!==this.generation||i!==this.activeRequestId||e!==this.currentFen||this.options.getFen()!==e||r!==this.currentCacheContext||this.readCacheContext()!==r)return;this.request=null;let a;try{a=he(s)}catch(l){this.reportError(l);return}this.cache.set(this.cacheKey(e,r),a),this.lastEvaluation=Object.freeze({...s}),this.setVisualState("connected"),this.controller?.publish(this.sample(a,this.options.getOrientation()))}sample(e,t){return Object.freeze({searchId:this.generation,fraction:e.fraction,label:ue(e.score,t)})}mount(e){this.unmount();let t=this.options.document.createElement("div");t.id=Y,t.className="thinker-eval-v2-rail thinker-eval-v2-overlay",t.dataset.orientation=this.options.getOrientation(),t.dataset.state="waiting",t.setAttribute("aria-label","Position evaluation");let i=this.options.document.createElement("div");i.className="thinker-eval-v2-fill";let r=this.options.document.createElement("span");if(r.className="thinker-eval-v2-score",r.textContent="\u2026",t.append(i,r),(this.options.document.body||this.options.document.documentElement).append(t),this.board=e,this.root=t,this.label=r,this.installGeometryTracking(e),this.syncGeometry(),this.controller=new E({root:t,fill:i,label:r}),this.controller.setOrientation(this.options.getOrientation()),this.currentFen){let a=this.cache.get(this.cacheKey(this.currentFen,this.currentCacheContext));t.dataset.state=a?"fresh":"waiting",this.controller.beginSearch(this.generation,a?this.sample(a,this.options.getOrientation()):null)}}unmount(){this.controller?.destroy(),this.controller=null,this.root?.remove(),this.root=null,this.label=null,this.board=null,this.geometry=null,this.removeGeometryTracking()}deactivate(){let e=!!(this.request||this.interval!==null||this.root||this.currentFen);this.abortRequest(),this.stopPolling(),this.currentFen="",this.currentCacheContext="",this.lastRequestAt=-1/0,this.connectionState="idle",this.lastEvaluation=null,this.lastError=null,e&&(this.generation+=1),this.unmount()}abortRequest(){try{this.request?.abort()}catch{}this.request=null}shouldDisplay(){try{return this.options.shouldDisplay?this.options.shouldDisplay():!!this.options.authorize()}catch{return!1}}safeRead(e,t){try{return e()}catch{return t}}clearPosition(e,t){let i=!!(this.currentFen||this.request),r=this.connectionState!==e||this.label?.textContent!==t;this.abortRequest(),this.currentFen="",this.currentCacheContext="",this.lastRequestAt=-1/0,this.lastEvaluation=null,i&&(this.generation+=1),(i||r)&&this.controller?.reset(.5,t),this.setVisualState(e,t)}setVisualState(e,t,i){this.connectionState=e,this.lastError=i==null?null:i instanceof Error?i.message:String(i),this.root&&(this.root.dataset.state=e==="connected"?"fresh":e),t!==void 0&&this.label&&this.label.textContent!==t&&(this.label.textContent=t)}reportError(e){let t=this.root?.dataset.state==="fresh";this.setVisualState("error",t?void 0:"!",e)}ensurePolling(){this.interval===null&&(this.interval=this.options.window.setInterval(()=>this.pollNow(),this.options.pollIntervalMs??Z))}stopPolling(){this.interval!==null&&this.options.window.clearInterval(this.interval),this.interval=null}installObserver(){if(this.observer||!this.options.document.body)return;let e=this.options.document.defaultView?.MutationObserver??globalThis.MutationObserver;if(!e)return;let t=new e(()=>this.queueReconcile());t.observe(this.options.document.body,{childList:!0,subtree:!0}),this.observer=t}queueReconcile(){this.reconcileQueued||(this.reconcileQueued=!0,queueMicrotask(()=>this.reconcile()))}installStyle(){if(this.options.document.getElementById(y))return;let e=de();if(!e)return;if(this.options.addStyle){let i=this.options.addStyle(e);if(i?.nodeType===1)i.id=y;else{let r=this.options.document.createElement("meta");r.id=y,(this.options.document.head||this.options.document.documentElement).append(r)}return}let t=this.options.document.createElement("style");t.id=y,t.textContent=e,(this.options.document.head||this.options.document.documentElement).append(t)}installGeometryTracking(e){this.removeGeometryTracking();let t=this.options.document.defaultView?.ResizeObserver??globalThis.ResizeObserver;t&&(this.resizeObserver=new t(()=>this.syncGeometry()),this.resizeObserver.observe(e)),this.options.window.addEventListener("resize",this.geometryListener),this.options.window.addEventListener("scroll",this.geometryListener,!0)}removeGeometryTracking(){this.resizeObserver?.disconnect(),this.resizeObserver=null,this.options.window.removeEventListener("resize",this.geometryListener),this.options.window.removeEventListener("scroll",this.geometryListener,!0)}syncGeometry(){if(!this.root||!this.board?.isConnected)return;let e=this.board.getBoundingClientRect(),t=28,i=6,r=e.left-t-i,s=e.right+i,a=this.options.window.innerWidth,l=r>=0?r:s+t<=a?s:Math.max(0,e.left);this.root.hidden=e.width<=0||e.height<=0;let o=l===r?"left":l===s?"right":"overlay";this.root.dataset.placement=o,this.root.style.left=`${l}px`,this.root.style.top=`${e.top}px`,this.root.style.height=`${e.height}px`,this.geometry=Object.freeze({left:l,top:e.top,width:t,height:e.height,placement:o})}readCacheContext(){try{return String(this.options.getCacheContext()||"").trim()}catch{return""}}cacheKey(e,t){return`${this.options.cacheNamespace??"eval-bar-v2"}|${t}|white|${e}`}};function pe(n){return new R(n)}return G(ve);})();
 globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
 /* THINKER_EVAL_BAR_V2_GENERATED_END */
 
@@ -2953,24 +2967,33 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
   // ===== EVAL BAR ENGINE (baseado no documento tecnico) =====
   let evalBarEnabled = localStorage.getItem("evalBar") === "true";
   let evalBarV2Enabled = localStorage.getItem("evalBarV2") !== "false";
+  let evalBarDiagnosticEnabled = localStorage.getItem("evalBarV2Diagnostics") === "true";
   let lastEvalData = { cp: 0, mate: null, depth: 0 };
   let evalBarCurrent = 50;
   let lastEvalFen = "";
   let evalBarV2Adapter = null;
 
   function getEvalBarBoard() {
-    return document.querySelector("wc-chess-board") ||
-      document.querySelector("chess-board") ||
-      document.querySelector(".board");
+    return globalThis.ThinkerEvalBarV2?.findChessComBoard?.(document) || null;
   }
 
   function getEvalBarFen() {
     try {
-      const { game } = get_cached_game();
-      return game?.getFEN?.() || null;
+      const api = globalThis.ThinkerEvalBarV2;
+      const board = getEvalBarBoard();
+      const boardFen = api?.readChessComFen?.(board);
+      if (boardFen) return boardFen;
+      const { board: gameBoard, game } = get_cached_game();
+      if (gameBoard !== board) return null;
+      const fen = game?.getFEN?.() || null;
+      return api?.isValidChessFen?.(fen) ? fen : null;
     } catch (_) {
       return null;
     }
+  }
+
+  function evalBarPresentationAllowed() {
+    return Boolean(globalThis.ThinkerEvalBarV2?.resolveChessComEvalPresentation?.(window.location));
   }
 
   function evalBarAuthorization() {
@@ -2994,27 +3017,45 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       onload: function (resp) {
         if (settled) return;
         settled = true;
-        if (!evalBarAuthorization() || handleEngineUnauthorized(resp)) return;
+        if (!evalBarAuthorization() || handleEngineUnauthorized(resp)) {
+          onError(new Error("Eval authorization expired"));
+          return;
+        }
         if (resp.status < 200 || resp.status >= 300) {
-          onError(new Error(`Eval HTTP ${resp.status}`));
+          let detail = "";
+          try { detail = JSON.parse(resp.responseText)?.error || ""; } catch (_) {}
+          const error = new Error(detail ? `${detail} (HTTP ${resp.status})` : `Eval HTTP ${resp.status}`);
+          reportEvalBarDiagnostic("http-error", error);
+          onError(error);
           return;
         }
         try {
-          onResult(JSON.parse(resp.responseText));
+          const result = JSON.parse(resp.responseText);
+          if (
+            (result.requestId !== undefined && result.requestId !== `eval-v2:${requestId}`) ||
+            (result.generation !== undefined && result.generation !== generation) ||
+            (result.cacheContext !== undefined && result.cacheContext !== cacheContext)
+          ) throw new Error("Eval response identity mismatch");
+          if (result.error) throw new Error(result.error);
+          onResult(result);
         } catch (error) {
+          reportEvalBarDiagnostic("response-error", error);
           onError(error);
         }
       },
       onerror: function (error) {
         if (!settled) {
           settled = true;
+          reportEvalBarDiagnostic("connection-error", error);
           onError(error);
         }
       },
       ontimeout: function () {
         if (!settled) {
           settled = true;
-          onError(new Error("Eval timeout"));
+          const error = new Error("Eval timeout");
+          reportEvalBarDiagnostic("timeout", error);
+          onError(error);
         }
       },
       onabort: function () {
@@ -3034,9 +3075,11 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       document,
       getFen: getEvalBarFen,
       getBoard: getEvalBarBoard,
-      getOrientation: () => getPlayingSide() === "b" ? "black" : "white",
+      getOrientation: getEvalBarOrientation,
       getCacheContext: getEvalBarCacheContext,
       authorize: evalBarAuthorization,
+      shouldDisplay: evalBarPresentationAllowed,
+      getRoute: () => window.location.pathname,
       requestEvaluation: requestEvalBarV2,
       addStyle: typeof GM_addStyle === "function" ? css => GM_addStyle(css) : undefined,
       cacheNamespace: "komodo-14.1-local-white-v1",
@@ -3044,6 +3087,31 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     globalThis.__thinkerEvalBarV2 = evalBarV2Adapter;
     return evalBarV2Adapter;
   }
+
+  function getEvalBarDiagnostics() {
+    const snapshot = evalBarV2Adapter?.snapshot?.() || null;
+    return Object.freeze({
+      enabled: evalBarDiagnosticEnabled,
+      route: window.location.pathname,
+      boardFound: Boolean(getEvalBarBoard()),
+      fen: getEvalBarFen(),
+      authorization: evalBarAuthorization(),
+      presentationAllowed: evalBarPresentationAllowed(),
+      adapter: snapshot,
+    });
+  }
+
+  function reportEvalBarDiagnostic(stage, error) {
+    if (!evalBarDiagnosticEnabled) return;
+    console.warn("[Thinker Eval Bar V2]", stage, getEvalBarDiagnostics(), error || null);
+  }
+
+  globalThis.krypbotEvalBarDiagnostics = getEvalBarDiagnostics;
+  globalThis.krypbotSetEvalBarDiagnostics = function (enabled) {
+    evalBarDiagnosticEnabled = Boolean(enabled);
+    localStorage.setItem("evalBarV2Diagnostics", String(evalBarDiagnosticEnabled));
+    return getEvalBarDiagnostics();
+  };
 
   function syncEvalBarRenderer() {
     if (evalBarV2Enabled) {
@@ -3176,6 +3244,24 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     } catch (e) {}
 
     return "w";
+  }
+
+  function getEvalBarOrientation() {
+    const board = getEvalBarBoard();
+    if (board) {
+      const orientation = String(board.getAttribute("orientation") || board.dataset?.orientation || "").toLowerCase();
+      if (orientation === "black" || orientation === "b") return "black";
+      if (orientation === "white" || orientation === "w") return "white";
+      if (board.hasAttribute("flipped") || board.classList.contains("flipped")) return "black";
+      const game = board.game || board.gameManager?.game;
+      try {
+        const side = game?.getPlayingAs?.();
+        if (side === "b" || side === 2 || side === "black") return "black";
+        if (side === "w" || side === 1 || side === "white") return "white";
+      } catch (_) {}
+    }
+    const url = window.location.href;
+    return url.includes("color=black") || url.includes("color=b") ? "black" : "white";
   }
 
   function renderEvalBar() {

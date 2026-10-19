@@ -1260,22 +1260,43 @@ def getmove():
 @app.route("/eval", methods=["POST"])
 @engine_api_auth
 def evaluate():
+    correlation = {}
+
+    def eval_response(cp, mate, depth=0, error=None):
+        payload = {"cp": cp, "mate": mate, "depth": depth, **correlation}
+        if error:
+            payload["error"] = error
+        return jsonify(payload)
+
     try:
         data = request.get_json(force=True, silent=True)
         if not data:
             import json
             data = json.loads(request.data)
-        
+        if not isinstance(data, dict):
+            return eval_response(0, None, error="JSON object required")
+
+        correlation = {
+            key: data[key]
+            for key in ("requestId", "generation", "cacheContext")
+            if key in data
+        }
+
         fen = data.get("fen", "")
         if not fen:
-            return jsonify({"cp": 0, "mate": None})
-            
-        board = chess.Board(fen)
-        if not board.is_valid() or board.is_game_over():
-            return jsonify({"cp": 0, "mate": None})
+            return eval_response(0, None, error="fen is required")
+
+        try:
+            board = chess.Board(fen)
+        except (TypeError, ValueError):
+            return eval_response(0, None, error="invalid fen")
+        if not board.is_valid():
+            return eval_response(0, None, error="invalid fen")
+        if board.is_game_over():
+            return eval_response(0, None)
         lines = analyse_with_recovery(board, chess.engine.Limit(time=0.05))
         if not lines:
-            return jsonify({"cp": 0, "mate": None})
+            return eval_response(0, None, error="engine returned no analysis")
         info = lines[0]
         
         score = info.get("score")
@@ -1284,14 +1305,17 @@ def evaluate():
             white_score = score.white()
             
             if white_score.is_mate():
-                return jsonify({"cp": None, "mate": white_score.mate(), "depth": info.get("depth", 0)})
+                return eval_response(None, white_score.mate(), info.get("depth", 0))
             else:
-                return jsonify({"cp": white_score.score(), "mate": None, "depth": info.get("depth", 0)})
+                cp = white_score.score()
+                if cp is None:
+                    return eval_response(0, None, error="engine score unavailable")
+                return eval_response(cp, None, info.get("depth", 0))
                 
-        return jsonify({"cp": 0, "mate": None})
+        return eval_response(0, None, error="engine score missing")
     except Exception as e:
         Log.error(f"Erro no eval: {e}")
-        return jsonify({"cp": 0, "mate": None})
+        return eval_response(0, None, error="evaluation failed")
 
 
 @app.route("/analyze", methods=["POST"])
