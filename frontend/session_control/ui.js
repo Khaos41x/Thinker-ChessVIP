@@ -33,12 +33,12 @@ function actionNode(panel, target) {
   return null;
 }
 
-function availability(status) {
+function availability(status, startBlocker) {
   const terminal = TERMINAL_PHASES.includes(status.phase);
   return Object.freeze({
-    start: status.rolloutStage === "DISABLED"
+    start: startBlocker || (status.rolloutStage === "DISABLED"
       ? "ROLLOUT_DISABLED"
-      : terminal ? null : "ACTIVE_SESSION_EXISTS",
+      : terminal ? null : "ACTIVE_SESSION_EXISTS"),
     stop: terminal ? "SESSION_NOT_ACTIVE" : null,
   });
 }
@@ -57,7 +57,7 @@ function presentAvailability(panel, action, reason) {
   }
 }
 
-function presentStatus(panel, status, formatDuration) {
+function presentStatus(panel, status, formatDuration, startBlocker) {
   const counts = (value) => `${value.wins}-${value.draws}-${value.losses}`;
   const offset = status.offsetElo >= 0 ? `+${status.offsetElo}` : String(status.offsetElo);
   setText(panel, "kb-session-rollout", status.executionMode ? `${status.rolloutStage} · ${status.executionMode}` : status.rolloutStage);
@@ -74,7 +74,7 @@ function presentStatus(panel, status, formatDuration) {
   setText(panel, "kb-session-dda", `${status.controllerMode} ${offset}`);
   setText(panel, "kb-session-target", status.effectiveTargetElo === null ? "—" : `${status.opponentRating} → ${status.effectiveTargetElo}${status.targetSaturated ? " SAT" : ""}`);
   setText(panel, "kb-session-warning", status.warningCode || "");
-  const state = availability(status);
+  const state = availability(status, startBlocker);
   presentAvailability(panel, "start", state.start);
   presentAvailability(panel, "stop", state.stop);
   return state;
@@ -221,7 +221,8 @@ function createSessionControlPresenter(options) {
     if (!panel) return null;
     try {
       const status = options.readStatus();
-      currentAvailability = presentStatus(panel, status, options.formatDuration);
+      const startBlocker = typeof options.readStartBlocker === "function" ? options.readStartBlocker() : null;
+      currentAvailability = presentStatus(panel, status, options.formatDuration, startBlocker);
       return status;
     } catch (error) {
       warning(reasonCode(error, "STATUS_UNAVAILABLE"));

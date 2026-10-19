@@ -138,10 +138,12 @@ function createHarness(
   href = "https://www.chess.com/game/finished",
 ) {
   const timers = [];
-  const sessionControlBridge = bridge || {
+  const sessionControlBridge = {
+    effectiveAutoQueue: () => true,
     ownsQueue: () => false,
     queueGate: () => ({ allowed: true }),
     executeQueue: async (_enabled, action) => action(),
+    ...(bridge || {}),
   };
   const context = {
     console,
@@ -221,6 +223,18 @@ function lobbyFixture(...actions) {
     text: "3 min Blitz Start Game Custom Challenge Play a Friend Tournaments",
     selectors: [selectors.sidebar],
   }).append(...actions);
+}
+
+{
+  const root = new FakeElement();
+  const action = button({ text: "+ New Game", selector: selectors.newGame });
+  root.append(sidebarFixture(action));
+  let masterEnabled = true;
+  const harness = createHarness(root, { effectiveAutoQueue: () => masterEnabled });
+  harness.api.clickNewGame();
+  masterEnabled = false;
+  harness.runNextTimer();
+  assert.strictEqual(action.clickCount, 0);
 }
 
 {

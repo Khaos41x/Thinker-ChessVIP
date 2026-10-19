@@ -108,7 +108,13 @@ function createSessionControlRuntime(options) {
       const assertCurrent = () => {
         if (disposed || generation !== startGeneration) throw typedError("SESSION_RUNTIME_UNAVAILABLE");
       };
+      const assertStartAllowed = () => {
+        if (typeof settings.canStart !== "function") return;
+        const result = settings.canStart();
+        if (result !== true) throw typedError(typeof result === "string" && result ? result : "SESSION_START_BLOCKED");
+      };
       assertCurrent();
+      assertStartAllowed();
       if (rollout.stage === "DISABLED") throw typedError("ROLLOUT_DISABLED");
       if (controller.isActive()) throw typedError("ACTIVE_SESSION_EXISTS");
       let config;
@@ -151,6 +157,7 @@ function createSessionControlRuntime(options) {
         const currentNegotiation = settings.negotiateExecutionMode ? settings.negotiateExecutionMode(current, config, clock.now()) : negotiateExecutionMode(current, config, clock.now());
         if (currentNegotiation.executionMode !== negotiation.executionMode) throw typedError("CALIBRATION_STATE_CHANGED");
         controller.setExecutionMode(currentNegotiation.executionMode);
+        assertStartAllowed();
         try {
           const snapshot = await controller.startSession({
             accountKey: current.accountKey,
@@ -159,6 +166,12 @@ function createSessionControlRuntime(options) {
             executionReasonCode: currentNegotiation.warningCode,
             activationContext: { context: current.context, pool: current.pool, opponentRatingScaleId: current.intendedQueueScaleId },
           });
+          try {
+            assertStartAllowed();
+          } catch (error) {
+            if (controller.isActive()) await controller.requestGracefulStop();
+            throw error;
+          }
           if (disposed || generation !== startGeneration) {
             try { await controller.requestGracefulStop(); } catch (_) {}
             throw typedError("SESSION_RUNTIME_UNAVAILABLE");

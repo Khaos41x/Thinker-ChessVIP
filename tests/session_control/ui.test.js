@@ -134,11 +134,13 @@ async function run() {
   let starts = 0;
   let stops = 0;
   let exports = 0;
+  let startBlocker = null;
   const warnings = [];
   const notifications = [];
   const presenter = createSessionControlPresenter({
     getPanel: () => panel,
     readStatus: () => currentStatus,
+    readStartBlocker: () => startBlocker,
     formatDuration: (value) => String(value),
     createConfig: (draft) => ({ ...draft }),
     start: async () => { starts += 1; },
@@ -161,6 +163,16 @@ async function run() {
   assert.equal(duration.value, "240", "status rendering overwrote the focused draft");
   assert.equal(panel.querySelector("#kb-session-start").getAttribute("disabled"), null);
   assert.equal(panel.querySelector("#kb-session-start").getAttribute("aria-disabled"), "false");
+
+  startBlocker = "BOT_DISABLED";
+  presenter.update();
+  panel.dispatch("click", panel.querySelector("#kb-session-start"));
+  await tick();
+  assert.equal(starts, 0);
+  assert.equal(panel.querySelector("#kb-session-start").getAttribute("data-disabled-reason"), "BOT_DISABLED");
+  assert(notifications.includes("BOT_DISABLED"));
+  startBlocker = null;
+  presenter.update();
 
   presenter.bind(panel);
   presenter.bind(panel);

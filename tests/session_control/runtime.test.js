@@ -100,12 +100,14 @@ async function run() {
   const storagePort = new GmStoragePort(storage.getValue.bind(storage), storage.setValue.bind(storage));
   const timers = [];
   let startContextReads = 0;
+  let masterEnabled = false;
   const runtime = createSessionControlRuntime({
     controller,
     storagePort,
     repository,
     clock,
     rollout: { schemaVersion: 1, stage: "ACTIVE_DDA" },
+    canStart: () => masterEnabled ? true : "BOT_DISABLED",
     observeStartContext: async () => {
       startContextReads += 1;
       return ({
@@ -119,6 +121,10 @@ async function run() {
     setInterval: (callback, milliseconds) => { timers.push({ callback, milliseconds }); return timers.length; },
     clearInterval() {},
   });
+  await assert.rejects(runtime.start(config()), (error) => error.code === "BOT_DISABLED");
+  assert.equal(controller.snapshot, null);
+  assert.equal(startContextReads, 0);
+  masterEnabled = true;
   const root = panel();
   const notifications = [];
   const presenter = createSessionControlPresenter({
