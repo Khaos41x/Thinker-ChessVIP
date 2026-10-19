@@ -28,6 +28,7 @@ sidebar.getBoundingClientRect = () => sidebarRect;
 const gameOver = element({ left: 350, top: 180, right: 750, bottom: 580, width: 400, height: 400 });
 const banner = { style: {} };
 let gameOverVisible = false;
+let semanticSidebarAvailable = true;
 
 const document = {
   body: {},
@@ -36,7 +37,7 @@ const document = {
   querySelector: (selector) => selector.includes("wc-chess-board") ? board : null,
   querySelectorAll(selector) {
     if (selector.includes("game-over-modal")) return gameOverVisible ? [gameOver] : [];
-    if (selector === ".play-controller-component") return [sidebar];
+    if (selector === ".play-controller-component") return semanticSidebarAvailable ? [sidebar] : [];
     return [];
   },
 };
@@ -122,6 +123,20 @@ window.location.pathname = "/play/online";
 assert(context.shouldShow() === true, "/play/online did not qualify for the banner");
 context.position();
 assert(banner.style.display === "flex", "/play/online did not display the banner");
+
+semanticSidebarAvailable = false;
+context.setObservedSidebar(null);
+const boardColumn = element(board.getBoundingClientRect());
+const layout = element({ left: 200, top: 100, right: 1248, bottom: 879, width: 1048, height: 779 });
+boardColumn.contains = (node) => node === board;
+boardColumn.parentElement = layout;
+board.parentElement = boardColumn;
+sidebar.parentElement = layout;
+layout.children = [boardColumn, sidebar];
+assert(context.shouldShow() === true, "geometry-only Chess.com sidebar did not qualify for the banner");
+context.position();
+assert(banner.style.display === "flex", "geometry-only Chess.com sidebar did not display the banner");
+semanticSidebarAvailable = true;
 
 window.location.pathname = "/analysis/game/live/185503745104/review";
 assert(context.shouldShow() === false, "review route qualified for the banner");

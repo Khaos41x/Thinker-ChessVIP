@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-08.4
+// @version      2026-10-19.1
 // @description  Chess Bot com Servidor Local
 // @author       You
 // @match        https://www.chess.com/*
@@ -3058,6 +3058,19 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     else removeEvalBarDOM();
   }
 
+  function safelySyncEvalBarRenderer() {
+    try {
+      syncEvalBarRenderer();
+      return true;
+    } catch (error) {
+      try { evalBarV2Adapter?.destroy?.(); } catch (_) {}
+      evalBarV2Adapter = null;
+      globalThis.__thinkerEvalBarV2 = null;
+      debug("eval bar bootstrap isolated", error);
+      return false;
+    }
+  }
+
   globalThis.krypbotSetEvalBarV2 = function (enabled) {
     evalBarV2Enabled = Boolean(enabled);
     localStorage.setItem("evalBarV2", String(evalBarV2Enabled));
@@ -4799,6 +4812,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       ".board-layout-sidebar",
       ".layout-board-sidebar",
       "#board-layout-sidebar",
+      "[data-cy*='sidebar']",
+      "[data-test-element*='sidebar']",
+      "[class*='play-controller']",
+      "[class*='game-panel']",
     ];
     const board = document.querySelector(
       "wc-chess-board, chess-board, .board, .chess-board, [class*='board-component']",
@@ -4827,7 +4844,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     let closest = null;
     let closestGap = Infinity;
     for (const candidate of document.querySelectorAll(
-      "aside, [class*='sidebar'], [class*='controller'], [class*='board-layout']",
+      "aside, [role='complementary'], [class*='sidebar'], [class*='controller'], [class*='board-layout'], [class*='game-panel']",
     )) {
       if (isExcludedThinkerSidebarCandidate(candidate)) continue;
       if (candidate.contains?.(board) || !isVisibleThinkerLayoutNode(candidate, { minWidth: 240, minHeight: 300 })) continue;
@@ -4839,6 +4856,33 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         closest = candidate;
         closestGap = gap;
       }
+    }
+    let boardBranch = board;
+    let ancestor = board.parentElement;
+    for (let depth = 0; ancestor && depth < 7; depth += 1) {
+      for (const candidate of Array.from(ancestor.children || [])) {
+        if (candidate === boardBranch || candidate.contains?.(board)) continue;
+        if (isExcludedThinkerSidebarCandidate(candidate)) continue;
+        if (!isVisibleThinkerLayoutNode(candidate, { minWidth: 240, minHeight: 300 })) continue;
+        const rect = getThinkerRect(candidate);
+        const gap = rect.left - boardRect.right;
+        const verticalOverlap = Math.min(rect.bottom, boardRect.bottom) - Math.max(rect.top, boardRect.top);
+        if (
+          gap < -4 ||
+          gap > 220 ||
+          rect.width < 240 ||
+          rect.width > 560 ||
+          rect.height < 300 ||
+          verticalOverlap < Math.min(240, boardRect.height * 0.35)
+        ) continue;
+        if (gap < closestGap) {
+          closest = candidate;
+          closestGap = gap;
+        }
+      }
+      if (closest) break;
+      boardBranch = ancestor;
+      ancestor = ancestor.parentElement;
     }
     return closest;
   }
@@ -6302,7 +6346,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
   }
 
   function installThinkerRouteBootstrap() {
-    syncEvalBarRenderer();
+    safelySyncEvalBarRenderer();
     maybeStartThinkerUserscript();
     if (!thinkerUserscriptStarted && thinkerRouteWatchTimer === null) {
       thinkerRouteWatchTimer = window.setInterval(maybeStartThinkerUserscript, 250);

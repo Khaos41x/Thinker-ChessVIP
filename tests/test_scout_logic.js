@@ -143,6 +143,36 @@ recoveryCallback();
 if (!shellsPresent || createAttempts !== 2) throw new Error("UI did not recover from a transient mount failure");
 recoveryCallback();
 if (reconcileCount < 2) throw new Error("UI recovery watchdog stopped after the first successful mount");
+const safeEvalStart = source.indexOf("  function safelySyncEvalBarRenderer() {");
+const safeEvalEnd = source.indexOf("\n  globalThis.krypbotSetEvalBarV2", safeEvalStart);
+if (safeEvalStart < 0 || safeEvalEnd < 0) throw new Error("eval bar bootstrap isolation is missing");
+let evalAdapterDestroyed = false;
+const safeEvalContext = {
+  syncEvalBarRenderer() { throw new Error("synthetic eval startup failure"); },
+  evalBarV2Adapter: { destroy() { evalAdapterDestroyed = true; } },
+  debug() {},
+};
+vm.runInNewContext(
+  source.slice(safeEvalStart, safeEvalEnd) + "\nglobalThis.safeSync=safelySyncEvalBarRenderer;",
+  safeEvalContext,
+);
+if (safeEvalContext.safeSync() !== false || !evalAdapterDestroyed) {
+  throw new Error("eval bar startup failure was not isolated and cleaned up");
+}
+const routeBootstrapStart = source.indexOf("  function installThinkerRouteBootstrap() {");
+const routeBootstrapEnd = source.indexOf("\n  if (document.readyState", routeBootstrapStart);
+let primaryUiStarts = 0;
+vm.runInNewContext(
+  "let thinkerUserscriptStarted=false, thinkerRouteWatchTimer=null;" +
+    source.slice(routeBootstrapStart, routeBootstrapEnd) +
+    "\ninstallThinkerRouteBootstrap();",
+  {
+    safelySyncEvalBarRenderer: () => false,
+    maybeStartThinkerUserscript: () => { primaryUiStarts++; },
+    window: { setInterval: () => 1 },
+  },
+);
+if (primaryUiStarts !== 1) throw new Error("eval bar startup failure blocked the primary UI bootstrap");
 const startupSource = source.slice(startupStart, startupEnd);
 if (
   !/catch\s*\((?!_)\w+\)/.test(startupSource) ||
@@ -161,6 +191,7 @@ const storageStart = source.indexOf("  const localStorage = (() => {");
 const storageEnd = source.indexOf("\n  function debug(", storageStart);
 if (storageStart < 0 || storageEnd < 0) throw new Error("storage fallback block not found");
 const blockedStorageWindow = {};
+blockedStorageWindow.setInterval = () => 1;
 Object.defineProperty(blockedStorageWindow, "localStorage", { get() { throw new Error("blocked"); } });
 const blockedStorage = vm.runInNewContext(
   source.slice(storageStart, storageEnd) + "\nlocalStorage.setItem('test', 'ok'); localStorage.getItem('test');",
@@ -240,7 +271,7 @@ const racedPoll = capturedPoll;
 pollContext.markLocalChange();
 pollContext.clearLocalPending();
 racedPoll.onload({ status: 200, responseText: '{"hint":false}' });
-if (Buffer.byteLength(source, "utf8") > 450000) {
+if (Buffer.byteLength(source, "utf8") > 600000) {
   throw new Error("userscript payload is too large for reliable Tampermonkey startup");
 }
 const start = source.indexOf("  const SCOUT_CACHE_TTL");

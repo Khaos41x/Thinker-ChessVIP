@@ -69,7 +69,7 @@ function createCdpClient(webSocketUrl) {
 
 (async () => {
   assert(fs.existsSync(chromePath), "Chrome executable not found");
-  const liveChess = process.env.CHESS_LIVE === "1";
+  const liveChess = process.env.CHESS_LIVE === "1" || process.argv.includes("--live");
 
   const server = http.createServer((request, response) => {
     const pathname = decodeURIComponent(new URL(request.url, "http://127.0.0.1").pathname);
@@ -180,6 +180,18 @@ function createCdpClient(webSocketUrl) {
       returnByValue: true,
     });
     const state = result.result.value;
+
+    if (liveChess) {
+      console.log(JSON.stringify({ state, consoleErrors }, null, 2));
+      assert(exceptions.length === 0, `Userscript exception: ${exceptions[0]?.text || "unknown"}`);
+      assert(state.menu, "configuration menu was not mounted");
+      assert(state.banner, "banner was not mounted");
+      assert(state.wrapper, "scout panel wrapper was not mounted");
+      assert(state.documentHeight > state.viewportHeight, "page cannot scroll to the configuration menu");
+      assert(state.bannerLayout.display === "flex", "banner is still hidden on a desktop viewport");
+      console.log("Live Chess.com userscript shell passed.");
+      return;
+    }
 
     const productionStartSmokeResult = await client.send("Runtime.evaluate", {
       expression: `(async () => {
@@ -331,6 +343,7 @@ function createCdpClient(webSocketUrl) {
   } finally {
     client?.close();
     chrome.kill();
+    server.closeAllConnections?.();
     server.close();
   }
 })().catch((error) => {
