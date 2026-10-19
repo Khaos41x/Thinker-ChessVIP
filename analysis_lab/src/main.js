@@ -1,9 +1,12 @@
 import './styles.css';
+import './ui/eval-bar.css';
 import { Chessground } from '@lichess-org/chessground';
+import { engineScoreFromUci, formatEvaluation, normalizeEvaluation } from './analysis/evaluation.ts';
 import { invalidateEvaluation } from './analysis-state.js';
 import { chessgroundConfig, guidanceForPosition, legalDestinations, projectPrimaryPv, promotionForMove } from './board-adapter.js';
 import { ChessSession } from './chess-session.js';
 import { browserEngineSupport, StockfishAdapter } from './engine/stockfish-adapter.js';
+import { EvalBarController } from './ui/eval-bar.ts';
 
 const session = new ChessSession();
 const orthodoxStartFen = session.current.fen;
@@ -33,12 +36,61 @@ function playBoardMove(from, to) {
 }
 
 const board = Chessground(ui.board, chessgroundConfig(session.chess, { onMove: playBoardMove }));
+const evaluationCache = new Map();
+const evalBar = new EvalBarController({
+  root: ui['eval-rail'],
+  fill: ui['eval-fill'],
+  label: ui['eval-score'],
+});
+let evaluationRenderTimer = null;
+let lastEvaluationRenderAt = 0;
+
+function evaluationSample(evaluation) {
+  const primary = evaluation?.lines?.find(line => line.multipv === 1) ?? (evaluation?.multipv === 1 ? evaluation : null);
+  if (!primary) throw new Error('Primary evaluation line is unavailable');
+  const score = engineScoreFromUci(primary ?? {});
+  const normalized = normalizeEvaluation(score);
+  return {
+    searchId: evaluation.searchId,
+    fraction: normalized.whiteVisualFraction,
+    label: formatEvaluation(score),
+  };
+}
+
+function cacheEvaluation(fen, sample) {
+  evaluationCache.delete(fen);
+  evaluationCache.set(fen, { fraction: sample.fraction, label: sample.label });
+  if (evaluationCache.size > 512) evaluationCache.delete(evaluationCache.keys().next().value);
+}
+
+function beginEvalBarSearch() {
+  const cached = evaluationCache.get(session.current.fen);
+  evalBar.beginSearch(state.searchId, cached ? { searchId: state.searchId, ...cached } : null);
+}
+
+function scheduleEvaluationRender() {
+  if (evaluationRenderTimer !== null) return;
+  const delay = Math.max(0, 100 - (performance.now() - lastEvaluationRenderAt));
+  evaluationRenderTimer = setTimeout(() => {
+    evaluationRenderTimer = null;
+    lastEvaluationRenderAt = performance.now();
+    renderEvaluation();
+  }, delay);
+}
 
 const adapter = new StockfishAdapter({
   onEvaluation: evaluation => {
     if (evaluation.searchId !== state.searchId) return;
+    let sample;
+    try {
+      sample = evaluationSample(evaluation);
+    } catch {
+      return;
+    }
+    cacheEvaluation(session.current.fen, sample);
+    evalBar.publish(sample);
     state.evaluation = evaluation;
-    renderEvaluation();
+    scheduleEvaluationRender();
   },
   onState: engineState => {
     state.engineState = engineState;
@@ -205,21 +257,15 @@ function renderGuidance(projected) {
 
 function renderEvaluation() {
   const evaluation = state.evaluation;
-  const primary = evaluation?.lines?.[0] ?? evaluation;
+  const primary = evaluation?.lines?.find(line => line.multipv === 1) ?? (evaluation?.multipv === 1 ? evaluation : null);
   const projected = projectPrimaryPv(session.current.fen, primary?.pv);
   board.setAutoShapes(projected.shapes);
   renderGuidance(projected);
   ui['main-eval'].textContent = scoreLabel(primary, true);
-  ui['eval-score'].textContent = scoreLabel(primary);
   ui['metric-depth'].textContent = primary?.depth ?? '—';
   ui['metric-nodes'].textContent = formatCompact(primary?.nodes);
   ui['metric-nps'].textContent = formatCompact(primary?.nps);
   ui['metric-time'].textContent = Number.isFinite(primary?.time) ? `${(primary.time / 1000).toFixed(1)}s` : '—';
-
-  let whitePercent = 50;
-  if (Number.isFinite(primary?.mate)) whitePercent = primary.mate > 0 ? 100 : 0;
-  else if (Number.isFinite(primary?.cp)) whitePercent = 100 / (1 + Math.exp(-primary.cp / 220));
-  ui['eval-fill'].style.height = `${Math.max(2, Math.min(98, whitePercent))}%`;
 
   ui['pv-list'].replaceChildren();
   if (!evaluation?.lines?.length) {
@@ -286,7 +332,10 @@ function engineSettings() {
 }
 
 function analyzeCurrentPosition({ invalidate = true } = {}) {
-  if (invalidate) invalidateEvaluation(state);
+  if (invalidate) {
+    invalidateEvaluation(state);
+    beginEvalBarSearch();
+  }
   const chess = session.chess;
   state.terminalMessage = null;
   if (chess.isGameOver()) {
@@ -309,6 +358,7 @@ function analyzeCurrentPosition({ invalidate = true } = {}) {
 
 function positionChanged() {
   invalidateEvaluation(state);
+  beginEvalBarSearch();
   state.keyboardSelected = null;
   board.selectSquare(null);
   renderAll();
@@ -317,6 +367,7 @@ function positionChanged() {
 
 function showEngineError(message) {
   invalidateEvaluation(state);
+  beginEvalBarSearch();
   adapter.destroy();
   state.engineState = 'error';
   state.engineEnabled = false;
@@ -331,6 +382,7 @@ async function toggleEngine() {
   if (state.engineEnabled) {
     state.engineEnabled = false;
     invalidateEvaluation(state);
+    beginEvalBarSearch();
     adapter.destroy();
     state.engineState = 'idle';
     renderEngineState();
@@ -411,6 +463,7 @@ document.querySelector('.transport').addEventListener('click', event => {
 ui['engine-toggle'].addEventListener('click', toggleEngine);
 ui['flip-board'].addEventListener('click', () => {
   state.orientation = state.orientation === 'white' ? 'black' : 'white';
+  evalBar.setOrientation(state.orientation);
   renderBoard();
 });
 ui.board.addEventListener('focus', () => {
@@ -466,6 +519,8 @@ window.addEventListener('keydown', event => {
   }
 });
 window.addEventListener('beforeunload', () => {
+  if (evaluationRenderTimer !== null) clearTimeout(evaluationRenderTimer);
+  evalBar.destroy();
   board.destroy();
   adapter.destroy();
 });

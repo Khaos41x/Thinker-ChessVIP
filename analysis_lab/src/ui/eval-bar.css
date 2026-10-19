@@ -1,0 +1,42 @@
+.eval-rail {
+  border-radius: 4px;
+  position: relative;
+  background: #161513;
+  overflow: hidden;
+  min-height: 200px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .28);
+  contain: layout paint;
+  isolation: isolate;
+}
+
+.eval-fill {
+  position: absolute;
+  inset: 0;
+  background: #f0f0f0;
+  transform: scaleY(.5);
+  transform-origin: center bottom;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.eval-rail[data-orientation="black"] .eval-fill {
+  transform-origin: center top;
+}
+
+.eval-score {
+  position: absolute;
+  left: 50%;
+  bottom: 9px;
+  z-index: 2;
+  writing-mode: vertical-rl;
+  transform: translateX(-50%) rotate(180deg);
+  color: #fff;
+  font: 800 11px/1 ui-monospace, monospace;
+  mix-blend-mode: difference;
+}
+
+.eval-rail[data-orientation="black"] .eval-score {
+  top: 9px;
+  bottom: auto;
+  transform: translateX(-50%);
+}

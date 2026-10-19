@@ -77,9 +77,6 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .board square.keyboard-focus { box-shadow: inset 0 0 0 4px rgba(255, 255, 255, .92); }
 .board .cg-shapes { opacity: .86; }
 .board coords { font-weight: 700; font-size: clamp(9px, .8vw, 12px); opacity: .72; }
-.eval-rail { border-radius: 4px; position: relative; background: #161513; overflow: hidden; min-height: 200px; box-shadow: 0 4px 16px rgba(0, 0, 0, .28); }
-.eval-fill { position: absolute; left: 0; right: 0; bottom: 0; height: 50%; background: #f0f0f0; transition: height .18s ease-out; }
-.eval-score { position: absolute; left: 50%; bottom: 9px; z-index: 2; writing-mode: vertical-rl; transform: translateX(-50%) rotate(180deg); color: #111; font: 800 11px/1 ui-monospace, monospace; text-shadow: 0 1px rgba(255, 255, 255, .35); }
 .board-footer { max-width: 842px; margin: 11px auto 0; padding-left: 42px; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
 .board-footer > span { color: var(--muted); font-size: 11px; }
 

@@ -4,7 +4,7 @@ MVP local de uma área de análise inspirada no fluxo de trabalho do Lichess. O 
 
 ## Executar
 
-Requisitos: Node.js `^20.19.0` ou `>=22.12.0` e um navegador moderno baseado em Chromium ou Firefox.
+Requisitos: Node.js `>=22.12.0` e um navegador moderno baseado em Chromium ou Firefox.
 
 ```powershell
 cd analysis_lab
@@ -18,8 +18,10 @@ Outros comandos:
 
 ```powershell
 npm test
+npm run typecheck
 npm run build
 npm run smoke:engine
+npm run profile:eval-bar
 npm run preview
 ```
 
@@ -32,6 +34,8 @@ interface/main.js
       │
       ├── ChessSession ── valida FEN/PGN e mantém a linha principal
       ├── BoardAdapter ── sincroniza Chessground e valida as setas da PV
+      ├── Analysis Core ── normaliza EP, classifica lances e agrega acurácia
+      ├── EvalBarController ── mailbox O(1) e animação transform em RAF
       │
       └── StockfishAdapter ── carrega WASM + NNUE e detecta capacidades
                     │
@@ -56,7 +60,7 @@ O desenho é eficiente porque separa três problemas: execução pesada fora da 
 
 - Xadrez padrão e linha principal somente; variantes e árvore de variações ficam para uma etapa posterior.
 - Promoção feita pelo tabuleiro escolhe dama automaticamente.
-- Não há cloud evaluation, cache IndexedDB/OPFS, tablebases, acurácia ou classificação de erros.
+- Não há cloud evaluation, cache IndexedDB/OPFS, tablebases nem review pipeline completo.
 - O build local usa o Stockfish 19 smallnet para reduzir download e memória. A troca para o build de rede grande deve ser uma decisão explícita de produto.
 
 ## Licenças
