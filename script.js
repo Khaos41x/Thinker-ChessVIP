@@ -225,6 +225,7 @@ try {
         return Promise.resolve({ allowed: false, reason: "NO_CHANGE" });
       },
       autoQueueChanged(enabled) {
+        if (controller && controller.isActive()) return;
         if (!enabled) compatibilityAutoQueue = false;
       },
       async start(config) {
@@ -238,6 +239,7 @@ try {
           negotiatedWarningCode = snapshot.executionReasonCode || null;
           warningCode = negotiatedWarningCode;
           if (compatibilityAutoQueue) handleAutoQueue();
+          if (typeof window.krypbotUpdateUI === "function") window.krypbotUpdateUI();
           return snapshot;
         }
         const start = context().start || {};
@@ -4947,6 +4949,9 @@ try {
           color: #000;
           box-shadow: 0 2px 10px rgba(0, 255, 136, 0.3);
         }
+        #kb-auto-queue-controls[aria-disabled="true"] { opacity: 0.72; cursor: not-allowed; }
+        #kb-auto-queue-controls[aria-disabled="true"] label { cursor: not-allowed; }
+        .kb-session-queue-note { margin: -9px 0 12px; color: #8bdcb3; font-size: 10px; line-height: 1.4; }
 
         .kb-slider-group { display: flex; align-items: center; gap: 12px; }
         .kb-slider {
@@ -5113,11 +5118,12 @@ try {
 
         <div class="kb-section">
           <p class="kb-section-label"><span class="kb-row-icon kb-icon-list" aria-hidden="true"></span>Auto Queue</p>
-          <div class="kb-radio-group">
+          <div id="kb-auto-queue-controls" class="kb-radio-group">
             <input type="radio" id="aq-on" name="kb-auto-queue" value="1"><label for="aq-on">ON</label>
             <input type="radio" id="aq-off" name="kb-auto-queue" value="0" checked><label for="aq-off">OFF</label>
           </div>
         </div>
+        <p id="kb-auto-queue-session-note" class="kb-session-queue-note" hidden aria-live="polite">ON temporário — controlado pelo Auto Farm até a sessão terminar. Sua preferência salva não será alterada.</p>
 
         <div class="kb-section">
           <p class="kb-section-label"><span class="kb-row-icon kb-icon-gauge" aria-hidden="true"></span>Auto Rating</p>
@@ -5360,6 +5366,17 @@ try {
           }
         });
 
+        function syncAutoQueueSessionUI() {
+          const sessionOwnsQueue = sessionControlBridge.isRunning();
+          $(`input[name="kb-auto-queue"][value="${sessionOwnsQueue || auto_queue ? 1 : 0}"]`).prop("checked", true);
+          $("input[name='kb-auto-queue']").prop("disabled", sessionOwnsQueue);
+          $("#kb-auto-queue-controls")
+            .attr("aria-disabled", sessionOwnsQueue ? "true" : "false")
+            .attr("title", sessionOwnsQueue ? "A fila está sob controle do Auto Farm nesta sessão." : "");
+          const queueNote = document.getElementById("kb-auto-queue-session-note");
+          if (queueNote) queueNote.hidden = !sessionOwnsQueue;
+        }
+
         window.krypbotUpdateUI = function () {
           detectGameMode();
           $(`input[name="kb-bot-status"][value="${hint ? 1 : 0}"]`).prop(
@@ -5370,10 +5387,7 @@ try {
             "checked",
             true,
           );
-          $(`input[name="kb-auto-queue"][value="${auto_queue ? 1 : 0}"]`).prop(
-            "checked",
-            true,
-          );
+          syncAutoQueueSessionUI();
           $(`input[name="kb-puzzle-hint"][value="${puzzleHint ? 1 : 0}"]`).prop(
             "checked",
             true,
@@ -5487,7 +5501,10 @@ try {
             downloadDiagnostic: downloadSessionDiagnostic,
           });
           window.krypbotSessionControlUI = Object.freeze({ update: sessionControlPresenter.update, readConfig: sessionControlPresenter.readConfig, dispose: sessionControlPresenter.dispose });
-          window.setInterval(sessionControlPresenter.update, 1000);
+          window.setInterval(() => {
+            sessionControlPresenter.update();
+            syncAutoQueueSessionUI();
+          }, 1000);
           sessionControlPresenter.update();
         }).catch((error) => notifySessionControl(error && error.code ? error.code : "SESSION_RUNTIME_UNAVAILABLE"));
 
@@ -5571,6 +5588,10 @@ try {
         });
 
         $('input[name="kb-auto-queue"]').on("change", function () {
+          if (sessionControlBridge.isRunning()) {
+            window.krypbotUpdateUI();
+            return;
+          }
           auto_queue = $(this).val() == "1";
           sessionControlBridge.autoQueueChanged(auto_queue);
           localStorage.setItem("kb-auto-queue", auto_queue ? "true" : "false");
@@ -5868,8 +5889,9 @@ try {
           if (typeof s.autoQueue === "boolean" && auto_queue !== s.autoQueue) {
             auto_queue = s.autoQueue;
             localStorage.setItem("kb-auto-queue", auto_queue ? "true" : "false");
-            $('input[name="kb-auto-queue"][value="' + (auto_queue ? "1" : "0") + '"]').prop("checked", true);
+            if (!sessionControlBridge.isRunning()) $('input[name="kb-auto-queue"][value="' + (auto_queue ? "1" : "0") + '"]').prop("checked", true);
             handleAutoQueue();
+            if (typeof window.krypbotUpdateUI === "function") window.krypbotUpdateUI();
           }
           // Auto Adjust
           if (typeof s.autoAdjust === "boolean") {

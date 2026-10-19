@@ -204,9 +204,12 @@ function createCdpClient(webSocketUrl) {
         const toast = document.getElementById("kb-session-toast")?.textContent || "";
         const bootstrapState = bootstrap.state();
         return {
-          ok: !button.hasAttribute("disabled") && Boolean(warning)${liveChess ? " && warning === toast" : ` && window.krypbotSessionControlBridge.status().phase === "QUEUEING" && window.krypbotSessionControlBridge.status().executionMode === "COMPATIBILITY" && warning === "DDA_MAPPING_UNAVAILABLE" && toast === "SESSION_STARTED"`},
+          ok: !button.hasAttribute("disabled") && Boolean(warning)${liveChess ? " && warning === toast" : ` && window.krypbotSessionControlBridge.status().phase === "QUEUEING" && window.krypbotSessionControlBridge.status().executionMode === "COMPATIBILITY" && warning === "DDA_MAPPING_UNAVAILABLE" && toast === "SESSION_STARTED" && document.getElementById("aq-on")?.checked && document.getElementById("aq-on")?.disabled && document.getElementById("aq-off")?.disabled && !document.getElementById("kb-auto-queue-session-note")?.hidden`},
           warning,
           toast,
+          queueOnChecked: document.getElementById("aq-on")?.checked,
+          queueControlsDisabled: document.getElementById("aq-on")?.disabled && document.getElementById("aq-off")?.disabled,
+          queueSessionNoteVisible: !document.getElementById("kb-auto-queue-session-note")?.hidden,
           ariaDisabled: button.getAttribute("aria-disabled"),
           bootstrapPhase: bootstrapState.phase,
           bootstrapReason: bootstrapState.reasonCode,

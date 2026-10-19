@@ -206,7 +206,7 @@ async function run() {
 
   const root = path.resolve(__dirname, "../..");
   const source = fs.readFileSync(path.join(root, "script.js"), "utf8");
-  assert.equal(sourceHash(source, "    const menuHtml = `", "    const bannerHtml = `"), "0be662e779674c572ae3f4528fc7a8a6cbc8dd4b5af5721bd9cd88208a72a451", "Session Control menuHtml changed");
+  assert.equal(sourceHash(source, "    const menuHtml = `", "    const bannerHtml = `"), "d4724aa8bc799af5cd9dbb36c16821b090764fbb8151bb62cf5eef1e9f076d49", "Session Control menuHtml changed");
   const wrapperCss = sourceBlock(source, "        #oi-wrapper {", "        #oi-wrapper > * {");
   for (const declaration of [
     "position: absolute !important",
