@@ -1,4 +1,4 @@
-.eval-rail {
+.thinker-eval-v2-rail {
   border-radius: 4px;
   position: relative;
   background: #161513;
@@ -7,9 +7,13 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, .28);
   contain: layout paint;
   isolation: isolate;
+  width: 28px;
+  align-self: stretch;
+  flex: 0 0 28px;
+  margin-right: 6px;
 }
 
-.eval-fill {
+.thinker-eval-v2-fill {
   position: absolute;
   inset: 0;
   background: #f0f0f0;
@@ -19,11 +23,11 @@
   backface-visibility: hidden;
 }
 
-.eval-rail[data-orientation="black"] .eval-fill {
+.thinker-eval-v2-rail[data-orientation="black"] .thinker-eval-v2-fill {
   transform-origin: center top;
 }
 
-.eval-score {
+.thinker-eval-v2-score {
   position: absolute;
   left: 50%;
   bottom: 9px;
@@ -35,7 +39,11 @@
   mix-blend-mode: difference;
 }
 
-.eval-rail[data-orientation="black"] .eval-score {
+.thinker-eval-v2-rail[data-state="stale"] .thinker-eval-v2-score {
+  opacity: .58;
+}
+
+.thinker-eval-v2-rail[data-orientation="black"] .thinker-eval-v2-score {
   top: 9px;
   bottom: auto;
   transform: translateX(-50%);

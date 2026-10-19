@@ -15,7 +15,9 @@
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "profile:eval-bar": "node scripts/profile-eval-bar.mjs"
+    "profile:eval-bar": "node scripts/profile-eval-bar.mjs",
+    "build:userscript-eval-bar": "node scripts/build-userscript-eval-bar.mjs",
+    "test:browser:eval-bar-v2": "node ../tests/browser/test_eval_bar_v2_chrome.mjs"
   },
   "dependencies": {
     "@lichess-org/chessground": "10.4.2",
@@ -23,6 +25,7 @@
     "chess.js": "1.4.0"
   },
   "devDependencies": {
+    "esbuild": "^0.28.2",
     "typescript": "5.9.3",
     "vite": "8.3.4",
     "vitest": "5.0.4"

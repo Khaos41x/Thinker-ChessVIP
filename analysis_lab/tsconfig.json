@@ -12,5 +12,5 @@
     "skipLibCheck": true,
     "isolatedModules": true
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts"]
+  "include": ["src/**/*.ts", "tests/**/*.ts", "../frontend/eval_bar/**/*.ts"]
 }

@@ -7,7 +7,9 @@ type ProfileResult = Readonly<{
   elapsedMs: number;
   longTaskCount: number;
   longestTaskMs: number;
+  frameIntervalP50Ms: number;
   frameIntervalP95Ms: number;
+  frameIntervalP99Ms: number;
   framesOver20Ms: number;
   finalFraction: number;
   finalTarget: number;
@@ -24,10 +26,10 @@ controller.beginSearch(1);
 
 const nextFrame = (): Promise<number> => new Promise(resolve => requestAnimationFrame(resolve));
 
-const percentile95 = (values: readonly number[]): number => {
+const percentile = (values: readonly number[], quantile: number): number => {
   if (values.length === 0) return 0;
   const sorted = [...values].sort((left, right) => left - right);
-  return sorted[Math.min(sorted.length - 1, Math.ceil(sorted.length * 0.95) - 1)];
+  return sorted[Math.min(sorted.length - 1, Math.ceil(sorted.length * quantile) - 1)];
 };
 
 const startEvalBarProfile = async (): Promise<ProfileResult> => {
@@ -74,7 +76,9 @@ const startEvalBarProfile = async (): Promise<ProfileResult> => {
     elapsedMs: performance.now() - startedAt,
     longTaskCount: longTasks.length,
     longestTaskMs: longTasks.length === 0 ? 0 : Math.max(...longTasks),
-    frameIntervalP95Ms: percentile95(intervals),
+    frameIntervalP50Ms: percentile(intervals, 0.5),
+    frameIntervalP95Ms: percentile(intervals, 0.95),
+    frameIntervalP99Ms: percentile(intervals, 0.99),
     framesOver20Ms: intervals.filter(interval => interval > 20).length,
     finalFraction: snapshot.current,
     finalTarget: snapshot.target,
