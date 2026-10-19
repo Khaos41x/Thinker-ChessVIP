@@ -74,6 +74,19 @@ function readiness(clock, source) {
   };
 }
 
+function compatibilityReadiness(clock, source) {
+  return {
+    schemaVersion: 1,
+    active: false,
+    executionMode: "compatibility",
+    reasonCode: "DDA_MAPPING_UNAVAILABLE",
+    opponentRatingScaleId: source,
+    targetScaleId: config().scaleId,
+    generatedAtEpochMs: clock.now(),
+    expiresAtEpochMs: clock.now() + 60000,
+  };
+}
+
 async function run() {
   const clock = new FakeClock(1000000);
   assert.throws(() => validateStartReadiness({}, config(), clock.now()), (error) => error.code === "CALIBRATION_NOT_ACTIVE");
@@ -86,19 +99,23 @@ async function run() {
   const storage = new FakeGmStorage();
   const storagePort = new GmStoragePort(storage.getValue.bind(storage), storage.setValue.bind(storage));
   const timers = [];
+  let startContextReads = 0;
   const runtime = createSessionControlRuntime({
     controller,
     storagePort,
     repository,
     clock,
     rollout: { schemaVersion: 1, stage: "ACTIVE_DDA" },
-    observeStartContext: async () => ({
+    observeStartContext: async () => {
+      startContextReads += 1;
+      return ({
       accountKey: "opaque-account",
       context: "chesscom-queue-sidebar-start-game-v1",
       pool: "chesscom-live-rapid-v1",
       intendedQueueScaleId: "chesscom-live-rapid-v1",
       calibrationReadiness: readiness(clock, "chesscom-live-rapid-v1"),
-    }),
+      });
+    },
     setInterval: (callback, milliseconds) => { timers.push({ callback, milliseconds }); return timers.length; },
     clearInterval() {},
   });
@@ -121,6 +138,7 @@ async function run() {
   await tick();
   await tick();
   assert.equal(controller.snapshot.phase, "QUEUEING");
+  assert.equal(startContextReads, 2, "START must re-observe context and server readiness inside the authorization lock");
   assert.equal(repository.events.size, 1, "real click did not produce exactly one controller commit");
   assert.deepEqual(storage.values.get("thinker.sessionControl.authorization.v1"), { schemaVersion: 1, accounts: ["opaque-account"], contexts: ["chesscom-queue-sidebar-start-game-v1"], pools: ["chesscom-live-rapid-v1"] });
   assert(notifications.includes("SESSION_STARTED"));
@@ -205,6 +223,65 @@ async function run() {
   assert.equal(installs, 1);
   assert.equal(bootstrap.getState().phase, "READY");
   firstRuntime.dispose();
+
+  const compatibilityRepository = new MemoryRepository();
+  const compatibilityLeader = new LeaderCoordinator({ repository: compatibilityRepository, locks: new FakeLockManager(), clock });
+  const compatibilityController = new SessionControlController({ repository: compatibilityRepository, leader: compatibilityLeader, clock, ownerTabId: TAB_A, idFactory: () => "7".repeat(32), rolloutStage: "ACTIVE_DDA" });
+  const compatibilityStorage = new FakeGmStorage();
+  const negotiated = [];
+  const compatibilityRuntime = createSessionControlRuntime({
+    controller: compatibilityController,
+    storagePort: new GmStoragePort(compatibilityStorage.getValue.bind(compatibilityStorage), compatibilityStorage.setValue.bind(compatibilityStorage)),
+    repository: compatibilityRepository,
+    clock,
+    rollout: { schemaVersion: 1, stage: "ACTIVE_DDA" },
+    observeStartContext: async () => ({
+      accountKey: "compatibility-account",
+      context: "chesscom-queue-sidebar-start-game-v1",
+      pool: "chesscom-live-rapid-v1",
+      intendedQueueScaleId: "chesscom-live-rapid-v1",
+      calibrationReadiness: compatibilityReadiness(clock, "chesscom-live-rapid-v1"),
+    }),
+    onMode: (mode) => negotiated.push(mode),
+    setInterval: () => 1,
+    clearInterval() {},
+  });
+  await compatibilityRuntime.start(config());
+  assert.equal(compatibilityController.snapshot.phase, "QUEUEING");
+  assert.equal(compatibilityController.executionMode, "COMPATIBILITY");
+  assert.equal(compatibilityController.snapshot.executionMode, "COMPATIBILITY");
+  assert.equal(compatibilityController.snapshot.executionReasonCode, "DDA_MAPPING_UNAVAILABLE");
+  assert.equal(compatibilityController.legacyAutoAdjustSuspended(), false);
+  assert.equal(negotiated[0].warningCode, "DDA_MAPPING_UNAVAILABLE");
+  const admittedCompatibility = await compatibilityController.observeCompatibilityGame({
+    schemaVersion: 1,
+    canonicalPlatformGameId: "compat-game",
+    accountKey: "compatibility-account",
+    opponentKey: "compat-opponent",
+    opponentRating: 1700,
+    opponentRatingScaleId: "chesscom-live-rapid-v1",
+    userSide: "white",
+    contextClass: "chesscom-live-game-v1",
+    poolId: "chesscom-live-rapid-v1",
+    rated: true,
+    observedAtEpochMs: clock.now(),
+    sourceVersion: "test-v1",
+  });
+  assert.equal(admittedCompatibility.allowed, true);
+  assert.equal(compatibilityController.snapshot.phase, "IN_GAME");
+  const compatibilityResult = { canonicalPlatformGameId: "compat-game", accountKey: "compatibility-account", outcome: "D" };
+  assert.equal((await compatibilityController.observeCompatibilityResult(compatibilityResult)).reason, "RESULT_COMMITTED");
+  assert.equal(compatibilityController.snapshot.observedCounts.draws, 1);
+  assert.equal(compatibilityController.snapshot.controlCounts.terminalGames, 0);
+  assert.equal((await compatibilityController.observeCompatibilityResult(compatibilityResult)).reason, "COMPATIBILITY_SESSION_INACTIVE");
+  assert.equal(compatibilityController.snapshot.observedCounts.draws, 1);
+  const recoveredCompatibilityController = new SessionControlController({ repository: compatibilityRepository, leader: compatibilityLeader, clock, ownerTabId: TAB_A, idFactory: () => "6".repeat(32), rolloutStage: "ACTIVE_DDA" });
+  const recoveredCompatibilityRuntime = createSessionControlRuntime({ controller: recoveredCompatibilityController, storagePort: new GmStoragePort(compatibilityStorage.getValue.bind(compatibilityStorage), compatibilityStorage.setValue.bind(compatibilityStorage)), repository: compatibilityRepository, clock, rollout: { schemaVersion: 1, stage: "ACTIVE_DDA" }, observeStartContext: async () => { throw new Error("not used"); }, setInterval: () => 1, clearInterval() {} });
+  await recoveredCompatibilityRuntime.recover("compatibility-account");
+  assert.equal(recoveredCompatibilityController.executionMode, "COMPATIBILITY");
+  assert.equal(recoveredCompatibilityController.snapshot.executionReasonCode, "DDA_MAPPING_UNAVAILABLE");
+  recoveredCompatibilityRuntime.dispose();
+  compatibilityRuntime.dispose();
 }
 
 module.exports = { run };

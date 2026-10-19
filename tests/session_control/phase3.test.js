@@ -41,7 +41,9 @@ async function run() {
   };
   assert.equal((await controller.pinCalibration(capability)).reason, "PINNED");
   assert.equal(controller.snapshot.activeGame.actuator.effectiveTargetElo, 2050);
-  assert.equal((await controller.pinCalibration({ ...capability, effectiveTargetElo: 1900 })).reason, "TARGET_NOT_PENDING");
+  assert.equal((await controller.pinCalibration({ ...capability, effectiveTargetElo: 1900 })).reason, "CALIBRATION_IDENTITY_MISMATCH");
+  assert.equal((await controller.pinCalibration({ ...capability, expiresAtEpochMs: 2100000 })).reason, "REFRESHED");
+  assert.equal(controller.snapshot.activeGame.calibrationCapabilityExpiresAtEpochMs, 2100000);
 
   const fen = "8/8/8/8/8/4k3/8/4K3 w - - 0 1";
   assert.equal(await controller.observePosition(fen), null);

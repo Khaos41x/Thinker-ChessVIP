@@ -5,8 +5,8 @@ const { LeaderCoordinator, SessionControlController, evaluateAutoMoveGate, evalu
 const { FakeClock, FakeLockManager, MemoryRepository } = require("../../frontend/session_control/testing");
 const { SESSION_ID, TAB_A, TAB_B, activeGame, event, queueIntent, startEvent } = require("./helpers");
 
-function hexFactory() {
-  let value = 10;
+function hexFactory(start = 10) {
+  let value = start;
   return () => (value++).toString(16).padStart(32, "0");
 }
 
@@ -44,10 +44,36 @@ async function run() {
   assert.equal(evaluateQueueGate({ ...queueInput, snapshot: controller.snapshot, isLeader: true, storageHealthy: true, nowEpochMs: clock.now() }).reason, "QUEUE_INTENT_PRESENT");
   clock.advance(15001);
   const recoveredLeader = new LeaderCoordinator({ repository, locks, clock });
-  const recoveredController = new SessionControlController({ repository, leader: recoveredLeader, clock, idFactory: hexFactory(), ownerTabId: TAB_B });
+  const recoveredController = new SessionControlController({ repository, leader: recoveredLeader, clock, idFactory: hexFactory(100), ownerTabId: TAB_B });
   recoveredController.setSnapshot(await repository.loadSession(SESSION_ID));
   recoveredController.setLease((await recoveredLeader.acquire({ authorityEpoch: 1, sessionId: SESSION_ID, ownerTabId: TAB_B })).lease);
   assert.equal((await recoveredController.executeQueueEffect(queueInput, () => { clicks += 1; })).reason, "QUEUE_INTENT_PRESENT");
+  assert.equal(clicks, 1);
+  const admitted = await recoveredController.observeGame({
+    schemaVersion: 1,
+    canonicalPlatformGameId: "observed-game",
+    accountKey: "opaque-account",
+    opponentKey: "opaque-opponent",
+    opponentRating: 1800,
+    opponentRatingScaleId: "opaque-rating-scale",
+    userSide: "white",
+    contextClass: "chesscom-live-game-v1",
+    poolId: "opaque-rating-scale",
+    rated: true,
+    sourceVersion: "test-observation-v1",
+    observedAtEpochMs: clock.now(),
+  });
+  assert.equal(admitted.reason, "GAME_ADMITTED");
+  assert.equal(recoveredController.snapshot.phase, "IN_GAME");
+  assert.equal((await recoveredController.observeResult({ canonicalPlatformGameId: "observed-game", accountKey: "opaque-account", outcome: "W" })).reason, "RESULT_COMMITTED");
+  assert.equal(recoveredController.snapshot.observedCounts.wins, 1);
+  assert.equal(recoveredController.snapshot.controlCounts.wins, 0);
+  let readinessReads = 0;
+  const closingInput = { userAutoQueue: true, intendedQueueScaleId: "opaque-rating-scale" };
+  Object.defineProperty(closingInput, "calibrationReadiness", { enumerable: true, get() { readinessReads += 1; return { active: readinessReads === 1, opponentRatingScaleId: "opaque-rating-scale", expiresAtEpochMs: 2000000 }; } });
+  await assert.rejects(() => recoveredController.executeQueueEffect(closingInput, () => { clicks += 1; }), (error) => error.code === "CALIBRATION_NOT_ACTIVE");
+  assert.equal(recoveredController.snapshot.phase, "QUEUEING");
+  assert.equal(recoveredController.snapshot.queueIntent, null, "pre-click gate failure must be retryable, not ambiguous");
   assert.equal(clicks, 1);
 
   const activeRepository = new MemoryRepository();
@@ -70,6 +96,9 @@ async function run() {
   };
   assert.equal(activeController.autoMoveGate(moveInput).allowed, true);
   assert.equal(activeController.legacyAutoAdjustSuspended(), true);
+  activeController.executionMode = "COMPATIBILITY";
+  assert.equal(activeController.legacyAutoAdjustSuspended(), false);
+  activeController.executionMode = "ACTIVE_DDA";
   assert.equal(activeController.moveSelectionElo(1700), 2000);
   const epoch = activeController.captureEffectEpoch();
   let moves = 0;

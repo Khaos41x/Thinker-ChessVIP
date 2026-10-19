@@ -98,6 +98,9 @@ class RatingScaleTranslator:
     def get(self, source_scale_id, target_scale_id):
         return self._mappings.get((source_scale_id, target_scale_id))
 
+    def source_scale_ids(self, target_scale_id):
+        return tuple(sorted(source for source, target in self._mappings if target == target_scale_id))
+
 
 class CalibrationCapabilityService:
     def __init__(self, runtime, translator, *, epoch=time.time, ttl_seconds=3600):
@@ -116,22 +119,67 @@ class CalibrationCapabilityService:
         scale_id = self.runtime.default_scale_id or payload.scale.scale_id
         return calibrator, payload, scale_id
 
+    def deployment_status(self):
+        now = int(self.epoch() * 1000)
+        try:
+            calibrator, artifact, scale_id = self._artifact()
+            sources = list(self.translator.source_scale_ids(scale_id))
+            reason = None if sources and self.runtime.rollout_policy.mode is CalibrationMode.ACTIVE else "DDA_MAPPING_UNAVAILABLE" if not sources else "CALIBRATION_NOT_ACTIVE"
+            return {
+                "schemaVersion": 1,
+                "targetScaleId": scale_id,
+                "artifactVersion": artifact.artifact_version,
+                "artifactChecksum": calibrator.artifact.checksum,
+                "supportedOpponentRatingScaleIds": sources,
+                "executionMode": "active_dda" if reason is None else "compatibility",
+                "reasonCode": reason,
+                "generatedAtEpochMs": now,
+                "expiresAtEpochMs": now + int(self.ttl_seconds * 1000),
+            }
+        except CalibrationCapabilityError as error:
+            return {
+                "schemaVersion": 1,
+                "targetScaleId": self.runtime.default_scale_id or "unavailable-calibration-scale-v1",
+                "artifactVersion": None,
+                "artifactChecksum": None,
+                "supportedOpponentRatingScaleIds": [],
+                "executionMode": "compatibility",
+                "reasonCode": error.code,
+                "generatedAtEpochMs": now,
+                "expiresAtEpochMs": now + int(self.ttl_seconds * 1000),
+            }
+
     def readiness(self, payload):
         expected = {"schemaVersion", "opponentRatingScaleId", "targetScaleId", "requiredMode"}
         if not isinstance(payload, dict) or set(payload) != expected or payload.get("schemaVersion") != 1 or payload.get("requiredMode") != "active":
             raise CalibrationCapabilityError("INVALID_CALIBRATION_REQUEST", "invalid readiness request", 400)
         now = int(self.epoch() * 1000)
+        reason = None
         try:
             _, artifact, scale_id = self._artifact()
             mapping = self.translator.get(payload["opponentRatingScaleId"], payload["targetScaleId"])
-            active = mapping is not None and scale_id == payload["targetScaleId"] and self.runtime.rollout_policy.mode in {CalibrationMode.ACTIVE, CalibrationMode.CANARY}
-        except CalibrationCapabilityError:
+            if scale_id != payload["targetScaleId"]:
+                active = False
+                reason = "CALIBRATION_SCALE_MISMATCH"
+            elif mapping is None:
+                active = False
+                reason = "DDA_MAPPING_UNAVAILABLE"
+            elif self.runtime.rollout_policy.mode is not CalibrationMode.ACTIVE:
+                active = False
+                reason = "CALIBRATION_NOT_ACTIVE"
+            else:
+                active = True
+        except CalibrationCapabilityError as error:
             artifact, scale_id, mapping, active = None, payload["targetScaleId"], None, False
+            reason = error.code
         return {
             "schemaVersion": 1,
             "active": active,
+            "executionMode": "active_dda" if active else "compatibility",
+            "reasonCode": reason,
             "opponentRatingScaleId": payload["opponentRatingScaleId"],
             "targetScaleId": scale_id,
+            "supportedOpponentRatingScaleIds": list(self.translator.source_scale_ids(scale_id)),
             "ratingScaleMappingVersion": mapping.mapping_version if mapping else None,
             "ratingScaleMappingChecksum": mapping.checksum if mapping else None,
             "artifactVersion": artifact.artifact_version if artifact else None,
@@ -155,7 +203,7 @@ class CalibrationCapabilityService:
         if isinstance(opponent, bool) or not isinstance(opponent, int) or offset not in {-200, 200} or adjusted != opponent + offset:
             raise CalibrationCapabilityError("INVALID_CALIBRATION_REQUEST", "invalid target arithmetic", 400)
         calibrator, artifact, scale_id = self._artifact()
-        if scale_id != payload.get("scaleId") or self.runtime.rollout_policy.mode not in {CalibrationMode.ACTIVE, CalibrationMode.CANARY}:
+        if scale_id != payload.get("scaleId") or self.runtime.rollout_policy.mode is not CalibrationMode.ACTIVE:
             raise CalibrationCapabilityError("CALIBRATION_NOT_ACTIVE", "active calibration is unavailable", 503)
         mapping = self.translator.get(payload.get("opponentRatingScaleId"), scale_id)
         if mapping is None:
@@ -185,7 +233,10 @@ class CalibrationCapabilityService:
             if existing is not None:
                 if existing[0] != signature:
                     raise CalibrationCapabilityError("MID_GAME_RETARGET_FORBIDDEN", "runtime target is already pinned", 409)
-                return dict(existing[1])
+                renewed = dict(existing[1])
+                renewed["expiresAtEpochMs"] = now + int(self.ttl_seconds * 1000)
+                self._pins[token] = (signature, renewed)
+                return dict(renewed)
             self._pins[token] = (signature, dict(response))
         return response
 

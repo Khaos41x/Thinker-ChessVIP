@@ -26,6 +26,7 @@ function buildStatusView(snapshot, options) {
       maxWinRate: null, controllerMode: "BOOST", offsetElo: 200, opponentRating: null,
       effectiveTargetElo: null, targetSaturated: false, warningCode: settings.warningCode || null,
       rolloutStage: rollout.stage,
+      executionMode: settings.executionMode || "UNAVAILABLE",
     });
   }
   const control = snapshot.controlCounts;
@@ -54,6 +55,7 @@ function buildStatusView(snapshot, options) {
     targetSaturated: Boolean(actuator && actuator.saturated),
     warningCode: settings.warningCode || snapshot.pauseReason || null,
     rolloutStage: rollout.stage,
+    executionMode: settings.executionMode || "ACTIVE_DDA",
   });
 }
 

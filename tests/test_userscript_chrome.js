@@ -186,13 +186,25 @@ function createCdpClient(webSocketUrl) {
         const bootstrap = window.krypbotSessionControlBootstrap;
         const button = document.getElementById("kb-session-start");
         if (!bootstrap || !button) return { ok: false, reason: "production-wiring-missing" };
+        ${liveChess ? "" : `
+        const api = window.ThinkerSessionControl;
+        const repository = new api.IndexedDbRepository({ indexedDB: window.indexedDB, crypto: window.crypto });
+        const clock = { now: () => Date.now() };
+        const leader = new api.LeaderCoordinator({ repository, locks: navigator.locks, clock });
+        const controller = new api.SessionControlController({ repository, leader, clock, ownerTabId: "dddddddddddddddddddddddddddddddd", idFactory: (() => { let value = 100; return () => (value++).toString(16).padStart(32, "0"); })(), rolloutStage: "ACTIVE_DDA" });
+        const values = new Map();
+        const storagePort = new api.GmStoragePort((key, fallback) => values.has(key) ? values.get(key) : fallback, (key, value) => values.set(key, value));
+        const runtime = api.createSessionControlRuntime({ controller, repository, leader, storagePort, clock, rollout: { schemaVersion: 1, stage: "ACTIVE_DDA" }, observeStartContext: async () => ({ accountKey: "fixture-account", context: "chesscom-queue-sidebar-start-game-v1", pool: "chesscom-live-rapid-v1", intendedQueueScaleId: "chesscom-live-rapid-v1", calibrationReadiness: { schemaVersion: 1, active: false, executionMode: "compatibility", reasonCode: "DDA_MAPPING_UNAVAILABLE", opponentRatingScaleId: "chesscom-live-rapid-v1", targetScaleId: "unavailable-calibration-scale-v1", generatedAtEpochMs: Date.now(), expiresAtEpochMs: Date.now() + 60000 } }), setInterval: () => 1, clearInterval() {} });
+        window.krypbotSessionControlBridge.install(controller, () => ({}), { rollout: runtime.rollout, start: runtime.start });
+        window.krypbotSessionControlUI.update();
+        `}
         button.click();
-        await new Promise((resolve) => setTimeout(resolve, 150));
+        await new Promise((resolve) => setTimeout(resolve, 250));
         const warning = document.getElementById("kb-session-warning")?.textContent || "";
         const toast = document.getElementById("kb-session-toast")?.textContent || "";
         const bootstrapState = bootstrap.state();
         return {
-          ok: !button.hasAttribute("disabled") && Boolean(warning) && warning === toast,
+          ok: !button.hasAttribute("disabled") && Boolean(warning)${liveChess ? " && warning === toast" : ` && window.krypbotSessionControlBridge.status().phase === "QUEUEING" && window.krypbotSessionControlBridge.status().executionMode === "COMPATIBILITY" && warning === "DDA_MAPPING_UNAVAILABLE" && toast === "SESSION_STARTED"`},
           warning,
           toast,
           ariaDisabled: button.getAttribute("aria-disabled"),
@@ -235,8 +247,9 @@ function createCdpClient(webSocketUrl) {
         const duplicate = await repository.commit(event, snapshot);
         const locks = navigator.locks;
         const clock = { now: () => Date.now() };
-        const first = new api.LeaderCoordinator({ repository, locks, clock });
-        const second = new api.LeaderCoordinator({ repository, locks, clock });
+        const smokeLeaseName = "thinker-session-control-smoke-" + Date.now();
+        const first = new api.LeaderCoordinator({ repository, locks, clock, leaseName: smokeLeaseName });
+        const second = new api.LeaderCoordinator({ repository, locks, clock, leaseName: smokeLeaseName });
         const [a, b] = await Promise.all([
           first.acquire({ authorityEpoch: 1, sessionId: snapshot.sessionId, ownerTabId: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }),
           second.acquire({ authorityEpoch: 1, sessionId: snapshot.sessionId, ownerTabId: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" }),
@@ -252,6 +265,8 @@ function createCdpClient(webSocketUrl) {
           calibrationReadiness: { active: true, opponentRatingScaleId: "opaque-scale-v1", expiresAtEpochMs: Date.now() + 30000 },
           intendedQueueScaleId: "opaque-scale-v1",
         } }));
+        const failClosedBeforeValidation = !bridge.effectiveAutoQueue(true) && !bridge.effectiveAutoMove(true) && !bridge.isActive();
+        bridge.setCalibrationValidated(true);
         const queueGate = bridge.queueGate(true);
         const legacySuspended = bridge.suspendsLegacyAutoAdjust();
         window.krypbotSessionControlUI.update();
@@ -265,7 +280,7 @@ function createCdpClient(webSocketUrl) {
         };
         bridge.clear();
         repository.close();
-        return { ok: commit.status === "committed" && restored.revision === 1 && duplicate.status === "duplicate" && a.status === "acquired" && b.status === "contended" && queueGate.allowed && legacySuspended && status.phase === "QUEUEING" && ui.phase === "QUEUEING" && ui.role === "LEADER" && !diagnosticText.includes("chrome-smoke") && !diagnosticText.includes("runtimeGameToken") && !diagnosticText.includes("lastFen"), commit: commit.status, recoveryRevision: restored.revision, duplicate: duplicate.status, leases: [a.status, b.status], queueGate, legacySuspended, status, ui };
+        return { ok: commit.status === "committed" && restored.revision === 1 && duplicate.status === "duplicate" && a.status === "acquired" && b.status === "contended" && failClosedBeforeValidation && queueGate.allowed && legacySuspended && status.phase === "QUEUEING" && ui.phase === "QUEUEING" && ui.role === "LEADER" && !diagnosticText.includes("chrome-smoke") && !diagnosticText.includes("runtimeGameToken") && !diagnosticText.includes("lastFen"), commit: commit.status, recoveryRevision: restored.revision, duplicate: duplicate.status, leases: [a.status, b.status], failClosedBeforeValidation, queueGate, legacySuspended, status, ui };
         } catch (error) {
           return { ok: false, name: error.name, code: error.code, message: error.message, causeName: error.cause?.name, causeMessage: error.cause?.message, stack: error.stack };
         }
@@ -277,7 +292,7 @@ function createCdpClient(webSocketUrl) {
 
     assert(exceptions.length === 0, `Userscript exception: ${exceptions[0]?.text || "unknown"}`);
     assert(productionStart.ok, `Production START wiring smoke failed: ${JSON.stringify(productionStart)}`);
-    if (!liveChess) assert(productionStart.warning === "UNSUPPORTED_BROWSER_CAPABILITY", `Fixture preflight reason changed: ${JSON.stringify(productionStart)}`);
+    if (!liveChess) assert(productionStart.warning === "DDA_MAPPING_UNAVAILABLE", `Default compatibility START did not leave IDLE: ${JSON.stringify(productionStart)}`);
     assert(module14.ok, `Module 14 browser smoke failed: ${JSON.stringify(module14)}`);
     assert(state.menu, "configuration menu was not mounted");
     assert(state.sessionPanel, "session control panel was not mounted");

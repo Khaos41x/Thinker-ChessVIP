@@ -93,7 +93,7 @@ function diagnosticExport(status, events, generatedAtEpochMs) {
     "phase", "role", "remainingTtlMs", "drainDeadlineEpochMs", "drainRemainingMs",
     "observedCounts", "controlCounts", "rawWinRate", "posteriorWinRate", "wilsonLower",
     "wilsonUpper", "minWinRate", "maxWinRate", "controllerMode", "offsetElo",
-    "opponentRating", "effectiveTargetElo", "targetSaturated", "warningCode", "rolloutStage",
+    "opponentRating", "effectiveTargetElo", "targetSaturated", "warningCode", "rolloutStage", "executionMode",
   ];
   const safeStatus = {};
   for (const key of allowedStatus) if (Object.prototype.hasOwnProperty.call(status, key)) safeStatus[key] = clone(status[key]);

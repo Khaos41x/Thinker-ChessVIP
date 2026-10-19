@@ -1,6 +1,6 @@
 "use strict";
 
-const { canonicalStringify, exactKeys } = require("./models");
+const { canonicalStringify, exactKeys, validateSnapshot } = require("./models");
 
 const ASCII_USERNAME = /^[A-Za-z0-9_-]{1,50}$/;
 const LIVE_TIME_CLASSES = Object.freeze(["bullet", "blitz", "rapid"]);
@@ -204,4 +204,40 @@ class StableEvidenceTracker {
   }
 }
 
-module.exports = { LIVE_TIME_CLASSES, StableEvidenceTracker, accountKeyForUsername, canonicalGameIdFromUrl, isEligibleTopLevelContext, normalizeUsername, observeQueueContext, validatePlatformObservation, validateTerminalObservation };
+function recoverObservedContext(rawSnapshot, calibrationReadiness, rawStableObservation) {
+  const snapshot = validateSnapshot(rawSnapshot);
+  const recovered = {};
+  if (snapshot.activationContext) {
+    recovered.queue = Object.freeze({
+      calibrationReadiness,
+      intendedQueueScaleId: snapshot.activationContext.opponentRatingScaleId,
+    });
+  }
+  if (!rawStableObservation || !snapshot.activeGame) return Object.freeze(recovered);
+  let observation;
+  try { observation = validatePlatformObservation(rawStableObservation); } catch (_) { return Object.freeze(recovered); }
+  const game = snapshot.activeGame;
+  const activation = snapshot.activationContext;
+  const matches = observation.canonicalPlatformGameId === game.canonicalPlatformGameId
+    && observation.accountKey === snapshot.accountKey
+    && observation.opponentRating === game.opponent.rating
+    && observation.opponentRatingScaleId === game.opponent.ratingScaleId
+    && (!activation || (observation.poolId === activation.pool && observation.opponentRatingScaleId === activation.opponentRatingScaleId));
+  if (!matches) return Object.freeze(recovered);
+  recovered.lifecycleIdentity = observation;
+  if (snapshot.executionMode === "ACTIVE_DDA" && game.targetPinStatus === "PINNED") {
+    recovered.move = Object.freeze({
+      gameMode: "play",
+      observedGame: Object.freeze({
+        gameIdentityStable: true,
+        terminalState: "ONGOING",
+        canonicalPlatformGameId: game.canonicalPlatformGameId,
+        accountKey: snapshot.accountKey,
+        runtimeGameToken: game.runtimeGameToken,
+      }),
+    });
+  }
+  return Object.freeze(recovered);
+}
+
+module.exports = { LIVE_TIME_CLASSES, StableEvidenceTracker, accountKeyForUsername, canonicalGameIdFromUrl, isEligibleTopLevelContext, normalizeUsername, observeQueueContext, recoverObservedContext, validatePlatformObservation, validateTerminalObservation };

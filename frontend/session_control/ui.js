@@ -60,7 +60,7 @@ function presentAvailability(panel, action, reason) {
 function presentStatus(panel, status, formatDuration) {
   const counts = (value) => `${value.wins}-${value.draws}-${value.losses}`;
   const offset = status.offsetElo >= 0 ? `+${status.offsetElo}` : String(status.offsetElo);
-  setText(panel, "kb-session-rollout", status.rolloutStage);
+  setText(panel, "kb-session-rollout", status.executionMode ? `${status.rolloutStage} · ${status.executionMode}` : status.rolloutStage);
   setText(panel, "kb-session-phase", status.phase);
   setText(panel, "kb-session-role", status.role);
   setText(panel, "kb-session-ttl", formatDuration(status.remainingTtlMs));

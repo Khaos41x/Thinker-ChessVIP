@@ -47,6 +47,10 @@ function run() {
   assert.equal(unknown.phase, "PAUSED_ACTIVE");
   assert.deepEqual(unknown.observedCounts, beforeUnknown.observedCounts);
   assert.deepEqual(unknown.controlCounts, beforeUnknown.controlCounts);
+  const compatibilityResult = event("COMPATIBILITY_RESULT_OBSERVED", unknown.revision, 1004000, { canonicalPlatformGameId: "unknown-game", outcome: "WIN" }, { eventId: "compat-result:unknown-game", canonicalPlatformGameId: "unknown-game" });
+  const resumed = reduce({ ...unknown, executionMode: "COMPATIBILITY" }, compatibilityResult).nextState;
+  assert.equal(resumed.phase, "QUEUEING");
+  assert.equal(resumed.pauseReason, null);
 
   let state = replay(gameSequence("DRAW", true, "first"));
   assert.equal(state.controller.mode, "BOOST");

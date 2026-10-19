@@ -4,6 +4,7 @@ const { canAdmitQueue, effectiveNow } = require("./clock");
 const { REDUCER_VERSION, SCHEMA_VERSION, TERMINAL_PHASES, validateHex128, validateSessionConfig, validateSnapshot } = require("./models");
 const { reduce } = require("./reducer");
 const { SessionControlError } = require("./repository");
+const { validatePlatformObservation } = require("./platform-chesscom");
 
 const ACTIVE_PHASES = Object.freeze(["QUEUEING", "IN_GAME", "DRAINING", "PAUSED_QUEUEING", "PAUSED_ACTIVE"]);
 
@@ -103,6 +104,15 @@ class SessionControlController {
     this.positionCommit = null;
     this.telemetry = options.telemetry || null;
     this.rolloutStage = options.rolloutStage || "DISABLED";
+    this.executionMode = options.executionMode || "ACTIVE_DDA";
+    this.activationContext = null;
+  }
+
+  setExecutionMode(mode) {
+    if (!["ACTIVE_DDA", "COMPATIBILITY"].includes(mode)) throw new TypeError("execution mode is invalid");
+    if (this.isActive() && mode !== this.executionMode) throw new SessionControlError("EXECUTION_MODE_IMMUTABLE", "Execution mode is pinned for the session");
+    this.executionMode = mode;
+    return mode;
   }
 
   setSnapshot(rawSnapshot) {
@@ -110,6 +120,10 @@ class SessionControlController {
     const previousKey = this.snapshot ? `${this.snapshot.authorityEpoch}:${this.snapshot.sessionId}:${this.snapshot.phase}:${this.snapshot.activeGame?.canonicalPlatformGameId || ""}` : "";
     const nextKey = next ? `${next.authorityEpoch}:${next.sessionId}:${next.phase}:${next.activeGame?.canonicalPlatformGameId || ""}` : "";
     this.snapshot = next;
+    if (next) {
+      this.executionMode = next.executionMode;
+      this.activationContext = next.activationContext;
+    }
     if (previousKey !== nextKey) this.effectEpoch.advance();
     return this.snapshot;
   }
@@ -136,7 +150,7 @@ class SessionControlController {
   }
 
   legacyAutoAdjustSuspended() {
-    return this.isActive();
+    return this.isActive() && this.executionMode === "ACTIVE_DDA";
   }
 
   moveSelectionElo(fallbackElo) {
@@ -177,16 +191,25 @@ class SessionControlController {
     const event = {
       schemaVersion: SCHEMA_VERSION, eventId: "session:start", sessionId, authorityEpoch,
       expectedRevision: 0, sequence: 1, occurredAtEpochMs: now, type: "SESSION_STARTED",
-      payload: { accountKey: input.accountKey, config, authorizationDecision: input.authorizationDecision },
+      payload: { accountKey: input.accountKey, config, authorizationDecision: input.authorizationDecision, executionMode: this.executionMode, executionReasonCode: input.executionReasonCode || null, activationContext: input.activationContext || this.activationContext || null },
       reducerVersion: REDUCER_VERSION,
     };
-    const next = reduce(null, event).nextState;
-    const result = await this.repository.commit(event, next);
-    if (result.status !== "committed") throw new SessionControlError("REVISION_CONFLICT", "Session start was not committed");
-    this.setSnapshot(next);
     const acquired = await this.leader.acquire({ authorityEpoch, sessionId, ownerTabId: this.ownerTabId });
     if (!["acquired", "renewed"].includes(acquired.status)) throw new SessionControlError("LEADER_REQUIRED", "Session writer lease is contended");
     this.setLease(acquired.lease);
+    const next = reduce(null, event).nextState;
+    let result;
+    try {
+      result = await this.repository.commit(event, next);
+    } catch (error) {
+      this.setLease(null);
+      throw error;
+    }
+    if (result.status !== "committed") {
+      this.setLease(null);
+      throw new SessionControlError("REVISION_CONFLICT", "Session start was not committed");
+    }
+    this.setSnapshot(next);
     this._record("session_started", "START");
     this._record("leader_acquired", acquired.status === "acquired" ? "LEASE_ACQUIRED" : "LEASE_RENEWED");
     return this.snapshot;
@@ -231,10 +254,17 @@ class SessionControlController {
   async pinCalibration(capability) {
     const snapshot = this.snapshot;
     const game = snapshot && snapshot.activeGame;
-    if (!game || game.targetPinStatus !== "PENDING") return decision(false, "TARGET_NOT_PENDING");
+    if (!game) return decision(false, "TARGET_NOT_PENDING");
     if (!capability || capability.runtimeGameToken !== game.runtimeGameToken || capability.mode !== "active") return decision(false, "CALIBRATION_IDENTITY_MISMATCH");
     const expectedOffset = snapshot.controller.mode === "BOOST" ? snapshot.config.boostOffsetElo : snapshot.config.correctionOffsetElo;
     if (capability.opponentRatingScaleId !== game.opponent.ratingScaleId || capability.platformAdjustedRating !== game.opponent.rating + expectedOffset || capability.scaleId !== snapshot.config.scaleId) return decision(false, "CALIBRATION_IDENTITY_MISMATCH");
+    if (game.targetPinStatus === "PINNED") {
+      const actuator = game.actuator;
+      const sameIdentity = capability.effectiveTargetElo === actuator.effectiveTargetElo && capability.ratingScaleMappingVersion === actuator.ratingScaleMappingVersion && capability.ratingScaleMappingChecksum === actuator.ratingScaleMappingChecksum && capability.artifactVersion === actuator.artifactVersion && capability.artifactChecksum === actuator.artifactChecksum && capability.cohort === actuator.cohort && capability.rolloutVersion === actuator.rolloutVersion;
+      if (!sameIdentity) return decision(false, "CALIBRATION_IDENTITY_MISMATCH");
+      await this._commit("CAPABILITY_REFRESHED", { canonicalPlatformGameId: game.canonicalPlatformGameId, calibrationCapabilityExpiresAtEpochMs: capability.expiresAtEpochMs }, `capability:refreshed:${game.canonicalPlatformGameId}:${capability.expiresAtEpochMs}`);
+      return decision(true, "REFRESHED");
+    }
     const actuator = {
       controllerMode: snapshot.controller.mode,
       offsetElo: expectedOffset,
@@ -329,6 +359,7 @@ class SessionControlController {
   }
 
   queueGate(input) {
+    if (this.executionMode === "COMPATIBILITY") return decision(false, "LEGACY_COMPATIBILITY_QUEUE");
     return evaluateQueueGate({ ...input, snapshot: this.snapshot, isLeader: this.isLeader(), storageHealthy: this.storageHealthy, nowEpochMs: this.clock.now() });
   }
 
@@ -338,6 +369,80 @@ class SessionControlController {
 
   queueDispatchGate(input) {
     return evaluateQueueDispatchGate({ ...input, snapshot: this.snapshot, isLeader: this.isLeader(), storageHealthy: this.storageHealthy, nowEpochMs: this.clock.now() });
+  }
+
+  async observeGame(observation) {
+    const snapshot = this.snapshot;
+    if (!snapshot || !snapshot.queueIntent || !["DISPATCHED", "AMBIGUOUS"].includes(snapshot.queueIntent.status)) return decision(false, "QUEUE_INTENT_NOT_DISPATCHED");
+    try { observation = validatePlatformObservation(observation); } catch (_) { return decision(false, "GAME_OBSERVATION_INVALID"); }
+    if (observation.accountKey !== snapshot.accountKey) return decision(false, "GAME_IDENTITY_MISMATCH");
+    if (snapshot.activationContext && (observation.poolId !== snapshot.activationContext.pool || observation.opponentRatingScaleId !== snapshot.activationContext.opponentRatingScaleId)) return decision(false, "GAME_CONTEXT_MISMATCH");
+    const activeGame = {
+      schemaVersion: 1,
+      canonicalPlatformGameId: observation.canonicalPlatformGameId,
+      queueIntentId: snapshot.queueIntent.intentId,
+      admittedAtEpochMs: this.clock.now(),
+      runtimeGameToken: snapshot.queueIntent.runtimeGameToken,
+      targetPinStatus: "PENDING",
+      calibrationCapabilityExpiresAtEpochMs: null,
+      lastFen: "",
+      positionRevision: 0,
+      opponent: { rating: observation.opponentRating, ratingScaleId: observation.opponentRatingScaleId, source: observation.sourceVersion, confidence: 1, observedAtEpochMs: observation.observedAtEpochMs },
+      actuator: null,
+      actuation: { valid: true, invalidReason: null, appliedMoveCount: 0, nonAppliedMoveCount: 0, resolvedProfile: null },
+    };
+    await this._commit("GAME_OBSERVED", { activeGame }, `game:observed:${observation.canonicalPlatformGameId}`);
+    return decision(true, "GAME_ADMITTED");
+  }
+
+  async observeCompatibilityGame(observation) {
+    const snapshot = this.snapshot;
+    if (this.executionMode !== "COMPATIBILITY" || !snapshot || !["QUEUEING", "DRAINING"].includes(snapshot.phase)) return decision(false, "COMPATIBILITY_SESSION_INACTIVE");
+    try { observation = validatePlatformObservation(observation); } catch (_) { return decision(false, "GAME_OBSERVATION_INVALID"); }
+    if (observation.accountKey !== snapshot.accountKey) return decision(false, "GAME_IDENTITY_MISMATCH");
+    if (snapshot.activationContext && (observation.poolId !== snapshot.activationContext.pool || observation.opponentRatingScaleId !== snapshot.activationContext.opponentRatingScaleId)) return decision(false, "GAME_CONTEXT_MISMATCH");
+    const activeGame = {
+      schemaVersion: 1,
+      canonicalPlatformGameId: observation.canonicalPlatformGameId,
+      queueIntentId: this.idFactory(),
+      admittedAtEpochMs: this.clock.now(),
+      runtimeGameToken: this.idFactory(),
+      targetPinStatus: "PENDING",
+      calibrationCapabilityExpiresAtEpochMs: null,
+      lastFen: "",
+      positionRevision: 0,
+      opponent: { rating: observation.opponentRating, ratingScaleId: observation.opponentRatingScaleId, source: observation.sourceVersion, confidence: 1, observedAtEpochMs: observation.observedAtEpochMs },
+      actuator: null,
+      actuation: { valid: false, invalidReason: "COMPATIBILITY_OBSERVATION_ONLY", appliedMoveCount: 0, nonAppliedMoveCount: 0, resolvedProfile: null },
+    };
+    await this._commit("COMPATIBILITY_GAME_OBSERVED", { activeGame }, `compat-game:observed:${observation.canonicalPlatformGameId}`);
+    return decision(true, "GAME_ADMITTED");
+  }
+
+  async observeResult(observation) {
+    const game = this.snapshot && this.snapshot.activeGame;
+    if (!game || !observation || observation.canonicalPlatformGameId !== game.canonicalPlatformGameId || observation.accountKey !== this.snapshot.accountKey) return decision(false, "GAME_IDENTITY_MISMATCH");
+    const outcome = { W: "WIN", D: "DRAW", L: "LOSS" }[observation.outcome];
+    if (!outcome) return decision(false, "OUTCOME_UNKNOWN");
+    await this._commit("GAME_RESULT_OBSERVED", { canonicalPlatformGameId: game.canonicalPlatformGameId, outcome }, `result:${game.canonicalPlatformGameId}`, game.canonicalPlatformGameId);
+    return decision(true, "RESULT_COMMITTED");
+  }
+
+  async observeCompatibilityResult(observation) {
+    const game = this.snapshot && this.snapshot.activeGame;
+    if (this.executionMode !== "COMPATIBILITY" || !this.snapshot || !game || !["IN_GAME", "DRAINING", "PAUSED_ACTIVE"].includes(this.snapshot.phase)) return decision(false, "COMPATIBILITY_SESSION_INACTIVE");
+    if (!observation || observation.accountKey !== this.snapshot.accountKey || observation.canonicalPlatformGameId !== game.canonicalPlatformGameId) return decision(false, "GAME_IDENTITY_MISMATCH");
+    const outcome = { W: "WIN", D: "DRAW", L: "LOSS" }[observation.outcome];
+    if (!outcome) return decision(false, "OUTCOME_UNKNOWN");
+    await this._commit("COMPATIBILITY_RESULT_OBSERVED", { canonicalPlatformGameId: observation.canonicalPlatformGameId, outcome }, `compat-result:${observation.canonicalPlatformGameId}`, observation.canonicalPlatformGameId);
+    return decision(true, "RESULT_COMMITTED");
+  }
+
+  async observeUnknownOutcome(observation) {
+    const game = this.snapshot && this.snapshot.activeGame;
+    if (!game || !observation || observation.accountKey !== this.snapshot.accountKey || observation.canonicalPlatformGameId !== game.canonicalPlatformGameId) return decision(false, "GAME_IDENTITY_MISMATCH");
+    await this._commit("OUTCOME_UNKNOWN", { canonicalPlatformGameId: game.canonicalPlatformGameId }, `outcome:unknown:${game.canonicalPlatformGameId}`, game.canonicalPlatformGameId);
+    return decision(false, "OUTCOME_UNKNOWN");
   }
 
   captureEffectEpoch() {
@@ -379,10 +484,10 @@ class SessionControlController {
     return event;
   }
 
-  async _commit(type, payload, eventId) {
+  async _commit(type, payload, eventId, canonicalPlatformGameId) {
     const previousPhase = this.snapshot.phase;
     const previousMode = this.snapshot.controller.mode;
-    const event = this._event(type, payload, eventId);
+    const event = this._event(type, payload, eventId, canonicalPlatformGameId);
     const next = reduce(this.snapshot, event).nextState;
     const result = await this.repository.commit(event, next, this._leaseBinding(event.expectedRevision));
     if (result.status === "duplicate") {
@@ -420,13 +525,23 @@ class SessionControlController {
     await this._commit("QUEUE_INTENT_CLAIMED", { fencingToken: this.lease.fencingToken }, `queue:claimed:${intentId}`);
     const epoch = this.captureEffectEpoch();
     const binding = this._leaseBinding(this.snapshot.revision);
-    await this.leader.executeCommittedEffect(binding, async () => {
-      if (!this.isEffectEpochCurrent(epoch)) throw new SessionControlError("STALE_EFFECT_EPOCH", "Queue callback belongs to an obsolete epoch");
-      const finalGate = this.queueDispatchGate(input);
-      if (!finalGate.allowed) throw new SessionControlError(finalGate.reason, "Queue gate closed before dispatch");
-      const dispatched = await this._commit("QUEUE_INTENT_DISPATCHED", {}, `queue:dispatched:${intentId}`);
-      return { binding: this._leaseBinding(dispatched.revision), value: dispatched };
-    }, clickEffect);
+    try {
+      await this.leader.executeCommittedEffect(binding, async () => {
+        if (!this.isEffectEpochCurrent(epoch)) throw new SessionControlError("STALE_EFFECT_EPOCH", "Queue callback belongs to an obsolete epoch");
+        const finalGate = this.queueDispatchGate(input);
+        if (!finalGate.allowed) throw new SessionControlError(finalGate.reason, "Queue gate closed before dispatch");
+        const dispatched = await this._commit("QUEUE_INTENT_DISPATCHED", {}, `queue:dispatched:${intentId}`);
+        return { binding: this._leaseBinding(dispatched.revision), value: dispatched };
+      }, clickEffect);
+    } catch (error) {
+      if (this.snapshot && this.snapshot.queueIntent) {
+        try {
+          if (this.snapshot.queueIntent.status === "CLAIMED") await this._commit("QUEUE_INTENT_CANCELLED", { reason: error.code || "QUEUE_DISPATCH_CANCELLED" }, `queue:cancelled:${intentId}`);
+          else if (this.snapshot.queueIntent.status === "DISPATCHED") await this._commit("QUEUE_INTENT_FAILED", { reason: error.code || "QUEUE_EFFECT_AMBIGUOUS" }, `queue:failed:${intentId}`);
+        } catch (_) {}
+      }
+      throw error;
+    }
     return decision(true, "DISPATCHED");
   }
 

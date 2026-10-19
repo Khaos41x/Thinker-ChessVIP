@@ -30,7 +30,7 @@ function incrementCounts(counts, outcome) {
 
 function startSession(event) {
   const payload = event.payload;
-  exactKeys(payload, ["accountKey", "config", "authorizationDecision"], [], "event.payload");
+  exactKeys(payload, ["accountKey", "config", "authorizationDecision"], ["executionMode", "executionReasonCode", "activationContext"], "event.payload");
   if (typeof payload.accountKey !== "string" || !payload.accountKey) throw new TypeError("event.payload.accountKey is required");
   exactKeys(payload.authorizationDecision, ["schemaVersion", "allowed", "reason"], [], "event.payload.authorizationDecision");
   if (payload.authorizationDecision.schemaVersion !== 1 || payload.authorizationDecision.allowed !== true || typeof payload.authorizationDecision.reason !== "string" || !payload.authorizationDecision.reason) throw new TypeError("session start requires an allowed authorization decision");
@@ -42,6 +42,9 @@ function startSession(event) {
     authorityEpoch: event.authorityEpoch,
     revision: event.sequence,
     accountKey: payload.accountKey,
+    executionMode: payload.executionMode || "ACTIVE_DDA",
+    executionReasonCode: payload.executionReasonCode || null,
+    activationContext: payload.activationContext || null,
     phase: "QUEUEING",
     createdAtEpochMs: event.occurredAtEpochMs,
     startedAtEpochMs: event.occurredAtEpochMs,
@@ -150,6 +153,18 @@ function transition(snapshot, event) {
         },
       };
     }
+    case "QUEUE_INTENT_FAILED": {
+      requirePhase(reconciled, ["QUEUEING", "PAUSED_QUEUEING"], event.type);
+      exactKeys(event.payload, ["reason"], [], "event.payload");
+      if (!reconciled.queueIntent || !["CLAIMED", "DISPATCHED"].includes(reconciled.queueIntent.status)) throw new TypeError("only claimed or dispatched queue intents can become ambiguous");
+      return { ...reconciled, phase: "PAUSED_QUEUEING", pauseReason: event.payload.reason || "QUEUE_EFFECT_AMBIGUOUS", queueIntent: { ...reconciled.queueIntent, status: "AMBIGUOUS" } };
+    }
+    case "QUEUE_INTENT_CANCELLED": {
+      requirePhase(reconciled, ["QUEUEING"], event.type);
+      exactKeys(event.payload, ["reason"], [], "event.payload");
+      if (!reconciled.queueIntent || reconciled.queueIntent.status !== "CLAIMED") throw new TypeError("only a claimed queue intent can be cancelled before dispatch");
+      return { ...reconciled, queueIntent: null, pauseReason: null };
+    }
     case "GAME_OBSERVED": {
       requirePhase(reconciled, ["QUEUEING", "DRAINING", "PAUSED_QUEUEING"], event.type);
       exactKeys(event.payload, ["activeGame"], [], "event.payload");
@@ -160,6 +175,16 @@ function transition(snapshot, event) {
       const next = { ...reconciled, phase, queueIntent: { ...reconciled.queueIntent, status: "MATCH_OBSERVED" }, activeGame, pauseReason: null };
       return phase === "DRAINING" ? enterDraining(next, now) : next;
     }
+    case "COMPATIBILITY_GAME_OBSERVED": {
+      requirePhase(reconciled, ["QUEUEING", "DRAINING"], event.type);
+      if (reconciled.executionMode !== "COMPATIBILITY") throw new TypeError("compatibility game requires compatibility execution mode");
+      exactKeys(event.payload, ["activeGame"], [], "event.payload");
+      if (reconciled.activeGame) throw new TypeError("an active game is already admitted");
+      const activeGame = validateActiveGame(event.payload.activeGame);
+      const phase = now >= reconciled.deadlineEpochMs || reconciled.phase === "DRAINING" ? "DRAINING" : "IN_GAME";
+      const next = { ...reconciled, phase, activeGame, queueIntent: null, pauseReason: null };
+      return phase === "DRAINING" ? enterDraining(next, now) : next;
+    }
     case "TARGET_PINNED": {
       requirePhase(reconciled, ["IN_GAME", "DRAINING"], event.type);
       exactKeys(event.payload, ["canonicalPlatformGameId", "actuator", "calibrationCapabilityExpiresAtEpochMs"], [], "event.payload");
@@ -167,6 +192,13 @@ function transition(snapshot, event) {
       if (reconciled.activeGame.targetPinStatus === "PINNED") throw new TypeError("active game target is already pinned");
       const activeGame = validateActiveGame({ ...reconciled.activeGame, targetPinStatus: "PINNED", actuator: event.payload.actuator, calibrationCapabilityExpiresAtEpochMs: event.payload.calibrationCapabilityExpiresAtEpochMs });
       return { ...reconciled, activeGame };
+    }
+    case "CAPABILITY_REFRESHED": {
+      requirePhase(reconciled, ["IN_GAME", "DRAINING"], event.type);
+      exactKeys(event.payload, ["canonicalPlatformGameId", "calibrationCapabilityExpiresAtEpochMs"], [], "event.payload");
+      if (!reconciled.activeGame || reconciled.activeGame.targetPinStatus !== "PINNED" || reconciled.activeGame.canonicalPlatformGameId !== event.payload.canonicalPlatformGameId) throw new TypeError("capability refresh does not match pinned game");
+      if (!Number.isInteger(event.payload.calibrationCapabilityExpiresAtEpochMs) || event.payload.calibrationCapabilityExpiresAtEpochMs <= reconciled.activeGame.calibrationCapabilityExpiresAtEpochMs) throw new TypeError("capability refresh must extend expiry");
+      return { ...reconciled, activeGame: validateActiveGame({ ...reconciled.activeGame, calibrationCapabilityExpiresAtEpochMs: event.payload.calibrationCapabilityExpiresAtEpochMs }) };
     }
     case "POSITION_OBSERVED": {
       requirePhase(reconciled, ["IN_GAME", "DRAINING"], event.type);
@@ -187,6 +219,13 @@ function transition(snapshot, event) {
     case "GAME_RESULT_OBSERVED":
       requirePhase(reconciled, ["IN_GAME", "DRAINING", "PAUSED_ACTIVE"], event.type);
       return reduceResult(reconciled, event);
+    case "COMPATIBILITY_RESULT_OBSERVED": {
+      requirePhase(reconciled, ["IN_GAME", "DRAINING", "PAUSED_ACTIVE"], event.type);
+      exactKeys(event.payload, ["canonicalPlatformGameId", "outcome"], [], "event.payload");
+      if (!reconciled.activeGame || reconciled.activeGame.canonicalPlatformGameId !== event.payload.canonicalPlatformGameId || event.eventId !== `compat-result:${event.payload.canonicalPlatformGameId}` || event.canonicalPlatformGameId !== event.payload.canonicalPlatformGameId || !OUTCOMES.includes(event.payload.outcome)) throw new TypeError("compatibility result identity is invalid");
+      const observedCounts = incrementCounts(reconciled.observedCounts, event.payload.outcome);
+      return { ...reconciled, observedCounts, activeGame: null, phase: reconciled.phase === "DRAINING" ? "COMPLETED" : "QUEUEING", pauseReason: null, completionReason: reconciled.phase === "DRAINING" ? "DRAIN_COMPLETE" : null };
+    }
     case "OUTCOME_UNKNOWN": {
       requirePhase(reconciled, ["IN_GAME", "DRAINING", "PAUSED_ACTIVE"], event.type);
       exactKeys(event.payload, ["canonicalPlatformGameId"], [], "event.payload");

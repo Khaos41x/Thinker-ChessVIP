@@ -74,6 +74,23 @@ def schema2_payload(capability):
 
 
 class CapabilityTests(unittest.TestCase):
+    def test_deployment_status_declares_exact_mode_and_scale(self):
+        service = capability_service()
+        status = service.deployment_status()
+        self.assertEqual(status["executionMode"], "active_dda")
+        self.assertEqual(status["targetScaleId"], "target-scale")
+        self.assertEqual(status["supportedOpponentRatingScaleIds"], ["platform-scale"])
+
+    def test_empty_mapping_declares_compatibility_without_claiming_dda(self):
+        service = capability_service()
+        service.translator = RatingScaleTranslator()
+        status = service.deployment_status()
+        readiness = service.readiness({"schemaVersion": 1, "opponentRatingScaleId": "platform-scale", "targetScaleId": "target-scale", "requiredMode": "active"})
+        self.assertEqual(status["executionMode"], "compatibility")
+        self.assertEqual(status["reasonCode"], "DDA_MAPPING_UNAVAILABLE")
+        self.assertFalse(readiness["active"])
+        self.assertEqual(readiness["reasonCode"], "DDA_MAPPING_UNAVAILABLE")
+
     def test_promoted_pchip_mapping_is_checksum_validated(self):
         artifact = {
             "schemaVersion": 1, "mappingVersion": "mapping-v1",

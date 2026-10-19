@@ -664,7 +664,7 @@ def build_rollout_policy():
         return RolloutPolicy(mode, basis_points, explicit_keys)
     except (InvalidOperation, ValueError):
         engine_telemetry.record_failure("configuration")
-        return RolloutPolicy(CalibrationMode.ACTIVE)
+        return RolloutPolicy(CalibrationMode.SHADOW)
 
 
 def build_calibration_runtime():
@@ -1349,6 +1349,12 @@ def calibration_readiness():
         return jsonify(calibration_capability_service.readiness(request.get_json(silent=True)))
     except CalibrationCapabilityError as error:
         return jsonify({"error": error.code}), error.status
+
+
+@app.route("/calibration-status", methods=["GET"])
+@engine_api_auth
+def calibration_status():
+    return jsonify(calibration_capability_service.deployment_status())
 
 
 @app.route("/calibration-capability", methods=["POST"])

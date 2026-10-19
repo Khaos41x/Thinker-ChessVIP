@@ -37,7 +37,7 @@ function validateStartReadiness(observation, config, nowEpochMs) {
     throw typedError(reported);
   }
   try {
-    exactKeys(readiness, ["schemaVersion", "active", "opponentRatingScaleId", "targetScaleId", "ratingScaleMappingVersion", "ratingScaleMappingChecksum", "artifactVersion", "artifactChecksum", "sourceMinimum", "sourceMaximum", "generatedAtEpochMs", "expiresAtEpochMs"], [], "calibrationReadiness");
+    exactKeys(readiness, ["schemaVersion", "active", "opponentRatingScaleId", "targetScaleId", "ratingScaleMappingVersion", "ratingScaleMappingChecksum", "artifactVersion", "artifactChecksum", "sourceMinimum", "sourceMaximum", "generatedAtEpochMs", "expiresAtEpochMs"], ["executionMode", "reasonCode", "supportedOpponentRatingScaleIds"], "calibrationReadiness");
   } catch (error) {
     throw typedError("CALIBRATION_UNAVAILABLE", error);
   }
@@ -50,6 +50,22 @@ function validateStartReadiness(observation, config, nowEpochMs) {
   if (!Number.isInteger(readiness.expiresAtEpochMs)) throw typedError("CALIBRATION_UNAVAILABLE");
   if (readiness.expiresAtEpochMs <= nowEpochMs) throw typedError("CALIBRATION_EXPIRED");
   return true;
+}
+
+function negotiateExecutionMode(observation, config, nowEpochMs) {
+  if (!observation || typeof observation !== "object") throw typedError("ACCOUNT_CONTEXT_UNAVAILABLE");
+  const readiness = observation.calibrationReadiness;
+  if (!readiness || typeof readiness !== "object" || readiness.schemaVersion !== 1) throw typedError("CALIBRATION_UNAVAILABLE");
+  if (typeof observation.intendedQueueScaleId !== "string" || !observation.intendedQueueScaleId) throw typedError("CONTEXT_UNIDENTIFIABLE");
+  if (readiness.opponentRatingScaleId !== observation.intendedQueueScaleId) throw typedError("CALIBRATION_SCALE_MISMATCH");
+  if (!Number.isInteger(readiness.generatedAtEpochMs) || readiness.generatedAtEpochMs > nowEpochMs || !Number.isInteger(readiness.expiresAtEpochMs) || readiness.expiresAtEpochMs <= nowEpochMs) throw typedError("CALIBRATION_EXPIRED");
+  if (readiness.active === true) {
+    validateStartReadiness(observation, config, nowEpochMs);
+    return Object.freeze({ executionMode: "ACTIVE_DDA", warningCode: null });
+  }
+  const code = typeof readiness.reasonCode === "string" && /^[A-Z][A-Z0-9_]+$/.test(readiness.reasonCode) ? readiness.reasonCode : "DDA_MAPPING_UNAVAILABLE";
+  if (!["DDA_MAPPING_UNAVAILABLE", "CALIBRATION_NOT_ACTIVE", "CALIBRATION_UNAVAILABLE"].includes(code)) throw typedError(code);
+  return Object.freeze({ executionMode: "COMPATIBILITY", warningCode: code });
 }
 
 function createSessionControlRuntime(options) {
@@ -73,9 +89,10 @@ function createSessionControlRuntime(options) {
     renewalTimer = setIntervalFn(() => {
       if (!controller.isActive() || renewalInFlight) return;
       renewalInFlight = true;
-      Promise.resolve(controller.renewLeadership()).then((result) => {
+      Promise.resolve(controller.renewLeadership()).then(async (result) => {
         if (!result || result.allowed !== true) throw typedError(result && result.reason || "LEADERSHIP_RENEWAL_FAILED");
         controller.setStorageHealthy(true);
+        await controller.reconcileNow();
       }).catch((error) => {
         controller.setStorageHealthy(false);
         controller.setLease(null);
@@ -108,13 +125,21 @@ function createSessionControlRuntime(options) {
       }
       assertCurrent();
       if (!observation || typeof observation.accountKey !== "string" || !observation.accountKey) throw typedError("ACCOUNT_CONTEXT_UNAVAILABLE");
-      const validateReadiness = settings.validateReadiness || validateStartReadiness;
-      validateReadiness(observation, config, clock.now());
+      const negotiation = settings.negotiateExecutionMode ? settings.negotiateExecutionMode(observation, config, clock.now()) : negotiateExecutionMode(observation, config, clock.now());
+      controller.setExecutionMode(negotiation.executionMode);
+      if (typeof settings.onMode === "function") settings.onMode(negotiation);
       const commitStart = async () => {
+        let current;
+        try {
+          current = await settings.observeStartContext(config);
+        } catch (error) {
+          throw typedError(reasonCode(error, "ACCOUNT_CONTEXT_UNAVAILABLE"), error);
+        }
+        if (!current || current.accountKey !== observation.accountKey || current.context !== observation.context || current.pool !== observation.pool || current.intendedQueueScaleId !== observation.intendedQueueScaleId) throw typedError("START_CONTEXT_CHANGED");
         const authorizationDecision = await resolveAuthorizationPolicy(settings.storagePort, {
-          account: observation.accountKey,
-          context: observation.context,
-          pool: observation.pool,
+          account: current.accountKey,
+          context: current.context,
+          pool: current.pool,
         });
         assertCurrent();
         if (!controller.snapshot) await controller.recoverSession(observation.accountKey);
@@ -123,9 +148,17 @@ function createSessionControlRuntime(options) {
           ensureRenewal();
           throw typedError("ACTIVE_SESSION_EXISTS");
         }
-        validateReadiness(observation, config, clock.now());
+        const currentNegotiation = settings.negotiateExecutionMode ? settings.negotiateExecutionMode(current, config, clock.now()) : negotiateExecutionMode(current, config, clock.now());
+        if (currentNegotiation.executionMode !== negotiation.executionMode) throw typedError("CALIBRATION_STATE_CHANGED");
+        controller.setExecutionMode(currentNegotiation.executionMode);
         try {
-          const snapshot = await controller.startSession({ accountKey: observation.accountKey, authorizationDecision, config });
+          const snapshot = await controller.startSession({
+            accountKey: current.accountKey,
+            authorizationDecision,
+            config,
+            executionReasonCode: currentNegotiation.warningCode,
+            activationContext: { context: current.context, pool: current.pool, opponentRatingScaleId: current.intendedQueueScaleId },
+          });
           if (disposed || generation !== startGeneration) {
             try { await controller.requestGracefulStop(); } catch (_) {}
             throw typedError("SESSION_RUNTIME_UNAVAILABLE");
@@ -163,7 +196,17 @@ function createSessionControlRuntime(options) {
     else closeRepository();
   }
 
-  return Object.freeze({ controller, dispose, ensureRenewal, rollout, start });
+  async function recover(accountKey) {
+    if (typeof accountKey !== "string" || !accountKey) throw typedError("ACCOUNT_CONTEXT_UNAVAILABLE");
+    const snapshot = await controller.recoverSession(accountKey);
+    if (controller.isActive()) {
+      ensureRenewal();
+      if (typeof settings.onMode === "function") settings.onMode(Object.freeze({ executionMode: controller.executionMode, warningCode: snapshot.executionReasonCode, recovered: true }));
+    }
+    return snapshot;
+  }
+
+  return Object.freeze({ controller, dispose, ensureRenewal, recover, rollout, start });
 }
 
 function createSessionControlBootstrap(options) {
@@ -231,6 +274,7 @@ module.exports = {
   ROLLOUT_KEY,
   createSessionControlBootstrap,
   createSessionControlRuntime,
+  negotiateExecutionMode,
   randomHex128,
   reasonCode,
   validateStartReadiness,

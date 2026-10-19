@@ -1,7 +1,8 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { StableEvidenceTracker, canonicalGameIdFromUrl, isEligibleTopLevelContext, normalizeUsername, observeQueueContext, validatePlatformObservation, validateTerminalObservation } = require("../../frontend/session_control");
+const { StableEvidenceTracker, canonicalGameIdFromUrl, isEligibleTopLevelContext, normalizeUsername, observeQueueContext, recoverObservedContext, reduce, validatePlatformObservation, validateTerminalObservation } = require("../../frontend/session_control");
+const { activeGame, event, queueIntent, startEvent } = require("./helpers");
 
 function run() {
   assert.equal(normalizeUsername("User_Name-1"), "user_name-1");
@@ -112,6 +113,22 @@ function run() {
   assert.equal(terminalTracker.observe(terminal).stable, false);
   assert.equal(terminalTracker.observe({ ...terminal, observedAtEpochMs: 2250 }).stable, true);
   assert.throws(() => validateTerminalObservation({ ...terminal, outcome: "UNKNOWN" }), /invalid/);
+
+  let recoveredSnapshot = reduce(null, startEvent(1000000)).nextState;
+  recoveredSnapshot = reduce(recoveredSnapshot, event("QUEUE_INTENT_PREPARED", 1, 1001000, { queueIntent: queueIntent() })).nextState;
+  recoveredSnapshot = reduce(recoveredSnapshot, event("QUEUE_INTENT_CLAIMED", 2, 1002000, { fencingToken: 1 })).nextState;
+  recoveredSnapshot = reduce(recoveredSnapshot, event("QUEUE_INTENT_DISPATCHED", 3, 1002500, {})).nextState;
+  recoveredSnapshot = reduce(recoveredSnapshot, event("GAME_OBSERVED", 4, 1003000, { activeGame: activeGame("game") })).nextState;
+  recoveredSnapshot = { ...recoveredSnapshot, activationContext: { context: "queue", pool: "opaque-rating-scale", opponentRatingScaleId: "opaque-rating-scale" } };
+  const unavailable = { schemaVersion: 1, active: false, reasonCode: "SERVER_UNAVAILABLE", opponentRatingScaleId: "opaque-rating-scale", targetScaleId: "opaque-scale-v1", generatedAtEpochMs: 1004000, expiresAtEpochMs: 1009000 };
+  const withoutFreshEvidence = recoverObservedContext(recoveredSnapshot, unavailable);
+  assert.equal(withoutFreshEvidence.queue.intendedQueueScaleId, "opaque-rating-scale");
+  assert.equal(withoutFreshEvidence.move, undefined);
+  const recoveredObservation = { ...base, canonicalPlatformGameId: "game", accountKey: "opaque-account", opponentRating: 1800, opponentRatingScaleId: "opaque-rating-scale", poolId: "opaque-rating-scale", observedAtEpochMs: 1005000 };
+  const withFreshEvidence = recoverObservedContext(recoveredSnapshot, unavailable, recoveredObservation);
+  assert.equal(withFreshEvidence.lifecycleIdentity.canonicalPlatformGameId, "game");
+  assert.equal(withFreshEvidence.move.observedGame.runtimeGameToken, recoveredSnapshot.activeGame.runtimeGameToken);
+  assert.equal(recoverObservedContext(recoveredSnapshot, unavailable, { ...recoveredObservation, canonicalPlatformGameId: "different" }).move, undefined);
 }
 
 module.exports = { run };

@@ -23,6 +23,9 @@ async function run() {
   childProcess.execFileSync("python", [path.join(root, "scripts", "build_userscript.py")], { cwd: root });
   const after = fs.readFileSync(target, "utf8");
   const partsAfter = splitArtifact(after);
+  assert(after.includes("refreshDeploymentStatus(recovered).catch(() => {})"), "production recovery does not retry calibration status asynchronously");
+  assert(after.includes("publishRecoveredQueue(recovered, unavailableReadiness(recovered, \"CALIBRATION_REVALIDATION_REQUIRED\"))"), "production recovery does not restore persisted queue context before server revalidation");
+  assert.equal(after.includes("const deploymentStatus = await globalThis.krypbotCalibrationApi.status();\n    sessionControlTargetScaleId"), false, "calibration status still blocks production bootstrap");
   assert.equal(after, before, "consecutive userscript builds are not byte-identical");
   assert.equal(partsAfter.before, partsBefore.before, "build changed bytes before the generated region");
   assert.equal(partsAfter.after, partsBefore.after, "build changed bytes after the generated region");

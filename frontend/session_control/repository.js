@@ -126,9 +126,9 @@ class IndexedDbRepository {
     if (!record) return null;
     let snapshot;
     try {
+      const expectedChecksum = await checksumSnapshot(record, this.crypto);
+      if (record.checksum !== expectedChecksum) throw new Error("snapshot checksum mismatch");
       snapshot = validateSnapshot(record);
-      const expectedChecksum = await checksumSnapshot(snapshot, this.crypto);
-      if (snapshot.checksum !== expectedChecksum) throw new Error("snapshot checksum mismatch");
       const maximumSequence = events.reduce((maximum, event) => Math.max(maximum, event.sequence), 0);
       if (maximumSequence !== snapshot.revision) throw new Error("snapshot and journal revisions diverge");
     } catch (error) {

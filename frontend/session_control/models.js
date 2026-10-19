@@ -8,6 +8,7 @@ const CONTROLLER_VERSION = "two-threshold-hysteresis-v1";
 const PHASES = Object.freeze(["IDLE", "QUEUEING", "IN_GAME", "DRAINING", "PAUSED_QUEUEING", "PAUSED_ACTIVE", "COMPLETED", "ABORTED"]);
 const MODES = Object.freeze(["BOOST", "CORRECT"]);
 const OUTCOMES = Object.freeze(["WIN", "DRAW", "LOSS"]);
+const EXECUTION_MODES = Object.freeze(["ACTIVE_DDA", "COMPATIBILITY"]);
 const QUEUE_INTENT_STATUSES = Object.freeze(["PREPARED", "CLAIMED", "DISPATCHED", "MATCH_OBSERVED", "CANCELLED", "AMBIGUOUS"]);
 const TERMINAL_PHASES = Object.freeze(["COMPLETED", "ABORTED"]);
 const HEX_128 = /^[0-9a-f]{32}$/;
@@ -194,12 +195,23 @@ function validateActiveGame(input) {
 
 function validateSnapshot(input) {
   const required = ["schemaVersion", "sessionId", "authorityEpoch", "revision", "accountKey", "phase", "createdAtEpochMs", "startedAtEpochMs", "deadlineEpochMs", "enteredDrainingAtEpochMs", "drainDeadlineEpochMs", "lastObservedEpochMs", "config", "observedCounts", "controlCounts", "consecutiveSaturatedEligibleGames", "saturationControllerMode", "controller", "queueIntent", "activeGame", "pauseReason", "completionReason"];
-  exactKeys(input, required, ["checksum"], "snapshot");
+  exactKeys(input, required, ["checksum", "executionMode", "executionReasonCode", "activationContext"], "snapshot");
   if (input.schemaVersion !== SCHEMA_VERSION) fail("snapshot.schemaVersion is unsupported");
   validateHex128(input.sessionId, "snapshot.sessionId");
   integer(input.authorityEpoch, 1, Number.MAX_SAFE_INTEGER, "snapshot.authorityEpoch");
   integer(input.revision, 0, Number.MAX_SAFE_INTEGER, "snapshot.revision");
   nonEmptyString(input.accountKey, "snapshot.accountKey");
+  const executionMode = input.executionMode === undefined ? "ACTIVE_DDA" : enumValue(input.executionMode, EXECUTION_MODES, "snapshot.executionMode");
+  const executionReasonCode = input.executionReasonCode === undefined || input.executionReasonCode === null ? null : nonEmptyString(input.executionReasonCode, "snapshot.executionReasonCode");
+  let activationContext = null;
+  if (input.activationContext !== undefined && input.activationContext !== null) {
+    exactKeys(input.activationContext, ["context", "pool", "opponentRatingScaleId"], [], "snapshot.activationContext");
+    activationContext = {
+      context: nonEmptyString(input.activationContext.context, "snapshot.activationContext.context"),
+      pool: nonEmptyString(input.activationContext.pool, "snapshot.activationContext.pool"),
+      opponentRatingScaleId: nonEmptyString(input.activationContext.opponentRatingScaleId, "snapshot.activationContext.opponentRatingScaleId"),
+    };
+  }
   enumValue(input.phase, PHASES, "snapshot.phase");
   for (const field of ["createdAtEpochMs", "startedAtEpochMs", "deadlineEpochMs", "lastObservedEpochMs"]) integer(input[field], 0, Number.MAX_SAFE_INTEGER, `snapshot.${field}`);
   nullable(input.enteredDrainingAtEpochMs, (value) => integer(value, 0, Number.MAX_SAFE_INTEGER, "snapshot.enteredDrainingAtEpochMs"));
@@ -217,7 +229,7 @@ function validateSnapshot(input) {
   nullable(input.pauseReason, (value) => nonEmptyString(value, "snapshot.pauseReason"));
   nullable(input.completionReason, (value) => nonEmptyString(value, "snapshot.completionReason"));
   if (input.checksum !== undefined && !/^[0-9a-f]{64}$/.test(input.checksum)) fail("snapshot.checksum is invalid");
-  return deepFreeze({ ...clone(input), config, observedCounts, controlCounts, controller });
+  return deepFreeze({ ...clone(input), executionMode, executionReasonCode, activationContext, config, observedCounts, controlCounts, controller });
 }
 
 function validateEventEnvelope(input) {
@@ -245,6 +257,7 @@ function withoutChecksum(snapshot) {
 module.exports = {
   CONTROLLER_VERSION,
   ESTIMATOR_VERSION,
+  EXECUTION_MODES,
   MODES,
   OUTCOMES,
   PHASES,
