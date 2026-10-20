@@ -15,7 +15,7 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
     configurable: true,
     value: () => ({ matches: false }),
   });
-  const fen = 'k7/8/8/8/8/8/4Q3/4K3 w - - 0 1';
+  const fen = 'r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9';
   const board = document.createElement('wc-chess-board');
   board.setAttribute('data-fen', fen);
   board.setAttribute('orientation', 'white');
@@ -25,7 +25,7 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
   const transport = (request: EvalRequest) => {
     const abort = new AbortController();
     requestCount += 1;
-    fetch(`${serverUrl}/eval`, {
+    fetch(`${serverUrl}/eval-bar`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -33,11 +33,12 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
         requestId: `eval-v2:${request.requestId}`,
         generation: request.generation,
         cacheContext: request.cacheContext,
+        context: 'analysis',
       }),
       signal: abort.signal,
     }).then(async response => {
       const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || `HTTP ${response.status}`);
+      if (!response.ok) throw new Error(payload.detail || payload.error || `HTTP ${response.status}`);
       if (payload.error) throw new Error(payload.error);
       request.onResult(payload);
     }).catch(error => {
@@ -51,7 +52,7 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
     getFen: () => readChessComFen(board),
     getBoard: () => board,
     getOrientation: () => board.getAttribute('orientation') === 'black' ? 'black' : 'white',
-    getCacheContext: () => 'komodo-14.1|backend-integration|white-cp-mate-v1',
+    getCacheContext: () => 'stockfish-19|sf_19_smallnet|nn-61e7af4bb97d.nnue|backend-integration',
     authorize: () => resolveChessComEvalAuthorization(window.location, document),
     shouldDisplay: () => true,
     getRoute: () => window.location.pathname,
@@ -61,11 +62,12 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
   });
   adapter.start(true);
   const transforms: string[] = [];
-  for (let attempt = 0; attempt < 300; attempt += 1) {
+  const cpDeadline = performance.now() + 13000;
+  while (performance.now() < cpDeadline) {
     await nextFrame();
     const fill = document.querySelector<HTMLElement>('.thinker-eval-v2-fill');
     if (fill) transforms.push(fill.style.transform);
-    if (adapter.snapshot().state === 'connected' && attempt > 12) break;
+    if (adapter.snapshot().state === 'connected') break;
   }
   for (let frame = 0; frame < 24; frame += 1) {
     await nextFrame();
@@ -81,9 +83,14 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
   board.setAttribute('data-fen', mateFen);
   board.setAttribute('orientation', 'white');
   adapter.pollNow();
-  for (let attempt = 0; attempt < 300; attempt += 1) {
+  const mateDeadline = performance.now() + 13000;
+  while (performance.now() < mateDeadline) {
     await nextFrame();
-    if (adapter.snapshot().state === 'connected' && adapter.snapshot().currentFen === mateFen) break;
+    const snapshot = adapter.snapshot();
+    if (snapshot.state === 'connected'
+      && snapshot.currentFen === mateFen
+      && snapshot.lastEvaluation?.mate !== null
+      && snapshot.lastEvaluation?.mate !== undefined) break;
   }
   await nextFrame();
   const mateBackend = adapter.snapshot().lastEvaluation;
@@ -93,6 +100,10 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
     requestCount,
     cpBackend,
     mateBackend,
+    smallnetIdentity: cpBackend?.engine === 'Stockfish 19'
+      && cpBackend?.package === '@lichess-org/stockfish-web@0.5.0'
+      && cpBackend?.build === 'sf_19_smallnet'
+      && cpBackend?.network === 'nn-61e7af4bb97d.nnue',
     connected: adapter.snapshot().state === 'connected',
     whiteLabel,
     blackLabel,
@@ -101,6 +112,7 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
     scaleYOnly: transforms.every(value => /^scaleY\([\d.e+-]+\)$/.test(value)),
     smoothFrames: new Set(transforms).size,
     geometry: adapter.snapshot().geometry,
+    diagnostics: adapter.snapshot(),
   };
   adapter.destroy();
   board.remove();

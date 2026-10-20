@@ -18,7 +18,8 @@
     "profile:eval-bar": "node scripts/profile-eval-bar.mjs",
     "build:userscript-eval-bar": "node scripts/build-userscript-eval-bar.mjs",
     "test:browser:eval-bar-v2": "node ../tests/browser/test_eval_bar_v2_chrome.mjs",
-    "test:browser:eval-bar-v2-backend": "node ../tests/browser/test_eval_bar_v2_backend.mjs"
+    "test:browser:eval-bar-v2-backend": "node ../tests/browser/test_eval_bar_v2_backend.mjs",
+    "benchmark:eval-bar-engines": "python ../scripts/benchmark_eval_bar_engines.py"
   },
   "dependencies": {
     "@lichess-org/chessground": "10.4.2",

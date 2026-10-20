@@ -1,0 +1,344 @@
+{
+  "schemaVersion": 1,
+  "conditions": {
+    "movetimeMs": 8000,
+    "soakSeconds": 30,
+    "positions": [
+      "initial",
+      "middlegame",
+      "endgame"
+    ]
+  },
+  "stockfish": {
+    "identity": {
+      "type": "ready",
+      "engine": "Stockfish 19",
+      "engineName": "Stockfish 19",
+      "package": "@lichess-org/stockfish-web@0.5.0",
+      "build": "sf_19_smallnet",
+      "network": "nn-61e7af4bb97d.nnue",
+      "networkSha256": "61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b",
+      "profile": {
+        "threads": 3,
+        "hash": 16,
+        "multiPv": 1,
+        "analyseMode": true,
+        "movetime": 8000
+      },
+      "startup": {
+        "factoryMs": 22.575899999999997,
+        "nnueMs": 5.60929999999999,
+        "uciMs": 221.01,
+        "readyMs": 393.76849999999996
+      },
+      "pid": 19312
+    },
+    "startupWallMs": 505.9288999764249,
+    "positions": [
+      {
+        "position": "initial",
+        "evaluation": {
+          "cp": 20,
+          "mate": null,
+          "depth": 29,
+          "seldepth": 44,
+          "nodes": 11469179,
+          "nps": 1433468,
+          "time": 8001,
+          "bestmove": "e2e4",
+          "engine": "Stockfish 19",
+          "package": "@lichess-org/stockfish-web@0.5.0",
+          "engineName": "Stockfish 19",
+          "build": "sf_19_smallnet",
+          "network": "nn-61e7af4bb97d.nnue",
+          "networkSha256": "61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b",
+          "profile": {
+            "threads": 3,
+            "hash": 16,
+            "multiPv": 1,
+            "analyseMode": true,
+            "movetime": 8000
+          },
+          "firstInfoMs": 14.644399999999962,
+          "searchMs": 8004.474500000001
+        },
+        "wallMs": 8006.744300015271,
+        "cpuPercentOfOneCore": 295.8443421248612,
+        "peakRssBytes": 221425664
+      },
+      {
+        "position": "middlegame",
+        "evaluation": {
+          "cp": -69,
+          "mate": null,
+          "depth": 28,
+          "seldepth": 41,
+          "nodes": 11297338,
+          "nps": 1411990,
+          "time": 8001,
+          "bestmove": "e1g1",
+          "engine": "Stockfish 19",
+          "package": "@lichess-org/stockfish-web@0.5.0",
+          "engineName": "Stockfish 19",
+          "build": "sf_19_smallnet",
+          "network": "nn-61e7af4bb97d.nnue",
+          "networkSha256": "61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b",
+          "profile": {
+            "threads": 3,
+            "hash": 16,
+            "multiPv": 1,
+            "analyseMode": true,
+            "movetime": 8000
+          },
+          "firstInfoMs": 1.5360000000000582,
+          "searchMs": 8002.0795
+        },
+        "wallMs": 8003.389299963601,
+        "cpuPercentOfOneCore": 295.5778997294007,
+        "peakRssBytes": 219369472
+      },
+      {
+        "position": "endgame",
+        "evaluation": {
+          "cp": 983,
+          "mate": null,
+          "depth": 36,
+          "seldepth": 43,
+          "nodes": 28004290,
+          "nps": 3500536,
+          "time": 8000,
+          "bestmove": "f2g3",
+          "engine": "Stockfish 19",
+          "package": "@lichess-org/stockfish-web@0.5.0",
+          "engineName": "Stockfish 19",
+          "build": "sf_19_smallnet",
+          "network": "nn-61e7af4bb97d.nnue",
+          "networkSha256": "61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b",
+          "profile": {
+            "threads": 3,
+            "hash": 16,
+            "multiPv": 1,
+            "analyseMode": true,
+            "movetime": 8000
+          },
+          "firstInfoMs": 1.4426999999996042,
+          "searchMs": 8001.467400000001
+        },
+        "wallMs": 8002.619000035338,
+        "cpuPercentOfOneCore": 295.6063508695783,
+        "peakRssBytes": 219082752
+      }
+    ],
+    "cancellation": {
+      "observedAfterSupersessionMs": 1.1042000260204077
+    },
+    "soak": {
+      "requestedSeconds": 30,
+      "completedPositions": 30,
+      "samples": [
+        {
+          "elapsedMs": 1001.7659000586718,
+          "position": "initial",
+          "rssBytes": 219922432
+        },
+        {
+          "elapsedMs": 2004.345600027591,
+          "position": "middlegame",
+          "rssBytes": 220196864
+        },
+        {
+          "elapsedMs": 3005.233100033365,
+          "position": "endgame",
+          "rssBytes": 220590080
+        },
+        {
+          "elapsedMs": 4007.8287000069395,
+          "position": "initial",
+          "rssBytes": 220786688
+        },
+        {
+          "elapsedMs": 5010.606799973175,
+          "position": "middlegame",
+          "rssBytes": 220807168
+        },
+        {
+          "elapsedMs": 6012.403000029735,
+          "position": "endgame",
+          "rssBytes": 220774400
+        },
+        {
+          "elapsedMs": 7013.271100004204,
+          "position": "initial",
+          "rssBytes": 220971008
+        },
+        {
+          "elapsedMs": 8016.048500081524,
+          "position": "middlegame",
+          "rssBytes": 220975104
+        },
+        {
+          "elapsedMs": 9017.179700080305,
+          "position": "endgame",
+          "rssBytes": 221114368
+        },
+        {
+          "elapsedMs": 10019.61980003398,
+          "position": "initial",
+          "rssBytes": 221200384
+        },
+        {
+          "elapsedMs": 11021.786299999803,
+          "position": "middlegame",
+          "rssBytes": 221200384
+        },
+        {
+          "elapsedMs": 12023.128499975428,
+          "position": "endgame",
+          "rssBytes": 221200384
+        },
+        {
+          "elapsedMs": 13024.652900057845,
+          "position": "initial",
+          "rssBytes": 221200384
+        },
+        {
+          "elapsedMs": 14026.12370008137,
+          "position": "middlegame",
+          "rssBytes": 221200384
+        },
+        {
+          "elapsedMs": 15027.222900069319,
+          "position": "endgame",
+          "rssBytes": 221200384
+        },
+        {
+          "elapsedMs": 16029.364000074565,
+          "position": "initial",
+          "rssBytes": 221265920
+        },
+        {
+          "elapsedMs": 17030.48710001167,
+          "position": "middlegame",
+          "rssBytes": 221265920
+        },
+        {
+          "elapsedMs": 18031.383999972604,
+          "position": "endgame",
+          "rssBytes": 221278208
+        },
+        {
+          "elapsedMs": 19032.27510000579,
+          "position": "initial",
+          "rssBytes": 220835840
+        },
+        {
+          "elapsedMs": 20033.867400023155,
+          "position": "middlegame",
+          "rssBytes": 220835840
+        },
+        {
+          "elapsedMs": 21035.129399970174,
+          "position": "endgame",
+          "rssBytes": 220852224
+        },
+        {
+          "elapsedMs": 22036.15419997368,
+          "position": "initial",
+          "rssBytes": 220852224
+        },
+        {
+          "elapsedMs": 23037.514899973758,
+          "position": "middlegame",
+          "rssBytes": 220876800
+        },
+        {
+          "elapsedMs": 24039.645900018513,
+          "position": "endgame",
+          "rssBytes": 220876800
+        },
+        {
+          "elapsedMs": 25040.64959997777,
+          "position": "initial",
+          "rssBytes": 220876800
+        },
+        {
+          "elapsedMs": 26041.533500072546,
+          "position": "middlegame",
+          "rssBytes": 220880896
+        },
+        {
+          "elapsedMs": 27042.686800006777,
+          "position": "endgame",
+          "rssBytes": 220880896
+        },
+        {
+          "elapsedMs": 28044.65350008104,
+          "position": "initial",
+          "rssBytes": 220909568
+        },
+        {
+          "elapsedMs": 29045.766700059175,
+          "position": "middlegame",
+          "rssBytes": 220909568
+        },
+        {
+          "elapsedMs": 30046.09950003214,
+          "position": "endgame",
+          "rssBytes": 220909568
+        }
+      ],
+      "minRssBytes": 219922432,
+      "maxRssBytes": 221278208,
+      "rssGrowthBytes": 987136
+    },
+    "rssAfterBytes": 220983296,
+    "meanNps": 2115331.3333333335,
+    "meanDepth": 31,
+    "meanFirstInfoMs": 5.874366666666542
+  },
+  "komodo": {
+    "engine": "Komodo 14.1",
+    "comparisonProfile": "matched-search-profile-not-production-defaults",
+    "profile": {
+      "threads": 3,
+      "hash": 16,
+      "multiPv": 1,
+      "skill": 25
+    },
+    "positions": [
+      {
+        "position": "initial",
+        "wallMs": 8043.894600006752,
+        "cpuPercentOfOneCore": 293.70101393397385,
+        "peakRssBytes": 332500992,
+        "depth": 24,
+        "nodes": 31596368,
+        "nps": 3949234,
+        "cp": 25,
+        "mate": null
+      },
+      {
+        "position": "middlegame",
+        "wallMs": 8002.023300039582,
+        "cpuPercentOfOneCore": 295.62835689172493,
+        "peakRssBytes": 45752320,
+        "depth": 26,
+        "nodes": 31121906,
+        "nps": 3890196,
+        "cp": -61,
+        "mate": null
+      },
+      {
+        "position": "endgame",
+        "wallMs": 8001.839100033976,
+        "cpuPercentOfOneCore": 295.43989455998457,
+        "peakRssBytes": 45821952,
+        "depth": 28,
+        "nodes": 74481365,
+        "nps": 9310010,
+        "cp": 770,
+        "mate": null
+      }
+    ]
+  }
+}

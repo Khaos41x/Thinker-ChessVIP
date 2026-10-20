@@ -14,6 +14,16 @@ export type EvalTransportResult = Readonly<{
   requestId?: string | number;
   generation?: number;
   cacheContext?: string;
+  engine?: string;
+  engineName?: string;
+  package?: string;
+  build?: string;
+  network?: string;
+  networkSha256?: string;
+  nodes?: number;
+  nps?: number;
+  time?: number;
+  bestmove?: string | null;
 }>;
 
 export type EvalRequest = Readonly<{

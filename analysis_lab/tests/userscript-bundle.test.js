@@ -31,4 +31,16 @@ describe('Eval Bar V2 userscript artifact', () => {
     expect(userscript).toContain('function injectEvalBarDOM()');
     expect(userscript).not.toContain('container.style.display = "flex"');
   });
+
+  it('routes Eval Bar V2 exclusively to the versioned Smallnet service', () => {
+    expect(userscript).toContain('SERVER_URL + "/eval-bar"');
+    expect(userscript).toContain('SERVER_URL + "/eval-bar/cancel"');
+    expect(userscript).toContain('@lichess-org/stockfish-web@0.5.0');
+    expect(userscript).toContain('sf_19_smallnet');
+    expect(userscript).toContain('nn-61e7af4bb97d.nnue:61e7af4bb97d');
+    expect(userscript).toContain('cacheNamespace: "stockfish-19-smallnet-local-white-v1"');
+    expect(userscript).toContain('const evalBarClientId = globalThis.crypto?.randomUUID?.()');
+    expect(userscript).toContain('`eval-v2:${evalBarClientId}:${requestId}`');
+    expect(userscript).not.toContain('komodo-14.1|${SERVER_URL}/eval|white-cp-mate-v1');
+  });
 });

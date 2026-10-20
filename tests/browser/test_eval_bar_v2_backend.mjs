@@ -97,16 +97,16 @@ const debugPort = await uniquePort();
 const profile = await mkdtemp(join(tmpdir(), 'thinker-eval-v2-backend-'));
 const pageUrl = `http://${host}:${vitePort}/profile-userscript-eval-bar-backend.html`;
 const backendUrl = `http://${host}:${backendPort}`;
-const backendCode = `import app, threading, sys; from werkzeug.serving import make_server; app.initialize_engine(); server=make_server('${host}', ${backendPort}, app.app, threaded=True); thread=threading.Thread(target=server.serve_forever); thread.start(); sys.stdin.readline(); server.shutdown(); thread.join(); app.komodo.close()`;
+const backendCode = `import app, threading, sys; from werkzeug.serving import make_server; app.stockfish_eval_bar.start(); server=make_server('${host}', ${backendPort}, app.app, threaded=True); thread=threading.Thread(target=server.serve_forever); thread.start(); sys.stdin.readline(); server.shutdown(); thread.join(); app.stockfish_eval_bar.close(); app.komodo.close()`;
 const backend = spawn('python', ['-c', backendCode], {
   cwd: repositoryRoot,
   env: { ...process.env, THINKER_CAPABILITY_TOKEN: token },
-  stdio: ['pipe', 'ignore', 'ignore'],
+  stdio: ['pipe', 'ignore', 'inherit'],
   windowsHide: true,
 });
 const vite = spawn(process.execPath, ['node_modules/vite/bin/vite.js', '--host', host, '--port', String(vitePort), '--strictPort'], {
   cwd: labRoot,
-  stdio: 'ignore',
+  stdio: ['ignore', 'inherit', 'inherit'],
   windowsHide: true,
 });
 let browser;
@@ -146,7 +146,7 @@ try {
   const evaluated = await cdp.send('Runtime.evaluate', {
     expression: `Promise.race([
       runEvalBarBackendIntegration(${JSON.stringify(backendUrl)}, ${JSON.stringify(token)}),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('backend fixture timeout')), 20000)),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('backend fixture timeout')), 35000)),
     ])`,
     awaitPromise: true,
     returnByValue: true,
@@ -156,7 +156,7 @@ try {
   console.log(JSON.stringify(result, null, 2));
   const realCp = result.cpBackend && Number.isFinite(result.cpBackend.cp) && result.cpBackend.mate === null;
   const realMate = result.mateBackend && Number.isInteger(result.mateBackend.mate) && result.mateBackend.cp === null;
-  if (!result.fenRead || result.requestCount !== 2 || !realCp || !realMate || !result.connected
+  if (!result.fenRead || result.requestCount !== 2 || !realCp || !realMate || !result.smallnetIdentity || !result.connected
     || !result.mateLabel.startsWith('#')
     || !result.orientationInverted || !result.scaleYOnly || result.smoothFrames < 3
     || !result.geometry || result.geometry.height < 500) process.exitCode = 1;

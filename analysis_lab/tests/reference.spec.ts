@@ -45,6 +45,18 @@ describe('model contracts and provenance', () => {
 
 describe('Lichess winning-chances reference model', () => {
   it.each([
+    [-2000, 0.02455256365856777],
+    [-1000, 0.02455256365856777],
+    [-300, 0.2488744990616516],
+    [0, 0.5],
+    [300, 0.7511255009383484],
+    [1000, 0.9754474363414323],
+    [2000, 0.9754474363414323],
+  ])('matches independently calculated Lichess fill for %i cp', (centipawns, expected) => {
+    expect(scoreToVisualFraction(cp(centipawns))).toBeCloseTo(expected, 14);
+  });
+
+  it.each([
     [0, 50],
     [100, 59.10258971916129],
     [200, 67.6211637485054],

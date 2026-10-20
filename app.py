@@ -38,6 +38,12 @@ from core.smart_pacing.security import CapabilityStore, SlidingWindowRateLimiter
 from core.smart_pacing.service import MovePlanService
 from core.smart_pacing.idempotency import MovePlanIdempotencyStore
 from core.elo_calibration import CalibrationRequest, EloCalibrator, EngineTelemetry, Side, load_artifact
+from core.eval_bar import (
+    StockfishEvalBarCancelled,
+    StockfishEvalBarError,
+    StockfishEvalBarService,
+    StockfishEvalBarTimeout,
+)
 
 app = Flask(__name__)
 CORS(app)
@@ -53,6 +59,18 @@ engine_api_auth = require_engine_capability(
     capability_store,
     allowed_origins={"https://www.chess.com", "https://chess.com"},
     rate_limiter=SlidingWindowRateLimiter(limit=240, window_seconds=60),
+)
+eval_bar_api_auth = require_engine_capability(
+    capability_store,
+    allowed_origins={"https://www.chess.com", "https://chess.com"},
+    rate_limiter=SlidingWindowRateLimiter(limit=240, window_seconds=60),
+    concurrency_limit=16,
+)
+eval_bar_control_auth = require_engine_capability(
+    capability_store,
+    allowed_origins={"https://www.chess.com", "https://chess.com"},
+    rate_limiter=SlidingWindowRateLimiter(limit=240, window_seconds=60),
+    concurrency_limit=4,
 )
 metrics_auth = require_engine_capability(
     capability_store,
@@ -621,6 +639,7 @@ class KomodoSingleton:
 cleanup_stale_komodo(ENGINE_PATH)
 komodo = KomodoSingleton(ENGINE_PATH)
 atexit.register(komodo.close)
+stockfish_eval_bar = StockfishEvalBarService()
 
 def get_base_fen(fen):
     return " ".join(fen.split(" ")[:4])
@@ -1316,6 +1335,57 @@ def evaluate():
     except Exception as e:
         Log.error(f"Erro no eval: {e}")
         return eval_response(0, None, error="evaluation failed")
+
+
+@app.route("/eval-bar", methods=["POST"])
+@eval_bar_api_auth
+def evaluate_eval_bar():
+    data = request.get_json(force=True, silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"error": "JSON object required"}), 400
+    request_id = str(data.get("requestId") or f"eval-bar:{time.monotonic_ns()}")
+    correlation = {"requestId": request_id}
+    correlation.update({key: data[key] for key in ("generation", "cacheContext") if key in data})
+    context = data.get("context")
+    if context not in {"analysis", "post-game"}:
+        return jsonify({"error": "eval_bar_context_not_authorized", **correlation}), 403
+    fen = data.get("fen")
+    if not isinstance(fen, str) or not fen.strip():
+        return jsonify({"error": "fen is required", **correlation}), 400
+    try:
+        board = chess.Board(fen)
+    except (TypeError, ValueError):
+        return jsonify({"error": "invalid fen", **correlation}), 400
+    if not board.is_valid():
+        return jsonify({"error": "invalid fen", **correlation}), 422
+    if board.is_game_over():
+        return jsonify({"error": "terminal position", **correlation}), 422
+    try:
+        result = stockfish_eval_bar.evaluate(fen, request_id)
+        return jsonify({**result, **correlation})
+    except StockfishEvalBarCancelled:
+        return jsonify({"error": "evaluation superseded", **correlation}), 409
+    except StockfishEvalBarTimeout:
+        return jsonify({"error": "stockfish timeout", **correlation}), 504
+    except StockfishEvalBarError as error:
+        Log.error(f"Erro no Stockfish Eval Bar: {error}")
+        return jsonify({"error": "stockfish unavailable", "detail": str(error), **correlation}), 503
+
+
+@app.route("/eval-bar/cancel", methods=["POST"])
+@eval_bar_control_auth
+def cancel_eval_bar():
+    data = request.get_json(force=True, silent=True)
+    if not isinstance(data, dict) or not data.get("requestId"):
+        return jsonify({"error": "requestId is required"}), 400
+    request_id = str(data["requestId"])
+    return jsonify({"requestId": request_id, "cancelRequested": stockfish_eval_bar.cancel(request_id)})
+
+
+@app.route("/eval-bar/status", methods=["GET"])
+@eval_bar_control_auth
+def eval_bar_status():
+    return jsonify(stockfish_eval_bar.status())
 
 
 @app.route("/analyze", methods=["POST"])
