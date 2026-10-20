@@ -10,6 +10,7 @@ const BUILD = 'sf_19_smallnet';
 const NETWORK = 'nn-61e7af4bb97d.nnue';
 const NETWORK_SHA256 = '61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b';
 const PROFILE = Object.freeze({ threads: 3, hash: 16, multiPv: 1, analyseMode: true, movetime: 8000 });
+const INFO_THROTTLE_MS = 100;
 const engineRootIndex = process.argv.indexOf('--engine-root');
 const engineRoot = resolve(engineRootIndex >= 0 ? process.argv[engineRootIndex + 1] : 'analysis_lab/public/engine');
 const modulePath = resolve(engineRoot, `${BUILD}.js`);
@@ -47,6 +48,10 @@ function parseInfo(line, whiteToMove) {
   const nodes = Number(value('nodes'));
   const nps = Number(value('nps'));
   const time = Number(value('time'));
+  const rawBound = tokens.includes('lowerbound') ? 'lowerbound' : tokens.includes('upperbound') ? 'upperbound' : null;
+  const bound = sign < 0 && rawBound
+    ? rawBound === 'lowerbound' ? 'upperbound' : 'lowerbound'
+    : rawBound;
   return {
     cp: scoreType === 'cp' ? rawScore * sign : null,
     mate: scoreType === 'mate' ? rawScore * sign : null,
@@ -55,12 +60,13 @@ function parseInfo(line, whiteToMove) {
     nodes: Number.isFinite(nodes) ? nodes : 0,
     nps: Number.isFinite(nps) ? nps : 0,
     time: Number.isFinite(time) ? time : 0,
+    bound,
   };
 }
 
 function cancelQueued(request, reason = 'cancelled') {
   if (!request) return;
-  output({ type: 'cancelled', requestId: request.requestId, reason });
+  output({ type: 'cancelled', requestId: request.requestId, reason, seq: 1 });
 }
 
 function requestStop() {
@@ -72,7 +78,14 @@ function requestStop() {
 }
 
 function startSearch(request) {
-  active = { ...request, stopping: false, startedAt: performance.now() };
+  active = {
+    ...request,
+    stopping: false,
+    startedAt: performance.now(),
+    lastPublishedAt: null,
+    lastPublishedInfo: null,
+    seq: 0,
+  };
   latestInfo = null;
   firstInfoMs = null;
   stopStartedAt = null;
@@ -81,6 +94,28 @@ function startSearch(request) {
   active.whiteToMove = whiteToMove;
   engine.uci(`position fen ${request.fen}`);
   engine.uci(`go movetime ${request.movetime}`);
+}
+
+function sameInfo(left, right) {
+  return Boolean(left && right
+    && left.cp === right.cp
+    && left.mate === right.mate
+    && left.depth === right.depth
+    && left.seldepth === right.seldepth
+    && left.nodes === right.nodes
+    && left.nps === right.nps
+    && left.time === right.time
+    && left.bound === right.bound);
+}
+
+function publishInfo(force = false) {
+  if (!active || active.stopping || !latestInfo || sameInfo(latestInfo, active.lastPublishedInfo)) return;
+  const now = performance.now();
+  if (!force && active.lastPublishedAt !== null && now - active.lastPublishedAt < INFO_THROTTLE_MS) return;
+  active.seq += 1;
+  active.lastPublishedAt = now;
+  active.lastPublishedInfo = { ...latestInfo };
+  output({ type: 'info', requestId: active.requestId, seq: active.seq, result: latestInfo });
 }
 
 function schedule(request) {
@@ -96,19 +131,21 @@ function schedule(request) {
 
 function finishBestmove(line) {
   if (!active) return;
+  publishInfo(true);
   const completed = active;
   const bestmove = line.trim().split(/\s+/)[1] || null;
   active = null;
   state = 'idle';
   const cancelMs = stopStartedAt === null ? null : performance.now() - stopStartedAt;
   if (completed.stopping) {
-    output({ type: 'cancelled', requestId: completed.requestId, reason: 'superseded', cancelMs });
+    output({ type: 'cancelled', requestId: completed.requestId, reason: 'superseded', cancelMs, seq: completed.seq + 1 });
   } else if (!latestInfo) {
-    output({ type: 'error', requestId: completed.requestId, error: 'engine returned no evaluation' });
+    output({ type: 'error', requestId: completed.requestId, error: 'engine returned no evaluation', seq: completed.seq + 1 });
   } else {
     output({
       type: 'result',
       requestId: completed.requestId,
+      seq: completed.seq + 1,
       result: {
         ...latestInfo,
         bestmove: bestmove === '(none)' ? null : bestmove,
@@ -156,6 +193,7 @@ function onLine(line) {
     if (parsed) {
       if (firstInfoMs === null) firstInfoMs = performance.now() - active.startedAt;
       if (!latestInfo || parsed.depth >= latestInfo.depth) latestInfo = parsed;
+      publishInfo();
     }
   } else if (text.startsWith('bestmove ')) finishBestmove(text);
 }

@@ -34,6 +34,10 @@ function hiddenNode(textContent = 'Game Review') {
 describe('userscript Eval Bar authorization', () => {
   it('allows analysis and review routes', () => {
     expect(resolveChessComEvalAuthorization({ pathname: '/analysis/game/abc' } as Location, documentWith())).toBe('analysis');
+    expect(resolveChessComEvalAuthorization(
+      { pathname: '/analysis/collection/example/analysis' } as Location,
+      documentWith(),
+    )).toBe('analysis');
     expect(resolveChessComEvalAuthorization({ pathname: '/game/live/abc/review' } as Location, documentWith())).toBe('analysis');
   });
 

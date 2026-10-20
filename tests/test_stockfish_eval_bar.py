@@ -1,4 +1,5 @@
 import os
+import json
 import sys
 import threading
 import time
@@ -17,7 +18,12 @@ AUTH_HEADERS = {
 }
 
 import app
-from core.eval_bar import StockfishEvalBarCancelled, StockfishEvalBarError, StockfishEvalBarService
+from core.eval_bar import (
+    StockfishEvalBarCancelled,
+    StockfishEvalBarError,
+    StockfishEvalBarService,
+    StockfishEvalBarTimeout,
+)
 
 
 class StockfishEvalBarEndpointTests(unittest.TestCase):
@@ -105,6 +111,105 @@ class StockfishEvalBarEndpointTests(unittest.TestCase):
             )
         self.assertEqual(response.status_code, 200)
         self.assertRegex(response.get_json()["requestId"], r"^eval-bar:\d+$")
+
+    def test_stream_endpoint_emits_correlated_progress_before_result(self):
+        payload = {
+            "fen": chess.STARTING_FEN,
+            "requestId": "eval-v2:stream",
+            "generation": 7,
+            "cacheContext": "smallnet-stream-v1",
+            "context": "analysis",
+        }
+        messages = iter([
+            {"type": "started", "seq": 0, "attempt": 1, "engineGeneration": 4},
+            {"type": "info", "seq": 1, "result": {"cp": 12, "mate": None, "depth": 6}},
+            {"type": "info", "seq": 2, "result": {"cp": 21, "mate": None, "depth": 10}},
+            {"type": "result", "seq": 3, "result": {
+                "cp": 18,
+                "mate": None,
+                "depth": 12,
+                "requestId": "malformed-override",
+                "fen": "malformed-override",
+                "type": "error",
+            }},
+        ])
+        with patch.object(app.stockfish_eval_bar, "evaluate_stream", return_value=messages), patch.object(
+            app, "analyse_with_recovery"
+        ) as komodo_eval:
+            response = self.client.post("/eval-bar/stream", json=payload, headers=AUTH_HEADERS)
+        events = [json.loads(line) for line in response.get_data(as_text=True).splitlines()]
+        self.assertEqual(response.mimetype, "application/x-ndjson")
+        self.assertEqual(response.headers["X-Accel-Buffering"], "no")
+        self.assertEqual([event["type"] for event in events], ["started", "info", "info", "result"])
+        self.assertEqual([event.get("depth") for event in events[1:]], [6, 10, 12])
+        self.assertTrue(all(event["requestId"] == payload["requestId"] for event in events))
+        self.assertTrue(all(event["generation"] == 7 for event in events))
+        self.assertTrue(all(event["fen"] == chess.STARTING_FEN for event in events))
+        self.assertTrue(all(event["perspective"] == "white" for event in events))
+        komodo_eval.assert_not_called()
+
+    def test_stream_protocol_failure_emits_terminal_error_event(self):
+        with patch.object(app.stockfish_eval_bar, "evaluate_stream", return_value=iter([
+            {"type": "info", "seq": "not-a-number", "result": {"cp": 0, "mate": None, "depth": 1}},
+        ])):
+            response = self.client.post(
+                "/eval-bar/stream",
+                json={
+                    "fen": chess.STARTING_FEN,
+                    "requestId": "bad-protocol",
+                    "generation": 1,
+                    "cacheContext": "bad-protocol",
+                    "context": "analysis",
+                },
+                headers=AUTH_HEADERS,
+            )
+        event = json.loads(response.get_data(as_text=True))
+        self.assertEqual(event["type"], "error")
+        self.assertEqual(event["status"], "error")
+        self.assertEqual(event["requestId"], "bad-protocol")
+
+    def test_closing_stream_cancels_only_its_smallnet_request(self):
+        def messages():
+            yield {"type": "started", "seq": 0, "attempt": 1, "engineGeneration": 1}
+            yield {"type": "info", "seq": 1, "result": {"cp": 1, "mate": None, "depth": 1}}
+
+        with patch.object(app.stockfish_eval_bar, "evaluate_stream", return_value=messages()), patch.object(
+            app.stockfish_eval_bar, "cancel", return_value=True
+        ) as cancel, patch.object(app.komodo, "close") as komodo_close:
+            response = self.client.post(
+                "/eval-bar/stream",
+                json={
+                    "fen": chess.STARTING_FEN,
+                    "requestId": "disconnect-me",
+                    "generation": 1,
+                    "cacheContext": "stream-close",
+                    "context": "analysis",
+                },
+                headers=AUTH_HEADERS,
+                buffered=False,
+            )
+            next(iter(response.response))
+            response.close()
+        cancel.assert_called_once_with("disconnect-me")
+        komodo_close.assert_not_called()
+
+    def test_collection_analysis_context_is_accepted_by_stream_contract(self):
+        with patch.object(app.stockfish_eval_bar, "evaluate_stream", return_value=iter([
+            {"type": "result", "seq": 1, "result": {"cp": 0, "mate": None, "depth": 1}},
+        ])):
+            response = self.client.post(
+                "/eval-bar/stream",
+                json={
+                    "fen": chess.STARTING_FEN,
+                    "requestId": "collection-analysis",
+                    "generation": 1,
+                    "cacheContext": "collection-analysis?move=18",
+                    "context": "analysis",
+                },
+                headers=AUTH_HEADERS,
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.get_data(as_text=True))["type"], "result")
 
     def test_missing_node_is_reported_as_stockfish_error(self):
         service = StockfishEvalBarService(node_path="definitely-missing-node", timeout_seconds=1)
@@ -236,6 +341,35 @@ class StockfishEvalBarRealEngineTests(unittest.TestCase):
         process.wait(timeout=5)
         recovered = self.service.evaluate(chess.STARTING_FEN, "after-restart", movetime_ms=100, timeout_seconds=20)
         self.assertGreater(self.service.generation, previous_generation)
+        self.assertGreater(recovered["depth"], 0)
+
+    def test_real_stream_publishes_multiple_depths_before_bestmove(self):
+        started = time.monotonic()
+        timeline = []
+        for event in self.service.evaluate_stream(
+            chess.STARTING_FEN, "real-progressive", movetime_ms=1200, timeout_seconds=20
+        ):
+            timeline.append((time.monotonic() - started, event))
+        infos = [(elapsed, event) for elapsed, event in timeline if event["type"] == "info"]
+        result_time, result = next((elapsed, event) for elapsed, event in timeline if event["type"] == "result")
+        self.assertGreaterEqual(len(infos), 2)
+        self.assertLess(infos[0][0], result_time)
+        self.assertGreater(infos[-1][1]["result"]["depth"], infos[0][1]["result"]["depth"])
+        self.assertEqual(result["result"]["engine"], "Stockfish 19")
+        self.assertEqual(result["result"]["build"], "sf_19_smallnet")
+        self.assertEqual(result["result"]["network"], "nn-61e7af4bb97d.nnue")
+
+    def test_real_stream_timeout_restarts_and_recovers(self):
+        self.service.start(timeout_seconds=20)
+        generation = self.service.generation
+        with self.assertRaises(StockfishEvalBarTimeout):
+            list(self.service.evaluate_stream(
+                chess.STARTING_FEN, "stream-timeout", movetime_ms=5000, timeout_seconds=0.05
+            ))
+        recovered = self.service.evaluate(
+            chess.STARTING_FEN, "after-stream-timeout", movetime_ms=100, timeout_seconds=20
+        )
+        self.assertGreater(self.service.generation, generation)
         self.assertGreater(recovered["depth"], 0)
 
     def test_real_inflight_process_failure_retries_once_without_duplicate_process(self):

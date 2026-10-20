@@ -22,10 +22,14 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
   Object.assign(board.style, { display: 'block', width: '600px', height: '600px' });
   document.body.append(board);
   let requestCount = 0;
+  let completedCount = 0;
+  const streamEvents: Array<{ request: number; type: string; depth?: number; elapsedMs: number }> = [];
   const transport = (request: EvalRequest) => {
     const abort = new AbortController();
     requestCount += 1;
-    fetch(`${serverUrl}/eval-bar`, {
+    const requestNumber = requestCount;
+    const startedAt = performance.now();
+    fetch(`${serverUrl}/eval-bar/stream`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -37,10 +41,34 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
       }),
       signal: abort.signal,
     }).then(async response => {
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.detail || payload.error || `HTTP ${response.status}`);
-      if (payload.error) throw new Error(payload.error);
-      request.onResult(payload);
+      if (!response.ok || !response.body) throw new Error(`HTTP ${response.status}`);
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffered = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        buffered += decoder.decode(value, { stream: !done });
+        const lines = buffered.split('\n');
+        buffered = done ? '' : lines.pop() || '';
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          const payload = JSON.parse(line);
+          streamEvents.push({
+            request: requestNumber,
+            type: payload.type,
+            depth: payload.depth,
+            elapsedMs: performance.now() - startedAt,
+          });
+          if (payload.type === 'started' || payload.type === 'info') request.onProgress(payload);
+          else if (payload.type === 'result') {
+            completedCount += 1;
+            request.onResult(payload);
+          } else if (payload.type === 'error' || payload.type === 'cancelled') {
+            throw new Error(payload.detail || payload.error || payload.type);
+          }
+        }
+        if (done) break;
+      }
     }).catch(error => {
       if (error?.name !== 'AbortError') request.onError(error);
     });
@@ -67,7 +95,7 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
     await nextFrame();
     const fill = document.querySelector<HTMLElement>('.thinker-eval-v2-fill');
     if (fill) transforms.push(fill.style.transform);
-    if (adapter.snapshot().state === 'connected') break;
+    if (completedCount >= 1) break;
   }
   for (let frame = 0; frame < 24; frame += 1) {
     await nextFrame();
@@ -98,6 +126,12 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
   const result = {
     fenRead: cpBackend !== null && readChessComFen(board) === mateFen,
     requestCount,
+    streamEvents,
+    firstEvaluationMs: streamEvents.find(event => event.request === 1 && event.type === 'info')?.elapsedMs ?? null,
+    preFinalDepths: streamEvents
+      .filter(event => event.request === 1 && event.type === 'info')
+      .map(event => event.depth),
+    firstFinalMs: streamEvents.find(event => event.request === 1 && event.type === 'result')?.elapsedMs ?? null,
     cpBackend,
     mateBackend,
     smallnetIdentity: cpBackend?.engine === 'Stockfish 19'

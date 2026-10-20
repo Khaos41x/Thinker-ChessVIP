@@ -156,10 +156,13 @@ try {
   console.log(JSON.stringify(result, null, 2));
   const realCp = result.cpBackend && Number.isFinite(result.cpBackend.cp) && result.cpBackend.mate === null;
   const realMate = result.mateBackend && Number.isInteger(result.mateBackend.mate) && result.mateBackend.cp === null;
+  const progressive = result.preFinalDepths.length >= 2
+    && result.firstEvaluationMs > 0
+    && result.firstEvaluationMs < result.firstFinalMs;
   if (!result.fenRead || result.requestCount !== 2 || !realCp || !realMate || !result.smallnetIdentity || !result.connected
     || !result.mateLabel.startsWith('#')
     || !result.orientationInverted || !result.scaleYOnly || result.smoothFrames < 3
-    || !result.geometry || result.geometry.height < 500) process.exitCode = 1;
+    || !result.geometry || result.geometry.height < 500 || !progressive) process.exitCode = 1;
 } finally {
   cdp?.socket.close();
   browser?.kill();

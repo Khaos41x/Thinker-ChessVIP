@@ -8,7 +8,7 @@ from collections import defaultdict, deque
 from functools import wraps
 from pathlib import Path
 
-from flask import jsonify, request
+from flask import current_app, jsonify, request
 
 
 class CapabilityStore:
@@ -121,10 +121,29 @@ def require_engine_capability(
                 return jsonify({"error": "invalid_capability"}), 401
             if not concurrency.acquire(blocking=False):
                 return jsonify({"error": "concurrency_limited"}), 429
+            release_lease = True
             try:
-                return handler(*args, **kwargs)
+                response = current_app.make_response(handler(*args, **kwargs))
+                if response.is_streamed:
+                    iterable = response.response
+
+                    def guarded_stream():
+                        try:
+                            yield from iterable
+                        finally:
+                            close = getattr(iterable, "close", None)
+                            try:
+                                if callable(close):
+                                    close()
+                            finally:
+                                concurrency.release()
+
+                    response.response = guarded_stream()
+                    release_lease = False
+                return response
             finally:
-                concurrency.release()
+                if release_lease:
+                    concurrency.release()
 
         return protected
 

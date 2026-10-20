@@ -93,6 +93,7 @@ async function runUserscriptEvalBarBrowserTest() {
   fen = 'fen-b';
   adapter.pollNow();
   const secondRequest = requests.at(-1)!;
+  firstRequest.onProgress({ type: 'info', sequence: 1, cp: 950, depth: 12 });
   firstRequest.onResult({ cp: 900, depth: 18 });
   const staleLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
   secondRequest.onResult({ cp: -240, depth: 19 });
@@ -108,28 +109,36 @@ async function runUserscriptEvalBarBrowserTest() {
 
   now = 101;
   adapter.pollNow();
-  const sameFenOldRequest = requests.at(-1)!;
-  now = 202;
+  const sameFenRequest = requests.at(-1)!;
+  const requestsBeforeRefreshBoundary = requests.length;
+  const abortsBeforeRefreshBoundary = abortCount;
+  now = 5202;
   adapter.pollNow();
-  const sameFenLatestRequest = requests.at(-1)!;
-  const beforeSameFenRace = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
-  sameFenOldRequest.onResult({ cp: 900, depth: 20 });
-  sameFenOldRequest.onError(new Error('obsolete request'));
+  const activeSurvivedRefresh = requests.length === requestsBeforeRefreshBoundary
+    && requests.at(-1) === sameFenRequest
+    && abortCount === abortsBeforeRefreshBoundary
+    && adapter.snapshot().requestActive;
+  sameFenRequest.onProgress({ type: 'info', sequence: 1, cp: 40, mate: null, depth: 8 });
   await waitFrames(2);
-  const afterSameFenRace = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
-  const oldSameFenCallbacksRejected = beforeSameFenRace === afterSameFenRace
-    && adapter.snapshot().requestActive
-    && sameFenLatestRequest.requestId > sameFenOldRequest.requestId;
+  const firstProgressLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
+  sameFenRequest.onProgress({ type: 'info', sequence: 2, cp: 90, mate: null, depth: 12 });
+  sameFenRequest.onProgress({ type: 'info', sequence: 1, cp: -900, mate: null, depth: 7 });
+  await waitFrames(2);
+  const secondProgressLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
+  const oldSameFenCallbacksRejected = activeSurvivedRefresh
+    && firstProgressLabel === '-0.4'
+    && secondProgressLabel === '-0.9'
+    && adapter.snapshot().requestActive;
 
-  sameFenLatestRequest.onResult({ mate: 3, depth: 20 });
+  sameFenRequest.onResult({ type: 'result', sequence: 3, mate: 3, depth: 20 });
   await waitFrames(4);
   const mateBlackLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
-  now = 303;
+  now = 10303;
   adapter.pollNow();
   requests.at(-1)!.onResult({ mate: -2, depth: 20 });
   await waitFrames(4);
   const negativeMateBlackLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
-  now = 404;
+  now = 15404;
   adapter.pollNow();
   requests.at(-1)!.onResult({ cp: 0, depth: 20 });
   await waitFrames(4);

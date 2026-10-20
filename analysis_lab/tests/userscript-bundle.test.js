@@ -33,8 +33,9 @@ describe('Eval Bar V2 userscript artifact', () => {
   });
 
   it('routes Eval Bar V2 exclusively to the versioned Smallnet service', () => {
-    expect(userscript).toContain('SERVER_URL + "/eval-bar"');
+    expect(userscript).toContain('SERVER_URL + "/eval-bar/stream"');
     expect(userscript).toContain('SERVER_URL + "/eval-bar/cancel"');
+    expect(userscript).toContain('onProgress(item)');
     expect(userscript).toContain('@lichess-org/stockfish-web@0.5.0');
     expect(userscript).toContain('sf_19_smallnet');
     expect(userscript).toContain('nn-61e7af4bb97d.nnue:61e7af4bb97d');

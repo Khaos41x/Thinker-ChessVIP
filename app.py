@@ -1372,6 +1372,138 @@ def evaluate_eval_bar():
         return jsonify({"error": "stockfish unavailable", "detail": str(error), **correlation}), 503
 
 
+@app.route("/eval-bar/stream", methods=["POST"])
+@eval_bar_api_auth
+def stream_eval_bar():
+    data = request.get_json(force=True, silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"error": "JSON object required"}), 400
+    request_id = str(data.get("requestId") or f"eval-bar:{time.monotonic_ns()}")
+    correlation = {"requestId": request_id}
+    correlation.update({key: data[key] for key in ("generation", "cacheContext") if key in data})
+    context = data.get("context")
+    if context not in {"analysis", "post-game"}:
+        return jsonify({"error": "eval_bar_context_not_authorized", **correlation}), 403
+    fen = data.get("fen")
+    if not isinstance(fen, str) or not fen.strip():
+        return jsonify({"error": "fen is required", **correlation}), 400
+    try:
+        board = chess.Board(fen)
+    except (TypeError, ValueError):
+        return jsonify({"error": "invalid fen", **correlation}), 400
+    if not board.is_valid():
+        return jsonify({"error": "invalid fen", **correlation}), 422
+    if board.is_game_over():
+        return jsonify({"error": "terminal position", **correlation}), 422
+
+    base_event = {
+        **correlation,
+        "fen": fen,
+        "perspective": "white",
+    }
+
+    def encode_event(payload):
+        return json.dumps(payload, separators=(",", ":")) + "\n"
+
+    def generate():
+        sequence = 0
+        terminal = False
+        try:
+            for message in stockfish_eval_bar.evaluate_stream(fen, request_id):
+                if not isinstance(message, dict):
+                    raise StockfishEvalBarError("invalid Stockfish stream message")
+                message_type = message.get("type")
+                if message_type not in {"started", "info", "result"}:
+                    raise StockfishEvalBarError("invalid Stockfish stream event type")
+                try:
+                    incoming_sequence = int(message.get("seq") or 0)
+                except (TypeError, ValueError) as error:
+                    raise StockfishEvalBarError("invalid Stockfish stream sequence") from error
+                sequence = max(sequence + 1, incoming_sequence)
+                status = "complete" if message_type == "result" else "searching"
+                payload = {
+                    **base_event,
+                    "type": message_type,
+                    "status": status,
+                    "sequence": sequence,
+                    "attempt": message.get("attempt"),
+                    "engineGeneration": message.get("engineGeneration"),
+                }
+                if message_type in {"info", "result"}:
+                    result = message.get("result")
+                    if not isinstance(result, dict):
+                        raise StockfishEvalBarError("invalid Stockfish stream result")
+                    payload.update({
+                        key: result[key]
+                        for key in (
+                            "cp", "mate", "depth", "seldepth", "nodes", "nps", "time", "bound",
+                            "bestmove", "engine", "package", "engineName", "build", "network",
+                            "networkSha256", "profile", "firstInfoMs", "searchMs", "cancelMs",
+                        )
+                        if key in result
+                    })
+                yield encode_event(payload)
+                if message_type == "result":
+                    terminal = True
+                    return
+            terminal = True
+            yield encode_event({
+                **base_event,
+                "type": "error",
+                "status": "error",
+                "sequence": sequence + 1,
+                "error": "stockfish stream ended without a result",
+            })
+        except StockfishEvalBarCancelled:
+            terminal = True
+            yield encode_event({
+                **base_event,
+                "type": "cancelled",
+                "status": "cancelled",
+                "sequence": sequence + 1,
+                "error": "evaluation superseded",
+            })
+        except StockfishEvalBarTimeout:
+            terminal = True
+            yield encode_event({
+                **base_event,
+                "type": "error",
+                "status": "error",
+                "sequence": sequence + 1,
+                "error": "stockfish timeout",
+            })
+        except StockfishEvalBarError as error:
+            terminal = True
+            Log.error(f"Erro no Stockfish Eval Bar stream: {error}")
+            yield encode_event({
+                **base_event,
+                "type": "error",
+                "status": "error",
+                "sequence": sequence + 1,
+                "error": "stockfish unavailable",
+                "detail": str(error),
+            })
+        except Exception as error:
+            terminal = True
+            Log.error(f"Erro de protocolo no Stockfish Eval Bar stream: {error}")
+            yield encode_event({
+                **base_event,
+                "type": "error",
+                "status": "error",
+                "sequence": sequence + 1,
+                "error": "stockfish stream protocol error",
+                "detail": str(error),
+            })
+        finally:
+            if not terminal:
+                stockfish_eval_bar.cancel(request_id)
+
+    response = Response(generate(), mimetype="application/x-ndjson")
+    response.headers["Cache-Control"] = "no-store, no-transform"
+    response.headers["X-Accel-Buffering"] = "no"
+    return response
+
+
 @app.route("/eval-bar/cancel", methods=["POST"])
 @eval_bar_control_auth
 def cancel_eval_bar():

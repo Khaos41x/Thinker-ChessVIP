@@ -7,6 +7,9 @@ declare const __THINKER_EVAL_BAR_CSS__: string | undefined;
 export type EvalAuthorization = 'analysis' | 'post-game' | null;
 
 export type EvalTransportResult = Readonly<{
+  type?: 'started' | 'info' | 'result' | 'cancelled' | 'error';
+  status?: string;
+  sequence?: number;
   cp?: number | null;
   mate?: number | null;
   depth?: number;
@@ -24,6 +27,7 @@ export type EvalTransportResult = Readonly<{
   nps?: number;
   time?: number;
   bestmove?: string | null;
+  bound?: 'lowerbound' | 'upperbound' | null;
 }>;
 
 export type EvalRequest = Readonly<{
@@ -31,6 +35,7 @@ export type EvalRequest = Readonly<{
   generation: number;
   requestId: number;
   cacheContext: string;
+  onProgress: (result: EvalTransportResult) => void;
   onResult: (result: EvalTransportResult) => void;
   onError: (error: unknown) => void;
 }>;
@@ -73,6 +78,12 @@ export type EvalBarDiagnosticSnapshot = Readonly<{
   geometry: Readonly<{ left: number; top: number; width: number; height: number; placement: string }> | null;
   lastEvaluation: EvalTransportResult | null;
   lastError: string | null;
+  activeSequence: number;
+  requestStartedAt: number | null;
+  requestElapsedMs: number | null;
+  lastRequestDurationMs: number | null;
+  abortCount: number;
+  lastAbortReason: string | null;
 }>;
 
 const ROOT_ID = 'thinker-eval-v2-rail';
@@ -351,10 +362,15 @@ export class UserscriptEvalBar {
   private generation = 0;
   private requestSequence = 0;
   private activeRequestId = 0;
+  private activeSequence = -1;
   private currentFen = '';
   private currentCacheContext = '';
   private currentOrientation: 'white' | 'black' = 'white';
   private lastRequestAt = -Infinity;
+  private requestStartedAt: number | null = null;
+  private lastRequestDurationMs: number | null = null;
+  private abortCount = 0;
+  private lastAbortReason: string | null = null;
   private request: EvalRequestHandle | null = null;
   private controller: EvalBarController | null = null;
   private root: HTMLElement | null = null;
@@ -370,7 +386,6 @@ export class UserscriptEvalBar {
   private lastError: string | null = null;
   private geometry: EvalBarDiagnosticSnapshot['geometry'] = null;
   private readonly routeListener = (): void => {
-    this.deactivate();
     this.queueReconcile();
   };
   private readonly geometryListener = (): void => this.syncGeometry();
@@ -441,7 +456,7 @@ export class UserscriptEvalBar {
     }
     const cacheContext = this.readCacheContext();
     if (!cacheContext) {
-      this.abortRequest();
+      this.abortRequest('cache-context-unavailable');
       this.setVisualState('error', '!', 'Evaluation cache context is unavailable');
       return;
     }
@@ -452,10 +467,11 @@ export class UserscriptEvalBar {
     const changed = fen !== this.currentFen || cacheContext !== this.currentCacheContext;
     if (changed) {
       this.generation += 1;
-      this.abortRequest();
+      this.abortRequest('position-changed');
       this.currentFen = fen;
       this.currentCacheContext = cacheContext;
       this.lastRequestAt = -Infinity;
+      this.activeSequence = -1;
       const cached = this.cache.get(this.cacheKey(fen, cacheContext));
       this.setVisualState(cached ? 'connected' : 'waiting', cached ? undefined : '…');
       this.controller?.beginSearch(this.generation, cached ? this.sample(cached, orientation) : null);
@@ -463,13 +479,14 @@ export class UserscriptEvalBar {
       const cached = this.cache.get(this.cacheKey(fen, cacheContext));
       if (cached) this.controller?.publish(this.sample(cached, orientation));
     }
+    if (this.request) return;
     if (this.now() - this.lastRequestAt < (this.options.refreshIntervalMs ?? DEFAULT_REFRESH_INTERVAL_MS)) return;
-    this.lastRequestAt = this.now();
-    this.abortRequest();
     if (this.root?.dataset.state !== 'fresh') this.setVisualState('loading', '…');
     const generation = this.generation;
     const requestId = ++this.requestSequence;
     this.activeRequestId = requestId;
+    this.activeSequence = -1;
+    this.requestStartedAt = this.now();
     let callbackSettled = false;
     try {
       const request = this.options.requestEvaluation({
@@ -477,6 +494,9 @@ export class UserscriptEvalBar {
         generation,
         requestId,
         cacheContext,
+        onProgress: result => {
+          this.acceptProgress(fen, generation, requestId, cacheContext, result);
+        },
         onResult: result => {
           callbackSettled = true;
           this.acceptResult(fen, generation, requestId, cacheContext, result);
@@ -485,14 +505,25 @@ export class UserscriptEvalBar {
           callbackSettled = true;
           if (requestId === this.activeRequestId && generation === this.generation) {
             this.request = null;
+            this.finishRequestTiming();
+            this.lastRequestAt = this.now();
             this.reportError(error);
           }
         },
       }) ?? null;
-      if (!callbackSettled && requestId === this.activeRequestId) this.request = request;
+      if (!callbackSettled && requestId === this.activeRequestId) {
+        this.request = request;
+        if (!request) {
+          this.finishRequestTiming();
+          this.lastRequestAt = this.now();
+          this.reportError(new Error('Evaluation transport is unavailable'));
+        }
+      }
     } catch (error) {
       if (requestId === this.activeRequestId) {
         this.request = null;
+        this.finishRequestTiming();
+        this.lastRequestAt = this.now();
         this.reportError(error);
       }
     }
@@ -541,6 +572,12 @@ export class UserscriptEvalBar {
       geometry: this.geometry,
       lastEvaluation: this.lastEvaluation,
       lastError: this.lastError,
+      activeSequence: this.activeSequence,
+      requestStartedAt: this.requestStartedAt,
+      requestElapsedMs: this.requestStartedAt === null ? null : Math.max(0, this.now() - this.requestStartedAt),
+      lastRequestDurationMs: this.lastRequestDurationMs,
+      abortCount: this.abortCount,
+      lastAbortReason: this.lastAbortReason,
     });
   }
 
@@ -561,7 +598,25 @@ export class UserscriptEvalBar {
       cacheContext !== this.currentCacheContext ||
       this.readCacheContext() !== cacheContext
     ) return;
+    const sequence = Number(result.sequence);
+    if (this.activeSequence >= 0 && !Number.isFinite(sequence)) {
+      this.request = null;
+      this.finishRequestTiming();
+      this.lastRequestAt = this.now();
+      this.reportError(new Error('Evaluation terminal sequence is unavailable'));
+      return;
+    }
+    if (Number.isFinite(sequence) && sequence <= this.activeSequence) {
+      this.request = null;
+      this.finishRequestTiming();
+      this.lastRequestAt = this.now();
+      this.reportError(new Error('Evaluation terminal sequence is stale'));
+      return;
+    }
+    if (Number.isFinite(sequence)) this.activeSequence = sequence;
     this.request = null;
+    this.finishRequestTiming();
+    this.lastRequestAt = this.now();
     let evaluation: CachedEvaluation;
     try {
       evaluation = normalizedResult(result);
@@ -570,6 +625,40 @@ export class UserscriptEvalBar {
       return;
     }
     this.cache.set(this.cacheKey(fen, cacheContext), evaluation);
+    this.lastEvaluation = Object.freeze({ ...result });
+    this.setVisualState('connected');
+    this.controller?.publish(this.sample(evaluation, this.options.getOrientation()));
+  }
+
+  private acceptProgress(
+    fen: string,
+    generation: number,
+    requestId: number,
+    cacheContext: string,
+    result: EvalTransportResult,
+  ): void {
+    if (
+      !this.enabled ||
+      !this.options.authorize() ||
+      generation !== this.generation ||
+      requestId !== this.activeRequestId ||
+      fen !== this.currentFen ||
+      this.options.getFen() !== fen ||
+      cacheContext !== this.currentCacheContext ||
+      this.readCacheContext() !== cacheContext
+    ) return;
+    const sequence = Number(result.sequence);
+    if (!Number.isFinite(sequence) || sequence <= this.activeSequence) return;
+    this.activeSequence = sequence;
+    if (result.type === 'started') return;
+    if (result.bound) return;
+    let evaluation: CachedEvaluation;
+    try {
+      evaluation = normalizedResult(result);
+    } catch (error) {
+      this.reportError(error);
+      return;
+    }
     this.lastEvaluation = Object.freeze({ ...result });
     this.setVisualState('connected');
     this.controller?.publish(this.sample(evaluation, this.options.getOrientation()));
@@ -626,11 +715,12 @@ export class UserscriptEvalBar {
 
   private deactivate(): void {
     const wasActive = Boolean(this.request || this.interval !== null || this.root || this.currentFen);
-    this.abortRequest();
+    this.abortRequest('deactivated');
     this.stopPolling();
     this.currentFen = '';
     this.currentCacheContext = '';
     this.lastRequestAt = -Infinity;
+    this.activeSequence = -1;
     this.connectionState = 'idle';
     this.lastEvaluation = null;
     this.lastError = null;
@@ -638,11 +728,21 @@ export class UserscriptEvalBar {
     this.unmount();
   }
 
-  private abortRequest(): void {
+  private abortRequest(reason: string): void {
+    if (this.request) {
+      this.abortCount += 1;
+      this.lastAbortReason = reason;
+      this.finishRequestTiming();
+    }
     try {
       this.request?.abort();
     } catch {}
     this.request = null;
+  }
+
+  private finishRequestTiming(): void {
+    if (this.requestStartedAt !== null) this.lastRequestDurationMs = Math.max(0, this.now() - this.requestStartedAt);
+    this.requestStartedAt = null;
   }
 
   private shouldDisplay(): boolean {
@@ -664,10 +764,11 @@ export class UserscriptEvalBar {
   private clearPosition(state: 'blocked' | 'waiting', label: string): void {
     const hadPosition = Boolean(this.currentFen || this.request);
     const visualChanged = this.connectionState !== state || this.label?.textContent !== label;
-    this.abortRequest();
+    this.abortRequest(state === 'blocked' ? 'authorization-unavailable' : 'fen-unavailable');
     this.currentFen = '';
     this.currentCacheContext = '';
     this.lastRequestAt = -Infinity;
+    this.activeSequence = -1;
     this.lastEvaluation = null;
     if (hadPosition) this.generation += 1;
     if (hadPosition || visualChanged) this.controller?.reset(0.5, label);
