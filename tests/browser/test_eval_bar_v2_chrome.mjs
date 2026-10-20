@@ -230,7 +230,7 @@ try {
     || !behavior.neutralRendered
     || !behavior.contextMissPreservedVisual || !behavior.oldContextRejected || !behavior.contextCacheSeparated
     || !behavior.cacheMissPreservedVisual || !behavior.cacheHitMarkedFresh
-    || !behavior.missingFenWaiting || !behavior.backendFailureVisible
+    || !behavior.missingFenWaiting || !behavior.backendFailureVisible || !behavior.recoveredAfterBackendFailure
     || !behavior.hiddenWhenBoardHidden || !behavior.visibleAfterBoardReturns
     || !behavior.mountedBlockedWhenUnauthorized || !behavior.noRequestWhenUnauthorized
     || !behavior.remountedAfterSpaRoute

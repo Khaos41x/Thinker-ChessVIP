@@ -21,10 +21,13 @@ describe('Eval Bar V2 userscript artifact', () => {
 
   it('declares style injection, feature flag and fail-closed authorization wiring', () => {
     expect(userscript).toContain('// @grant        GM_addStyle');
+    expect(userscript).toContain('// @grant        unsafeWindow');
     expect(userscript).toContain('localStorage.getItem("evalBarV2") !== "false"');
     expect(userscript).toContain('if (!evalBarAuthorization()) return null;');
     expect(userscript).toContain('globalThis.krypbotSetEvalBarV2');
     expect(userscript).toContain('globalThis.krypbotEvalBarDiagnostics');
+    expect(userscript).toContain('evalBarPageWindow.krypbotEvalBarDiagnostics');
+    expect(userscript).toContain('redactedEvalBarDiagnostics');
     expect(userscript).toContain('shouldDisplay: evalBarPresentationAllowed');
     expect(userscript).toContain('readChessComFen?.(board)');
     expect(userscript).toContain('if (evalBarV2Enabled) {');
@@ -34,6 +37,10 @@ describe('Eval Bar V2 userscript artifact', () => {
 
   it('routes Eval Bar V2 exclusively to the versioned Smallnet service', () => {
     expect(userscript).toContain('SERVER_URL + "/eval-bar/stream"');
+    expect(userscript).toContain('responseType: "stream"');
+    expect(userscript).toContain('onloadstart: function (resp)');
+    expect(userscript).toContain('stream.getReader()');
+    expect(userscript).toContain('new TextDecoder()');
     expect(userscript).toContain('SERVER_URL + "/eval-bar/cancel"');
     expect(userscript).toContain('onProgress(item)');
     expect(userscript).toContain('@lichess-org/stockfish-web@0.5.0');

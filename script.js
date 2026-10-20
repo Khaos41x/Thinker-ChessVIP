@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-19.2
+// @version      2026-10-20.1
 // @description  Chess Bot com Servidor Local
 // @author       You
 // @match        https://www.chess.com/*
@@ -13,6 +13,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_addStyle
+// @grant        unsafeWindow
 // @connect      localhost
 // @connect      127.0.0.1
 // @connect      api.chess.com
@@ -2993,6 +2994,18 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
   let lastEvalFen = "";
   let evalBarV2Adapter = null;
   const evalBarClientId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  let evalBarTransportDiagnostic = Object.freeze({ stage: "idle", status: null, elapsedMs: null, eventType: null, depth: null, error: null });
+
+  function setEvalBarTransportDiagnostic(stage, details = {}) {
+    evalBarTransportDiagnostic = Object.freeze({
+      stage,
+      status: Number.isFinite(Number(details.status)) ? Number(details.status) : null,
+      elapsedMs: Number.isFinite(Number(details.elapsedMs)) ? Number(details.elapsedMs) : null,
+      eventType: typeof details.eventType === "string" ? details.eventType : null,
+      depth: Number.isFinite(Number(details.depth)) ? Number(details.depth) : null,
+      error: details.error == null ? null : details.error instanceof Error ? details.error.message : String(details.error),
+    });
+  }
 
   function getEvalBarBoard() {
     return globalThis.ThinkerEvalBarV2?.findChessComBoard?.(document) || null;
@@ -3033,119 +3046,165 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     const transportRequestId = `eval-v2:${evalBarClientId}:${requestId}`;
     let settled = false;
     let handle = null;
-    let receivedLength = 0;
+    let streamReader = null;
+    let streamStarted = false;
+    let abortedByClient = false;
     let buffered = "";
     const startedAt = performance.now();
-    const consume = (resp, flush = false) => {
-      const responseText = String(resp?.responseText || "");
-      if (responseText.length < receivedLength) {
-        receivedLength = 0;
-        buffered = "";
+    const cancelReader = () => {
+      const reader = streamReader;
+      streamReader = null;
+      if (!reader?.cancel) return;
+      try {
+        const cancellation = reader.cancel();
+        cancellation?.catch?.(() => {});
+      } catch (_) {}
+    };
+    const fail = (stage, error) => {
+      if (settled) return;
+      settled = true;
+      cancelReader();
+      setEvalBarTransportDiagnostic(stage, { elapsedMs: performance.now() - startedAt, error });
+      reportEvalBarDiagnostic(stage, error);
+      onError(error);
+    };
+    const httpError = (status, responseText, response) => {
+      let detail = "";
+      try { detail = JSON.parse(responseText)?.error || ""; } catch (_) {}
+      if (Number(status) === 401) {
+        handleEngineUnauthorized(response);
+        return new Error(detail ? `${detail} (HTTP 401)` : "Eval authorization expired (HTTP 401)");
       }
-      buffered += responseText.slice(receivedLength);
-      receivedLength = responseText.length;
+      return new Error(detail ? `${detail} (HTTP ${status})` : `Eval HTTP ${status}`);
+    };
+    const consume = (chunk, flush = false) => {
+      buffered += String(chunk || "");
       const lines = buffered.split("\n");
       buffered = flush ? "" : lines.pop() || "";
       if (flush && lines.length && !lines[lines.length - 1]) lines.pop();
       for (const raw of lines) {
         const line = raw.trim();
         if (!line || settled) continue;
-        let item;
-        try { item = JSON.parse(line); } catch (error) {
-          if (!flush) {
-            buffered = `${raw}\n${buffered}`;
-            continue;
-          }
-          throw error;
-        }
-        if (
-          item.requestId !== transportRequestId ||
-          item.generation !== generation ||
-          item.cacheContext !== cacheContext ||
-          item.fen !== fen ||
-          item.perspective !== "white"
-        ) throw new Error("Eval response identity mismatch");
+        const item = JSON.parse(line);
+        const mismatches = [];
+        if (item.requestId !== transportRequestId) mismatches.push("requestId");
+        if (item.generation !== generation) mismatches.push("generation");
+        if (item.cacheContext !== cacheContext) mismatches.push("cacheContext");
+        if (item.fen !== fen) mismatches.push("fen");
+        if (item.perspective !== "white") mismatches.push("perspective");
+        if (mismatches.length) throw new Error(`Eval response identity mismatch: ${mismatches.join(", ")}`);
         if (item.type === "started") {
+          setEvalBarTransportDiagnostic("stream-started", { status: 200, elapsedMs: performance.now() - startedAt, eventType: item.type });
           reportEvalBarDiagnostic("stream-started", { latencyMs: performance.now() - startedAt, item });
           onProgress(item);
         } else if (item.type === "info") {
+          setEvalBarTransportDiagnostic("stream-info", { status: 200, elapsedMs: performance.now() - startedAt, eventType: item.type, depth: item.depth });
           onProgress(item);
         } else if (item.type === "result") {
           settled = true;
+          setEvalBarTransportDiagnostic("stream-complete", { status: 200, elapsedMs: performance.now() - startedAt, eventType: item.type, depth: item.depth });
           reportEvalBarDiagnostic("stream-complete", { latencyMs: performance.now() - startedAt, item });
           onResult(item);
         } else if (item.type === "error" || item.type === "cancelled") {
-          settled = true;
           throw new Error(item.detail || item.error || item.type);
+        } else {
+          throw new Error(`Unknown Eval event type: ${String(item.type)}`);
         }
       }
     };
+    setEvalBarTransportDiagnostic("request-started", { elapsedMs: 0 });
     handle = GM_xmlhttpRequest({
       method: "POST",
       url: SERVER_URL + "/eval-bar/stream",
       headers: engineRequestHeaders(),
       data: JSON.stringify({ fen, requestId: transportRequestId, generation, cacheContext, context: evalBarAuthorization() }),
       timeout: 15000,
-      onprogress: function (resp) {
-        if (settled) return;
-        if (Number(resp?.status) >= 400) return;
+      responseType: "stream",
+      onloadstart: function (resp) {
+        const stream = resp?.response;
+        if (settled || !stream?.getReader) return;
+        let decoder;
         try {
-          consume(resp);
+          streamReader = stream.getReader();
+          decoder = new TextDecoder();
         } catch (error) {
-          settled = true;
-          reportEvalBarDiagnostic("stream-parse-error", error);
-          handle?.abort?.();
-          onError(error);
+          streamReader = null;
+          setEvalBarTransportDiagnostic("stream-init-error", { status: resp?.status, elapsedMs: performance.now() - startedAt, error });
+          reportEvalBarDiagnostic("stream-init-error", error);
+          return;
         }
+        streamStarted = true;
+        const reader = streamReader;
+        const status = Number(resp?.status);
+        void (async () => {
+          let responseText = "";
+          try {
+            while (!settled) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              const chunk = decoder.decode(value, { stream: true });
+              if (status >= 400) responseText += chunk;
+              else consume(chunk);
+            }
+            const tail = decoder.decode();
+            if (status >= 400) {
+              responseText += tail;
+              fail("http-error", httpError(status, responseText, resp));
+              return;
+            }
+            if (!settled) consume(tail, true);
+            if (!settled) fail("response-error", new Error("Eval stream ended without a terminal event"));
+          } catch (error) {
+            fail(status >= 400 ? "http-error" : "stream-read-error", status >= 400 ? httpError(status, responseText, resp) : error);
+          } finally {
+            if (streamReader === reader) streamReader = null;
+            try { reader.releaseLock?.(); } catch (_) {}
+          }
+        })();
       },
       onload: function (resp) {
-        if (settled) return;
-        if (!evalBarAuthorization() || handleEngineUnauthorized(resp)) {
-          settled = true;
-          onError(new Error("Eval authorization expired"));
+        if (settled || streamStarted) return;
+        if (!evalBarAuthorization()) {
+          fail("authorization-error", new Error("Eval authorization expired"));
           return;
         }
         if (resp.status < 200 || resp.status >= 300) {
-          settled = true;
-          let detail = "";
-          try { detail = JSON.parse(resp.responseText)?.error || ""; } catch (_) {}
-          const error = new Error(detail ? `${detail} (HTTP ${resp.status})` : `Eval HTTP ${resp.status}`);
-          reportEvalBarDiagnostic("http-error", error);
-          onError(error);
+          fail("http-error", httpError(resp.status, String(resp.responseText || ""), resp));
           return;
         }
         try {
-          consume(resp, true);
+          consume(String(resp.responseText || ""), true);
           if (!settled) throw new Error("Eval stream ended without a terminal event");
         } catch (error) {
-          settled = true;
-          reportEvalBarDiagnostic("response-error", error);
-          onError(error);
+          fail("response-error", error);
         }
       },
       onerror: function (error) {
-        if (!settled) {
-          settled = true;
-          reportEvalBarDiagnostic("connection-error", error);
-          onError(error);
-        }
+        const status = Number(error?.status);
+        const message = typeof error?.error === "string" ? error.error
+          : typeof error?.statusText === "string" && error.statusText ? error.statusText
+            : Number.isFinite(status) && status > 0 ? `Eval HTTP ${status}` : "Eval connection error";
+        fail("connection-error", error instanceof Error ? error : new Error(message));
       },
       ontimeout: function () {
         if (!settled) {
-          settled = true;
           const error = new Error("Eval timeout");
-          reportEvalBarDiagnostic("timeout", { elapsedMs: performance.now() - startedAt, error });
-          onError(error);
+          error.elapsedMs = performance.now() - startedAt;
+          fail("timeout", error);
         }
       },
       onabort: function () {
         reportEvalBarDiagnostic("abort", { elapsedMs: performance.now() - startedAt });
-        settled = true;
+        if (!abortedByClient) fail("abort", new Error("Eval request aborted"));
       },
     });
     return {
       abort: () => {
         if (settled) return;
+        abortedByClient = true;
+        settled = true;
+        cancelReader();
+        setEvalBarTransportDiagnostic("cancelled", { elapsedMs: performance.now() - startedAt });
         GM_xmlhttpRequest({
           method: "POST",
           url: SERVER_URL + "/eval-bar/cancel",
@@ -3190,6 +3249,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       fen: getEvalBarFen(),
       authorization: evalBarAuthorization(),
       presentationAllowed: evalBarPresentationAllowed(),
+      transport: evalBarTransportDiagnostic,
       adapter: snapshot,
     });
   }
@@ -3205,6 +3265,62 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     localStorage.setItem("evalBarV2Diagnostics", String(evalBarDiagnosticEnabled));
     return getEvalBarDiagnostics();
   };
+  const evalBarPageWindow = typeof unsafeWindow === "object" && unsafeWindow ? unsafeWindow : window;
+  const redactedEvalBarDiagnostics = () => {
+    const diagnostics = getEvalBarDiagnostics();
+    const adapter = diagnostics.adapter;
+    return Object.freeze({
+      enabled: diagnostics.enabled,
+      route: diagnostics.route,
+      boardFound: diagnostics.boardFound,
+      fen: diagnostics.fen,
+      authorization: diagnostics.authorization,
+      presentationAllowed: diagnostics.presentationAllowed,
+      transport: diagnostics.transport ? Object.freeze({
+        stage: diagnostics.transport.stage,
+        status: diagnostics.transport.status,
+        elapsedMs: diagnostics.transport.elapsedMs,
+        eventType: diagnostics.transport.eventType,
+        depth: diagnostics.transport.depth,
+        error: diagnostics.transport.error,
+      }) : null,
+      adapter: adapter ? Object.freeze({
+        route: adapter.route,
+        authorization: adapter.authorization,
+        boardFound: adapter.boardFound,
+        fenAvailable: adapter.fenAvailable,
+        state: adapter.state,
+        mounted: adapter.mounted,
+        geometry: adapter.geometry ? Object.freeze({
+          left: adapter.geometry.left,
+          top: adapter.geometry.top,
+          width: adapter.geometry.width,
+          height: adapter.geometry.height,
+          placement: adapter.geometry.placement,
+        }) : null,
+        lastEvaluation: adapter.lastEvaluation ? Object.freeze({
+          type: adapter.lastEvaluation.type,
+          sequence: adapter.lastEvaluation.sequence,
+          cp: adapter.lastEvaluation.cp,
+          mate: adapter.lastEvaluation.mate,
+          depth: adapter.lastEvaluation.depth,
+          engine: adapter.lastEvaluation.engine,
+          package: adapter.lastEvaluation.package,
+          build: adapter.lastEvaluation.build,
+          network: adapter.lastEvaluation.network,
+          status: adapter.lastEvaluation.status,
+        }) : null,
+        lastError: adapter.lastError,
+        activeSequence: adapter.activeSequence,
+        requestStartedAt: adapter.requestStartedAt,
+        requestElapsedMs: adapter.requestElapsedMs,
+        lastRequestDurationMs: adapter.lastRequestDurationMs,
+        abortCount: adapter.abortCount,
+        lastAbortReason: adapter.lastAbortReason,
+      }) : null,
+    });
+  };
+  evalBarPageWindow.krypbotEvalBarDiagnostics = redactedEvalBarDiagnostics;
 
   function syncEvalBarRenderer() {
     if (evalBarV2Enabled) {

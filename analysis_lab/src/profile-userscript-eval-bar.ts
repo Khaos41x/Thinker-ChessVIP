@@ -185,6 +185,14 @@ async function runUserscriptEvalBarBrowserTest() {
   const backendFailureVisible = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.state === 'error'
     && adapter.snapshot().lastError === 'backend offline'
     && document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent === labelBeforeBackendFailure;
+  now += 101;
+  adapter.pollNow();
+  const recoveryRequest = requests.at(-1)!;
+  recoveryRequest.onProgress({ type: 'info', sequence: 1, cp: 55, mate: null, depth: 6 });
+  await waitFrames(2);
+  const recoveredAfterBackendFailure = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.state === 'fresh'
+    && adapter.snapshot().lastError === null
+    && document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent !== '!';
 
   board.style.display = 'none';
   adapter.pollNow();
@@ -248,6 +256,7 @@ async function runUserscriptEvalBarBrowserTest() {
     cacheHitMarkedFresh: cacheHitState === 'fresh',
     missingFenWaiting,
     backendFailureVisible,
+    recoveredAfterBackendFailure,
     hiddenWhenBoardHidden,
     visibleAfterBoardReturns,
     abortCount,
