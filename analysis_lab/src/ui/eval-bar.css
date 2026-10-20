@@ -1,16 +1,31 @@
 .thinker-eval-v2-rail {
-  border-radius: 4px;
+  --thinker-eval-v2-width: 20px;
+  --thinker-eval-v2-gap: 10px;
+  --thinker-eval-v2-dark: rgb(64, 61, 57);
+  --thinker-eval-v2-light: rgb(255, 255, 255);
+  --thinker-eval-v2-draw: rgb(119, 117, 116);
+  --thinker-eval-v2-radius: 2px;
+  --thinker-eval-v2-label-padding: 5px;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: var(--thinker-eval-v2-radius);
   position: relative;
-  background: #161513;
+  background: var(--thinker-eval-v2-dark);
   overflow: hidden;
   min-height: 200px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, .28);
+  box-shadow: none;
   contain: layout paint;
   isolation: isolate;
-  width: 28px;
+  width: var(--thinker-eval-v2-width);
   align-self: stretch;
-  flex: 0 0 28px;
-  margin-right: 6px;
+  flex: 0 0 var(--thinker-eval-v2-width);
+  margin-right: var(--thinker-eval-v2-gap);
+}
+
+@media (min-width: 960px) {
+  .thinker-eval-v2-rail {
+    --thinker-eval-v2-width: 30px;
+  }
 }
 
 .thinker-eval-v2-overlay {
@@ -25,7 +40,7 @@
 .thinker-eval-v2-fill {
   position: absolute;
   inset: 0;
-  background: #f0f0f0;
+  background: var(--thinker-eval-v2-light);
   transform: scaleY(.5);
   transform-origin: center bottom;
   will-change: transform;
@@ -37,15 +52,21 @@
 }
 
 .thinker-eval-v2-score {
+  box-sizing: border-box;
   position: absolute;
-  left: 50%;
-  bottom: 9px;
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: 2;
-  writing-mode: vertical-rl;
-  transform: translateX(-50%) rotate(180deg);
-  color: #fff;
-  font: 800 11px/1 ui-monospace, monospace;
-  mix-blend-mode: difference;
+  padding: var(--thinker-eval-v2-label-padding) 0;
+  color: var(--thinker-eval-v2-dark);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 14.3px;
+  text-align: center;
+  white-space: nowrap;
+  mix-blend-mode: normal;
 }
 
 .thinker-eval-v2-rail[data-state="stale"] .thinker-eval-v2-score,
@@ -63,11 +84,10 @@
 }
 
 .thinker-eval-v2-rail[data-state="error"] {
-  box-shadow: inset 0 0 0 2px #b94a48, 0 4px 16px rgba(0, 0, 0, .28);
+  box-shadow: inset 0 0 0 2px #b94a48;
 }
 
 .thinker-eval-v2-rail[data-orientation="black"] .thinker-eval-v2-score {
-  top: 9px;
+  top: 0;
   bottom: auto;
-  transform: translateX(-50%);
 }

@@ -251,4 +251,170 @@ async function runUserscriptEvalBarBrowserTest() {
   };
 }
 
-Object.assign(globalThis, { runUserscriptEvalBarBrowserTest });
+async function runUserscriptEvalBarVisualTest() {
+  history.replaceState({}, '', '/analysis/visual-fixture');
+  window.scrollTo(0, 0);
+  const boardSize = window.innerWidth === 900 ? 528 : window.innerWidth === 1280 ? 584 : 480;
+  const shell = document.createElement('div');
+  const board = document.createElement('div');
+  const spacer = document.createElement('div');
+  Object.assign(shell.style, {
+    display: 'block',
+    marginLeft: '80px',
+    marginTop: '140px',
+    width: `${boardSize}px`,
+    height: `${boardSize}px`,
+  });
+  Object.assign(board.style, { display: 'block', width: '100%', height: '100%' });
+  spacer.style.height = '1200px';
+  shell.append(board);
+  document.body.append(shell, spacer);
+  const originalShellStyle = shell.getAttribute('style');
+  const originalBoardStyle = board.getAttribute('style');
+  let orientation: 'white' | 'black' = 'white';
+  const adapter = createUserscriptEvalBar({
+    window,
+    document,
+    getFen: () => '4k3/8/8/8/8/8/P7/4K3 w - - 0 1',
+    getBoard: () => board,
+    getOrientation: () => orientation,
+    getCacheContext: () => 'visual-fixture',
+    authorize: () => 'analysis',
+    shouldDisplay: () => true,
+    requestEvaluation: request => {
+      request.onResult({ cp: 1033, depth: 18 });
+      return null;
+    },
+    pollIntervalMs: 60000,
+    refreshIntervalMs: 60000,
+  });
+  adapter.start(true);
+  await waitFrames(12);
+
+  const root = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')!;
+  const fill = root.querySelector<HTMLElement>('.thinker-eval-v2-fill')!;
+  const label = root.querySelector<HTMLElement>('.thinker-eval-v2-score')!;
+  const boardRect = board.getBoundingClientRect();
+  const railRect = root.getBoundingClientRect();
+  const labelRect = label.getBoundingClientRect();
+  const rootStyle = getComputedStyle(root);
+  const fillStyle = getComputedStyle(fill);
+  const labelStyle = getComputedStyle(label);
+  const whiteOrigin = getComputedStyle(fill).transformOrigin.split(' ').map(Number.parseFloat);
+  const baseline = {
+    width: railRect.width,
+    heightDelta: Math.abs(railRect.height - boardRect.height),
+    topDelta: Math.abs(railRect.top - boardRect.top),
+    gap: Math.abs(boardRect.left - railRect.right),
+    placement: root.dataset.placement,
+    labelBottomDelta: Math.abs(railRect.bottom - labelRect.bottom),
+    labelCenterDelta: Math.abs((railRect.left + railRect.right) / 2 - (labelRect.left + labelRect.right) / 2),
+  };
+  const hostPreservedAfterMount = board.parentElement === shell
+    && board.getAttribute('style') === originalBoardStyle
+    && shell.getAttribute('style') === originalShellStyle;
+  const styles = {
+    dark: rootStyle.backgroundColor,
+    light: fillStyle.backgroundColor,
+    draw: rootStyle.getPropertyValue('--thinker-eval-v2-draw').trim(),
+    radius: rootStyle.borderRadius,
+    borderTopWidth: rootStyle.borderTopWidth,
+    shadow: rootStyle.boxShadow,
+    fontFamily: labelStyle.fontFamily,
+    fontSize: labelStyle.fontSize,
+    fontWeight: labelStyle.fontWeight,
+    lineHeight: labelStyle.lineHeight,
+    labelColor: labelStyle.color,
+    mixBlendMode: labelStyle.mixBlendMode,
+    paddingTop: labelStyle.paddingTop,
+    paddingBottom: labelStyle.paddingBottom,
+    labelHeight: labelRect.height,
+    whiteOriginY: whiteOrigin[1],
+    writingMode: labelStyle.writingMode,
+    labelTransform: labelStyle.transform,
+    score: label.textContent,
+    fillTransform: fill.style.transform,
+    fillInlineHeight: fill.style.height,
+  };
+
+  orientation = 'black';
+  adapter.pollNow();
+  await waitFrames(2);
+  const blackRailRect = root.getBoundingClientRect();
+  const blackLabelRect = label.getBoundingClientRect();
+  const blackOrigin = getComputedStyle(fill).transformOrigin.split(' ').map(Number.parseFloat);
+  const flipped = {
+    labelTopDelta: Math.abs(blackLabelRect.top - blackRailRect.top),
+    labelCenterDelta: Math.abs((blackRailRect.left + blackRailRect.right) / 2 - (blackLabelRect.left + blackLabelRect.right) / 2),
+    originY: blackOrigin[1],
+  };
+
+  const resizedSize = boardSize - 80;
+  shell.style.width = `${resizedSize}px`;
+  shell.style.height = `${resizedSize}px`;
+  window.dispatchEvent(new Event('resize'));
+  await waitFrames(2);
+  const resizedBoardRect = board.getBoundingClientRect();
+  const resizedRailRect = root.getBoundingClientRect();
+  const resized = {
+    heightDelta: Math.abs(resizedRailRect.height - resizedBoardRect.height),
+    topDelta: Math.abs(resizedRailRect.top - resizedBoardRect.top),
+    gap: Math.abs(resizedBoardRect.left - resizedRailRect.right),
+  };
+
+  window.scrollTo(0, 60);
+  await waitFrames(2);
+  const scrolledBoardRect = board.getBoundingClientRect();
+  const scrolledRailRect = root.getBoundingClientRect();
+  const scrolled = {
+    heightDelta: Math.abs(scrolledRailRect.height - scrolledBoardRect.height),
+    topDelta: Math.abs(scrolledRailRect.top - scrolledBoardRect.top),
+    gap: Math.abs(scrolledBoardRect.left - scrolledRailRect.right),
+    scrollY: window.scrollY,
+  };
+  const hostPreserved = hostPreservedAfterMount
+    && board.parentElement === shell
+    && board.getAttribute('style') === originalBoardStyle;
+
+  shell.style.marginLeft = '5px';
+  window.dispatchEvent(new Event('resize'));
+  await waitFrames(2);
+  const rightFallback = {
+    placement: root.dataset.placement,
+    gap: Math.abs(root.getBoundingClientRect().left - board.getBoundingClientRect().right),
+  };
+
+  shell.style.marginLeft = '0';
+  shell.style.width = `${window.innerWidth}px`;
+  shell.style.height = `${resizedSize}px`;
+  window.dispatchEvent(new Event('resize'));
+  await waitFrames(2);
+  const overlayFallback = {
+    placement: root.dataset.placement,
+    leftDelta: Math.abs(root.getBoundingClientRect().left - board.getBoundingClientRect().left),
+  };
+  const geometry = adapter.snapshot().geometry;
+  adapter.destroy();
+  shell.remove();
+  spacer.remove();
+  window.scrollTo(0, 0);
+
+  return {
+    viewport: { width: window.innerWidth, height: window.innerHeight },
+    expectedWidth: window.innerWidth >= 960 ? 30 : 20,
+    boardSize,
+    baseline,
+    styles,
+    flipped,
+    resized,
+    scrolled,
+    rightFallback,
+    overlayFallback,
+    geometry,
+    hostPreserved,
+    originalShellStyle,
+    rootsAfterDestroy: document.querySelectorAll('#thinker-eval-v2-rail').length,
+  };
+}
+
+Object.assign(globalThis, { runUserscriptEvalBarBrowserTest, runUserscriptEvalBarVisualTest });

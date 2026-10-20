@@ -745,8 +745,13 @@ export class UserscriptEvalBar {
   private syncGeometry(): void {
     if (!this.root || !this.board?.isConnected) return;
     const rect = this.board.getBoundingClientRect();
-    const width = 28;
-    const gap = 6;
+    const style = this.options.window.getComputedStyle(this.root);
+    const measuredWidth = Number.parseFloat(style.getPropertyValue('--thinker-eval-v2-width'));
+    const measuredGap = Number.parseFloat(style.getPropertyValue('--thinker-eval-v2-gap'));
+    const width = Number.isFinite(measuredWidth) && measuredWidth > 0
+      ? measuredWidth
+      : this.options.window.innerWidth >= 960 ? 30 : 20;
+    const gap = Number.isFinite(measuredGap) && measuredGap >= 0 ? measuredGap : 10;
     const leftCandidate = rect.left - width - gap;
     const rightCandidate = rect.right + gap;
     const viewportWidth = this.options.window.innerWidth;

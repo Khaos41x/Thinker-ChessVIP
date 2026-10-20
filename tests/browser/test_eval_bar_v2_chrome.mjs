@@ -146,8 +146,81 @@ try {
     behavior: evaluated.result.value,
     retainedHeapDeltaBytes: after.usedSize - before.usedSize,
   };
+  const visualResults = [];
+  const visualViewports = [
+    { width: 900, height: 700 },
+    { width: 959, height: 720 },
+    { width: 960, height: 720 },
+    { width: 961, height: 720 },
+    { width: 1280, height: 720 },
+  ];
+  for (const viewport of visualViewports) {
+    await cdp.send('Emulation.setDeviceMetricsOverride', {
+      width: viewport.width,
+      height: viewport.height,
+      deviceScaleFactor: 1,
+      mobile: false,
+    });
+    const visual = await cdp.send('Runtime.evaluate', {
+      expression: `Promise.race([
+        runUserscriptEvalBarVisualTest(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('visual fixture timeout')), 10000)),
+      ])`,
+      awaitPromise: true,
+      returnByValue: true,
+    });
+    if (visual.exceptionDetails) throw new Error(visual.exceptionDetails.exception?.description || visual.exceptionDetails.text);
+    visualResults.push(visual.result.value);
+  }
+  result.visual = visualResults;
   console.log(JSON.stringify(result, null, 2));
   const behavior = result.behavior;
+  const visualPasses = visualResults.every((visual, index) => {
+    const geometrySets = [visual.baseline, visual.resized, visual.scrolled];
+    const geometryAligned = geometrySets.every(geometry => geometry.heightDelta <= 1
+      && geometry.topDelta <= 1 && Math.abs(geometry.gap - 10) <= 1);
+    const expectedBoardSize = visual.viewport.width === 900 ? 528 : visual.viewport.width === 1280 ? 584 : 480;
+    return visual.viewport.width === visualViewports[index].width
+      && visual.viewport.height === visualViewports[index].height
+      && Math.abs(visual.baseline.width - visual.expectedWidth) <= 1
+      && geometryAligned
+      && visual.baseline.placement === 'left'
+      && visual.boardSize === expectedBoardSize
+      && visual.styles.dark === 'rgb(64, 61, 57)'
+      && visual.styles.light === 'rgb(255, 255, 255)'
+      && visual.styles.draw === 'rgb(119, 117, 116)'
+      && visual.styles.radius === '2px'
+      && visual.styles.borderTopWidth === '0px'
+      && visual.styles.shadow === 'none'
+      && /Segoe UI|system-ui/.test(visual.styles.fontFamily)
+      && visual.styles.fontSize === '10px'
+      && visual.styles.fontWeight === '600'
+      && visual.styles.lineHeight === '14.3px'
+      && visual.styles.labelColor === 'rgb(64, 61, 57)'
+      && visual.styles.mixBlendMode === 'normal'
+      && visual.styles.writingMode === 'horizontal-tb'
+      && visual.styles.labelTransform === 'none'
+      && visual.styles.score === '+10.3'
+      && /^scaleY\([0-9.]+\)$/.test(visual.styles.fillTransform)
+      && visual.styles.fillInlineHeight === ''
+      && visual.styles.paddingTop === '5px'
+      && visual.styles.paddingBottom === '5px'
+      && Math.abs(visual.styles.labelHeight - 24.3) <= 1
+      && Math.abs(visual.styles.whiteOriginY - visual.boardSize) <= 1
+      && visual.baseline.labelBottomDelta <= 1
+      && visual.baseline.labelCenterDelta <= 1
+      && visual.flipped.labelTopDelta <= 1
+      && visual.flipped.labelCenterDelta <= 1
+      && visual.flipped.originY <= 1
+      && visual.scrolled.scrollY > 0
+      && visual.rightFallback.placement === 'right'
+      && Math.abs(visual.rightFallback.gap - 10) <= 1
+      && visual.overlayFallback.placement === 'overlay'
+      && visual.overlayFallback.leftDelta <= 1
+      && visual.geometry?.width === visual.expectedWidth
+      && visual.hostPreserved
+      && visual.rootsAfterDestroy === 0;
+  });
   if (
     !behavior.domPreserved || !behavior.singleRootAfterRepeatedStart
     || !behavior.overlayAligned || !behavior.parentPreservedAfterDestroy
@@ -164,6 +237,7 @@ try {
     || behavior.rootsAfterDestroy !== 0
     || behavior.styleMarkers !== 1 || behavior.maximumPendingFramesDuringBurst > 1
     || result.retainedHeapDeltaBytes > 1_500_000
+    || !visualPasses
   ) process.exitCode = 1;
 } finally {
   cdp?.socket.close();
