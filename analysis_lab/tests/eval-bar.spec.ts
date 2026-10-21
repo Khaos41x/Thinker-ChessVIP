@@ -114,4 +114,23 @@ describe('EvalBarController', () => {
     controller.setOrientation('black');
     expect(root.dataset.orientation).toBe('black');
   });
+
+  it('reports the first committed visual frame without changing interpolation', () => {
+    const scheduler = new FakeScheduler();
+    const frames: Array<ReturnType<EvalBarController['snapshot']>> = [];
+    const root = { dataset: {} } as unknown as HTMLElement;
+    const fill = { style: { transform: '' } } as unknown as HTMLElement;
+    const label = { textContent: '0.0' } as HTMLElement;
+    const controller = new EvalBarController(
+      { root, fill, label },
+      { scheduler, reducedMotion: false, onFrameCommitted: snapshot => frames.push(snapshot) },
+    );
+    controller.beginSearch(5);
+    controller.publish({ searchId: 5, fraction: 0.9, label: '+1.0' });
+    scheduler.step(16);
+    expect(frames).toHaveLength(1);
+    expect(frames[0].current).toBeGreaterThan(0.5);
+    expect(frames[0].current).toBeLessThan(0.9);
+    expect(label.textContent).toBe('+1.0');
+  });
 });

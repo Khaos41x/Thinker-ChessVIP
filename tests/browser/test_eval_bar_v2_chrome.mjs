@@ -71,6 +71,29 @@ const connect = async url => {
   };
 };
 
+const evaluatePromise = async (cdp, expression, timeoutMs, label) => {
+  const key = `__thinkerCdpResult${Date.now()}${Math.random().toString(16).slice(2)}`;
+  await cdp.send('Runtime.evaluate', {
+    expression: `globalThis.${key} = { status: 'pending' };
+      Promise.resolve(${expression}).then(
+        value => { globalThis.${key} = { status: 'done', value }; },
+        error => { globalThis.${key} = { status: 'error', error: String(error?.stack || error) }; },
+      );`,
+  });
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const response = await cdp.send('Runtime.evaluate', {
+      expression: `globalThis.${key}`,
+      returnByValue: true,
+    });
+    const state = response.result.value;
+    if (state?.status === 'done') return state.value;
+    if (state?.status === 'error') throw new Error(state.error);
+    await delay(100);
+  }
+  throw new Error(`${label} timeout`);
+};
+
 let browserPath = null;
 for (const candidate of candidates) {
   try {
@@ -104,6 +127,7 @@ try {
   browser = spawn(browserPath, [
     '--headless=new',
     '--js-flags=--expose-gc',
+    '--force-prefers-reduced-motion=no-preference',
     `--remote-debugging-port=${debugPort}`,
     `--user-data-dir=${profile}`,
     '--disable-background-timer-throttling',
@@ -130,22 +154,38 @@ try {
   console.log('eval-bar browser: running fixture');
   await cdp.send('HeapProfiler.collectGarbage');
   const before = await cdp.send('Runtime.getHeapUsage');
-  const evaluated = await cdp.send('Runtime.evaluate', {
-    expression: `Promise.race([
-      runUserscriptEvalBarBrowserTest(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('browser fixture timeout')), 15000)),
-    ])`,
-    awaitPromise: true,
-    returnByValue: true,
-  });
-  if (evaluated.exceptionDetails) throw new Error(evaluated.exceptionDetails.exception?.description || evaluated.exceptionDetails.text);
+  const behaviorResult = await evaluatePromise(cdp, 'runUserscriptEvalBarBrowserTest()', 15000, 'browser fixture');
   await cdp.send('HeapProfiler.collectGarbage');
   const after = await cdp.send('Runtime.getHeapUsage');
   const result = {
     browser: browserPath,
-    behavior: evaluated.result.value,
+    behavior: behaviorResult,
     retainedHeapDeltaBytes: after.usedSize - before.usedSize,
   };
+  const continuityEvaluation = await cdp.send('Runtime.evaluate', {
+    expression: `Promise.race([
+      runUserscriptEvalBarContinuityTest(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('continuity fixture timeout')), 15000)),
+    ])`,
+    awaitPromise: true,
+    returnByValue: true,
+  });
+  if (continuityEvaluation.exceptionDetails) {
+    throw new Error(continuityEvaluation.exceptionDetails.exception?.description || continuityEvaluation.exceptionDetails.text);
+  }
+  result.continuity = continuityEvaluation.result.value;
+  const reactiveEvaluation = await cdp.send('Runtime.evaluate', {
+    expression: `Promise.race([
+      runUserscriptEvalBarReactiveFenTest(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('reactive FEN fixture timeout')), 10000)),
+    ])`,
+    awaitPromise: true,
+    returnByValue: true,
+  });
+  if (reactiveEvaluation.exceptionDetails) {
+    throw new Error(reactiveEvaluation.exceptionDetails.exception?.description || reactiveEvaluation.exceptionDetails.text);
+  }
+  result.reactiveFen = reactiveEvaluation.result.value;
   const visualResults = [];
   const visualViewports = [
     { width: 900, height: 700 },
@@ -173,8 +213,77 @@ try {
     visualResults.push(visual.result.value);
   }
   result.visual = visualResults;
-  console.log(JSON.stringify(result, null, 2));
   const behavior = result.behavior;
+  const continuity = result.continuity;
+  const summarize = key => {
+    const values = continuity.transitions.map(transition => transition[key]);
+    return {
+      minimum: Math.min(...values),
+      average: values.reduce((sum, value) => sum + value, 0) / values.length,
+      maximum: Math.max(...values),
+    };
+  };
+  result.continuitySummary = {
+    transitions: continuity.transitions.length,
+    detectionMs: summarize('detectionMs'),
+    firstEvaluationMs: summarize('firstEvaluationMs'),
+    firstFrameMs: summarize('firstFrameMs'),
+    fillOpacities: [...new Set(continuity.transitions.map(transition => transition.pendingVisual.fillOpacity))],
+    labelOpacities: [...new Set(continuity.transitions.map(transition => transition.pendingVisual.labelOpacity))],
+    neutralResets: continuity.transitions.filter(transition => transition.pendingFraction !== transition.priorFraction).length,
+    domRemounts: continuity.finalSnapshot.mountCount - 1,
+    boardRetargets: continuity.finalSnapshot.boardRetargetCount,
+    obsoleteEventsRejected: continuity.finalSnapshot.staleResultCount,
+    aborts: continuity.finalSnapshot.abortCount,
+  };
+  console.log(JSON.stringify({
+    browser: result.browser,
+    behavior: result.behavior,
+    retainedHeapDeltaBytes: result.retainedHeapDeltaBytes,
+    continuitySummary: result.continuitySummary,
+    reactiveFen: result.reactiveFen,
+    visual: result.visual,
+  }, null, 2));
+  const continuityPasses = continuity.requestCount === 31
+    && continuity.rootsAfterDestroy === 0
+    && continuity.finalSnapshot.mountCount === 1
+    && continuity.finalSnapshot.boardRetargetCount === 1
+    && continuity.finalSnapshot.staleResultCount >= 30
+    && continuity.transitions.length === 30
+    && continuity.transitions.every(transition => {
+      const pending = transition.pendingVisual;
+      const geometry = transition.geometry;
+      const initialGeometry = continuity.initialGeometry;
+      const movedContinuously = Math.abs(transition.updatedFraction - transition.pendingFraction) > 0
+        && (transition.targetFraction > transition.pendingFraction
+          ? transition.updatedFraction > transition.pendingFraction && transition.updatedFraction < transition.targetFraction
+          : transition.updatedFraction < transition.pendingFraction && transition.updatedFraction > transition.targetFraction);
+      return transition.detectionMs >= 0
+        && transition.detectionMs < 100
+        && transition.firstEvaluationMs >= 0
+        && transition.firstFrameMs >= 0
+        && transition.firstFrameMs < 100
+        && transition.sameRoot
+        && transition.requestAborted
+        && transition.pendingFraction === transition.priorFraction
+        && pending.fillOpacity === '1'
+        && pending.labelOpacity === '1'
+        && pending.transform === transition.priorTransform
+        && pending.label === transition.priorLabel
+        && pending.state === 'stale'
+        && pending.roots === 1
+        && transition.afterObsolete.transform === transition.priorTransform
+        && transition.afterObsolete.label === transition.priorLabel
+        && transition.afterObsolete.staleResultCount >= transition.move
+        && movedContinuously
+        && transition.renderedFen === `4k3/8/8/8/8/8/P7/4K3 ${transition.move % 2 ? 'b' : 'w'} - - 0 ${transition.move + 1}`
+        && transition.visualStale === false
+        && geometry.left === initialGeometry.left
+        && geometry.top === initialGeometry.top
+        && geometry.width === initialGeometry.width
+        && geometry.height === initialGeometry.height
+        && geometry.placement === initialGeometry.placement;
+    });
   const visualPasses = visualResults.every((visual, index) => {
     const geometrySets = [visual.baseline, visual.resized, visual.scrolled];
     const geometryAligned = geometrySets.every(geometry => geometry.heightDelta <= 1
@@ -230,6 +339,7 @@ try {
     || !behavior.neutralRendered
     || !behavior.contextMissPreservedVisual || !behavior.oldContextRejected || !behavior.contextCacheSeparated
     || !behavior.cacheMissPreservedVisual || !behavior.cacheHitMarkedFresh
+    || !behavior.cacheHitContinuous
     || !behavior.missingFenWaiting || !behavior.backendFailureVisible || !behavior.recoveredAfterBackendFailure
     || !behavior.hiddenWhenBoardHidden || !behavior.visibleAfterBoardReturns
     || !behavior.mountedBlockedWhenUnauthorized || !behavior.noRequestWhenUnauthorized
@@ -237,6 +347,12 @@ try {
     || behavior.rootsAfterDestroy !== 0
     || behavior.styleMarkers !== 1 || behavior.maximumPendingFramesDuringBurst > 1
     || result.retainedHeapDeltaBytes > 1_500_000
+    || !continuityPasses
+    || !result.reactiveFen.missingFenPreserved
+    || !result.reactiveFen.propertyOnlyDetected
+    || !result.reactiveFen.propertyOnlyRendered
+    || !result.reactiveFen.burstCoalesced
+    || !result.reactiveFen.permanentBoardRemovalUnmounted
     || !visualPasses
   ) process.exitCode = 1;
 } finally {

@@ -59,6 +59,8 @@ export type UserscriptEvalBarOptions = Readonly<{
   pollIntervalMs?: number;
   refreshIntervalMs?: number;
   now?: () => number;
+  reducedMotion?: boolean;
+  boardMissingGraceMs?: number;
 }>;
 
 type CachedEvaluation = Readonly<{
@@ -66,7 +68,7 @@ type CachedEvaluation = Readonly<{
   fraction: number;
 }>;
 
-export type EvalBarConnectionState = 'idle' | 'blocked' | 'waiting' | 'loading' | 'connected' | 'error';
+export type EvalBarConnectionState = 'idle' | 'blocked' | 'waiting' | 'loading' | 'stale' | 'connected' | 'error';
 
 export type EvalBarDiagnosticSnapshot = Readonly<{
   route: string;
@@ -84,6 +86,20 @@ export type EvalBarDiagnosticSnapshot = Readonly<{
   lastRequestDurationMs: number | null;
   abortCount: number;
   lastAbortReason: string | null;
+  renderedFen: string;
+  visualStale: boolean;
+  visualFraction: number | null;
+  targetFraction: number | null;
+  lastFenDetectedAt: number | null;
+  lastRequestDispatchedAt: number | null;
+  lastFirstEvaluationAt: number | null;
+  lastDetectionToRequestMs: number | null;
+  lastRequestToFirstEvaluationMs: number | null;
+  staleResultCount: number;
+  mountCount: number;
+  boardRetargetCount: number;
+  lastFirstRenderedFrameAt: number | null;
+  lastEvaluationToFirstFrameMs: number | null;
 }>;
 
 const ROOT_ID = 'thinker-eval-v2-rail';
@@ -91,6 +107,8 @@ const STYLE_ID = 'thinker-eval-v2-style';
 const DEFAULT_CACHE_CAPACITY = 64;
 const DEFAULT_POLL_INTERVAL_MS = 500;
 const DEFAULT_REFRESH_INTERVAL_MS = 5000;
+const DEFAULT_BOARD_MISSING_GRACE_MS = 1500;
+const ROUTE_RECONCILE_FRAMES = 4;
 const ROUTE_CHANGE_EVENT = 'thinker-eval-bar-route-change';
 const historyHooks = new WeakMap<Window, { references: number; pushState: History['pushState']; replaceState: History['replaceState'] }>();
 
@@ -385,8 +403,30 @@ export class UserscriptEvalBar {
   private lastEvaluation: EvalTransportResult | null = null;
   private lastError: string | null = null;
   private geometry: EvalBarDiagnosticSnapshot['geometry'] = null;
+  private boardGeometry: Readonly<{ left: number; top: number; width: number; height: number }> | null = null;
+  private hasRenderedEvaluation = false;
+  private renderedFen = '';
+  private visualStale = false;
+  private lastFenDetectedAt: number | null = null;
+  private lastRequestDispatchedAt: number | null = null;
+  private lastFirstEvaluationAt: number | null = null;
+  private lastDetectionToRequestMs: number | null = null;
+  private lastRequestToFirstEvaluationMs: number | null = null;
+  private firstEvaluationGeneration = -1;
+  private staleResultCount = 0;
+  private mountCount = 0;
+  private boardRetargetCount = 0;
+  private pendingRenderedFen = '';
+  private pendingRenderedGeneration = -1;
+  private lastEvaluationAcceptedAt: number | null = null;
+  private lastFirstRenderedFrameAt: number | null = null;
+  private lastEvaluationToFirstFrameMs: number | null = null;
+  private boardMissingTimer: number | null = null;
+  private routeReconcileTimer: number | null = null;
+  private routeReconcileFramesRemaining = 0;
   private readonly routeListener = (): void => {
     this.queueReconcile();
+    this.scheduleRouteReconcileBurst();
   };
   private readonly geometryListener = (): void => this.syncGeometry();
 
@@ -425,10 +465,11 @@ export class UserscriptEvalBar {
     }
     const board = this.options.getBoard();
     if (!board?.isConnected || !board.parentElement) {
-      this.deactivate();
+      this.handleBoardUnavailable();
       return;
     }
-    if (!this.controller || this.board !== board || !this.root?.isConnected) this.mount(board);
+    this.clearBoardMissingTimer();
+    this.ensureBoard(board);
     this.ensurePolling();
     this.pollNow();
   }
@@ -440,10 +481,11 @@ export class UserscriptEvalBar {
     }
     const board = this.options.getBoard();
     if (!board?.isConnected || !board.parentElement) {
-      this.deactivate();
+      this.handleBoardUnavailable();
       return;
     }
-    if (!this.controller || this.board !== board || !this.root?.isConnected) this.mount(board);
+    this.clearBoardMissingTimer();
+    this.ensureBoard(board);
     this.syncGeometry();
     if (!this.options.authorize()) {
       this.clearPosition('blocked', '—');
@@ -457,7 +499,7 @@ export class UserscriptEvalBar {
     const cacheContext = this.readCacheContext();
     if (!cacheContext) {
       this.abortRequest('cache-context-unavailable');
-      this.setVisualState('error', '!', 'Evaluation cache context is unavailable');
+      this.reportError(new Error('Evaluation cache context is unavailable'));
       return;
     }
     const orientation = this.options.getOrientation();
@@ -466,27 +508,41 @@ export class UserscriptEvalBar {
     this.currentOrientation = orientation;
     const changed = fen !== this.currentFen || cacheContext !== this.currentCacheContext;
     if (changed) {
+      const detectedAt = this.now();
       this.generation += 1;
       this.abortRequest('position-changed');
       this.currentFen = fen;
       this.currentCacheContext = cacheContext;
       this.lastRequestAt = -Infinity;
       this.activeSequence = -1;
+      this.lastFenDetectedAt = detectedAt;
+      this.firstEvaluationGeneration = -1;
+      this.pendingRenderedFen = '';
+      this.pendingRenderedGeneration = -1;
       const cached = this.cache.get(this.cacheKey(fen, cacheContext));
-      this.setVisualState(cached ? 'connected' : 'waiting', cached ? undefined : '…');
+      this.visualStale = this.hasRenderedEvaluation;
+      this.setVisualState(cached ? 'connected' : this.visualStale ? 'stale' : 'waiting',
+        cached || this.hasRenderedEvaluation ? undefined : '…');
       this.controller?.beginSearch(this.generation, cached ? this.sample(cached, orientation) : null);
+      if (cached) this.markEvaluationAccepted(fen, true);
     } else if (orientationChanged) {
       const cached = this.cache.get(this.cacheKey(fen, cacheContext));
       if (cached) this.controller?.publish(this.sample(cached, orientation));
     }
     if (this.request) return;
     if (this.now() - this.lastRequestAt < (this.options.refreshIntervalMs ?? DEFAULT_REFRESH_INTERVAL_MS)) return;
-    if (this.root?.dataset.state !== 'fresh') this.setVisualState('loading', '…');
+    if (this.root?.dataset.state !== 'fresh') {
+      this.setVisualState(this.hasRenderedEvaluation ? 'stale' : 'loading', this.hasRenderedEvaluation ? undefined : '…');
+    }
     const generation = this.generation;
     const requestId = ++this.requestSequence;
     this.activeRequestId = requestId;
     this.activeSequence = -1;
     this.requestStartedAt = this.now();
+    this.lastRequestDispatchedAt = this.requestStartedAt;
+    this.lastDetectionToRequestMs = this.lastFenDetectedAt === null
+      ? null
+      : Math.max(0, this.requestStartedAt - this.lastFenDetectedAt);
     let callbackSettled = false;
     try {
       const request = this.options.requestEvaluation({
@@ -495,13 +551,16 @@ export class UserscriptEvalBar {
         requestId,
         cacheContext,
         onProgress: result => {
+          if (callbackSettled) return;
           this.acceptProgress(fen, generation, requestId, cacheContext, result);
         },
         onResult: result => {
+          if (callbackSettled) return;
           callbackSettled = true;
           this.acceptResult(fen, generation, requestId, cacheContext, result);
         },
         onError: error => {
+          if (callbackSettled) return;
           callbackSettled = true;
           if (requestId === this.activeRequestId && generation === this.generation) {
             this.request = null;
@@ -578,6 +637,20 @@ export class UserscriptEvalBar {
       lastRequestDurationMs: this.lastRequestDurationMs,
       abortCount: this.abortCount,
       lastAbortReason: this.lastAbortReason,
+      renderedFen: this.renderedFen,
+      visualStale: this.visualStale,
+      visualFraction: this.controller?.snapshot().current ?? null,
+      targetFraction: this.controller?.snapshot().target ?? null,
+      lastFenDetectedAt: this.lastFenDetectedAt,
+      lastRequestDispatchedAt: this.lastRequestDispatchedAt,
+      lastFirstEvaluationAt: this.lastFirstEvaluationAt,
+      lastDetectionToRequestMs: this.lastDetectionToRequestMs,
+      lastRequestToFirstEvaluationMs: this.lastRequestToFirstEvaluationMs,
+      staleResultCount: this.staleResultCount,
+      mountCount: this.mountCount,
+      boardRetargetCount: this.boardRetargetCount,
+      lastFirstRenderedFrameAt: this.lastFirstRenderedFrameAt,
+      lastEvaluationToFirstFrameMs: this.lastEvaluationToFirstFrameMs,
     });
   }
 
@@ -588,16 +661,14 @@ export class UserscriptEvalBar {
     cacheContext: string,
     result: EvalTransportResult,
   ): void {
-    if (
-      !this.enabled ||
-      !this.options.authorize() ||
-      generation !== this.generation ||
-      requestId !== this.activeRequestId ||
-      fen !== this.currentFen ||
-      this.options.getFen() !== fen ||
-      cacheContext !== this.currentCacheContext ||
-      this.readCacheContext() !== cacheContext
-    ) return;
+    if (!this.acceptsRequest(fen, generation, requestId, cacheContext)) {
+      if (generation === this.generation && requestId === this.activeRequestId) {
+        this.request = null;
+        this.finishRequestTiming();
+        this.lastRequestAt = this.now();
+      }
+      return;
+    }
     const sequence = Number(result.sequence);
     if (this.activeSequence >= 0 && !Number.isFinite(sequence)) {
       this.request = null;
@@ -626,6 +697,7 @@ export class UserscriptEvalBar {
     }
     this.cache.set(this.cacheKey(fen, cacheContext), evaluation);
     this.lastEvaluation = Object.freeze({ ...result });
+    this.markEvaluationAccepted(fen, false);
     this.setVisualState('connected');
     this.controller?.publish(this.sample(evaluation, this.options.getOrientation()));
   }
@@ -637,16 +709,7 @@ export class UserscriptEvalBar {
     cacheContext: string,
     result: EvalTransportResult,
   ): void {
-    if (
-      !this.enabled ||
-      !this.options.authorize() ||
-      generation !== this.generation ||
-      requestId !== this.activeRequestId ||
-      fen !== this.currentFen ||
-      this.options.getFen() !== fen ||
-      cacheContext !== this.currentCacheContext ||
-      this.readCacheContext() !== cacheContext
-    ) return;
+    if (!this.acceptsRequest(fen, generation, requestId, cacheContext)) return;
     const sequence = Number(result.sequence);
     if (!Number.isFinite(sequence) || sequence <= this.activeSequence) return;
     this.activeSequence = sequence;
@@ -660,6 +723,7 @@ export class UserscriptEvalBar {
       return;
     }
     this.lastEvaluation = Object.freeze({ ...result });
+    this.markEvaluationAccepted(fen, false);
     this.setVisualState('connected');
     this.controller?.publish(this.sample(evaluation, this.options.getOrientation()));
   }
@@ -689,17 +753,40 @@ export class UserscriptEvalBar {
     const host = this.options.document.body || this.options.document.documentElement;
     host.append(root);
     this.board = board;
+    this.mountCount += 1;
     this.root = root;
     this.label = label;
     this.installGeometryTracking(board);
     this.syncGeometry();
-    this.controller = new EvalBarController({ root, fill, label });
+    this.controller = new EvalBarController(
+      { root, fill, label },
+      {
+        reducedMotion: this.options.reducedMotion,
+        onFrameCommitted: () => this.commitPendingVisualFrame(),
+      },
+    );
     this.controller.setOrientation(this.options.getOrientation());
     if (this.currentFen) {
       const cached = this.cache.get(this.cacheKey(this.currentFen, this.currentCacheContext));
       root.dataset.state = cached ? 'fresh' : 'waiting';
       this.controller.beginSearch(this.generation, cached ? this.sample(cached, this.options.getOrientation()) : null);
     }
+  }
+
+  private ensureBoard(board: HTMLElement): void {
+    if (!this.controller || !this.root?.isConnected) {
+      this.mount(board);
+      return;
+    }
+    if (this.board === board) return;
+    if (!this.isEquivalentBoard(board)) {
+      this.mount(board);
+      return;
+    }
+    this.board = board;
+    this.boardRetargetCount += 1;
+    this.installGeometryTracking(board);
+    this.syncGeometry();
   }
 
   private unmount(): void {
@@ -710,11 +797,14 @@ export class UserscriptEvalBar {
     this.label = null;
     this.board = null;
     this.geometry = null;
+    this.boardGeometry = null;
     this.removeGeometryTracking();
   }
 
   private deactivate(): void {
     const wasActive = Boolean(this.request || this.interval !== null || this.root || this.currentFen);
+    this.clearBoardMissingTimer();
+    this.cancelRouteReconcileBurst();
     this.abortRequest('deactivated');
     this.stopPolling();
     this.currentFen = '';
@@ -724,6 +814,11 @@ export class UserscriptEvalBar {
     this.connectionState = 'idle';
     this.lastEvaluation = null;
     this.lastError = null;
+    this.hasRenderedEvaluation = false;
+    this.renderedFen = '';
+    this.visualStale = false;
+    this.pendingRenderedFen = '';
+    this.pendingRenderedGeneration = -1;
     if (wasActive) this.generation += 1;
     this.unmount();
   }
@@ -763,16 +858,32 @@ export class UserscriptEvalBar {
 
   private clearPosition(state: 'blocked' | 'waiting', label: string): void {
     const hadPosition = Boolean(this.currentFen || this.request);
-    const visualChanged = this.connectionState !== state || this.label?.textContent !== label;
+    const controllerSnapshot = this.controller?.snapshot();
+    const needsNeutralReset = this.hasRenderedEvaluation
+      || this.label?.textContent !== label
+      || controllerSnapshot?.current !== 0.5
+      || controllerSnapshot?.target !== 0.5;
     this.abortRequest(state === 'blocked' ? 'authorization-unavailable' : 'fen-unavailable');
     this.currentFen = '';
     this.currentCacheContext = '';
     this.lastRequestAt = -Infinity;
     this.activeSequence = -1;
-    this.lastEvaluation = null;
     if (hadPosition) this.generation += 1;
-    if (hadPosition || visualChanged) this.controller?.reset(0.5, label);
-    this.setVisualState(state, label);
+    this.pendingRenderedFen = '';
+    this.pendingRenderedGeneration = -1;
+    if (state === 'blocked') {
+      this.hasRenderedEvaluation = false;
+      this.renderedFen = '';
+      this.visualStale = false;
+      this.lastEvaluation = null;
+      if (needsNeutralReset) this.controller?.reset(0.5, label);
+      this.setVisualState(state, label);
+      return;
+    }
+    this.visualStale = this.hasRenderedEvaluation;
+    if (hadPosition) this.controller?.beginSearch(this.generation);
+    if (!this.hasRenderedEvaluation && needsNeutralReset) this.controller?.reset(0.5, label);
+    this.setVisualState(state, this.hasRenderedEvaluation ? undefined : label);
   }
 
   private setVisualState(state: EvalBarConnectionState, label?: string, error?: unknown): void {
@@ -783,7 +894,7 @@ export class UserscriptEvalBar {
   }
 
   private reportError(error: unknown): void {
-    const preserveEvaluation = this.root?.dataset.state === 'fresh';
+    const preserveEvaluation = this.hasRenderedEvaluation;
     this.setVisualState('error', preserveEvaluation ? undefined : '!', error);
   }
 
@@ -805,7 +916,12 @@ export class UserscriptEvalBar {
     const Observer = this.options.document.defaultView?.MutationObserver ?? globalThis.MutationObserver;
     if (!Observer) return;
     const observer = new Observer(() => this.queueReconcile());
-    observer.observe(this.options.document.body, { childList: true, subtree: true });
+    observer.observe(this.options.document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['data-fen', 'fen', 'data-position'],
+    });
     this.observer = observer;
   }
 
@@ -878,6 +994,7 @@ export class UserscriptEvalBar {
     this.root.style.top = `${rect.top}px`;
     this.root.style.height = `${rect.height}px`;
     this.geometry = Object.freeze({ left, top: rect.top, width, height: rect.height, placement });
+    this.boardGeometry = Object.freeze({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
   }
 
   private readCacheContext(): string {
@@ -890,6 +1007,114 @@ export class UserscriptEvalBar {
 
   private cacheKey(fen: string, cacheContext: string): string {
     return `${this.options.cacheNamespace ?? 'eval-bar-v2'}|${cacheContext}|white|${fen}`;
+  }
+
+  private acceptsRequest(fen: string, generation: number, requestId: number, cacheContext: string): boolean {
+    const accepted = this.enabled
+      && Boolean(this.options.authorize())
+      && generation === this.generation
+      && requestId === this.activeRequestId
+      && fen === this.currentFen
+      && this.options.getFen() === fen
+      && cacheContext === this.currentCacheContext
+      && this.readCacheContext() === cacheContext;
+    if (!accepted) this.staleResultCount += 1;
+    return accepted;
+  }
+
+  private markEvaluationAccepted(fen: string, cached: boolean): void {
+    if (this.firstEvaluationGeneration !== this.generation) {
+      const acceptedAt = this.now();
+      this.firstEvaluationGeneration = this.generation;
+      this.lastFirstEvaluationAt = acceptedAt;
+      this.lastRequestToFirstEvaluationMs = cached || this.lastRequestDispatchedAt === null
+        ? null
+        : Math.max(0, acceptedAt - this.lastRequestDispatchedAt);
+      this.lastEvaluationAcceptedAt = acceptedAt;
+    }
+    this.hasRenderedEvaluation = true;
+    this.pendingRenderedFen = fen;
+    this.pendingRenderedGeneration = this.generation;
+  }
+
+  private commitPendingVisualFrame(): void {
+    if (!this.pendingRenderedFen || this.pendingRenderedGeneration !== this.generation) return;
+    this.renderedFen = this.pendingRenderedFen;
+    this.pendingRenderedFen = '';
+    this.pendingRenderedGeneration = -1;
+    this.visualStale = false;
+    const committedAt = this.now();
+    this.lastFirstRenderedFrameAt = committedAt;
+    this.lastEvaluationToFirstFrameMs = this.lastEvaluationAcceptedAt === null
+      ? null
+      : Math.max(0, committedAt - this.lastEvaluationAcceptedAt);
+  }
+
+  private isEquivalentBoard(board: HTMLElement): boolean {
+    if (this.board === board) return true;
+    if (this.board?.contains(board) || board.contains(this.board)) return true;
+    if (!this.boardGeometry) return false;
+    const rect = board.getBoundingClientRect();
+    return Math.abs(rect.left - this.boardGeometry.left) <= 2
+      && Math.abs(rect.top - this.boardGeometry.top) <= 2
+      && Math.abs(rect.width - this.boardGeometry.width) <= 2
+      && Math.abs(rect.height - this.boardGeometry.height) <= 2;
+  }
+
+  private handleBoardUnavailable(): void {
+    if (!this.controller || !this.root?.isConnected) {
+      this.deactivate();
+      return;
+    }
+    if (this.boardMissingTimer === null) {
+      const hadPosition = Boolean(this.currentFen || this.request);
+      this.abortRequest('board-unavailable');
+      this.currentFen = '';
+      this.currentCacheContext = '';
+      this.lastRequestAt = -Infinity;
+      this.activeSequence = -1;
+      if (hadPosition) {
+        this.generation += 1;
+        this.controller.beginSearch(this.generation);
+      }
+      this.pendingRenderedFen = '';
+      this.pendingRenderedGeneration = -1;
+      this.boardMissingTimer = this.options.window.setTimeout(() => {
+        this.boardMissingTimer = null;
+        const board = this.safeRead(() => this.options.getBoard(), null);
+        if (!board?.isConnected || !board.parentElement) this.deactivate();
+        else this.queueReconcile();
+      }, this.options.boardMissingGraceMs ?? DEFAULT_BOARD_MISSING_GRACE_MS);
+    }
+    this.ensurePolling();
+    this.visualStale = this.hasRenderedEvaluation;
+    this.setVisualState(this.hasRenderedEvaluation ? 'stale' : 'waiting', this.hasRenderedEvaluation ? undefined : '…');
+  }
+
+  private clearBoardMissingTimer(): void {
+    if (this.boardMissingTimer !== null) this.options.window.clearTimeout(this.boardMissingTimer);
+    this.boardMissingTimer = null;
+  }
+
+  private scheduleRouteReconcileBurst(): void {
+    this.routeReconcileFramesRemaining = ROUTE_RECONCILE_FRAMES;
+    if (this.routeReconcileTimer !== null) return;
+    const tick = (): void => {
+      this.routeReconcileTimer = null;
+      if (!this.started || this.routeReconcileFramesRemaining <= 0) return;
+      this.routeReconcileFramesRemaining -= 1;
+      this.reconcile();
+      if (this.routeReconcileFramesRemaining > 0) {
+        this.routeReconcileTimer = this.options.window.setTimeout(tick, 16);
+      }
+    };
+    this.routeReconcileTimer = this.options.window.setTimeout(tick, 0);
+  }
+
+  private cancelRouteReconcileBurst(): void {
+    if (this.routeReconcileTimer !== null) this.options.window.clearTimeout(this.routeReconcileTimer);
+    this.routeReconcileTimer = null;
+    this.routeReconcileFramesRemaining = 0;
   }
 }
 

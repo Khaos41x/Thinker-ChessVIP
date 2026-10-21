@@ -32,6 +32,7 @@ export class EvalBarController {
   private readonly elements: EvalBarElements;
   private readonly scheduler: EvalBarScheduler;
   private readonly reducedMotion: boolean;
+  private readonly onFrameCommitted: ((snapshot: ReturnType<EvalBarController['snapshot']>) => void) | undefined;
   private activeSearchId = 0;
   private mailbox: EvalBarSample | null = null;
   private frameHandle: number | null = null;
@@ -45,6 +46,7 @@ export class EvalBarController {
       scheduler?: EvalBarScheduler;
       initialFraction?: number;
       reducedMotion?: boolean;
+      onFrameCommitted?: (snapshot: ReturnType<EvalBarController['snapshot']>) => void;
     }> = {},
   ) {
     this.elements = elements;
@@ -52,6 +54,7 @@ export class EvalBarController {
     this.reducedMotion = options.reducedMotion
       ?? globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches
       ?? false;
+    this.onFrameCommitted = options.onFrameCommitted;
     this.current = clampFraction(options.initialFraction ?? 0.5);
     this.target = this.current;
     this.commitTransform();
@@ -134,11 +137,13 @@ export class EvalBarController {
     if (Math.abs(this.target - this.current) <= 0.0001 && this.mailbox === null) {
       this.current = this.target;
       this.commitTransform();
+      this.onFrameCommitted?.(this.snapshot());
       this.lastTimestamp = null;
       return;
     }
 
     this.commitTransform();
+    this.onFrameCommitted?.(this.snapshot());
     this.frameHandle = this.scheduler.requestFrame(nextTimestamp => this.animate(nextTimestamp));
   }
 

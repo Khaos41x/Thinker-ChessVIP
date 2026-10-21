@@ -145,6 +145,7 @@ async function runUserscriptEvalBarBrowserTest() {
   const neutralLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
 
   const beforeContextMiss = document.querySelector<HTMLElement>('.thinker-eval-v2-fill')?.style.transform;
+  const labelBeforeContextMiss = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
   cacheContext = 'engine-b|white-cp-mate-v1';
   adapter.pollNow();
   const contextRequest = requests.at(-1)!;
@@ -152,7 +153,7 @@ async function runUserscriptEvalBarBrowserTest() {
   const contextMissState = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.state;
   requests.at(-2)!.onResult({ cp: 800, depth: 21 });
   await waitFrames(2);
-  const oldContextRejected = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent === '…'
+  const oldContextRejected = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent === labelBeforeContextMiss
     && adapter.snapshot().requestActive;
   contextRequest.onResult({ cp: 125, depth: 21 });
   await waitFrames(4);
@@ -167,16 +168,24 @@ async function runUserscriptEvalBarBrowserTest() {
   adapter.pollNow();
   const afterFenMiss = document.querySelector<HTMLElement>('.thinker-eval-v2-fill')?.style.transform;
   const fenMissState = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.state;
+  const cacheStartFraction = adapter.snapshot().visualFraction!;
   fen = 'fen-b';
   adapter.pollNow();
   const cacheHitState = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.state;
-  await waitFrames(4);
+  const cacheTargetFraction = adapter.snapshot().targetFraction!;
+  await waitFrames(1);
+  const cacheFirstFrameFraction = adapter.snapshot().visualFraction!;
+  const cacheHitContinuous = cacheTargetFraction >= cacheStartFraction
+    ? cacheFirstFrameFraction >= cacheStartFraction && cacheFirstFrameFraction <= cacheTargetFraction
+    : cacheFirstFrameFraction <= cacheStartFraction && cacheFirstFrameFraction >= cacheTargetFraction;
+  await waitFrames(3);
 
   const requestsBeforeMissingFen = requests.length;
+  const labelBeforeMissingFen = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
   fen = '';
   adapter.pollNow();
   const missingFenWaiting = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.state === 'waiting'
-    && document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent === '…'
+    && document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent === labelBeforeMissingFen
     && requests.length === requestsBeforeMissingFen;
   fen = 'fen-b';
   adapter.pollNow();
@@ -249,11 +258,12 @@ async function runUserscriptEvalBarBrowserTest() {
     matePerspectiveRendered: mateBlackLabel === '#-3',
     negativeMatePerspectiveRendered: negativeMateBlackLabel === '#2',
     neutralRendered: neutralLabel === '0.0',
-    contextMissPreservedVisual: beforeContextMiss === afterContextMiss && contextMissState === 'loading',
+    contextMissPreservedVisual: beforeContextMiss === afterContextMiss && contextMissState === 'stale',
     oldContextRejected,
     contextCacheSeparated,
-    cacheMissPreservedVisual: beforeFenMiss === afterFenMiss && fenMissState === 'loading',
+    cacheMissPreservedVisual: beforeFenMiss === afterFenMiss && fenMissState === 'stale',
     cacheHitMarkedFresh: cacheHitState === 'fresh',
+    cacheHitContinuous,
     missingFenWaiting,
     backendFailureVisible,
     recoveredAfterBackendFailure,
@@ -305,6 +315,7 @@ async function runUserscriptEvalBarVisualTest() {
     },
     pollIntervalMs: 60000,
     refreshIntervalMs: 60000,
+    reducedMotion: false,
   });
   adapter.start(true);
   await waitFrames(12);
@@ -435,4 +446,209 @@ async function runUserscriptEvalBarVisualTest() {
   };
 }
 
-Object.assign(globalThis, { runUserscriptEvalBarBrowserTest, runUserscriptEvalBarVisualTest });
+async function runUserscriptEvalBarContinuityTest() {
+  history.replaceState({}, '', '/analysis/collection/continuity/analysis?move=0');
+  const shell = document.createElement('div');
+  let board = document.createElement('div');
+  Object.assign(shell.style, { position: 'relative', width: '600px', height: '600px', marginLeft: '80px' });
+  Object.assign(board.style, { width: '600px', height: '600px' });
+  shell.append(board);
+  document.body.append(shell);
+
+  const fenFor = (move: number): string => `4k3/8/8/8/8/8/P7/4K3 ${move % 2 ? 'b' : 'w'} - - 0 ${move + 1}`;
+  let fen = fenFor(0);
+  const requests: Array<EvalRequest & { createdAt: number; aborted: boolean }> = [];
+  const adapter = createUserscriptEvalBar({
+    window,
+    document,
+    getFen: () => fen,
+    getBoard: () => board,
+    getOrientation: () => 'white',
+    getCacheContext: () => 'continuity-fixture',
+    authorize: () => 'analysis',
+    shouldDisplay: () => true,
+    getRoute: () => `${location.pathname}${location.search}`,
+    requestEvaluation: request => {
+      const record = Object.assign(request, { createdAt: performance.now(), aborted: false });
+      requests.push(record);
+      return { abort: () => { record.aborted = true; } };
+    },
+    pollIntervalMs: 60000,
+    refreshIntervalMs: 60000,
+    reducedMotion: false,
+  });
+  adapter.start(true);
+  const initialRequest = requests.at(-1)!;
+  initialRequest.onProgress({ type: 'info', sequence: 1, cp: 700, mate: null, depth: 8 });
+  await waitFrames(20);
+
+  const root = document.querySelector<HTMLElement>('#thinker-eval-v2-rail')!;
+  const fill = root.querySelector<HTMLElement>('.thinker-eval-v2-fill')!;
+  const label = root.querySelector<HTMLElement>('.thinker-eval-v2-score')!;
+  const initialGeometry = adapter.snapshot().geometry;
+  const transitions: Array<Record<string, unknown>> = [];
+  let previousRequest = initialRequest;
+
+  for (let move = 1; move <= 30; move += 1) {
+    if (move === 16) {
+      const replacement = document.createElement('div');
+      Object.assign(replacement.style, { width: '600px', height: '600px' });
+      board.replaceWith(replacement);
+      board = replacement;
+    }
+    const priorLabel = label.textContent;
+    const priorTransform = fill.style.transform;
+    const priorFraction = adapter.snapshot().visualFraction;
+    const navigationStartedAt = performance.now();
+    fen = fenFor(move);
+    history.replaceState({}, '', `/analysis/collection/continuity/analysis?move=${move}`);
+    await Promise.resolve();
+    await Promise.resolve();
+    const currentRequest = requests.at(-1)!;
+    const requestDetectedAt = currentRequest.createdAt;
+    const rootBeforeEvaluation = document.querySelector<HTMLElement>('#thinker-eval-v2-rail')!;
+    const pendingSnapshot = adapter.snapshot();
+    const pendingFrameAt = await nextFrame();
+    const pendingFraction = adapter.snapshot().visualFraction;
+    const pendingVisual = {
+      fillOpacity: getComputedStyle(fill).opacity,
+      labelOpacity: getComputedStyle(label).opacity,
+      transform: fill.style.transform,
+      label: label.textContent,
+      state: root.dataset.state,
+      roots: document.querySelectorAll('#thinker-eval-v2-rail').length,
+    };
+    previousRequest.onProgress({ type: 'info', sequence: 999, cp: -9999, mate: null, depth: 99 });
+    const afterObsolete = {
+      transform: fill.style.transform,
+      label: label.textContent,
+      staleResultCount: adapter.snapshot().staleResultCount,
+    };
+    const evaluationAt = performance.now();
+    currentRequest.onProgress({
+      type: 'info',
+      sequence: 1,
+      cp: move % 2 ? 1100 : -900,
+      mate: null,
+      depth: 8,
+    });
+    const firstUpdatedFrameAt = await nextFrame();
+    const updatedSnapshot = adapter.snapshot();
+    transitions.push({
+      move,
+      detectionMs: requestDetectedAt - navigationStartedAt,
+      firstEvaluationMs: evaluationAt - requestDetectedAt,
+      firstFrameMs: firstUpdatedFrameAt - evaluationAt,
+      pendingFrameMs: pendingFrameAt - navigationStartedAt,
+      priorFraction,
+      pendingFraction,
+      updatedFraction: updatedSnapshot.visualFraction,
+      targetFraction: updatedSnapshot.targetFraction,
+      priorTransform,
+      priorLabel,
+      pendingVisual,
+      afterObsolete,
+      sameRoot: rootBeforeEvaluation === root && document.querySelector('#thinker-eval-v2-rail') === root,
+      geometry: adapter.snapshot().geometry,
+      requestAborted: previousRequest.aborted,
+      renderedFen: updatedSnapshot.renderedFen,
+      visualStale: updatedSnapshot.visualStale,
+    });
+    previousRequest = currentRequest;
+  }
+  previousRequest.onResult({ type: 'result', sequence: 2, cp: -900, mate: null, depth: 18 });
+  await waitFrames(8);
+  const finalSnapshot = adapter.snapshot();
+  adapter.destroy();
+  shell.remove();
+  return {
+    transitions,
+    initialGeometry,
+    finalSnapshot,
+    requestCount: requests.length,
+    rootsAfterDestroy: document.querySelectorAll('#thinker-eval-v2-rail').length,
+  };
+}
+
+async function runUserscriptEvalBarReactiveFenTest() {
+  history.replaceState({}, '', '/analysis/collection/reactive/analysis?move=0');
+  const board = document.createElement('div');
+  Object.assign(board.style, { width: '500px', height: '500px', marginLeft: '80px' });
+  document.body.append(board);
+  const initialFen = '4k3/8/8/8/8/8/P7/4K3 w - - 0 1';
+  const nextFen = '4k3/8/8/8/8/8/P7/4K3 b - - 0 2';
+  let fen = initialFen;
+  const requests: Array<EvalRequest & { createdAt: number }> = [];
+  const adapter = createUserscriptEvalBar({
+    window,
+    document,
+    getFen: () => fen,
+    getBoard: () => board,
+    getOrientation: () => 'white',
+    getCacheContext: () => 'reactive-fixture',
+    authorize: () => 'analysis',
+    shouldDisplay: () => true,
+    requestEvaluation: request => {
+      requests.push(Object.assign(request, { createdAt: performance.now() }));
+      return { abort: () => undefined };
+    },
+    pollIntervalMs: 60000,
+    refreshIntervalMs: 60000,
+    reducedMotion: false,
+    boardMissingGraceMs: 20,
+  });
+  adapter.start(true);
+  requests[0].onProgress({ type: 'info', sequence: 1, cp: 500, mate: null, depth: 8 });
+  await waitFrames(10);
+  const root = document.querySelector<HTMLElement>('#thinker-eval-v2-rail')!;
+  const fill = root.querySelector<HTMLElement>('.thinker-eval-v2-fill')!;
+  const label = root.querySelector<HTMLElement>('.thinker-eval-v2-score')!;
+  const retainedTransform = fill.style.transform;
+  const retainedLabel = label.textContent;
+  fen = '';
+  history.replaceState({}, '', '/analysis/collection/reactive/analysis?move=1');
+  await nextFrame();
+  const missingFenPreserved = fill.style.transform === retainedTransform
+    && label.textContent === retainedLabel
+    && getComputedStyle(fill).opacity === '1';
+  const fenAvailableAt = performance.now();
+  fen = nextFen;
+  await waitFrames(2);
+  const reactiveRequest = requests.at(-1)!;
+  const propertyOnlyDetected = requests.length === 2
+    && reactiveRequest.createdAt - fenAvailableAt < 100;
+  reactiveRequest.onProgress({ type: 'info', sequence: 1, cp: -400, mate: null, depth: 8 });
+  await nextFrame();
+  const propertyOnlyRendered = adapter.snapshot().renderedFen === nextFen;
+  const requestsBeforeBurst = requests.length;
+  let burstFen = nextFen;
+  for (let move = 2; move <= 11; move += 1) {
+    burstFen = `4k3/8/8/8/8/8/P7/4K3 ${move % 2 ? 'b' : 'w'} - - 0 ${move + 1}`;
+    fen = burstFen;
+    history.replaceState({}, '', `/analysis/collection/reactive/analysis?move=${move}`);
+  }
+  await Promise.resolve();
+  await Promise.resolve();
+  const burstCoalesced = requests.length === requestsBeforeBurst + 1
+    && adapter.snapshot().currentFen === burstFen;
+  board.remove();
+  adapter.pollNow();
+  await new Promise(resolve => setTimeout(resolve, 30));
+  const permanentBoardRemovalUnmounted = !document.querySelector('#thinker-eval-v2-rail');
+  adapter.destroy();
+  return {
+    missingFenPreserved,
+    propertyOnlyDetected,
+    propertyOnlyRendered,
+    burstCoalesced,
+    detectionMs: reactiveRequest.createdAt - fenAvailableAt,
+    permanentBoardRemovalUnmounted,
+  };
+}
+
+Object.assign(globalThis, {
+  runUserscriptEvalBarBrowserTest,
+  runUserscriptEvalBarVisualTest,
+  runUserscriptEvalBarContinuityTest,
+  runUserscriptEvalBarReactiveFenTest,
+});
