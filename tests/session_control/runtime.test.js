@@ -33,6 +33,7 @@ class Element {
   setAttribute(name, value) { this.attributes.set(name, String(value)); }
   getAttribute(name) { return this.attributes.has(name) ? this.attributes.get(name) : null; }
   removeAttribute(name) { this.attributes.delete(name); }
+  toggleAttribute(name, force) { if (force) this.setAttribute(name, ""); else this.removeAttribute(name); }
   addEventListener(type, listener, options) {
     if (!this.listeners.has(type)) this.listeners.set(type, new Set());
     this.listeners.get(type).add(listener);
@@ -155,7 +156,7 @@ async function run() {
   root.dispatch(root.querySelector("#kb-session-start"));
   await tick();
   assert.equal(repository.events.size, 1);
-  assert(notifications.includes("⚠️ Não foi possível atualizar a sessão"));
+  assert(!notifications.includes("⚠️ Não foi possível atualizar a sessão"));
   const renewalWarnings = [];
   controller.renewLeadership = async () => { throw new Error("injected renewal failure"); };
   runtime.dispose();

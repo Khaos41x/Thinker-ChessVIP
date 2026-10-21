@@ -79,15 +79,14 @@ function availability(status, startBlocker) {
 function presentAvailability(panel, action, reason) {
   const button = panel.querySelector(`[data-action="${action}"]`);
   if (!button) return;
-  button.removeAttribute("disabled");
+  button.toggleAttribute("disabled", Boolean(reason));
   button.setAttribute("aria-disabled", reason ? "true" : "false");
   if (reason) {
     button.setAttribute("data-disabled-reason", reason);
-    button.setAttribute("title", warningLabel(reason));
   } else {
     button.removeAttribute("data-disabled-reason");
-    button.removeAttribute("title");
   }
+  button.removeAttribute("title");
 }
 
 function presentStatus(panel, status, formatDuration, startBlocker) {
@@ -96,7 +95,6 @@ function presentStatus(panel, status, formatDuration, startBlocker) {
   setText(panel, "kb-session-ttl", formatDuration(status.remainingTtlMs));
   setText(panel, "kb-session-observed", `${counts.wins} V | ${counts.draws} E | ${counts.losses} D`);
   setText(panel, "kb-session-raw", `${status.rawWinRate.toFixed(0)}%`);
-  setText(panel, "kb-session-warning", warningLabel(status.warningCode));
   const state = availability(status, startBlocker);
   presentAvailability(panel, "start", state.start);
   presentAvailability(panel, "stop", state.stop);
@@ -127,14 +125,12 @@ function createSessionControlPresenter(options) {
     const value = code || "STATUS_UNAVAILABLE";
     if (typeof options.setWarning === "function") options.setWarning(value);
     const label = warningLabel(value);
-    if (panel) setText(panel, "kb-session-warning", label);
     if (typeof options.notify === "function") options.notify(label, { transient: true });
     emit("warning", { code: value });
   }
 
   function success(code) {
     if (typeof options.setWarning === "function") options.setWarning(null);
-    if (panel) setText(panel, "kb-session-warning", "");
     if (typeof options.notify === "function") options.notify(successLabel(code), { transient: true, success: true });
     emit("success", { code });
   }
@@ -165,7 +161,7 @@ function createSessionControlPresenter(options) {
     if (inFlight.has(action)) return;
     const blocked = currentAvailability[action];
     if (blocked) {
-      warning(blocked);
+      emit("blocked", { action, code: blocked });
       return;
     }
     inFlight.add(action);

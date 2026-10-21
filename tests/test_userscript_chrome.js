@@ -201,6 +201,7 @@ function createCdpClient(webSocketUrl) {
         const initial = { expanded: toggle.getAttribute("aria-expanded"), hidden: panel.getAttribute("aria-hidden"), inert: panel.hasAttribute("inert"), open: panel.dataset.open };
         const delayStyle = getComputedStyle(delayPanel);
         const delayInputs = Array.from(delayPanel.querySelectorAll(".kb-num-input"));
+        const delayInputShells = Array.from(delayPanel.querySelectorAll(".kb-delay-input"));
         const delayModeLabels = Array.from(delayPanel.querySelectorAll('input[name="delayMode"] + label'));
         const delayPlacement = {
           outsideAutoPlay: !sessionPanel.contains(delayPanel),
@@ -211,6 +212,9 @@ function createCdpClient(webSocketUrl) {
           noOverflow: delayPanel.scrollWidth <= delayPanel.clientWidth,
           controlsAccessible: delayInputs.every((node) => node.getBoundingClientRect().height >= 24 && parseFloat(getComputedStyle(node).fontSize) >= 9)
             && delayModeLabels.every((node) => node.getBoundingClientRect().height >= 24 && parseFloat(getComputedStyle(node).fontSize) >= 9),
+          customInputs: delayInputs.every((node) => ["none", "textfield"].includes(getComputedStyle(node).appearance))
+            && delayInputShells.length === 2
+            && delayInputShells.every((node) => getComputedStyle(node).borderRadius === "9px" && getComputedStyle(node).backgroundColor !== "rgb(255, 255, 255)"),
         };
         delayMinimum.focus();
         const delayFocusAllowed = document.activeElement === delayMinimum;
@@ -256,7 +260,7 @@ function createCdpClient(webSocketUrl) {
             && collapsedFocusBlocked && expandedFocusAllowed
             && retained.duration === "240" && retained.minimum === "74" && retained.maximum === "83"
             && retained.delayMinimum === "0.75" && retained.delayMaximum === "1.80"
-            && delayPlacement.outsideAutoPlay && delayPlacement.outsideAdvanced && delayPlacement.followsAutoMoves && delayPlacement.precedesAutoQueue && delayPlacement.visible && delayPlacement.noOverflow && delayPlacement.controlsAccessible
+            && delayPlacement.outsideAutoPlay && delayPlacement.outsideAdvanced && delayPlacement.followsAutoMoves && delayPlacement.precedesAutoQueue && delayPlacement.visible && delayPlacement.noOverflow && delayPlacement.controlsAccessible && delayPlacement.customInputs
             && delayFocusAllowed && delayPersisted
             && phaseBefore === phaseAfter && sequenceBefore === sequenceAfterOpen && sequenceAfterDraft === sequenceAfterClose && sequenceAfterClose === sequenceAfter,
           initial, opened, closed, retained, delayPlacement, delayFocusAllowed, delayPersisted, collapsedFocusBlocked, expandedFocusAllowed, phaseBefore, phaseAfter, sequenceBefore, sequenceAfterOpen, sequenceAfterDraft, sequenceAfterClose, sequenceAfter,
@@ -275,6 +279,33 @@ function createCdpClient(webSocketUrl) {
     assert(disclosureSmoke.glass.width === "292px" && disclosureSmoke.glass.padding === "14px", `Session panel compact geometry regressed: ${JSON.stringify(disclosureSmoke.glass)}`);
     assert(disclosureSmoke.glass.titleFont === "16px" && disclosureSmoke.glass.metricFont === "13px", `Session panel typography hierarchy regressed: ${JSON.stringify(disclosureSmoke.glass)}`);
     assert(disclosureSmoke.glass.backgroundImage.includes("linear-gradient") && disclosureSmoke.glass.shadow.includes("rgba(0, 0, 0, 0.48)") && disclosureSmoke.glass.metricSurfaceImage.includes("linear-gradient"), `Session panel still renders as a flat opaque surface: ${JSON.stringify(disclosureSmoke.glass)}`);
+
+    const workspaceSmokeResult = await client.send("Runtime.evaluate", {
+      expression: `(() => {
+        const menu = document.getElementById("krypbot-container");
+        const scout = document.getElementById("oi-zone2");
+        const close = document.getElementById("kb-minimize-toggle");
+        const scoutClose = scout?.querySelector(".tc-scout-close");
+        const launcher = document.getElementById("kb-workspace-launcher");
+        if (!menu || !scout || !close || !scoutClose || !launcher) return { ok:false, reason:"workspace-controls-missing" };
+        close.focus();
+        close.click();
+        const collapsedWidth = menu.getBoundingClientRect().width;
+        const closedFromAssistant = menu.classList.contains("minimized") && getComputedStyle(scout).display === "none" && getComputedStyle(launcher).display === "flex" && launcher.getAttribute("aria-expanded") === "false" && document.activeElement === launcher && Math.abs(collapsedWidth - 154) <= 1;
+        launcher.click();
+        const restoredFromAssistant = !menu.classList.contains("minimized") && getComputedStyle(scout).display === "flex" && launcher.getAttribute("aria-expanded") === "true";
+        scoutClose.focus();
+        scoutClose.click();
+        const closedFromScout = menu.classList.contains("minimized") && getComputedStyle(scout).display === "none" && document.activeElement === launcher;
+        launcher.click();
+        const restoredFromScout = !menu.classList.contains("minimized") && getComputedStyle(scout).display === "flex" && document.getElementById("oi-zone2") === scout;
+        return { ok:closedFromAssistant && restoredFromAssistant && closedFromScout && restoredFromScout, closedFromAssistant, restoredFromAssistant, closedFromScout, restoredFromScout, launcherText:launcher.textContent.trim(), collapsedWidth };
+      })()`,
+      returnByValue: true,
+    });
+    const workspaceSmoke = workspaceSmokeResult.result.value;
+    assert(workspaceSmoke.ok, `Workspace close/restore smoke failed: ${JSON.stringify(workspaceSmoke)}`);
+    assert(workspaceSmoke.launcherText.includes("Thinker Chess"), `Workspace launcher lost product identity: ${JSON.stringify(workspaceSmoke)}`);
 
     if (liveChess) {
       console.log(JSON.stringify({ state, consoleErrors }, null, 2));
@@ -305,6 +336,8 @@ function createCdpClient(webSocketUrl) {
         window.krypbotSessionControlBridge.install(controller, () => ({}), { rollout: runtime.rollout, start: runtime.start });
         window.krypbotSessionControlUI.update();
         `}
+        const initiallyDisabled = button.hasAttribute("disabled");
+        const disabledTitle = button.getAttribute("title");
         button.click();
         await new Promise((resolve) => setTimeout(resolve, 250));
         const disabledWarning = document.getElementById("kb-session-warning")?.textContent || "";
@@ -313,6 +346,7 @@ function createCdpClient(webSocketUrl) {
         ${liveChess ? "" : `
         window.krypbotSetMasterEnabled?.(true);
         await new Promise((resolve) => setTimeout(resolve, 50));
+        const enabledAfterMaster = !button.hasAttribute("disabled");
         button.click();
         await new Promise((resolve) => setTimeout(resolve, 250));
         `}
@@ -321,7 +355,9 @@ function createCdpClient(webSocketUrl) {
         const sessionStatus = window.krypbotSessionControlBridge.status();
         const bootstrapState = bootstrap.state();
         return {
-          ok: !button.hasAttribute("disabled") && disabledWarning === "⚠️ Não foi possível atualizar a sessão" && disabledToast === "⚠️ Não foi possível atualizar a sessão" && disabledPhase === "IDLE"${liveChess ? "" : ` && Boolean(warning) && sessionStatus.phase === "QUEUEING" && sessionStatus.executionMode === "COMPATIBILITY" && sessionStatus.warningCode === "DDA_MAPPING_UNAVAILABLE" && warning === "⚠️ Verifique o Artefato" && toast === "Sessão iniciada" && document.getElementById("aq-on")?.checked && document.getElementById("aq-on")?.disabled && document.getElementById("aq-off")?.disabled && !document.getElementById("kb-auto-queue-session-note")?.hidden`},
+          ok: initiallyDisabled && disabledTitle === null && disabledWarning === "" && disabledToast === "" && disabledPhase === "IDLE"${liveChess ? "" : ` && enabledAfterMaster && button.hasAttribute("disabled") && warning === "" && sessionStatus.phase === "QUEUEING" && sessionStatus.executionMode === "COMPATIBILITY" && sessionStatus.warningCode === "DDA_MAPPING_UNAVAILABLE" && toast === "Sessão iniciada" && document.getElementById("aq-on")?.checked && document.getElementById("aq-on")?.disabled && document.getElementById("aq-off")?.disabled && !document.getElementById("kb-auto-queue-session-note")?.hidden`},
+          initiallyDisabled,
+          disabledTitle,
           disabledWarning,
           disabledToast,
           disabledPhase,
@@ -418,7 +454,7 @@ function createCdpClient(webSocketUrl) {
     assert(disclosureSmoke.scoutGlass.font.includes("-apple-system") || disclosureSmoke.scoutGlass.font.includes("BlinkMacSystemFont") || disclosureSmoke.scoutGlass.font.includes("Segoe UI"), `Scout system font regressed: ${JSON.stringify(disclosureSmoke.scoutGlass)}`);
     assert(disclosureSmoke.scoutGlass.width === "292px" && disclosureSmoke.scoutGlass.minHeight === "430px" && Math.abs(disclosureSmoke.scoutGlass.height - disclosureSmoke.scoutGlass.menuHeight) <= 1 && disclosureSmoke.scoutGlass.emptyAlign === "center" && disclosureSmoke.scoutGlass.emptyJustify === "center", `Scout waiting state retained legacy dead-space geometry: ${JSON.stringify(disclosureSmoke.scoutGlass)}`);
     assert(productionStart.ok, `Production START wiring smoke failed: ${JSON.stringify(productionStart)}`);
-    if (!liveChess) assert(productionStart.warning === "⚠️ Verifique o Artefato" && productionStart.rawWarningCode === "DDA_MAPPING_UNAVAILABLE", `Default compatibility START did not leave IDLE: ${JSON.stringify(productionStart)}`);
+    if (!liveChess) assert(productionStart.warning === "" && productionStart.rawWarningCode === "DDA_MAPPING_UNAVAILABLE", `Default compatibility START did not leave IDLE: ${JSON.stringify(productionStart)}`);
     assert(module14.ok, `Module 14 browser smoke failed: ${JSON.stringify(module14)}`);
     assert(state.menu, "configuration menu was not mounted");
     assert(state.sessionPanel, "session control panel was not mounted");
@@ -479,6 +515,12 @@ function createCdpClient(webSocketUrl) {
       const artifactPath = path.join(root, "tests", "artifacts", "thinker-panels-final.png");
       fs.writeFileSync(artifactPath, Buffer.from(screenshot.data, "base64"));
       console.log(`Visual evidence: ${artifactPath}`);
+      await client.send("Runtime.evaluate", { expression: "document.getElementById('kb-minimize-toggle')?.click()" });
+      await sleep(150);
+      const launcherScreenshot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      const launcherArtifactPath = path.join(root, "tests", "artifacts", "thinker-launcher-final.png");
+      fs.writeFileSync(launcherArtifactPath, Buffer.from(launcherScreenshot.data, "base64"));
+      console.log(`Launcher evidence: ${launcherArtifactPath}`);
     }
     console.log(JSON.stringify({ state, productionStart, module14, consoleErrors }, null, 2));
     console.log(liveChess ? "Live Chess.com userscript bootstrap passed." : "Chrome userscript bootstrap passed.");

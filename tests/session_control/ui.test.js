@@ -51,6 +51,11 @@ class FakeElement {
     this.attributes.delete(name);
   }
 
+  toggleAttribute(name, force) {
+    if (force) this.setAttribute(name, "");
+    else this.removeAttribute(name);
+  }
+
   focus() {
     this.focused = true;
   }
@@ -197,9 +202,10 @@ async function run() {
   panel.dispatch("click", panel.querySelector("#kb-session-start"));
   await tick();
   assert.equal(starts, 0);
+  assert.equal(panel.querySelector("#kb-session-start").hasAttribute?.("disabled") ?? panel.querySelector("#kb-session-start").getAttribute("disabled") !== null, true);
   assert.equal(panel.querySelector("#kb-session-start").getAttribute("data-disabled-reason"), "BOT_DISABLED");
-  assert.equal(panel.querySelector("#kb-session-start").getAttribute("title"), "⚠️ Não foi possível atualizar a sessão");
-  assert(notifications.includes("⚠️ Não foi possível atualizar a sessão"));
+  assert.equal(panel.querySelector("#kb-session-start").getAttribute("title"), null);
+  assert(!notifications.includes("⚠️ Não foi possível atualizar a sessão"));
   startBlocker = null;
   presenter.update();
 
@@ -226,10 +232,10 @@ async function run() {
   assert.equal(blockedEvent.defaultPrevented, true);
   assert.equal(start.getAttribute("aria-disabled"), "true");
   assert.equal(start.getAttribute("data-disabled-reason"), "ROLLOUT_DISABLED");
-  assert.equal(start.getAttribute("title"), "⚠️ Não foi possível atualizar a sessão");
-  assert.equal(panel.querySelector("#kb-session-warning").textContent, "⚠️ Não foi possível atualizar a sessão");
-  assert(warnings.includes("ROLLOUT_DISABLED"));
-  assert(notifications.includes("⚠️ Não foi possível atualizar a sessão"));
+  assert.equal(start.getAttribute("title"), null);
+  assert.equal(panel.querySelector("#kb-session-warning").textContent, "");
+  assert(!warnings.includes("ROLLOUT_DISABLED"));
+  assert(!notifications.includes("⚠️ Não foi possível atualizar a sessão"));
 
   panel.dispatch("click", panel.querySelector("#kb-session-export"));
   assert.equal(exports, 1);
@@ -255,7 +261,8 @@ async function run() {
   for (const id of ["kb-session-rollout", "kb-session-role", "kb-session-drain", "kb-session-control", "kb-session-posterior", "kb-session-band", "kb-session-dda", "kb-session-target"]) {
     assert(!menu.includes(`id="${id}"`), `Session Control menu retained advanced field ${id}`);
   }
-  assert(menu.includes('id="kb-advanced-settings-toggle"'), "advanced settings gear is missing");
+  assert(menu.includes('id="kb-advanced-settings-toggle"'), "advanced settings control is missing");
+  assert(menu.includes('<span>Configurar</span><span class="kb-advanced-chevron"'), "advanced settings control is not discoverable");
   assert(menu.includes('<h3 id="kb-auto-play-title">Auto Play</h3>'), "Auto Play heading is missing");
   assert(menu.includes('aria-labelledby="kb-auto-play-title"'), "Auto Play section is missing its accessible heading relationship");
   assert(!menu.includes('<span>Session Control</span>'), "legacy Session Control heading is still visible");
@@ -273,6 +280,12 @@ async function run() {
   assert(menu.includes('aria-label="Run Delay mínimo em segundos"'));
   assert(menu.includes('aria-label="Run Delay máximo em segundos"'));
   assert(menu.includes('role="group" aria-labelledby="kb-run-delay-label"'));
+  assert(menu.includes('class="kb-delay-input"'));
+  assert(menu.includes('class="kb-delay-unit" aria-hidden="true">s</span>'));
+  assert(!menu.includes('id="kb-session-warning"'), "obsolete inline session warning is still rendered");
+  assert(menu.includes('id="kb-workspace-launcher"'));
+  assert(menu.includes('<span class="kb-logo-copy">Thinker Chess</span>'));
+  assert(!menu.includes('<div class="kb-logo">K</div>'));
   const mainGlassCss = sourceBlock(source, "          position:relative; isolation:isolate; overflow:hidden; width: 292px", "        #oi-zone2.tc-workspace-card {");
   const scoutGlassCss = sourceBlock(source, "        #oi-zone2.tc-workspace-card {", "        #krypbot-container .kb-header {");
   for (const declaration of [
@@ -298,14 +311,16 @@ async function run() {
   assert(source.includes('retry.className = "tc-scout-retry"'), "Scout unavailable retry is not styled by the shared premium system");
   assert(source.includes('panel.querySelector(".tc-scout-empty")?.appendChild(retry)'), "Scout unavailable retry is outside the centered empty state");
   assert(source.includes("@media (max-width: 640px)"), "workspace lacks a narrow-viewport layout");
-  assert(source.includes("width: 60px !important;\n          max-width: 60px !important"), "minimized panel retains the expanded inline width");
+  assert(source.includes("width: 154px !important;\n          max-width: 154px !important"), "workspace launcher lost its compact branded width");
+  assert(source.includes("setThinkerWorkspaceCollapsed(true)"), "panel close does not collapse the complete workspace");
+  assert(source.includes("setThinkerWorkspaceCollapsed(false)"), "workspace launcher does not restore the complete workspace");
   assert(source.includes('#krypbot-container .kb-session-button[data-action="start"]'), "START lacks a dedicated primary-action style");
   assert(source.includes("height:38px; border-radius:12px; background:linear-gradient(135deg,#42eca0 0%,#18b96a 100%)"), "START primary-action styling regressed");
   assert(source.includes('panel.toggleAttribute("inert", !open)'), "advanced disclosure does not synchronize focus isolation");
   assert(source.includes("@media (prefers-reduced-motion: reduce)"), "advanced disclosure ignores reduced-motion preferences");
   assert(source.includes('source?.closest?.("#kb-session-panel")'), "advanced disclosure is not scoped to its owning Session Control panel");
   assert(!menu.includes("SESSION_RUNTIME_UNAVAILABLE"), "Session Control menu exposes a raw startup reason code");
-  assert.equal(sourceHash(source, "    const menuHtml = `", "    const bannerHtml = `"), "c5f62be5e71db8c07520b81bf5fe104654874f86d9b12c52b4d97ae4319a16ee", "Auto Play menuHtml changed");
+  assert.equal(sourceHash(source, "    const menuHtml = `", "    const bannerHtml = `"), "2e297fe803ab9083b9aea54be360d4c55f032083ad7cf91ef14b7b08b6cd119c", "Auto Play menuHtml changed");
   const wrapperCss = sourceBlock(source, "        #oi-wrapper {", "        #oi-wrapper > * {");
   for (const declaration of [
     "position: absolute !important",

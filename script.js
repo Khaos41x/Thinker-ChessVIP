@@ -1748,7 +1748,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       panel.innerHTML = `
         <div class="tc-scout-head" style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;padding-bottom:12px;border-bottom:1px solid #26282e">
           <div style="min-width:0;font-size:14px;line-height:1.2;font-weight:800">Scout do Oponente</div>
-          <button class="tc-scout-close" type="button" aria-label="Fechar Scout">×</button>
+          <button class="tc-scout-close" type="button" aria-label="Recolher painéis do Thinker Chess">×</button>
         </div>
         <div class="tc-scout-empty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-width:0;padding:34px 16px;text-align:center">
           <div class="tc-scout-radar" aria-hidden="true"><span class="tc-scout-radar-dot"></span></div>
@@ -1756,7 +1756,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           <p class="tc-scout-empty-detail" style="margin:0;max-width:100%;color:#9da3b2;font-size:11px;line-height:1.5;white-space:normal;overflow-wrap:anywhere">${detail}</p>
         </div>`;
       panel.querySelector(".tc-scout-close")?.addEventListener("click", () => {
-        panel.style.display = "none";
+        setThinkerWorkspaceCollapsed(true);
       });
       if (state === "unavailable" && this.lastOpponent) {
         const retry = document.createElement("button");
@@ -1766,7 +1766,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         retry.addEventListener("click", () => this.fetchData(this.lastOpponent));
         panel.querySelector(".tc-scout-empty")?.appendChild(retry);
       }
-      if (typeof _ghostModeActive !== "undefined" && _ghostModeActive) panel.style.display = "none";
+      if ((typeof _ghostModeActive !== "undefined" && _ghostModeActive) || layout.container.classList.contains("minimized")) panel.style.display = "none";
       layout.wrapper.appendChild(panel);
     },
 
@@ -1793,13 +1793,15 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             <div class="tc-scout-title">Scout do Oponente</div>
             <div class="tc-scout-subtitle">Carregando histórico recente…</div>
           </div>
+          <button class="tc-scout-close" type="button" aria-label="Recolher painéis do Thinker Chess">×</button>
         </div>
         <div class="tc-scout-loading">
           <div class="tc-scout-radar" aria-hidden="true"><span class="tc-scout-radar-dot"></span></div>
           <div class="tc-scout-skeleton" aria-hidden="true"></div>
           <div class="tc-scout-skeleton" aria-hidden="true"></div>
         </div>`;
-      if (typeof _ghostModeActive !== "undefined" && _ghostModeActive) panel.style.display = "none";
+      panel.querySelector(".tc-scout-close")?.addEventListener("click", () => setThinkerWorkspaceCollapsed(true));
+      if ((typeof _ghostModeActive !== "undefined" && _ghostModeActive) || layout.container.classList.contains("minimized")) panel.style.display = "none";
       layout.wrapper.appendChild(panel);
     },
 
@@ -1950,7 +1952,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         </style>
         <div class="tc-scout-head">
           <div><div class="tc-scout-title">Scout do Oponente</div><div class="tc-scout-subtitle">${this.escapeHtml(this.lastOpponent || "Oponente")} · ${scoutStats.sampleSize} jogos · até ${lastPlayed}</div></div>
-          <button class="tc-scout-close" type="button" aria-label="Fechar Scout">Fechar</button>
+          <button class="tc-scout-close" type="button" aria-label="Recolher painéis do Thinker Chess">Fechar</button>
         </div>
         <div class="tc-scout-donut" style="background:${donutGradient}">
           <div class="tc-scout-donut-copy"><b>${scoutStats.winRate}%</b><small>taxa de vitórias</small></div>
@@ -1967,10 +1969,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           ${this.renderOpeningGroup(scoutStats.openings.black, scoutStats.colors.black.games, false)}
         </div>
         `;
-      if (typeof _ghostModeActive !== "undefined" && _ghostModeActive) panel.style.display = "none";
+      if ((typeof _ghostModeActive !== "undefined" && _ghostModeActive) || layout.container.classList.contains("minimized")) panel.style.display = "none";
       layout.wrapper.appendChild(panel);
       panel.querySelector(".tc-scout-close")?.addEventListener("click", () => {
-        panel.style.display = "none";
+        setThinkerWorkspaceCollapsed(true);
       });
     },
 
@@ -5026,6 +5028,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
   let thinkerUiFailureCount = 0;
   let thinkerBannerFrame = null;
   let thinkerWorkspaceFrame = null;
+  let thinkerWorkspaceCollapsed = false;
   let thinkerObservedBannerSidebar = null;
   let thinkerBannerResizeObserver = null;
   let thinkerBannerLayoutObserver = null;
@@ -5144,6 +5147,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     _menuReady = false;
     if (removeMenu) {
       const menu = document.getElementById("krypbot-container");
+      thinkerWorkspaceCollapsed = Boolean(menu?.classList.contains("minimized"));
       if (menu && typeof menu.remove === "function") menu.remove();
       else if (menu && menu.parentNode) menu.parentNode.removeChild(menu);
       thinkerMenuNode = null;
@@ -5359,12 +5363,28 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     if (menu) menu.style.display = _ghostModeActive ? "none" : "flex";
     if (wrapper) wrapper.style.setProperty("display", _ghostModeActive ? "none" : "flex", "important");
     if (scoutPrimary) scoutPrimary.style.display = _ghostModeActive ? "none" : "";
-    if (scoutSecondary) scoutSecondary.style.display = _ghostModeActive ? "none" : "flex";
+    if (scoutSecondary) scoutSecondary.style.display = _ghostModeActive || menu?.classList.contains("minimized") ? "none" : "flex";
     if (banner && !shouldShowThinkerBanner()) banner.style.display = "none";
     ensureGhostRecoveryControl();
     if (shouldShowThinkerBanner()) {
       scheduleThinkerBannerPosition();
     }
+  }
+
+  function setThinkerWorkspaceCollapsed(collapsed) {
+    const menu = document.getElementById("krypbot-container");
+    if (!menu) return;
+    const isCollapsed = collapsed === true;
+    thinkerWorkspaceCollapsed = isCollapsed;
+    menu.classList.toggle("minimized", isCollapsed);
+    menu.setAttribute("data-workspace-collapsed", isCollapsed ? "true" : "false");
+    const launcher = document.getElementById("kb-workspace-launcher");
+    if (launcher) launcher.setAttribute("aria-expanded", isCollapsed ? "false" : "true");
+    const scout = document.getElementById("oi-zone2");
+    if (scout) scout.style.display = isCollapsed || _ghostModeActive ? "none" : "flex";
+    if (!isCollapsed && typeof OpponentIntel !== "undefined" && !scout) OpponentIntel.checkOpponent();
+    if (isCollapsed && launcher) launcher.focus({ preventScroll: true });
+    if (typeof scheduleThinkerWorkspaceLayout === "function") scheduleThinkerWorkspaceLayout();
   }
 
   function reconcileThinkerUiShells() {
@@ -5542,39 +5562,41 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         }
 
         #krypbot-container.minimized {
-          width: 60px !important;
-          max-width: 60px !important;
-          height: 60px;
-          padding: 0;
-          border-radius: 30px;
+          width: 154px !important;
+          max-width: 154px !important;
+          height: 46px;
+          min-height: 46px !important;
+          padding: 0 !important;
+          border-radius: 15px !important;
           cursor: pointer;
           display: flex;
           justify-content: center;
           align-items: center;
-          background: rgba(0, 255, 136, 0.15);
-          border-color: rgba(0, 255, 136, 0.3);
+          background: rgba(20,20,25,.78) !important;
+          border-color: rgba(255,255,255,.1) !important;
+          box-shadow:0 14px 34px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.08) !important;
         }
 
         #krypbot-container.minimized:hover {
-          background: rgba(0, 255, 136, 0.25);
-          box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+          border-color: rgba(56,229,139,.26) !important;
+          box-shadow:0 16px 38px rgba(0,0,0,.42), 0 0 0 3px rgba(56,229,139,.07) !important;
         }
 
         #krypbot-container.minimized > *:not(.kb-logo) {
           display: none !important;
         }
 
-        .kb-logo {
+        #krypbot-container .kb-logo {
           display: none;
-          font-size: 26px;
-          font-weight: 800;
-          color: #00ff88;
-          text-shadow: 0 0 12px rgba(0, 255, 136, 0.6);
+          width:100%; height:100%; padding:0 12px; align-items:center; gap:9px; border:0; border-radius:inherit;
+          background:transparent; color:#f5f7f9; font:700 12px/1 var(--tc-font); cursor:pointer;
         }
 
         #krypbot-container.minimized .kb-logo {
-          display: block;
+          display: flex;
         }
+        #krypbot-container .kb-logo-mark { width:26px; height:26px; display:grid; place-items:center; flex:none; border-radius:9px; background:linear-gradient(145deg,#42eca0,#16b969); color:#07150e; font-size:16px; box-shadow:0 6px 16px rgba(26,199,111,.22), inset 0 1px 0 rgba(255,255,255,.38); }
+        #krypbot-container .kb-logo-copy { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; letter-spacing:-.01em; }
 
         .kb-header {
           display: flex;
@@ -5752,12 +5774,17 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           background:rgba(5,8,12,.18); box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
         }
         #krypbot-container .kb-run-delay-card {
-          min-height:48px; margin:6px 0 2px; padding:8px 9px; display:grid; grid-template-columns:auto minmax(0,1fr); align-items:center; gap:8px;
+          min-height:58px; margin:6px 0 2px; padding:9px; display:flex; flex-direction:column; align-items:stretch; gap:8px;
           background:rgba(56,229,139,.035);
         }
         #krypbot-container .kb-run-delay-card > div { min-width:0; margin:0 !important; }
-        #krypbot-container .kb-run-delay-card > div:last-child { justify-content:flex-end !important; gap:5px; }
-        #krypbot-container .kb-run-delay-card .kb-num-input { width:46px; height:30px; padding:4px 6px; }
+        #krypbot-container .kb-run-delay-controls { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; }
+        #krypbot-container .kb-delay-range { display:flex; align-items:center; gap:5px; min-width:0; }
+        #krypbot-container .kb-delay-input { width:56px; height:32px; display:flex; align-items:center; box-sizing:border-box; border:1px solid rgba(255,255,255,.09); border-radius:9px; background:rgba(7,9,13,.55); box-shadow:inset 0 1px 0 rgba(255,255,255,.035); transition:border-color .18s ease, box-shadow .18s ease, background .18s ease; }
+        #krypbot-container .kb-delay-input:focus-within { border-color:rgba(56,229,139,.6); background:rgba(7,12,10,.72); box-shadow:0 0 0 3px rgba(56,229,139,.1), inset 0 1px 0 rgba(255,255,255,.045); }
+        #krypbot-container .kb-delay-input .kb-num-input { width:38px; height:30px; padding:0 0 0 7px; border:0; border-radius:0; background:transparent; text-align:right; outline:none; }
+        #krypbot-container .kb-delay-unit { padding:0 6px 0 3px; color:#7f8793; font-size:9px; font-weight:650; }
+        #krypbot-container .kb-delay-separator { color:#68707c; font-size:11px; }
         #krypbot-container .kb-run-delay-card .kb-radio-group:has(input[name="delayMode"]) { height:30px; }
         #krypbot-container .kb-run-delay-card .kb-radio-group:has(input[name="delayMode"]) label { min-width:34px; padding:6px 4px; font-size:9px; }
         #krypbot-container .kb-slider-group { gap: 8px; }
@@ -5766,7 +5793,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-num-input {
           width: 52px; height: 27px; box-sizing: border-box; padding: 4px 7px; border: 1px solid #303238;
           border-radius: 7px; background: #1a1b20; color: #fff; font-size: 11px; font-weight: 700;
-          appearance: textfield; -moz-appearance: textfield;
+          appearance: none; -webkit-appearance: none; -moz-appearance: textfield; font-variant-numeric:tabular-nums;
         }
         #krypbot-container .kb-num-input::-webkit-inner-spin-button,
         #krypbot-container .kb-num-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
@@ -5795,13 +5822,15 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-session-title { display:flex; justify-content:space-between; align-items:center; color:#f4f5f7; font-size:13px; line-height:20px; font-weight:750; letter-spacing:-.01em; }
         #krypbot-container .kb-session-title h3 { margin:0; color:inherit; font:inherit; letter-spacing:inherit; }
         #krypbot-container .kb-advanced-toggle {
-          width:28px; height:28px; display:grid; place-items:center; padding:0; border:1px solid rgba(255,255,255,.08);
-          border-radius:9px; background:rgba(255,255,255,.055); color:#aeb3bc; font-size:14px; line-height:1;
-          cursor:pointer; transition:background .2s ease, color .2s ease, transform .3s cubic-bezier(.16,1,.3,1), border-color .2s ease;
+          height:28px; display:flex; align-items:center; gap:6px; padding:0 9px; border:1px solid rgba(255,255,255,.08);
+          border-radius:9px; background:rgba(255,255,255,.055); color:#aeb3bc; font-size:10px; line-height:1; font-weight:700;
+          cursor:pointer; transition:background .2s ease, color .2s ease, border-color .2s ease;
         }
         #krypbot-container .kb-advanced-toggle:hover,
         #krypbot-container .kb-advanced-toggle:focus-visible { background:rgba(255,255,255,.11); border-color:rgba(255,255,255,.16); color:#fff; outline:none; }
-        #krypbot-container .kb-advanced-toggle[aria-expanded="true"] { color:#36e58a; transform:rotate(45deg); }
+        #krypbot-container .kb-advanced-toggle[aria-expanded="true"] { color:#62eea7; border-color:rgba(56,229,139,.22); background:rgba(56,229,139,.08); }
+        #krypbot-container .kb-advanced-chevron { font-size:12px; transition:transform .28s cubic-bezier(.16,1,.3,1); }
+        #krypbot-container .kb-advanced-toggle[aria-expanded="true"] .kb-advanced-chevron { transform:rotate(180deg); }
         #krypbot-container .kb-advanced-settings {
           display:grid; grid-template-rows:0fr; min-height:0; margin:0; opacity:0; visibility:hidden; pointer-events:none;
           transform:translateY(-5px); transition:grid-template-rows .32s cubic-bezier(.16,1,.3,1), opacity .2s ease, transform .32s cubic-bezier(.16,1,.3,1), margin .32s ease, visibility 0s linear .32s;
@@ -5843,7 +5872,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-session-metric:first-child { background:linear-gradient(135deg,rgba(56,229,139,.075),rgba(255,255,255,.025)); }
         #krypbot-container .kb-session-metric:first-child strong { font-size:13px; font-variant-numeric:tabular-nums; }
         #krypbot-container .kb-session-metric:nth-child(2) strong { color:#65eea9; }
-        #krypbot-container .kb-session-warning { min-height:14px; color:#ffc765; font-size:10px; line-height:15px; overflow-wrap:anywhere; }
         #oi-zone2 .tc-scout-head { padding-bottom:17px !important; border-bottom:1px solid rgba(255,255,255,.075) !important; }
         #oi-zone2 .tc-scout-title,
         #oi-zone2 .tc-scout-head > div:first-child { font-size:17px !important; line-height:22px !important; font-weight:750 !important; letter-spacing:-.02em; }
@@ -5884,6 +5912,11 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         @media (max-width: 640px) {
           #oi-wrapper { width:calc(100vw - 20px) !important; flex-direction:column !important; align-items:flex-start !important; gap:12px !important; }
           #oi-wrapper > * { width:min(292px, calc(100vw - 20px)) !important; max-width:100% !important; }
+          #oi-wrapper > #krypbot-container.minimized { width:154px !important; max-width:154px !important; }
+        }
+        @media (max-width: 340px) {
+          #krypbot-container .kb-run-delay-controls { flex-direction:column; align-items:stretch; }
+          #krypbot-container .kb-run-delay-card .kb-radio-group:has(input[name="delayMode"]) { align-self:flex-start; }
         }
         @media (prefers-reduced-motion: reduce) {
           #krypbot-container,
@@ -5900,7 +5933,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
 
     const menuHtml = `
       <div id="krypbot-container">
-        <div class="kb-logo">K</div>
+        <button class="kb-logo" id="kb-workspace-launcher" type="button" aria-label="Abrir painéis do Thinker Chess" aria-expanded="true">
+          <span class="kb-logo-mark" aria-hidden="true">♞</span>
+          <span class="kb-logo-copy">Thinker Chess</span>
+        </button>
 
         <div class="kb-header">
           <div><span class="kb-eyebrow">CHESS ASSISTANT</span><h2 class="kb-title">Thinker Chess</h2></div>
@@ -5926,14 +5962,18 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         </div>
 
         <div class="kb-section-col kb-run-delay-card" id="auto-delay-section">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <p class="kb-section-label" id="kb-run-delay-label" style="color:#c4c9d2;font-size:11px">Run Delay</p>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:5px">
-            <div style="display:flex;gap:6px;align-items:center">
-              <input type="number" id="minDelayInput" class="kb-num-input" min="0.01" max="60" step="0.01" aria-label="Run Delay mínimo em segundos">
-              <span style="color:rgba(255,255,255,0.4);font-size:10px">to</span>
-              <input type="number" id="maxDelayInput" class="kb-num-input" min="0.01" max="60" step="0.01" aria-label="Run Delay máximo em segundos">
+          <p class="kb-section-label" id="kb-run-delay-label" style="color:#c4c9d2;font-size:11px">Run Delay</p>
+          <div class="kb-run-delay-controls">
+            <div class="kb-delay-range">
+              <label class="kb-delay-input">
+                <input type="number" id="minDelayInput" class="kb-num-input" min="0.01" max="60" step="0.01" inputmode="decimal" aria-label="Run Delay mínimo em segundos">
+                <span class="kb-delay-unit" aria-hidden="true">s</span>
+              </label>
+              <span class="kb-delay-separator" aria-hidden="true">–</span>
+              <label class="kb-delay-input">
+                <input type="number" id="maxDelayInput" class="kb-num-input" min="0.01" max="60" step="0.01" inputmode="decimal" aria-label="Run Delay máximo em segundos">
+                <span class="kb-delay-unit" aria-hidden="true">s</span>
+              </label>
             </div>
             <div class="kb-radio-group" role="group" aria-labelledby="kb-run-delay-label">
               <input type="radio" id="dm-rand" name="delayMode" value="random"><label for="dm-rand">RND</label>
@@ -6005,7 +6045,9 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         <section class="kb-session-panel" id="kb-session-panel" aria-labelledby="kb-auto-play-title">
           <div class="kb-session-title">
             <h3 id="kb-auto-play-title">Auto Play</h3>
-            <button class="kb-advanced-toggle" id="kb-advanced-settings-toggle" type="button" aria-label="Configurações avançadas do Auto Play" aria-controls="advanced-settings-panel" aria-expanded="false">⚙</button>
+            <button class="kb-advanced-toggle" id="kb-advanced-settings-toggle" type="button" aria-label="Configurar Auto Play" aria-controls="advanced-settings-panel" aria-expanded="false">
+              <span>Configurar</span><span class="kb-advanced-chevron" aria-hidden="true">⌄</span>
+            </button>
           </div>
           <div class="kb-advanced-settings" id="advanced-settings-panel" data-open="false" aria-hidden="true" inert>
             <div class="kb-advanced-settings-inner">
@@ -6028,7 +6070,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             <div class="kb-session-metric"><span>Placar</span><strong id="kb-session-observed">0 V | 0 E | 0 D</strong></div>
             <div class="kb-session-metric"><span>Win Rate</span><strong id="kb-session-raw">0%</strong></div>
           </div>
-          <div class="kb-session-warning" id="kb-session-warning" role="alert" aria-live="assertive"></div>
         </section>
 
         <div id="kb-session-toast" role="status" aria-live="assertive" aria-atomic="true"></div>
@@ -6136,6 +6177,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         OpponentIntel.ensureScoutWrapper();
         scheduleThinkerWorkspaceLayout();
         OpponentIntel.startObserver();
+        setThinkerWorkspaceCollapsed(thinkerWorkspaceCollapsed);
         const switchGroups = document.querySelectorAll(
           "#krypbot-container .kb-radio-group",
         );
@@ -6193,12 +6235,12 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         // Add Minimize Logic
         $("#kb-minimize-toggle").on("click", function (e) {
           e.stopPropagation();
-          $("#krypbot-container").addClass("minimized");
+          setThinkerWorkspaceCollapsed(true);
         });
-        $("#krypbot-container").on("click", function (e) {
-          if ($(this).hasClass("minimized")) {
-            $(this).removeClass("minimized");
-          }
+        $("#kb-workspace-launcher").on("click", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          setThinkerWorkspaceCollapsed(false);
         });
 
         function syncAutoQueueSessionUI() {
@@ -6334,8 +6376,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         }).catch((error) => {
           const code = error && error.code ? error.code : "SESSION_RUNTIME_UNAVAILABLE";
           sessionControlBridge.setWarning(code);
-          const warning = document.getElementById("kb-session-warning");
-          if (warning) warning.textContent = sessionControlMessage(code);
           notifySessionControl(code);
         });
 
@@ -6925,7 +6965,7 @@ factories["telemetry"]=function(module,exports,require){
 const{clone,deepFreeze,exactKeys,isPlainObject}=require("./models");const TELEMETRY_VERSION="session-control-telemetry-v1";const DIAGNOSTIC_VERSION="session-control-diagnostic-v1";const EVENT_NAMES=Object.freeze(["session_started","session_recovered","session_draining","session_completed","leader_acquired","leader_lost","lease_takeover","queue_intent_admitted","queue_intent_consumed","queue_intent_expired","game_target_pinned","result_committed","duplicate_result_ignored","dda_mode_changed","target_saturated","calibration_mismatch","session_paused",]);const FIELD_NAMES=Object.freeze(["occurredAtEpochMs","phase","revision","role","observedCounts","controlCounts","controllerMode","posteriorWinRate","offsetElo","rawTargetElo","effectiveTargetElo","saturated","reasonCode","reducerVersion","estimatorVersion","controllerVersion","rolloutStage",]);function safeCounts(value,field){exactKeys(value,["wins","draws","losses","terminalGames"],[],field);const output={};for(const key of["wins","draws","losses","terminalGames"]){if(!Number.isInteger(value[key])||value[key]<0)throw new TypeError(`${field}.${key} is invalid`);output[key]=value[key];}return output;}function sanitizeFields(input){if(!isPlainObject(input))throw new TypeError("telemetry fields must be an object");for(const key of Object.keys(input))if(!FIELD_NAMES.includes(key))throw new TypeError(`telemetry field is forbidden: ${key}`);const output={};for(const[key,value]of Object.entries(input)){if(value===undefined||value===null)continue;if(key==="observedCounts"||key==="controlCounts")output[key]=safeCounts(value,`telemetry.${key}`);else if(["occurredAtEpochMs","revision","offsetElo","rawTargetElo","effectiveTargetElo"].includes(key)){if(!Number.isInteger(value))throw new TypeError(`telemetry.${key} must be an integer`);output[key]=value;}else if(key==="posteriorWinRate"){if(!Number.isFinite(value)||value<0||value>1)throw new TypeError("telemetry.posteriorWinRate is invalid");output[key]=value;}else if(key==="saturated"){if(typeof value!=="boolean")throw new TypeError("telemetry.saturated must be boolean");output[key]=value;}else{if(typeof value!=="string"||!value||value.length>120)throw new TypeError(`telemetry.${key} must be a short string`);output[key]=value;}}return output;}function sanitizeEvent(input){if(!isPlainObject(input))throw new TypeError("telemetry event must be an object");const{schemaVersion,telemetryVersion,name,...fields}=input;if(schemaVersion!==1)throw new TypeError("telemetry schema version is unsupported");if(telemetryVersion!==TELEMETRY_VERSION)throw new TypeError("telemetry version is unsupported");if(!EVENT_NAMES.includes(name))throw new TypeError("telemetry event name is unsupported");return{schemaVersion,telemetryVersion,name,...sanitizeFields(fields)};}class BoundedTelemetry{constructor(options){const settings=options||{};this.capacity=settings.capacity===undefined?500:settings.capacity;if(!Number.isInteger(this.capacity)||this.capacity<1||this.capacity>5000)throw new TypeError("telemetry capacity is invalid");this.events=[];}record(name,fields){const event=deepFreeze(sanitizeEvent({schemaVersion:1,telemetryVersion:TELEMETRY_VERSION,name,...(fields||{})}));this.events.push(event);if(this.events.length>this.capacity)this.events.splice(0,this.events.length-this.capacity);return event;}list(){return deepFreeze(clone(this.events));}clear(){this.events.length=0;}}function diagnosticExport(status,events,generatedAtEpochMs){if(!isPlainObject(status))throw new TypeError("diagnostic status must be an object");if(!Array.isArray(events))throw new TypeError("diagnostic events must be an array");if(!Number.isInteger(generatedAtEpochMs)||generatedAtEpochMs<0)throw new TypeError("diagnostic timestamp is invalid");const allowedStatus=["phase","role","remainingTtlMs","drainDeadlineEpochMs","drainRemainingMs","observedCounts","controlCounts","rawWinRate","posteriorWinRate","wilsonLower","wilsonUpper","minWinRate","maxWinRate","controllerMode","offsetElo","opponentRating","effectiveTargetElo","targetSaturated","warningCode","rolloutStage","executionMode",];const safeStatus={};for(const key of allowedStatus)if(Object.prototype.hasOwnProperty.call(status,key))safeStatus[key]=clone(status[key]);return deepFreeze({schemaVersion:1,diagnosticVersion:DIAGNOSTIC_VERSION,generatedAtEpochMs,status:safeStatus,events:events.map(sanitizeEvent)});}module.exports={BoundedTelemetry,DIAGNOSTIC_VERSION,EVENT_NAMES,FIELD_NAMES,TELEMETRY_VERSION,diagnosticExport,sanitizeEvent,sanitizeFields};
 };
 factories["ui"]=function(module,exports,require){
-const FIELD_IDS=Object.freeze({durationMinutes:"kb-session-duration",minimumPercent:"kb-session-min-rate",maximumPercent:"kb-session-max-rate",});const TERMINAL_PHASES=Object.freeze(["IDLE","COMPLETED","ABORTED"]);const PHASE_LABELS=Object.freeze({IDLE:"Aguardando",QUEUEING:"Buscando...",IN_GAME:"Jogando...",DRAINING:"Finalizando sessão...",PAUSED_QUEUEING:"Sessão pausada",PAUSED_ACTIVE:"Sessão pausada",COMPLETED:"Concluído",ABORTED:"Interrompido",});const SUCCESS_LABELS=Object.freeze({SESSION_STARTED:"Sessão iniciada",DRAINING:"Finalizando sessão...",SESSION_STOPPED:"Sessão finalizada",COMPLETED:"Concluído",});function phaseLabel(phase){return Object.prototype.hasOwnProperty.call(PHASE_LABELS,phase)?PHASE_LABELS[phase]:"Atualizando...";}function warningLabel(code){if(!code)return "";if(code==="DDA_MAPPING_UNAVAILABLE"||code.includes("ARTIFACT"))return "⚠️ Verifique o Artefato";if(code.startsWith("CALIBRATION_"))return "⚠️ Calibração não encontrada";return "⚠️ Não foi possível atualizar a sessão";}function successLabel(code){return SUCCESS_LABELS[code]||"Operação concluída";}function reasonCode(error,fallback){if(error&&typeof error.code==="string"&&error.code)return error.code;if(error&&typeof error.reason==="string"&&error.reason)return error.reason;if(error&&typeof error.message==="string"&&/^[A-Z][A-Z0-9_]+$/.test(error.message))return error.message;return fallback;}function findById(panel,id){return panel&&typeof panel.querySelector==="function"?panel.querySelector(`#${id}`):null;}function setText(panel,id,value){const node=findById(panel,id);if(node)node.textContent=value;}function actionNode(panel,target){let node=target;while(node&&node!==panel){if(typeof node.getAttribute==="function"&&node.getAttribute("data-action"))return node;node=node.parentNode;}return null;}function availability(status,startBlocker){const terminal=TERMINAL_PHASES.includes(status.phase);return Object.freeze({start:startBlocker||(status.rolloutStage==="DISABLED"?"ROLLOUT_DISABLED":terminal?null:"ACTIVE_SESSION_EXISTS"),stop:terminal?"SESSION_NOT_ACTIVE":null,});}function presentAvailability(panel,action,reason){const button=panel.querySelector(`[data-action="${action}"]`);if(!button)return;button.removeAttribute("disabled");button.setAttribute("aria-disabled",reason?"true":"false");if(reason){button.setAttribute("data-disabled-reason",reason);button.setAttribute("title",warningLabel(reason));}else{button.removeAttribute("data-disabled-reason");button.removeAttribute("title");}}function presentStatus(panel,status,formatDuration,startBlocker){const counts=status.observedCounts;setText(panel,"kb-session-phase",phaseLabel(status.phase));setText(panel,"kb-session-ttl",formatDuration(status.remainingTtlMs));setText(panel,"kb-session-observed",`${counts.wins} V | ${counts.draws} E | ${counts.losses} D`);setText(panel,"kb-session-raw",`${status.rawWinRate.toFixed(0)}%`);setText(panel,"kb-session-warning",warningLabel(status.warningCode));const state=availability(status,startBlocker);presentAvailability(panel,"start",state.start);presentAvailability(panel,"stop",state.stop);return state;}function createSessionControlPresenter(options){if(!options||typeof options.getPanel!=="function")throw new TypeError("getPanel is required");const AbortControllerType=options.AbortController||globalThis.AbortController;if(typeof AbortControllerType!=="function")throw new TypeError("AbortController is required");let panel=null;let abortController=null;let currentAvailability=Object.freeze({start:"STATUS_UNAVAILABLE",stop:"STATUS_UNAVAILABLE"});let sequence=0;const draft=Object.create(null);const inFlight=new Set();function emit(type,detail){sequence+=1;if(panel){panel.setAttribute("data-session-ui-event",type);panel.setAttribute("data-session-ui-sequence",String(sequence));}if(typeof options.onTelemetry==="function")options.onTelemetry(Object.freeze({type,sequence,...(detail||{})}));}function warning(code){const value=code||"STATUS_UNAVAILABLE";if(typeof options.setWarning==="function")options.setWarning(value);const label=warningLabel(value);if(panel)setText(panel,"kb-session-warning",label);if(typeof options.notify==="function")options.notify(label,{transient:true});emit("warning",{code:value});}function success(code){if(typeof options.setWarning==="function")options.setWarning(null);if(panel)setText(panel,"kb-session-warning","");if(typeof options.notify==="function")options.notify(successLabel(code),{transient:true,success:true});emit("success",{code});}function captureDraft(nextPanel){for(const[field,id]of Object.entries(FIELD_IDS)){const input=findById(nextPanel,id);if(!input)continue;if(Object.prototype.hasOwnProperty.call(draft,field))input.value=draft[field];else draft[field]=String(input.value);}}function readDraft(){return Object.freeze({durationMinutes:draft.durationMinutes,minimumPercent:draft.minimumPercent,maximumPercent:draft.maximumPercent,});}function readConfig(){if(typeof options.createConfig!=="function")throw new TypeError("createConfig is required");return options.createConfig(readDraft());}async function run(action){if(inFlight.has(action))return;const blocked=currentAvailability[action];if(blocked){warning(blocked);return;}inFlight.add(action);emit("dispatch",{action});try{if(action==="start"){let config;try{config=readConfig();}catch(error){warning(reasonCode(error,"SESSION_CONFIG_INVALID"));return;}await options.start(config);success("SESSION_STARTED");}else if(action==="stop"){const result=await options.stop();if(!result||result.allowed!==true){warning(reasonCode(result,"GRACEFUL_STOP_FAILED"));return;}success(reasonCode(result,"SESSION_STOPPED"));}}catch(error){warning(reasonCode(error,action==="start"?"SESSION_START_FAILED":"GRACEFUL_STOP_FAILED"));}finally{inFlight.delete(action);update();}}function runExport(){emit("dispatch",{action:"export"});try{const diagnostic=options.exportDiagnostic();options.downloadDiagnostic(diagnostic);}catch(error){warning(reasonCode(error,"DIAGNOSTIC_EXPORT_FAILED"));}update();}function bind(nextPanel){if(nextPanel===panel&&abortController)return false;if(abortController)abortController.abort();panel=nextPanel||null;abortController=null;if(!panel)return false;captureDraft(panel);abortController=new AbortControllerType();const signal=abortController.signal;panel.addEventListener("input",(event)=>{for(const[field,id]of Object.entries(FIELD_IDS)){if(event.target&&event.target.id===id){draft[field]=String(event.target.value);emit("draft",{field});return;}}},{signal});panel.addEventListener("click",(event)=>{const button=actionNode(panel,event.target);if(!button)return;event.preventDefault();event.stopPropagation();const action=button.getAttribute("data-action");if(action==="export")runExport();else if(action==="start"||action==="stop")void run(action);},{signal});emit("bound");return true;}function update(){const nextPanel=options.getPanel();if(nextPanel!==panel)bind(nextPanel);if(!panel)return null;try{const status=options.readStatus();const startBlocker=typeof options.readStartBlocker==="function"?options.readStartBlocker():null;currentAvailability=presentStatus(panel,status,options.formatDuration,startBlocker);return status;}catch(error){warning(reasonCode(error,"STATUS_UNAVAILABLE"));return null;}}function dispose(){if(abortController)abortController.abort();abortController=null;panel=null;}return Object.freeze({bind,dispose,readConfig,readDraft,update});}module.exports={FIELD_IDS,createSessionControlPresenter,phaseLabel,presentStatus,reasonCode,successLabel,warningLabel};
+const FIELD_IDS=Object.freeze({durationMinutes:"kb-session-duration",minimumPercent:"kb-session-min-rate",maximumPercent:"kb-session-max-rate",});const TERMINAL_PHASES=Object.freeze(["IDLE","COMPLETED","ABORTED"]);const PHASE_LABELS=Object.freeze({IDLE:"Aguardando",QUEUEING:"Buscando...",IN_GAME:"Jogando...",DRAINING:"Finalizando sessão...",PAUSED_QUEUEING:"Sessão pausada",PAUSED_ACTIVE:"Sessão pausada",COMPLETED:"Concluído",ABORTED:"Interrompido",});const SUCCESS_LABELS=Object.freeze({SESSION_STARTED:"Sessão iniciada",DRAINING:"Finalizando sessão...",SESSION_STOPPED:"Sessão finalizada",COMPLETED:"Concluído",});function phaseLabel(phase){return Object.prototype.hasOwnProperty.call(PHASE_LABELS,phase)?PHASE_LABELS[phase]:"Atualizando...";}function warningLabel(code){if(!code)return "";if(code==="DDA_MAPPING_UNAVAILABLE"||code.includes("ARTIFACT"))return "⚠️ Verifique o Artefato";if(code.startsWith("CALIBRATION_"))return "⚠️ Calibração não encontrada";return "⚠️ Não foi possível atualizar a sessão";}function successLabel(code){return SUCCESS_LABELS[code]||"Operação concluída";}function reasonCode(error,fallback){if(error&&typeof error.code==="string"&&error.code)return error.code;if(error&&typeof error.reason==="string"&&error.reason)return error.reason;if(error&&typeof error.message==="string"&&/^[A-Z][A-Z0-9_]+$/.test(error.message))return error.message;return fallback;}function findById(panel,id){return panel&&typeof panel.querySelector==="function"?panel.querySelector(`#${id}`):null;}function setText(panel,id,value){const node=findById(panel,id);if(node)node.textContent=value;}function actionNode(panel,target){let node=target;while(node&&node!==panel){if(typeof node.getAttribute==="function"&&node.getAttribute("data-action"))return node;node=node.parentNode;}return null;}function availability(status,startBlocker){const terminal=TERMINAL_PHASES.includes(status.phase);return Object.freeze({start:startBlocker||(status.rolloutStage==="DISABLED"?"ROLLOUT_DISABLED":terminal?null:"ACTIVE_SESSION_EXISTS"),stop:terminal?"SESSION_NOT_ACTIVE":null,});}function presentAvailability(panel,action,reason){const button=panel.querySelector(`[data-action="${action}"]`);if(!button)return;button.toggleAttribute("disabled",Boolean(reason));button.setAttribute("aria-disabled",reason?"true":"false");if(reason){button.setAttribute("data-disabled-reason",reason);}else{button.removeAttribute("data-disabled-reason");}button.removeAttribute("title");}function presentStatus(panel,status,formatDuration,startBlocker){const counts=status.observedCounts;setText(panel,"kb-session-phase",phaseLabel(status.phase));setText(panel,"kb-session-ttl",formatDuration(status.remainingTtlMs));setText(panel,"kb-session-observed",`${counts.wins} V | ${counts.draws} E | ${counts.losses} D`);setText(panel,"kb-session-raw",`${status.rawWinRate.toFixed(0)}%`);const state=availability(status,startBlocker);presentAvailability(panel,"start",state.start);presentAvailability(panel,"stop",state.stop);return state;}function createSessionControlPresenter(options){if(!options||typeof options.getPanel!=="function")throw new TypeError("getPanel is required");const AbortControllerType=options.AbortController||globalThis.AbortController;if(typeof AbortControllerType!=="function")throw new TypeError("AbortController is required");let panel=null;let abortController=null;let currentAvailability=Object.freeze({start:"STATUS_UNAVAILABLE",stop:"STATUS_UNAVAILABLE"});let sequence=0;const draft=Object.create(null);const inFlight=new Set();function emit(type,detail){sequence+=1;if(panel){panel.setAttribute("data-session-ui-event",type);panel.setAttribute("data-session-ui-sequence",String(sequence));}if(typeof options.onTelemetry==="function")options.onTelemetry(Object.freeze({type,sequence,...(detail||{})}));}function warning(code){const value=code||"STATUS_UNAVAILABLE";if(typeof options.setWarning==="function")options.setWarning(value);const label=warningLabel(value);if(typeof options.notify==="function")options.notify(label,{transient:true});emit("warning",{code:value});}function success(code){if(typeof options.setWarning==="function")options.setWarning(null);if(typeof options.notify==="function")options.notify(successLabel(code),{transient:true,success:true});emit("success",{code});}function captureDraft(nextPanel){for(const[field,id]of Object.entries(FIELD_IDS)){const input=findById(nextPanel,id);if(!input)continue;if(Object.prototype.hasOwnProperty.call(draft,field))input.value=draft[field];else draft[field]=String(input.value);}}function readDraft(){return Object.freeze({durationMinutes:draft.durationMinutes,minimumPercent:draft.minimumPercent,maximumPercent:draft.maximumPercent,});}function readConfig(){if(typeof options.createConfig!=="function")throw new TypeError("createConfig is required");return options.createConfig(readDraft());}async function run(action){if(inFlight.has(action))return;const blocked=currentAvailability[action];if(blocked){emit("blocked",{action,code:blocked});return;}inFlight.add(action);emit("dispatch",{action});try{if(action==="start"){let config;try{config=readConfig();}catch(error){warning(reasonCode(error,"SESSION_CONFIG_INVALID"));return;}await options.start(config);success("SESSION_STARTED");}else if(action==="stop"){const result=await options.stop();if(!result||result.allowed!==true){warning(reasonCode(result,"GRACEFUL_STOP_FAILED"));return;}success(reasonCode(result,"SESSION_STOPPED"));}}catch(error){warning(reasonCode(error,action==="start"?"SESSION_START_FAILED":"GRACEFUL_STOP_FAILED"));}finally{inFlight.delete(action);update();}}function runExport(){emit("dispatch",{action:"export"});try{const diagnostic=options.exportDiagnostic();options.downloadDiagnostic(diagnostic);}catch(error){warning(reasonCode(error,"DIAGNOSTIC_EXPORT_FAILED"));}update();}function bind(nextPanel){if(nextPanel===panel&&abortController)return false;if(abortController)abortController.abort();panel=nextPanel||null;abortController=null;if(!panel)return false;captureDraft(panel);abortController=new AbortControllerType();const signal=abortController.signal;panel.addEventListener("input",(event)=>{for(const[field,id]of Object.entries(FIELD_IDS)){if(event.target&&event.target.id===id){draft[field]=String(event.target.value);emit("draft",{field});return;}}},{signal});panel.addEventListener("click",(event)=>{const button=actionNode(panel,event.target);if(!button)return;event.preventDefault();event.stopPropagation();const action=button.getAttribute("data-action");if(action==="export")runExport();else if(action==="start"||action==="stop")void run(action);},{signal});emit("bound");return true;}function update(){const nextPanel=options.getPanel();if(nextPanel!==panel)bind(nextPanel);if(!panel)return null;try{const status=options.readStatus();const startBlocker=typeof options.readStartBlocker==="function"?options.readStartBlocker():null;currentAvailability=presentStatus(panel,status,options.formatDuration,startBlocker);return status;}catch(error){warning(reasonCode(error,"STATUS_UNAVAILABLE"));return null;}}function dispose(){if(abortController)abortController.abort();abortController=null;panel=null;}return Object.freeze({bind,dispose,readConfig,readDraft,update});}module.exports={FIELD_IDS,createSessionControlPresenter,phaseLabel,presentStatus,reasonCode,successLabel,warningLabel};
 };
 factories["index"]=function(module,exports,require){
 module.exports=Object.freeze({...require("./clock"),...require("./controller"),...require("./leader"),...require("./models"),...require("./ports"),...require("./platform-chesscom"),...require("./reducer"),...require("./repository"),...require("./runtime"),...require("./statistics"),...require("./status"),...require("./telemetry"),...require("./ui"),});
