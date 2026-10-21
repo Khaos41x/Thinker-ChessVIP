@@ -181,6 +181,71 @@ function createCdpClient(webSocketUrl) {
     });
     const state = result.result.value;
 
+    const disclosureSmokeResult = await client.send("Runtime.evaluate", {
+      expression: `(() => {
+        const toggle = document.getElementById("kb-advanced-settings-toggle");
+        const panel = document.getElementById("advanced-settings-panel");
+        const duration = document.getElementById("kb-session-duration");
+        const minimum = document.getElementById("kb-session-min-rate");
+        const maximum = document.getElementById("kb-session-max-rate");
+        const delayMinimum = document.getElementById("minDelayInput");
+        const delayMaximum = document.getElementById("maxDelayInput");
+        const delayMode = document.getElementById("dm-max");
+        const sessionPanel = document.getElementById("kb-session-panel");
+        if (!toggle || !panel || !duration || !minimum || !maximum || !delayMinimum || !delayMaximum || !delayMode || !sessionPanel) return { ok: false, reason: "advanced-disclosure-missing" };
+        const phaseBefore = window.krypbotSessionControlBridge?.status?.().phase || null;
+        const sequenceBefore = sessionPanel.getAttribute("data-session-ui-sequence");
+        const initial = { expanded: toggle.getAttribute("aria-expanded"), hidden: panel.getAttribute("aria-hidden"), inert: panel.hasAttribute("inert"), open: panel.dataset.open };
+        duration.focus();
+        const collapsedFocusBlocked = document.activeElement !== duration;
+        toggle.click();
+        const opened = { expanded: toggle.getAttribute("aria-expanded"), hidden: panel.getAttribute("aria-hidden"), inert: panel.hasAttribute("inert"), open: panel.dataset.open };
+        const sequenceAfterOpen = sessionPanel.getAttribute("data-session-ui-sequence");
+        duration.focus();
+        const expandedFocusAllowed = document.activeElement === duration;
+        duration.value = "240";
+        duration.dispatchEvent(new Event("input", { bubbles: true }));
+        minimum.value = "74";
+        minimum.dispatchEvent(new Event("input", { bubbles: true }));
+        maximum.value = "83";
+        maximum.dispatchEvent(new Event("input", { bubbles: true }));
+        delayMinimum.value = "0.75";
+        delayMaximum.value = "1.80";
+        delayMode.checked = true;
+        const sequenceAfterDraft = sessionPanel.getAttribute("data-session-ui-sequence");
+        toggle.click();
+        const closed = { expanded: toggle.getAttribute("aria-expanded"), hidden: panel.getAttribute("aria-hidden"), inert: panel.hasAttribute("inert"), open: panel.dataset.open };
+        const sequenceAfterClose = sessionPanel.getAttribute("data-session-ui-sequence");
+        toggle.click();
+        const retained = { duration: duration.value, minimum: minimum.value, maximum: maximum.value, delayMinimum: delayMinimum.value, delayMaximum: delayMaximum.value, delayMode: delayMode.checked };
+        toggle.click();
+        const phaseAfter = window.krypbotSessionControlBridge?.status?.().phase || null;
+        const sequenceAfter = sessionPanel.getAttribute("data-session-ui-sequence");
+        const style = getComputedStyle(document.getElementById("krypbot-container"));
+        const scout = document.getElementById("oi-zone2");
+        const scoutStyle = scout ? getComputedStyle(scout) : null;
+        return {
+          ok: initial.expanded === "false" && initial.hidden === "true" && initial.inert && initial.open === "false"
+            && opened.expanded === "true" && opened.hidden === "false" && !opened.inert && opened.open === "true"
+            && closed.expanded === "false" && closed.hidden === "true" && closed.inert && closed.open === "false"
+            && collapsedFocusBlocked && expandedFocusAllowed
+            && retained.duration === "240" && retained.minimum === "74" && retained.maximum === "83"
+            && retained.delayMinimum === "0.75" && retained.delayMaximum === "1.80" && retained.delayMode
+            && phaseBefore === phaseAfter && sequenceBefore === sequenceAfterOpen && sequenceAfterDraft === sequenceAfterClose && sequenceAfterClose === sequenceAfter,
+          initial, opened, closed, retained, collapsedFocusBlocked, expandedFocusAllowed, phaseBefore, phaseAfter, sequenceBefore, sequenceAfterOpen, sequenceAfterDraft, sequenceAfterClose, sequenceAfter,
+          glass: { background: style.backgroundColor, radius: style.borderRadius, backdrop: style.backdropFilter || style.webkitBackdropFilter, font: style.fontFamily },
+          scoutGlass: scoutStyle ? { background: scoutStyle.backgroundColor, radius: scoutStyle.borderRadius, backdrop: scoutStyle.backdropFilter || scoutStyle.webkitBackdropFilter, font: scoutStyle.fontFamily } : null,
+        };
+      })()`,
+      returnByValue: true,
+    });
+    const disclosureSmoke = disclosureSmokeResult.result.value;
+
+    assert(disclosureSmoke.ok, `Advanced settings disclosure smoke failed: ${JSON.stringify(disclosureSmoke)}`);
+    assert(disclosureSmoke.glass.background === "rgba(20, 20, 25, 0.65)", `Session panel glass background regressed: ${JSON.stringify(disclosureSmoke.glass)}`);
+    assert(disclosureSmoke.glass.radius === "20px" && disclosureSmoke.glass.backdrop.includes("16px"), `Session panel glass geometry regressed: ${JSON.stringify(disclosureSmoke.glass)}`);
+    assert(disclosureSmoke.glass.font.includes("-apple-system") || disclosureSmoke.glass.font.includes("BlinkMacSystemFont") || disclosureSmoke.glass.font.includes("Segoe UI"), `Session panel system font regressed: ${JSON.stringify(disclosureSmoke.glass)}`);
+
     if (liveChess) {
       console.log(JSON.stringify({ state, consoleErrors }, null, 2));
       assert(exceptions.length === 0, `Userscript exception: ${exceptions[0]?.text || "unknown"}`);
@@ -319,6 +384,8 @@ function createCdpClient(webSocketUrl) {
     const module14 = module14Smoke.result.value;
 
     assert(exceptions.length === 0, `Userscript exception: ${exceptions[0]?.text || "unknown"}`);
+    assert(disclosureSmoke.scoutGlass?.background === "rgba(20, 20, 25, 0.65)" && disclosureSmoke.scoutGlass.radius === "20px" && disclosureSmoke.scoutGlass.backdrop.includes("16px"), `Scout glass styling regressed: ${JSON.stringify(disclosureSmoke.scoutGlass)}`);
+    assert(disclosureSmoke.scoutGlass.font.includes("-apple-system") || disclosureSmoke.scoutGlass.font.includes("BlinkMacSystemFont") || disclosureSmoke.scoutGlass.font.includes("Segoe UI"), `Scout system font regressed: ${JSON.stringify(disclosureSmoke.scoutGlass)}`);
     assert(productionStart.ok, `Production START wiring smoke failed: ${JSON.stringify(productionStart)}`);
     if (!liveChess) assert(productionStart.warning === "⚠️ Verifique o Artefato" && productionStart.rawWarningCode === "DDA_MAPPING_UNAVAILABLE", `Default compatibility START did not leave IDLE: ${JSON.stringify(productionStart)}`);
     assert(module14.ok, `Module 14 browser smoke failed: ${JSON.stringify(module14)}`);

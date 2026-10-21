@@ -5480,8 +5480,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
 
     const css = `
       <style id="tc-userscript-style">
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
         html.tc-page-scrollbar-hidden,
         html.tc-page-scrollbar-hidden body {
           scrollbar-width: none !important;
@@ -5661,9 +5659,20 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
 
         #krypbot-container {
           width: 268px; max-width: 268px; box-sizing: border-box; margin: 0; padding: 16px;
-          gap: 0; background: #111216; border: 1px solid #202228; border-radius: 20px;
-          box-shadow: 0 18px 42px rgba(0,0,0,.34); backdrop-filter: none; -webkit-backdrop-filter: none;
-          color: #f7f8fa; font-family: Inter, Arial, sans-serif;
+          gap: 0; background: rgba(20, 20, 25, 0.65) !important;
+          border: 1px solid rgba(255, 255, 255, 0.08) !important; border-radius: 20px !important;
+          box-shadow: 0 24px 64px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.08);
+          backdrop-filter: blur(16px) !important; -webkit-backdrop-filter: blur(16px) !important;
+          color: #f7f8fa; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+        }
+        #oi-zone2.tc-workspace-card {
+          background: rgba(20, 20, 25, 0.65) !important;
+          backdrop-filter: blur(16px) !important;
+          -webkit-backdrop-filter: blur(16px) !important;
+          border: 1px solid rgba(255, 255, 255, 0.08) !important;
+          border-radius: 20px !important;
+          box-shadow: 0 24px 64px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.08) !important;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
         }
         #krypbot-container .kb-header {
           margin: 0 0 12px; padding: 0 0 12px; border-bottom: 1px solid #24262c;
@@ -5743,15 +5752,44 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-color-input {
           width: 19px; height: 19px; border: 0; border-radius: 6px; padding: 0; overflow: hidden;
         }
-        #krypbot-container .kb-session-panel { border-top:1px solid #24262c; padding:12px 0 2px; display:flex; flex-direction:column; gap:9px; }
+        #krypbot-container .kb-session-panel { border-top:1px solid rgba(255,255,255,.08); padding:12px 0 2px; display:flex; flex-direction:column; gap:9px; }
         #krypbot-container .kb-session-title { display:flex; justify-content:space-between; align-items:center; color:#f4f5f7; font-size:11px; font-weight:800; }
+        #krypbot-container .kb-advanced-toggle {
+          width:28px; height:28px; display:grid; place-items:center; padding:0; border:1px solid rgba(255,255,255,.08);
+          border-radius:9px; background:rgba(255,255,255,.055); color:#aeb3bc; font-size:14px; line-height:1;
+          cursor:pointer; transition:background .2s ease, color .2s ease, transform .3s cubic-bezier(.16,1,.3,1), border-color .2s ease;
+        }
+        #krypbot-container .kb-advanced-toggle:hover,
+        #krypbot-container .kb-advanced-toggle:focus-visible { background:rgba(255,255,255,.11); border-color:rgba(255,255,255,.16); color:#fff; outline:none; }
+        #krypbot-container .kb-advanced-toggle[aria-expanded="true"] { color:#36e58a; transform:rotate(45deg); }
+        #krypbot-container .kb-advanced-settings {
+          display:grid; grid-template-rows:0fr; min-height:0; margin:0; opacity:0; visibility:hidden; pointer-events:none;
+          transform:translateY(-5px); transition:grid-template-rows .32s cubic-bezier(.16,1,.3,1), opacity .2s ease, transform .32s cubic-bezier(.16,1,.3,1), margin .32s ease, visibility 0s linear .32s;
+        }
+        #krypbot-container .kb-advanced-settings[data-open="true"] {
+          grid-template-rows:1fr; margin:2px 0 4px; opacity:1; visibility:visible; pointer-events:auto; transform:translateY(0);
+          transition:grid-template-rows .32s cubic-bezier(.16,1,.3,1), opacity .2s ease, transform .32s cubic-bezier(.16,1,.3,1), margin .32s ease, visibility 0s;
+        }
+        #krypbot-container .kb-advanced-settings-inner { min-height:0; overflow:hidden; display:flex; flex-direction:column; gap:9px; }
+        #krypbot-container .kb-advanced-heading { margin:3px 0 0; color:#8e94a1; font-size:9px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+        #krypbot-container .kb-advanced-toggle,
+        #krypbot-container .kb-num-input,
+        #krypbot-container .kb-session-field input,
+        #krypbot-container .kb-session-button { font-family:inherit; }
         #krypbot-container .kb-session-fields { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
         #krypbot-container .kb-session-field { display:flex; flex-direction:column; gap:3px; color:#858b97; font-size:8px; }
         #krypbot-container .kb-session-field input { width:100%; height:27px; box-sizing:border-box; border:1px solid #303238; border-radius:7px; background:#1a1b20; color:#fff; padding:4px 6px; font-size:10px; }
-        #krypbot-container .kb-session-actions { display:grid; grid-template-columns:1fr 1fr auto; gap:6px; }
-        #krypbot-container .kb-session-button { height:28px; border:0; border-radius:7px; background:#2ad36f; color:#0c1710; font-size:9px; font-weight:800; cursor:pointer; }
-        #krypbot-container .kb-session-button[data-action="stop"] { background:#31343b; color:#f4f5f7; }
-        #krypbot-container .kb-session-button[data-action="export"] { width:31px; background:#202228; color:#aeb3bc; }
+        #krypbot-container .kb-session-actions { display:grid; grid-template-columns:minmax(0,1fr) auto auto; align-items:center; gap:7px; }
+        #krypbot-container .kb-session-button { height:32px; border:1px solid transparent; border-radius:10px; color:#0c1710; font-size:9px; font-weight:800; cursor:pointer; transition:transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s ease, filter .2s ease, background .2s ease; }
+        #krypbot-container .kb-session-button[data-action="start"] {
+          height:44px; border-radius:14px; background:linear-gradient(135deg,#36e58a 0%,#17b967 100%); color:#07180f;
+          font-size:12px; letter-spacing:.06em; box-shadow:0 10px 24px rgba(23,185,103,.25), inset 0 1px 0 rgba(255,255,255,.35);
+        }
+        #krypbot-container .kb-session-button[data-action="start"]:hover { transform:translateY(-1px); filter:brightness(1.06); box-shadow:0 14px 30px rgba(23,185,103,.34), inset 0 1px 0 rgba(255,255,255,.4); }
+        #krypbot-container .kb-session-button[data-action="start"]:active { transform:translateY(0) scale(.99); }
+        #krypbot-container .kb-session-button:focus-visible { outline:2px solid rgba(54,229,138,.75); outline-offset:2px; }
+        #krypbot-container .kb-session-button[data-action="stop"] { width:48px; background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.08); color:#f4f5f7; }
+        #krypbot-container .kb-session-button[data-action="export"] { width:34px; background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.08); color:#aeb3bc; }
         #krypbot-container .kb-session-button[aria-disabled="true"] { opacity:.45; cursor:not-allowed; }
         #krypbot-container .kb-session-status { display:grid; grid-template-columns:1fr 1fr; gap:5px 8px; padding:8px; border-radius:8px; background:#18191e; }
         #krypbot-container .kb-session-metric { display:flex; justify-content:space-between; gap:4px; color:#858b97; font-size:8px; }
@@ -5760,6 +5798,12 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #kb-session-toast { position:fixed; right:18px; bottom:18px; z-index:2147483647; max-width:320px; padding:10px 14px; border:1px solid #ffbd59; border-radius:8px; background:#18191e; color:#ffbd59; font-size:11px; font-weight:800; box-shadow:0 8px 28px rgba(0,0,0,.45); opacity:0; transform:translateY(8px); transition:opacity .16s ease,transform .16s ease; pointer-events:none; }
         #kb-session-toast[data-visible="true"] { opacity:1; transform:translateY(0); }
         #kb-session-toast[data-success="true"] { border-color:#2ad36f; color:#2ad36f; }
+        @media (prefers-reduced-motion: reduce) {
+          #krypbot-container .kb-advanced-settings,
+          #krypbot-container .kb-advanced-settings[data-open="true"],
+          #krypbot-container .kb-advanced-toggle,
+          #krypbot-container .kb-session-button { transition:none !important; }
+        }
       </style>
     `;
 
@@ -5850,30 +5894,37 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           </div>
         </div>
 
-        <div class="kb-section-col" id="auto-delay-section">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <p class="kb-section-label" style="color:#8e94a1;font-size:10px">Run Delay</p>
-            <span id="autoDelayDisplay" class="kb-delay-display">0.50 - 2.00s</span>
-          </div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-            <div style="display:flex; gap:8px; align-items:center;">
-              <input type="number" id="minDelayInput" class="kb-num-input" min="0.01" step="0.01">
-              <span style="color:rgba(255,255,255,0.4); font-size:11px">to</span>
-              <input type="number" id="maxDelayInput" class="kb-num-input" min="0.01" step="0.01">
-            </div>
-            <div class="kb-radio-group">
-              <input type="radio" id="dm-rand" name="delayMode" value="random"><label for="dm-rand">RND</label>
-              <input type="radio" id="dm-max" name="delayMode" value="max"><label for="dm-max">INST</label>
-            </div>
-          </div>
-        </div>
-
         <section class="kb-session-panel" id="kb-session-panel" aria-label="Session Control">
-          <div class="kb-session-title"><span>Session Control</span></div>
-          <div class="kb-session-fields">
-            <label class="kb-session-field">Duration (min)<input id="kb-session-duration" type="number" min="1" max="1440" step="1" value="120"></label>
-            <label class="kb-session-field">Min win %<input id="kb-session-min-rate" type="number" min="1" max="98" step="1" value="75"></label>
-            <label class="kb-session-field">Max win %<input id="kb-session-max-rate" type="number" min="2" max="99" step="1" value="82"></label>
+          <div class="kb-session-title">
+            <span>Session Control</span>
+            <button class="kb-advanced-toggle" id="kb-advanced-settings-toggle" type="button" aria-label="Configurações avançadas" aria-controls="advanced-settings-panel" aria-expanded="false">⚙</button>
+          </div>
+          <div class="kb-advanced-settings" id="advanced-settings-panel" data-open="false" aria-hidden="true" inert>
+            <div class="kb-advanced-settings-inner">
+              <p class="kb-advanced-heading">Configurações avançadas</p>
+              <div class="kb-session-fields">
+                <label class="kb-session-field">Duration (min)<input id="kb-session-duration" type="number" min="1" max="1440" step="1" value="120"></label>
+                <label class="kb-session-field">Min win %<input id="kb-session-min-rate" type="number" min="1" max="98" step="1" value="75"></label>
+                <label class="kb-session-field">Max win %<input id="kb-session-max-rate" type="number" min="2" max="99" step="1" value="82"></label>
+              </div>
+              <div class="kb-section-col" id="auto-delay-section">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <p class="kb-section-label" id="kb-run-delay-label" style="color:#8e94a1;font-size:10px">Run Delay</p>
+                  <span id="autoDelayDisplay" class="kb-delay-display">0.50 - 2.00s</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+                  <div style="display:flex;gap:8px;align-items:center">
+                    <input type="number" id="minDelayInput" class="kb-num-input" min="0.01" step="0.01" aria-label="Run Delay mínimo em segundos">
+                    <span style="color:rgba(255,255,255,0.4);font-size:11px">to</span>
+                    <input type="number" id="maxDelayInput" class="kb-num-input" min="0.01" step="0.01" aria-label="Run Delay máximo em segundos">
+                  </div>
+                  <div class="kb-radio-group" role="group" aria-labelledby="kb-run-delay-label">
+                    <input type="radio" id="dm-rand" name="delayMode" value="random"><label for="dm-rand">RND</label>
+                    <input type="radio" id="dm-max" name="delayMode" value="max"><label for="dm-max">INST</label>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="kb-session-actions">
             <button class="kb-session-button" id="kb-session-start" data-action="start" type="button">START</button>
@@ -6022,6 +6073,32 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             toggle();
           });
         });
+        const sessionMenu = document.getElementById("krypbot-container");
+        const resolveAdvancedSettings = (source) => {
+          const sessionPanel = source?.closest?.("#kb-session-panel") || sessionMenu?.querySelector("#kb-session-panel");
+          return {
+            toggle: sessionPanel?.querySelector("#kb-advanced-settings-toggle") || null,
+            panel: sessionPanel?.querySelector("#advanced-settings-panel") || null,
+          };
+        };
+        const setAdvancedSettingsOpen = (open, source) => {
+          const { toggle, panel } = resolveAdvancedSettings(source);
+          if (!toggle || !panel) return;
+          toggle.setAttribute("aria-expanded", open ? "true" : "false");
+          panel.dataset.open = open ? "true" : "false";
+          panel.setAttribute("aria-hidden", open ? "false" : "true");
+          panel.toggleAttribute("inert", !open);
+        };
+        if (sessionMenu) {
+          setAdvancedSettingsOpen(false);
+          sessionMenu.addEventListener("click", (event) => {
+            const toggle = event.target?.closest?.("#kb-advanced-settings-toggle");
+            if (!toggle || !sessionMenu.contains(toggle)) return;
+            event.preventDefault();
+            event.stopPropagation();
+            setAdvancedSettingsOpen(toggle.getAttribute("aria-expanded") !== "true", toggle);
+          });
+        }
         // Add Minimize Logic
         $("#kb-minimize-toggle").on("click", function (e) {
           e.stopPropagation();
@@ -6149,7 +6226,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             createConfig: sessionConfigFromDraft,
             start: (config) => sessionControlBridge.start(config),
             stop: () => sessionControlBridge.gracefulStop(),
-            setWarning: (code) => sessionControlBridge.setWarning(code),
+            setWarning: (code) => {
+              sessionControlBridge.setWarning(code);
+              if (code === "SESSION_CONFIG_INVALID") setAdvancedSettingsOpen(true);
+            },
             notify: notifySessionControl,
             exportDiagnostic: () => sessionControlBridge.exportDiagnostic(),
             downloadDiagnostic: downloadSessionDiagnostic,

@@ -255,8 +255,36 @@ async function run() {
   for (const id of ["kb-session-rollout", "kb-session-role", "kb-session-drain", "kb-session-control", "kb-session-posterior", "kb-session-band", "kb-session-dda", "kb-session-target"]) {
     assert(!menu.includes(`id="${id}"`), `Session Control menu retained advanced field ${id}`);
   }
+  assert(menu.includes('id="kb-advanced-settings-toggle"'), "advanced settings gear is missing");
+  assert(menu.includes('aria-controls="advanced-settings-panel" aria-expanded="false"'), "advanced settings gear is missing its collapsed ARIA contract");
+  assert(menu.includes('id="advanced-settings-panel" data-open="false" aria-hidden="true" inert'), "advanced settings panel is not inert and collapsed by default");
+  const advancedMarkup = sourceBlock(menu, '          <div class="kb-advanced-settings"', '          <div class="kb-session-actions">');
+  for (const id of ["kb-session-duration", "kb-session-min-rate", "kb-session-max-rate", "auto-delay-section"]) {
+    assert(advancedMarkup.includes(`id="${id}"`), `advanced settings panel is missing ${id}`);
+  }
+  assert(advancedMarkup.includes('aria-label="Run Delay mínimo em segundos"'));
+  assert(advancedMarkup.includes('aria-label="Run Delay máximo em segundos"'));
+  assert(advancedMarkup.includes('role="group" aria-labelledby="kb-run-delay-label"'));
+  const mainGlassCss = sourceBlock(source, "          width: 268px; max-width: 268px", "        #oi-zone2.tc-workspace-card {");
+  const scoutGlassCss = sourceBlock(source, "        #oi-zone2.tc-workspace-card {", "        #krypbot-container .kb-header {");
+  for (const declaration of [
+    "background: rgba(20, 20, 25, 0.65) !important",
+    "backdrop-filter: blur(16px) !important",
+    "-webkit-backdrop-filter: blur(16px) !important",
+    "border: 1px solid rgba(255, 255, 255, 0.08) !important",
+    "border-radius: 20px !important",
+    'font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important',
+  ]) {
+    assert(mainGlassCss.includes(declaration), `main-panel glass CSS is missing ${declaration}`);
+    assert(scoutGlassCss.includes(declaration), `Scout glass CSS is missing ${declaration}`);
+  }
+  assert(source.includes('#krypbot-container .kb-session-button[data-action="start"]'), "START lacks a dedicated primary-action style");
+  assert(source.includes("height:44px; border-radius:14px; background:linear-gradient(135deg,#36e58a 0%,#17b967 100%)"), "START primary-action styling regressed");
+  assert(source.includes('panel.toggleAttribute("inert", !open)'), "advanced disclosure does not synchronize focus isolation");
+  assert(source.includes("@media (prefers-reduced-motion: reduce)"), "advanced disclosure ignores reduced-motion preferences");
+  assert(source.includes('source?.closest?.("#kb-session-panel")'), "advanced disclosure is not scoped to its owning Session Control panel");
   assert(!menu.includes("SESSION_RUNTIME_UNAVAILABLE"), "Session Control menu exposes a raw startup reason code");
-  assert.equal(sourceHash(source, "    const menuHtml = `", "    const bannerHtml = `"), "ef9ee93a2be9a0712ccf6cdc5731ae4efb6a7eacb438a0e79c225cecd7f50cf6", "Session Control menuHtml changed");
+  assert.equal(sourceHash(source, "    const menuHtml = `", "    const bannerHtml = `"), "4177c936918661b863cab25b46e3d9d1b9e107aa917f34d28d18d7e02fbba1ce", "Session Control menuHtml changed");
   const wrapperCss = sourceBlock(source, "        #oi-wrapper {", "        #oi-wrapper > * {");
   for (const declaration of [
     "position: absolute !important",
