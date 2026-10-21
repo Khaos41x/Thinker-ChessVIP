@@ -265,7 +265,7 @@ function createCdpClient(webSocketUrl) {
             && phaseBefore === phaseAfter && sequenceBefore === sequenceAfterOpen && sequenceAfterDraft === sequenceAfterClose && sequenceAfterClose === sequenceAfter,
           initial, opened, closed, retained, delayPlacement, delayFocusAllowed, delayPersisted, collapsedFocusBlocked, expandedFocusAllowed, phaseBefore, phaseAfter, sequenceBefore, sequenceAfterOpen, sequenceAfterDraft, sequenceAfterClose, sequenceAfter,
           glass: { background: style.backgroundColor, backgroundImage: style.backgroundImage, radius: style.borderRadius, backdrop: style.backdropFilter || style.webkitBackdropFilter, font: style.fontFamily, width: style.width, padding: style.padding, shadow: style.boxShadow, titleFont: titleStyle.fontSize, metricFont: metricStyle.fontSize, metricSurface: metricSurface.backgroundColor, metricSurfaceImage: metricSurface.backgroundImage },
-          scoutGlass: scoutStyle ? { background: scoutStyle.backgroundColor, radius: scoutStyle.borderRadius, backdrop: scoutStyle.backdropFilter || scoutStyle.webkitBackdropFilter, font: scoutStyle.fontFamily, width: scoutStyle.width, height: scout.getBoundingClientRect().height, menuHeight: menu.getBoundingClientRect().height, minHeight: scoutStyle.minHeight, emptyAlign: scoutEmptyStyle?.alignItems || null, emptyJustify: scoutEmptyStyle?.justifyContent || null } : null,
+          scoutGlass: scoutStyle ? { background: scoutStyle.backgroundColor, radius: scoutStyle.borderRadius, backdrop: scoutStyle.backdropFilter || scoutStyle.webkitBackdropFilter, font: scoutStyle.fontFamily, width: scoutStyle.width, height: scout.getBoundingClientRect().height, menuHeight: menu.getBoundingClientRect().height, minHeight: scoutStyle.minHeight, emptyAlign: scoutEmptyStyle?.alignItems || null, emptyJustify: scoutEmptyStyle?.justifyContent || null, hasRadar: Boolean(scout?.querySelector(".tc-scout-radar")), rawRate: menu.querySelector("#kb-session-raw")?.textContent || null, delayInactive: document.getElementById("auto-delay-section")?.dataset.inactive || null, delayHintHidden: document.getElementById("kb-run-delay-hint")?.hidden } : null,
         };
       })()`,
       returnByValue: true,
@@ -452,7 +452,8 @@ function createCdpClient(webSocketUrl) {
     assert(exceptions.length === 0, `Userscript exception: ${exceptions[0]?.text || "unknown"}`);
     assert(disclosureSmoke.scoutGlass?.background === "rgba(20, 20, 25, 0.65)" && disclosureSmoke.scoutGlass.radius === "18px" && disclosureSmoke.scoutGlass.backdrop.includes("16px"), `Scout glass styling regressed: ${JSON.stringify(disclosureSmoke.scoutGlass)}`);
     assert(disclosureSmoke.scoutGlass.font.includes("-apple-system") || disclosureSmoke.scoutGlass.font.includes("BlinkMacSystemFont") || disclosureSmoke.scoutGlass.font.includes("Segoe UI"), `Scout system font regressed: ${JSON.stringify(disclosureSmoke.scoutGlass)}`);
-    assert(disclosureSmoke.scoutGlass.width === "292px" && disclosureSmoke.scoutGlass.minHeight === "430px" && Math.abs(disclosureSmoke.scoutGlass.height - disclosureSmoke.scoutGlass.menuHeight) <= 1 && disclosureSmoke.scoutGlass.emptyAlign === "center" && disclosureSmoke.scoutGlass.emptyJustify === "center", `Scout waiting state retained legacy dead-space geometry: ${JSON.stringify(disclosureSmoke.scoutGlass)}`);
+    assert(disclosureSmoke.scoutGlass.width === "292px" && disclosureSmoke.scoutGlass.minHeight === "0px" && disclosureSmoke.scoutGlass.height < disclosureSmoke.scoutGlass.menuHeight && disclosureSmoke.scoutGlass.emptyAlign === "flex-start" && disclosureSmoke.scoutGlass.emptyJustify === "center" && !disclosureSmoke.scoutGlass.hasRadar, `Scout waiting state retained legacy dead-space geometry: ${JSON.stringify(disclosureSmoke.scoutGlass)}`);
+    assert(disclosureSmoke.scoutGlass.rawRate === "—" && disclosureSmoke.scoutGlass.delayInactive === "true" && disclosureSmoke.scoutGlass.delayHintHidden === false, `Idle presentation state regressed: ${JSON.stringify(disclosureSmoke.scoutGlass)}`);
     assert(productionStart.ok, `Production START wiring smoke failed: ${JSON.stringify(productionStart)}`);
     if (!liveChess) assert(productionStart.warning === "" && productionStart.rawWarningCode === "DDA_MAPPING_UNAVAILABLE", `Default compatibility START did not leave IDLE: ${JSON.stringify(productionStart)}`);
     assert(module14.ok, `Module 14 browser smoke failed: ${JSON.stringify(module14)}`);
@@ -506,9 +507,56 @@ function createCdpClient(webSocketUrl) {
     });
     const wideBoundary = wideBoundaryResult.result.value;
     assert(wideBoundary.direction === "row" && wideBoundary.width <= wideBoundary.viewportWidth - 20, `Workspace breakpoint regressed at 641px: ${JSON.stringify(wideBoundary)}`);
+    for (const [width, height, scale] of [[1280, 720, 1], [1440, 900, 1.25], [1920, 1080, 1.5]]) {
+      const cssWidth = Math.round(width / scale);
+      const cssHeight = Math.round(height / scale);
+      await client.send("Emulation.setDeviceMetricsOverride", { width: cssWidth, height: cssHeight, deviceScaleFactor: scale, mobile: false });
+      await sleep(80);
+      const viewportResult = await client.send("Runtime.evaluate", {
+        expression: `(() => {
+          const wrapper = document.getElementById("oi-wrapper");
+          const menu = document.getElementById("krypbot-container");
+          const scout = document.getElementById("oi-zone2");
+          const controls = Array.from(menu.querySelectorAll("button, input:not([type=radio]), [role=switch]")).filter((node) => !node.hidden && !node.closest("[inert]") && getComputedStyle(node).display !== "none" && node.getClientRects().length > 0);
+          const hiddenControls = controls.filter((node) => { const rect = node.getBoundingClientRect(); return rect.width <= 0 || rect.height <= 0 || rect.left < 0 || rect.right > innerWidth; }).map((node) => node.id || node.type);
+          const wrapperRect = wrapper.getBoundingClientRect();
+          return {
+            width: innerWidth,
+            wrapper: wrapperRect.width,
+            wrapperLeft: wrapperRect.left,
+            wrapperRight: wrapperRect.right,
+            wrapperBottom: wrapperRect.bottom + scrollY,
+            documentHeight: document.documentElement.scrollHeight,
+            menu: menu.getBoundingClientRect().width,
+            scout: scout.getBoundingClientRect().width,
+            switchCount: controls.filter((node) => node.getAttribute("role") === "switch").length,
+            allReachable: hiddenControls.length === 0,
+            hiddenControls,
+          };
+        })()`,
+        returnByValue: true,
+      });
+      const viewport = viewportResult.result.value;
+      assert(viewport.wrapper <= viewport.width - 20 && viewport.wrapperLeft >= 0 && viewport.wrapperRight <= viewport.width && viewport.wrapperBottom <= viewport.documentHeight + 1 && viewport.menu <= viewport.width - 20 && viewport.scout <= viewport.width - 20 && viewport.switchCount > 0 && viewport.allReachable, `Workspace failed responsive ${width}×${height} @ ${Math.round(scale * 100)}%: ${JSON.stringify(viewport)}`);
+    }
     await client.send("Emulation.clearDeviceMetricsOverride");
     await sleep(100);
+    const switchKeyboardResult = await client.send("Runtime.evaluate", {
+      expression: `(() => {
+        const group = document.getElementById("sp-on")?.closest("[role=switch]");
+        if (!group) return { ok:false };
+        const before = group.getAttribute("aria-checked");
+        group.focus();
+        group.dispatchEvent(new KeyboardEvent("keydown", { key:"Enter", bubbles:true }));
+        const after = group.getAttribute("aria-checked");
+        group.dispatchEvent(new KeyboardEvent("keydown", { key:"Enter", bubbles:true }));
+        return { ok:document.activeElement === group && before !== after && group.getAttribute("aria-checked") === before, before, after };
+      })()`,
+      returnByValue: true,
+    });
+    assert(switchKeyboardResult.result.value.ok, `Switch keyboard interaction regressed: ${JSON.stringify(switchKeyboardResult.result.value)}`);
     if (captureVisual) {
+      await client.send("Runtime.evaluate", { expression: `(() => { const toast = document.getElementById("kb-session-toast"); if (toast) { toast.dataset.visible = "false"; toast.textContent = ""; } window.krypbotSessionControlUI?.update?.(); })()` });
       await client.send("Runtime.evaluate", { expression: "scrollTo(0, document.documentElement.scrollHeight)" });
       await sleep(150);
       const screenshot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });

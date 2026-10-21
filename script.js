@@ -1740,7 +1740,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       panel.className = "tc-workspace-card";
       panel.dataset.state = state;
       panel.style.cssText =
-        "width:292px;min-height:430px;box-sizing:border-box;background:rgba(20,20,25,.65);border:1px solid rgba(255,255,255,.08);border-radius:18px;box-shadow:0 24px 64px rgba(0,0,0,.48);padding:18px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#fff;margin:0;display:flex;flex-direction:column;";
+        "width:292px;box-sizing:border-box;background:rgba(20,20,25,.65);border:1px solid rgba(255,255,255,.08);border-radius:18px;box-shadow:0 24px 64px rgba(0,0,0,.48);padding:14px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#fff;margin:0;display:flex;flex-direction:column;";
       const title = state === "waiting" ? "Aguardando adversário" : "Histórico indisponível";
       const detail = state === "waiting"
         ? "O Scout exibirá apenas dados públicos reais quando identificar o adversário."
@@ -1750,8 +1750,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           <div style="min-width:0;font-size:14px;line-height:1.2;font-weight:800">Scout do Oponente</div>
           <button class="tc-scout-close" type="button" aria-label="Recolher painéis do Thinker Chess">×</button>
         </div>
-        <div class="tc-scout-empty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-width:0;padding:34px 16px;text-align:center">
-          <div class="tc-scout-radar" aria-hidden="true"><span class="tc-scout-radar-dot"></span></div>
+        <div class="tc-scout-empty" style="display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;min-width:0;padding:18px 0 2px;text-align:left">
           <span class="tc-scout-status" style="display:inline-block;max-width:100%;padding:5px 8px;border:1px solid #303640;border-radius:999px;color:#c6cbd4;font-size:11px;line-height:1.3">${title}</span>
           <p class="tc-scout-empty-detail" style="margin:0;max-width:100%;color:#9da3b2;font-size:11px;line-height:1.5;white-space:normal;overflow-wrap:anywhere">${detail}</p>
         </div>`;
@@ -1786,7 +1785,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       panel.className = "tc-workspace-card";
       panel.dataset.state = "loading";
       panel.style.cssText =
-        "width:292px;min-height:430px;box-sizing:border-box;background:rgba(20,20,25,.65);border:1px solid rgba(255,255,255,.08);border-radius:18px;box-shadow:0 24px 64px rgba(0,0,0,.48);padding:18px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#fff;display:flex;flex-direction:column;gap:12px;margin:0;";
+        "width:292px;min-height:260px;box-sizing:border-box;background:rgba(20,20,25,.65);border:1px solid rgba(255,255,255,.08);border-radius:18px;box-shadow:0 24px 64px rgba(0,0,0,.48);padding:14px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#fff;display:flex;flex-direction:column;gap:12px;margin:0;";
       panel.innerHTML = `
         <div class="tc-scout-head">
           <div>
@@ -5533,7 +5532,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           width: max-content !important;
           z-index: 2147483647 !important;
           display: flex !important;
-          align-items: stretch !important;
+          align-items: flex-start !important;
           gap: 12px !important;
           pointer-events: none !important;
         }
@@ -5706,7 +5705,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           background:radial-gradient(110% 42% at 50% -8%,rgba(77,255,171,.13),transparent 58%);
         }
         #oi-zone2.tc-workspace-card {
-          position:relative; isolation:isolate; overflow:hidden; width:292px !important; min-height:430px !important; padding:18px !important;
+          position:relative; isolation:isolate; overflow:hidden; width:292px !important; min-height:0 !important; padding:14px !important;
           background: var(--tc-glass-bg) !important;
           background-image:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.012) 42%,rgba(3,5,8,.1)) !important;
           backdrop-filter: blur(16px) !important;
@@ -5776,6 +5775,13 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-run-delay-card {
           min-height:58px; margin:6px 0 2px; padding:9px; display:flex; flex-direction:column; align-items:stretch; gap:8px;
           background:rgba(56,229,139,.035);
+        }
+        #krypbot-container .kb-run-delay-card[data-inactive="true"] {
+          border-color:rgba(255,255,255,.045); background:rgba(255,255,255,.018);
+        }
+        #krypbot-container .kb-run-delay-card[data-inactive="true"] .kb-run-delay-controls { opacity:.56; }
+        #krypbot-container .kb-dependency-hint {
+          margin:0; color:#8f97a6; font-size:10px; line-height:1.4;
         }
         #krypbot-container .kb-run-delay-card > div { min-width:0; margin:0 !important; }
         #krypbot-container .kb-run-delay-controls { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; }
@@ -5883,16 +5889,17 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           cursor:pointer;
         }
         #oi-zone2 .tc-scout-empty {
-          flex:1 !important; min-height:300px; box-sizing:border-box; align-items:center !important; justify-content:center !important;
-          gap:11px !important; padding:28px 14px !important; text-align:center;
+          flex:0 0 auto !important; min-height:0; box-sizing:border-box; align-items:flex-start !important; justify-content:center !important;
+          gap:8px !important; padding:18px 0 2px !important; text-align:left;
         }
+        #oi-zone2[data-state="waiting"] .tc-scout-status { margin:0; }
         #oi-zone2 .tc-scout-status { padding:6px 10px !important; border-color:rgba(255,255,255,.09) !important; background:rgba(255,255,255,.035); color:#dce1e8 !important; font-size:11px !important; }
-        #oi-zone2 .tc-scout-empty-detail { max-width:230px !important; color:var(--tc-muted) !important; font-size:11px !important; line-height:1.55 !important; }
+        #oi-zone2 .tc-scout-empty-detail { max-width:240px !important; color:var(--tc-muted) !important; font-size:11px !important; line-height:1.55 !important; }
         #oi-zone2 .tc-scout-retry {
           margin-top:4px; padding:9px 14px; border:1px solid rgba(56,229,139,.3); border-radius:10px;
           background:rgba(56,229,139,.1); color:#67efaa; font:700 11px/1.2 var(--tc-font); cursor:pointer;
         }
-        #oi-zone2 .tc-scout-loading { flex:1; min-height:300px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:24px 14px; box-sizing:border-box; }
+        #oi-zone2 .tc-scout-loading { flex:1; min-height:186px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:20px 14px; box-sizing:border-box; }
         #oi-zone2 .tc-scout-loading .tc-scout-radar { margin-bottom:16px; }
         #oi-zone2 .tc-scout-skeleton { width:100%; height:52px; border:1px solid rgba(255,255,255,.045); border-radius:13px; background:linear-gradient(100deg,rgba(255,255,255,.025),rgba(255,255,255,.065),rgba(255,255,255,.025)); }
         #oi-zone2 .tc-scout-radar {
@@ -5913,6 +5920,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           #oi-wrapper { width:calc(100vw - 20px) !important; flex-direction:column !important; align-items:flex-start !important; gap:12px !important; }
           #oi-wrapper > * { width:min(292px, calc(100vw - 20px)) !important; max-width:100% !important; }
           #oi-wrapper > #krypbot-container.minimized { width:154px !important; max-width:154px !important; }
+        }
+        @media (max-width: 980px) {
+          #oi-wrapper { max-width:calc(100vw - 20px) !important; }
+          #oi-wrapper > * { max-width:calc(100vw - 20px) !important; }
         }
         @media (max-width: 340px) {
           #krypbot-container .kb-run-delay-controls { flex-direction:column; align-items:stretch; }
@@ -5939,7 +5950,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         </button>
 
         <div class="kb-header">
-          <div><span class="kb-eyebrow">CHESS ASSISTANT</span><h2 class="kb-title">Thinker Chess</h2></div>
+          <div><span class="kb-eyebrow">ASSISTENTE DE XADREZ</span><h2 class="kb-title">Thinker Chess</h2></div>
           <button class="kb-minimize-btn" id="kb-minimize-toggle">
             Fechar
           </button>
@@ -5954,7 +5965,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         </div>
 
         <div class="kb-section">
-          <p class="kb-section-label"><span class="kb-row-icon kb-icon-play" aria-hidden="true"></span>Auto Moves</p>
+          <p class="kb-section-label"><span class="kb-row-icon kb-icon-play" aria-hidden="true"></span>Jogadas automáticas</p>
           <div class="kb-radio-group">
             <input type="radio" id="am-on" name="kb-auto-move" value="1"><label for="am-on">ON</label>
             <input type="radio" id="am-off" name="kb-auto-move" value="0" checked><label for="am-off">OFF</label>
@@ -5962,28 +5973,29 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         </div>
 
         <div class="kb-section-col kb-run-delay-card" id="auto-delay-section">
-          <p class="kb-section-label" id="kb-run-delay-label" style="color:#c4c9d2;font-size:11px">Run Delay</p>
+          <p class="kb-section-label" id="kb-run-delay-label" style="color:#c4c9d2;font-size:11px">Ritmo de jogada</p>
           <div class="kb-run-delay-controls">
             <div class="kb-delay-range">
               <label class="kb-delay-input">
-                <input type="number" id="minDelayInput" class="kb-num-input" min="0.01" max="60" step="0.01" inputmode="decimal" aria-label="Run Delay mínimo em segundos">
+                <input type="number" id="minDelayInput" class="kb-num-input" min="0.01" max="60" step="0.01" inputmode="decimal" aria-label="Ritmo mínimo em segundos">
                 <span class="kb-delay-unit" aria-hidden="true">s</span>
               </label>
               <span class="kb-delay-separator" aria-hidden="true">–</span>
               <label class="kb-delay-input">
-                <input type="number" id="maxDelayInput" class="kb-num-input" min="0.01" max="60" step="0.01" inputmode="decimal" aria-label="Run Delay máximo em segundos">
+                <input type="number" id="maxDelayInput" class="kb-num-input" min="0.01" max="60" step="0.01" inputmode="decimal" aria-label="Ritmo máximo em segundos">
                 <span class="kb-delay-unit" aria-hidden="true">s</span>
               </label>
             </div>
             <div class="kb-radio-group" role="group" aria-labelledby="kb-run-delay-label">
               <input type="radio" id="dm-rand" name="delayMode" value="random"><label for="dm-rand">RND</label>
-              <input type="radio" id="dm-max" name="delayMode" value="max"><label for="dm-max">INST</label>
+              <input type="radio" id="dm-max" name="delayMode" value="max"><label for="dm-max">IMED.</label>
             </div>
           </div>
+          <p class="kb-dependency-hint" id="kb-run-delay-hint" hidden>Ative Jogadas automáticas para aplicar este ritmo.</p>
         </div>
 
         <div class="kb-section">
-          <p class="kb-section-label"><span class="kb-row-icon kb-icon-list" aria-hidden="true"></span>Auto Queue</p>
+          <p class="kb-section-label"><span class="kb-row-icon kb-icon-list" aria-hidden="true"></span>Fila automática</p>
           <div id="kb-auto-queue-controls" class="kb-radio-group">
             <input type="radio" id="aq-on" name="kb-auto-queue" value="1"><label for="aq-on">ON</label>
             <input type="radio" id="aq-off" name="kb-auto-queue" value="0" checked><label for="aq-off">OFF</label>
@@ -5992,7 +6004,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         <p id="kb-auto-queue-session-note" class="kb-session-queue-note" hidden aria-live="polite">ON temporário — controlado pelo Auto Farm até a sessão terminar. Sua preferência salva não será alterada.</p>
 
         <div class="kb-section">
-          <p class="kb-section-label"><span class="kb-row-icon kb-icon-gauge" aria-hidden="true"></span>Auto Rating</p>
+          <p class="kb-section-label"><span class="kb-row-icon kb-icon-gauge" aria-hidden="true"></span>Ajuste automático</p>
           <div class="kb-radio-group">
             <input type="radio" id="aa-on" name="kb-auto-adjust" value="1"><label for="aa-on">ON</label>
             <input type="radio" id="aa-off" name="kb-auto-adjust" value="0" checked><label for="aa-off">OFF</label>
@@ -6000,7 +6012,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         </div>
 
         <div class="kb-section">
-          <p class="kb-section-label"><span class="kb-row-icon kb-icon-activity" aria-hidden="true"></span>Smart Pacing</p>
+          <p class="kb-section-label"><span class="kb-row-icon kb-icon-activity" aria-hidden="true"></span>Ritmo inteligente</p>
           <div class="kb-radio-group">
             <input type="radio" id="sp-on" name="kb-smart-pacing" value="1"><label for="sp-on">ON</label>
             <input type="radio" id="sp-off" name="kb-smart-pacing" value="0" checked><label for="sp-off">OFF</label>
@@ -6008,7 +6020,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         </div>
 
         <div class="kb-section">
-          <p class="kb-section-label"><span class="kb-row-icon kb-icon-eye" aria-hidden="true"></span>Eval Bar</p>
+          <p class="kb-section-label"><span class="kb-row-icon kb-icon-eye" aria-hidden="true"></span>Barra de avaliação</p>
           <div class="kb-radio-group">
             <input type="radio" id="eb-on" name="kb-eval-bar" value="1"><label for="eb-on">ON</label>
             <input type="radio" id="eb-off" name="kb-eval-bar" value="0" checked><label for="eb-off">OFF</label>
@@ -6016,16 +6028,16 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         </div>
 
         <div class="kb-section-col" id="puzzle-section" style="display: none;">
-          <p class="kb-section-label">Puzzle Mode <span style="font-size:11px; color:rgba(255,255,255,0.4); font-weight:normal;">(Elo 3200)</span></p>
+          <p class="kb-section-label">Modo de quebra-cabeça <span style="font-size:11px; color:rgba(255,255,255,0.4); font-weight:normal;">(Elo 3200)</span></p>
           <div class="kb-section" style="margin:0">
-            <p style="font-size:12px; margin:0; color:rgba(255,255,255,0.6)">Hint Lines</p>
+            <p style="font-size:12px; margin:0; color:rgba(255,255,255,0.6)">Linhas de sugestão</p>
             <div class="kb-radio-group">
               <input type="radio" id="ph-on" name="kb-puzzle-hint" value="1"><label for="ph-on">ON</label>
               <input type="radio" id="ph-off" name="kb-puzzle-hint" value="0" checked><label for="ph-off">OFF</label>
             </div>
           </div>
           <div class="kb-section" style="margin:0">
-            <p style="font-size:12px; margin:0; color:rgba(255,255,255,0.6)">Auto Solve</p>
+            <p style="font-size:12px; margin:0; color:rgba(255,255,255,0.6)">Resolução automática</p>
             <div class="kb-radio-group">
               <input type="radio" id="pa-on" name="kb-puzzle-auto" value="1"><label for="pa-on">ON</label>
               <input type="radio" id="pa-off" name="kb-puzzle-auto" value="0" checked><label for="pa-off">OFF</label>
@@ -6034,7 +6046,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         </div>
 
         <div class="kb-section-col">
-          <p class="kb-section-label" style="color:#8e94a1;font-size:10px">Elo Level</p>
+          <p class="kb-section-label" style="color:#8e94a1;font-size:10px">Nível de força</p>
           <div class="kb-slider-group">
             <span style="font-size:11px; color:rgba(255,255,255,0.4)">800</span>
             <input id="kb-elo-slider" class="kb-slider" type="range" min="800" max="3200" step="100" value="3200">
@@ -6053,22 +6065,22 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             <div class="kb-advanced-settings-inner">
               <p class="kb-advanced-heading">Configurações avançadas</p>
               <div class="kb-session-fields">
-                <label class="kb-session-field">Duration (min)<input id="kb-session-duration" type="number" min="1" max="1440" step="1" value="120"></label>
-                <label class="kb-session-field">Min win %<input id="kb-session-min-rate" type="number" min="1" max="98" step="1" value="75"></label>
-                <label class="kb-session-field">Max win %<input id="kb-session-max-rate" type="number" min="2" max="99" step="1" value="82"></label>
+                <label class="kb-session-field">Duração (min)<input id="kb-session-duration" type="number" min="1" max="1440" step="1" value="120"></label>
+                <label class="kb-session-field">Vitórias mín. %<input id="kb-session-min-rate" type="number" min="1" max="98" step="1" value="75"></label>
+                <label class="kb-session-field">Vitórias máx. %<input id="kb-session-max-rate" type="number" min="2" max="99" step="1" value="82"></label>
               </div>
             </div>
           </div>
           <div class="kb-session-actions">
-            <button class="kb-session-button" id="kb-session-start" data-action="start" type="button">START</button>
-            <button class="kb-session-button" id="kb-session-stop" data-action="stop" type="button">DRAIN</button>
-            <button class="kb-session-button" id="kb-session-export" data-action="export" type="button" aria-label="Export diagnostic">⇩</button>
+            <button class="kb-session-button" id="kb-session-start" data-action="start" type="button">INICIAR</button>
+            <button class="kb-session-button" id="kb-session-stop" data-action="stop" type="button">FINALIZAR</button>
+            <button class="kb-session-button" id="kb-session-export" data-action="export" type="button" aria-label="Exportar diagnóstico">⇩</button>
           </div>
           <div class="kb-session-status" aria-live="polite">
             <div class="kb-session-metric"><span>Tempo Restante</span><strong id="kb-session-ttl">00:00:00</strong></div>
             <div class="kb-session-metric"><span>Status</span><strong id="kb-session-phase">Aguardando</strong></div>
             <div class="kb-session-metric"><span>Placar</span><strong id="kb-session-observed">0 V | 0 E | 0 D</strong></div>
-            <div class="kb-session-metric"><span>Win Rate</span><strong id="kb-session-raw">0%</strong></div>
+            <div class="kb-session-metric"><span>Taxa de vitória</span><strong id="kb-session-raw">—</strong></div>
           </div>
         </section>
 
@@ -6076,7 +6088,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
 
         <div class="kb-footer">
           <div style="display:flex; align-items:center; gap:10px;">
-            <span style="font-size:10px; color:#8e94a1;">Theme</span>
+            <span style="font-size:10px; color:#8e94a1;">Tema</span>
             <input type="color" id="kb-color-picker" class="kb-color-input" value="#00ff88">
           </div>
         </div>
@@ -6138,7 +6150,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             getThinkerRect(sidebar)?.bottom || 0,
           ) + window.scrollY;
           const safeTop = Math.max(window.innerHeight + 32, gameplayDocumentBottom + 32);
-          const safeLeft = Math.max(10, Math.round((boardRect?.left || 0) + window.scrollX));
+          const candidateLeft = Math.max(10, Math.round((boardRect?.left || 0) + window.scrollX));
+          const wrapperWidth = Math.max(wrapper.scrollWidth || 0, wrapper.getBoundingClientRect().width || 0);
+          const maxLeft = Math.max(10, Math.floor(window.scrollX + window.innerWidth - wrapperWidth - 10));
+          const safeLeft = Math.min(candidateLeft, maxLeft);
           wrapper.style.setProperty("top", Math.ceil(safeTop) + "px", "important");
           wrapper.style.setProperty("left", safeLeft + "px", "important");
         }
@@ -6264,6 +6279,12 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             "checked",
             true,
           );
+          const delaySection = document.getElementById("auto-delay-section");
+          const delayHint = document.getElementById("kb-run-delay-hint");
+          if (delaySection) {
+            delaySection.dataset.inactive = auto_move ? "false" : "true";
+          }
+          if (delayHint) delayHint.hidden = auto_move;
           syncAutoQueueSessionUI();
           $(`input[name="kb-puzzle-hint"][value="${puzzleHint ? 1 : 0}"]`).prop(
             "checked",
@@ -6289,7 +6310,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
               "box-shadow": "0 0 6px rgba(255,255,255,0.5)",
               color: "#fff",
             });
-            $("#autoDelayDisplay").text("INSTANT");
+            $("#autoDelayDisplay").text("IMEDIATO");
           } else {
             $("#autoDelayDisplay").text(
               `${autoDelayMin.toFixed(2)} - ${autoDelayMax.toFixed(2)}s`,
@@ -6559,7 +6580,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
               "box-shadow": "0 0 8px rgba(255,255,255,0.6)",
               color: "#fff",
             });
-            $("#autoDelayDisplay").text("INSTANT");
+            $("#autoDelayDisplay").text("IMEDIATO");
           } else {
             // Restaurar valores padrão ao voltar para Random/Avg
             autoDelayMin = 0.5;
@@ -6802,7 +6823,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             localStorage.setItem("autoMaxDelay", autoDelayMax);
             $("#maxDelayInput").val(autoDelayMax.toFixed(2));
           }
-          $("#autoDelayDisplay").text(autoDelayMode === "max" ? "INSTANT" : autoDelayMin.toFixed(2) + " - " + autoDelayMax.toFixed(2) + "s");
+          $("#autoDelayDisplay").text(autoDelayMode === "max" ? "IMEDIATO" : autoDelayMin.toFixed(2) + " - " + autoDelayMax.toFixed(2) + "s");
           // Color
           if (s.color && current_color !== s.color) {
             current_color = s.color;
@@ -6965,7 +6986,7 @@ factories["telemetry"]=function(module,exports,require){
 const{clone,deepFreeze,exactKeys,isPlainObject}=require("./models");const TELEMETRY_VERSION="session-control-telemetry-v1";const DIAGNOSTIC_VERSION="session-control-diagnostic-v1";const EVENT_NAMES=Object.freeze(["session_started","session_recovered","session_draining","session_completed","leader_acquired","leader_lost","lease_takeover","queue_intent_admitted","queue_intent_consumed","queue_intent_expired","game_target_pinned","result_committed","duplicate_result_ignored","dda_mode_changed","target_saturated","calibration_mismatch","session_paused",]);const FIELD_NAMES=Object.freeze(["occurredAtEpochMs","phase","revision","role","observedCounts","controlCounts","controllerMode","posteriorWinRate","offsetElo","rawTargetElo","effectiveTargetElo","saturated","reasonCode","reducerVersion","estimatorVersion","controllerVersion","rolloutStage",]);function safeCounts(value,field){exactKeys(value,["wins","draws","losses","terminalGames"],[],field);const output={};for(const key of["wins","draws","losses","terminalGames"]){if(!Number.isInteger(value[key])||value[key]<0)throw new TypeError(`${field}.${key} is invalid`);output[key]=value[key];}return output;}function sanitizeFields(input){if(!isPlainObject(input))throw new TypeError("telemetry fields must be an object");for(const key of Object.keys(input))if(!FIELD_NAMES.includes(key))throw new TypeError(`telemetry field is forbidden: ${key}`);const output={};for(const[key,value]of Object.entries(input)){if(value===undefined||value===null)continue;if(key==="observedCounts"||key==="controlCounts")output[key]=safeCounts(value,`telemetry.${key}`);else if(["occurredAtEpochMs","revision","offsetElo","rawTargetElo","effectiveTargetElo"].includes(key)){if(!Number.isInteger(value))throw new TypeError(`telemetry.${key} must be an integer`);output[key]=value;}else if(key==="posteriorWinRate"){if(!Number.isFinite(value)||value<0||value>1)throw new TypeError("telemetry.posteriorWinRate is invalid");output[key]=value;}else if(key==="saturated"){if(typeof value!=="boolean")throw new TypeError("telemetry.saturated must be boolean");output[key]=value;}else{if(typeof value!=="string"||!value||value.length>120)throw new TypeError(`telemetry.${key} must be a short string`);output[key]=value;}}return output;}function sanitizeEvent(input){if(!isPlainObject(input))throw new TypeError("telemetry event must be an object");const{schemaVersion,telemetryVersion,name,...fields}=input;if(schemaVersion!==1)throw new TypeError("telemetry schema version is unsupported");if(telemetryVersion!==TELEMETRY_VERSION)throw new TypeError("telemetry version is unsupported");if(!EVENT_NAMES.includes(name))throw new TypeError("telemetry event name is unsupported");return{schemaVersion,telemetryVersion,name,...sanitizeFields(fields)};}class BoundedTelemetry{constructor(options){const settings=options||{};this.capacity=settings.capacity===undefined?500:settings.capacity;if(!Number.isInteger(this.capacity)||this.capacity<1||this.capacity>5000)throw new TypeError("telemetry capacity is invalid");this.events=[];}record(name,fields){const event=deepFreeze(sanitizeEvent({schemaVersion:1,telemetryVersion:TELEMETRY_VERSION,name,...(fields||{})}));this.events.push(event);if(this.events.length>this.capacity)this.events.splice(0,this.events.length-this.capacity);return event;}list(){return deepFreeze(clone(this.events));}clear(){this.events.length=0;}}function diagnosticExport(status,events,generatedAtEpochMs){if(!isPlainObject(status))throw new TypeError("diagnostic status must be an object");if(!Array.isArray(events))throw new TypeError("diagnostic events must be an array");if(!Number.isInteger(generatedAtEpochMs)||generatedAtEpochMs<0)throw new TypeError("diagnostic timestamp is invalid");const allowedStatus=["phase","role","remainingTtlMs","drainDeadlineEpochMs","drainRemainingMs","observedCounts","controlCounts","rawWinRate","posteriorWinRate","wilsonLower","wilsonUpper","minWinRate","maxWinRate","controllerMode","offsetElo","opponentRating","effectiveTargetElo","targetSaturated","warningCode","rolloutStage","executionMode",];const safeStatus={};for(const key of allowedStatus)if(Object.prototype.hasOwnProperty.call(status,key))safeStatus[key]=clone(status[key]);return deepFreeze({schemaVersion:1,diagnosticVersion:DIAGNOSTIC_VERSION,generatedAtEpochMs,status:safeStatus,events:events.map(sanitizeEvent)});}module.exports={BoundedTelemetry,DIAGNOSTIC_VERSION,EVENT_NAMES,FIELD_NAMES,TELEMETRY_VERSION,diagnosticExport,sanitizeEvent,sanitizeFields};
 };
 factories["ui"]=function(module,exports,require){
-const FIELD_IDS=Object.freeze({durationMinutes:"kb-session-duration",minimumPercent:"kb-session-min-rate",maximumPercent:"kb-session-max-rate",});const TERMINAL_PHASES=Object.freeze(["IDLE","COMPLETED","ABORTED"]);const PHASE_LABELS=Object.freeze({IDLE:"Aguardando",QUEUEING:"Buscando...",IN_GAME:"Jogando...",DRAINING:"Finalizando sessão...",PAUSED_QUEUEING:"Sessão pausada",PAUSED_ACTIVE:"Sessão pausada",COMPLETED:"Concluído",ABORTED:"Interrompido",});const SUCCESS_LABELS=Object.freeze({SESSION_STARTED:"Sessão iniciada",DRAINING:"Finalizando sessão...",SESSION_STOPPED:"Sessão finalizada",COMPLETED:"Concluído",});function phaseLabel(phase){return Object.prototype.hasOwnProperty.call(PHASE_LABELS,phase)?PHASE_LABELS[phase]:"Atualizando...";}function warningLabel(code){if(!code)return "";if(code==="DDA_MAPPING_UNAVAILABLE"||code.includes("ARTIFACT"))return "⚠️ Verifique o Artefato";if(code.startsWith("CALIBRATION_"))return "⚠️ Calibração não encontrada";return "⚠️ Não foi possível atualizar a sessão";}function successLabel(code){return SUCCESS_LABELS[code]||"Operação concluída";}function reasonCode(error,fallback){if(error&&typeof error.code==="string"&&error.code)return error.code;if(error&&typeof error.reason==="string"&&error.reason)return error.reason;if(error&&typeof error.message==="string"&&/^[A-Z][A-Z0-9_]+$/.test(error.message))return error.message;return fallback;}function findById(panel,id){return panel&&typeof panel.querySelector==="function"?panel.querySelector(`#${id}`):null;}function setText(panel,id,value){const node=findById(panel,id);if(node)node.textContent=value;}function actionNode(panel,target){let node=target;while(node&&node!==panel){if(typeof node.getAttribute==="function"&&node.getAttribute("data-action"))return node;node=node.parentNode;}return null;}function availability(status,startBlocker){const terminal=TERMINAL_PHASES.includes(status.phase);return Object.freeze({start:startBlocker||(status.rolloutStage==="DISABLED"?"ROLLOUT_DISABLED":terminal?null:"ACTIVE_SESSION_EXISTS"),stop:terminal?"SESSION_NOT_ACTIVE":null,});}function presentAvailability(panel,action,reason){const button=panel.querySelector(`[data-action="${action}"]`);if(!button)return;button.toggleAttribute("disabled",Boolean(reason));button.setAttribute("aria-disabled",reason?"true":"false");if(reason){button.setAttribute("data-disabled-reason",reason);}else{button.removeAttribute("data-disabled-reason");}button.removeAttribute("title");}function presentStatus(panel,status,formatDuration,startBlocker){const counts=status.observedCounts;setText(panel,"kb-session-phase",phaseLabel(status.phase));setText(panel,"kb-session-ttl",formatDuration(status.remainingTtlMs));setText(panel,"kb-session-observed",`${counts.wins} V | ${counts.draws} E | ${counts.losses} D`);setText(panel,"kb-session-raw",`${status.rawWinRate.toFixed(0)}%`);const state=availability(status,startBlocker);presentAvailability(panel,"start",state.start);presentAvailability(panel,"stop",state.stop);return state;}function createSessionControlPresenter(options){if(!options||typeof options.getPanel!=="function")throw new TypeError("getPanel is required");const AbortControllerType=options.AbortController||globalThis.AbortController;if(typeof AbortControllerType!=="function")throw new TypeError("AbortController is required");let panel=null;let abortController=null;let currentAvailability=Object.freeze({start:"STATUS_UNAVAILABLE",stop:"STATUS_UNAVAILABLE"});let sequence=0;const draft=Object.create(null);const inFlight=new Set();function emit(type,detail){sequence+=1;if(panel){panel.setAttribute("data-session-ui-event",type);panel.setAttribute("data-session-ui-sequence",String(sequence));}if(typeof options.onTelemetry==="function")options.onTelemetry(Object.freeze({type,sequence,...(detail||{})}));}function warning(code){const value=code||"STATUS_UNAVAILABLE";if(typeof options.setWarning==="function")options.setWarning(value);const label=warningLabel(value);if(typeof options.notify==="function")options.notify(label,{transient:true});emit("warning",{code:value});}function success(code){if(typeof options.setWarning==="function")options.setWarning(null);if(typeof options.notify==="function")options.notify(successLabel(code),{transient:true,success:true});emit("success",{code});}function captureDraft(nextPanel){for(const[field,id]of Object.entries(FIELD_IDS)){const input=findById(nextPanel,id);if(!input)continue;if(Object.prototype.hasOwnProperty.call(draft,field))input.value=draft[field];else draft[field]=String(input.value);}}function readDraft(){return Object.freeze({durationMinutes:draft.durationMinutes,minimumPercent:draft.minimumPercent,maximumPercent:draft.maximumPercent,});}function readConfig(){if(typeof options.createConfig!=="function")throw new TypeError("createConfig is required");return options.createConfig(readDraft());}async function run(action){if(inFlight.has(action))return;const blocked=currentAvailability[action];if(blocked){emit("blocked",{action,code:blocked});return;}inFlight.add(action);emit("dispatch",{action});try{if(action==="start"){let config;try{config=readConfig();}catch(error){warning(reasonCode(error,"SESSION_CONFIG_INVALID"));return;}await options.start(config);success("SESSION_STARTED");}else if(action==="stop"){const result=await options.stop();if(!result||result.allowed!==true){warning(reasonCode(result,"GRACEFUL_STOP_FAILED"));return;}success(reasonCode(result,"SESSION_STOPPED"));}}catch(error){warning(reasonCode(error,action==="start"?"SESSION_START_FAILED":"GRACEFUL_STOP_FAILED"));}finally{inFlight.delete(action);update();}}function runExport(){emit("dispatch",{action:"export"});try{const diagnostic=options.exportDiagnostic();options.downloadDiagnostic(diagnostic);}catch(error){warning(reasonCode(error,"DIAGNOSTIC_EXPORT_FAILED"));}update();}function bind(nextPanel){if(nextPanel===panel&&abortController)return false;if(abortController)abortController.abort();panel=nextPanel||null;abortController=null;if(!panel)return false;captureDraft(panel);abortController=new AbortControllerType();const signal=abortController.signal;panel.addEventListener("input",(event)=>{for(const[field,id]of Object.entries(FIELD_IDS)){if(event.target&&event.target.id===id){draft[field]=String(event.target.value);emit("draft",{field});return;}}},{signal});panel.addEventListener("click",(event)=>{const button=actionNode(panel,event.target);if(!button)return;event.preventDefault();event.stopPropagation();const action=button.getAttribute("data-action");if(action==="export")runExport();else if(action==="start"||action==="stop")void run(action);},{signal});emit("bound");return true;}function update(){const nextPanel=options.getPanel();if(nextPanel!==panel)bind(nextPanel);if(!panel)return null;try{const status=options.readStatus();const startBlocker=typeof options.readStartBlocker==="function"?options.readStartBlocker():null;currentAvailability=presentStatus(panel,status,options.formatDuration,startBlocker);return status;}catch(error){warning(reasonCode(error,"STATUS_UNAVAILABLE"));return null;}}function dispose(){if(abortController)abortController.abort();abortController=null;panel=null;}return Object.freeze({bind,dispose,readConfig,readDraft,update});}module.exports={FIELD_IDS,createSessionControlPresenter,phaseLabel,presentStatus,reasonCode,successLabel,warningLabel};
+const FIELD_IDS=Object.freeze({durationMinutes:"kb-session-duration",minimumPercent:"kb-session-min-rate",maximumPercent:"kb-session-max-rate",});const TERMINAL_PHASES=Object.freeze(["IDLE","COMPLETED","ABORTED"]);const PHASE_LABELS=Object.freeze({IDLE:"Aguardando",QUEUEING:"Buscando...",IN_GAME:"Jogando...",DRAINING:"Finalizando sessão...",PAUSED_QUEUEING:"Sessão pausada",PAUSED_ACTIVE:"Sessão pausada",COMPLETED:"Concluído",ABORTED:"Interrompido",});const SUCCESS_LABELS=Object.freeze({SESSION_STARTED:"Sessão iniciada",DRAINING:"Finalizando sessão...",SESSION_STOPPED:"Sessão finalizada",COMPLETED:"Concluído",});function phaseLabel(phase){return Object.prototype.hasOwnProperty.call(PHASE_LABELS,phase)?PHASE_LABELS[phase]:"Atualizando...";}function warningLabel(code){if(!code)return "";if(code==="DDA_MAPPING_UNAVAILABLE"||code.includes("ARTIFACT"))return "⚠️ Verifique o Artefato";if(code.startsWith("CALIBRATION_"))return "⚠️ Calibração não encontrada";return "⚠️ Não foi possível atualizar a sessão";}function successLabel(code){return SUCCESS_LABELS[code]||"Operação concluída";}function reasonCode(error,fallback){if(error&&typeof error.code==="string"&&error.code)return error.code;if(error&&typeof error.reason==="string"&&error.reason)return error.reason;if(error&&typeof error.message==="string"&&/^[A-Z][A-Z0-9_]+$/.test(error.message))return error.message;return fallback;}function findById(panel,id){return panel&&typeof panel.querySelector==="function"?panel.querySelector(`#${id}`):null;}function setText(panel,id,value){const node=findById(panel,id);if(node)node.textContent=value;}function actionNode(panel,target){let node=target;while(node&&node!==panel){if(typeof node.getAttribute==="function"&&node.getAttribute("data-action"))return node;node=node.parentNode;}return null;}function availability(status,startBlocker){const terminal=TERMINAL_PHASES.includes(status.phase);return Object.freeze({start:startBlocker||(status.rolloutStage==="DISABLED"?"ROLLOUT_DISABLED":terminal?null:"ACTIVE_SESSION_EXISTS"),stop:terminal?"SESSION_NOT_ACTIVE":null,});}function presentAvailability(panel,action,reason){const button=panel.querySelector(`[data-action="${action}"]`);if(!button)return;button.toggleAttribute("disabled",Boolean(reason));button.setAttribute("aria-disabled",reason?"true":"false");if(reason){button.setAttribute("data-disabled-reason",reason);}else{button.removeAttribute("data-disabled-reason");}button.removeAttribute("title");}function presentStatus(panel,status,formatDuration,startBlocker){const counts=status.observedCounts;const controlCounts=status.controlCounts;setText(panel,"kb-session-phase",phaseLabel(status.phase));setText(panel,"kb-session-ttl",formatDuration(status.remainingTtlMs));setText(panel,"kb-session-observed",`${counts.wins} V | ${counts.draws} E | ${counts.losses} D`);setText(panel,"kb-session-raw",controlCounts.terminalGames===0?"—":`${status.rawWinRate.toFixed(0)}%`);const state=availability(status,startBlocker);presentAvailability(panel,"start",state.start);presentAvailability(panel,"stop",state.stop);return state;}function createSessionControlPresenter(options){if(!options||typeof options.getPanel!=="function")throw new TypeError("getPanel is required");const AbortControllerType=options.AbortController||globalThis.AbortController;if(typeof AbortControllerType!=="function")throw new TypeError("AbortController is required");let panel=null;let abortController=null;let currentAvailability=Object.freeze({start:"STATUS_UNAVAILABLE",stop:"STATUS_UNAVAILABLE"});let sequence=0;const draft=Object.create(null);const inFlight=new Set();function emit(type,detail){sequence+=1;if(panel){panel.setAttribute("data-session-ui-event",type);panel.setAttribute("data-session-ui-sequence",String(sequence));}if(typeof options.onTelemetry==="function")options.onTelemetry(Object.freeze({type,sequence,...(detail||{})}));}function warning(code){const value=code||"STATUS_UNAVAILABLE";if(typeof options.setWarning==="function")options.setWarning(value);const label=warningLabel(value);if(typeof options.notify==="function")options.notify(label,{transient:true});emit("warning",{code:value});}function success(code){if(typeof options.setWarning==="function")options.setWarning(null);if(typeof options.notify==="function")options.notify(successLabel(code),{transient:true,success:true});emit("success",{code});}function captureDraft(nextPanel){for(const[field,id]of Object.entries(FIELD_IDS)){const input=findById(nextPanel,id);if(!input)continue;if(Object.prototype.hasOwnProperty.call(draft,field))input.value=draft[field];else draft[field]=String(input.value);}}function readDraft(){return Object.freeze({durationMinutes:draft.durationMinutes,minimumPercent:draft.minimumPercent,maximumPercent:draft.maximumPercent,});}function readConfig(){if(typeof options.createConfig!=="function")throw new TypeError("createConfig is required");return options.createConfig(readDraft());}async function run(action){if(inFlight.has(action))return;const blocked=currentAvailability[action];if(blocked){emit("blocked",{action,code:blocked});return;}inFlight.add(action);emit("dispatch",{action});try{if(action==="start"){let config;try{config=readConfig();}catch(error){warning(reasonCode(error,"SESSION_CONFIG_INVALID"));return;}await options.start(config);success("SESSION_STARTED");}else if(action==="stop"){const result=await options.stop();if(!result||result.allowed!==true){warning(reasonCode(result,"GRACEFUL_STOP_FAILED"));return;}success(reasonCode(result,"SESSION_STOPPED"));}}catch(error){warning(reasonCode(error,action==="start"?"SESSION_START_FAILED":"GRACEFUL_STOP_FAILED"));}finally{inFlight.delete(action);update();}}function runExport(){emit("dispatch",{action:"export"});try{const diagnostic=options.exportDiagnostic();options.downloadDiagnostic(diagnostic);}catch(error){warning(reasonCode(error,"DIAGNOSTIC_EXPORT_FAILED"));}update();}function bind(nextPanel){if(nextPanel===panel&&abortController)return false;if(abortController)abortController.abort();panel=nextPanel||null;abortController=null;if(!panel)return false;captureDraft(panel);abortController=new AbortControllerType();const signal=abortController.signal;panel.addEventListener("input",(event)=>{for(const[field,id]of Object.entries(FIELD_IDS)){if(event.target&&event.target.id===id){draft[field]=String(event.target.value);emit("draft",{field});return;}}},{signal});panel.addEventListener("click",(event)=>{const button=actionNode(panel,event.target);if(!button)return;event.preventDefault();event.stopPropagation();const action=button.getAttribute("data-action");if(action==="export")runExport();else if(action==="start"||action==="stop")void run(action);},{signal});emit("bound");return true;}function update(){const nextPanel=options.getPanel();if(nextPanel!==panel)bind(nextPanel);if(!panel)return null;try{const status=options.readStatus();const startBlocker=typeof options.readStartBlocker==="function"?options.readStartBlocker():null;currentAvailability=presentStatus(panel,status,options.formatDuration,startBlocker);return status;}catch(error){warning(reasonCode(error,"STATUS_UNAVAILABLE"));return null;}}function dispose(){if(abortController)abortController.abort();abortController=null;panel=null;}return Object.freeze({bind,dispose,readConfig,readDraft,update});}module.exports={FIELD_IDS,createSessionControlPresenter,phaseLabel,presentStatus,reasonCode,successLabel,warningLabel};
 };
 factories["index"]=function(module,exports,require){
 module.exports=Object.freeze({...require("./clock"),...require("./controller"),...require("./leader"),...require("./models"),...require("./ports"),...require("./platform-chesscom"),...require("./reducer"),...require("./repository"),...require("./runtime"),...require("./statistics"),...require("./status"),...require("./telemetry"),...require("./ui"),});

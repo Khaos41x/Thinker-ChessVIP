@@ -99,8 +99,8 @@ function status(overrides) {
     remainingTtlMs: 120000,
     drainDeadlineEpochMs: null,
     drainRemainingMs: null,
-    observedCounts: { wins: 0, draws: 0, losses: 0 },
-    controlCounts: { wins: 0, draws: 0, losses: 0 },
+    observedCounts: { wins: 0, draws: 0, losses: 0, terminalGames: 0 },
+    controlCounts: { wins: 0, draws: 0, losses: 0, terminalGames: 0 },
     rawWinRate: 0,
     posteriorWinRate: 50,
     minWinRate: 75,
@@ -177,12 +177,25 @@ async function run() {
   assert.equal(panel.querySelector("#kb-session-phase").textContent, "Aguardando");
   assert.equal(panel.querySelector("#kb-session-ttl").textContent, "120000");
   assert.equal(panel.querySelector("#kb-session-observed").textContent, "0 V | 0 E | 0 D");
-  assert.equal(panel.querySelector("#kb-session-raw").textContent, "0%");
-  currentStatus = status({ phase: "QUEUEING", observedCounts: { wins: 12, draws: 1, losses: 2 }, rawWinRate: 80.49 });
+  assert.equal(panel.querySelector("#kb-session-raw").textContent, "—");
+  currentStatus = status({
+    phase: "QUEUEING",
+    observedCounts: { wins: 12, draws: 1, losses: 2, terminalGames: 15 },
+    controlCounts: { wins: 12, draws: 1, losses: 2, terminalGames: 15 },
+    rawWinRate: 80.49,
+  });
   presenter.update();
   assert.equal(panel.querySelector("#kb-session-phase").textContent, "Buscando...");
   assert.equal(panel.querySelector("#kb-session-observed").textContent, "12 V | 1 E | 2 D");
   assert.equal(panel.querySelector("#kb-session-raw").textContent, "80%");
+  currentStatus = status({ observedCounts: { wins: 1, draws: 0, losses: 0, terminalGames: 1 }, rawWinRate: 100 });
+  presenter.update();
+  assert.equal(panel.querySelector("#kb-session-raw").textContent, "—", "raw win rate used observed rather than control samples");
+  for (const [phase, label] of [["DRAINING", "Finalizando sessão..."], ["PAUSED_ACTIVE", "Sessão pausada"], ["COMPLETED", "Concluído"], ["ABORTED", "Interrompido"]]) {
+    currentStatus = status({ phase });
+    presenter.update();
+    assert.equal(panel.querySelector("#kb-session-phase").textContent, label);
+  }
   currentStatus = status();
   presenter.update();
   const duration = panel.querySelector("#kb-session-duration");
@@ -255,7 +268,7 @@ async function run() {
   const root = path.resolve(__dirname, "../..");
   const source = fs.readFileSync(path.join(root, "script.js"), "utf8");
   const menu = sourceBlock(source, "    const menuHtml = `", "    const bannerHtml = `");
-  for (const [label, id] of [["Tempo Restante", "kb-session-ttl"], ["Status", "kb-session-phase"], ["Placar", "kb-session-observed"], ["Win Rate", "kb-session-raw"]]) {
+  for (const [label, id] of [["Tempo Restante", "kb-session-ttl"], ["Status", "kb-session-phase"], ["Placar", "kb-session-observed"], ["Taxa de vitória", "kb-session-raw"]]) {
     assert(menu.includes(`<span>${label}</span><strong id="${id}">`), `Session Control menu is missing ${label}`);
   }
   for (const id of ["kb-session-rollout", "kb-session-role", "kb-session-drain", "kb-session-control", "kb-session-posterior", "kb-session-band", "kb-session-dda", "kb-session-target"]) {
@@ -277,8 +290,8 @@ async function run() {
   const runDelayIndex = menu.indexOf('id="auto-delay-section"');
   const autoQueueIndex = menu.indexOf('name="kb-auto-queue"');
   assert(autoMovesIndex >= 0 && runDelayIndex > autoMovesIndex && autoQueueIndex > runDelayIndex, "Run Delay is not positioned with the primary Auto Moves controls");
-  assert(menu.includes('aria-label="Run Delay mínimo em segundos"'));
-  assert(menu.includes('aria-label="Run Delay máximo em segundos"'));
+  assert(menu.includes('aria-label="Ritmo mínimo em segundos"'));
+  assert(menu.includes('aria-label="Ritmo máximo em segundos"'));
   assert(menu.includes('role="group" aria-labelledby="kb-run-delay-label"'));
   assert(menu.includes('class="kb-delay-input"'));
   assert(menu.includes('class="kb-delay-unit" aria-hidden="true">s</span>'));
@@ -302,10 +315,11 @@ async function run() {
   const wrapperTokens = sourceBlock(source, "        #oi-wrapper {", "          position: absolute !important");
   assert(wrapperTokens.includes("--tc-glass-bg: rgba(20, 20, 25, 0.65)"));
   assert(wrapperTokens.includes('--tc-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'));
-  assert(source.includes("width:292px !important; min-height:430px !important; padding:18px !important"), "Scout compact geometry regressed");
+  assert(source.includes("width:292px !important; min-height:0 !important; padding:14px !important"), "Scout compact geometry regressed");
   assert(source.includes("min-height:36px; box-sizing:border-box; display:flex; flex-direction:column"), "Auto Play metric hierarchy regressed");
   assert(source.includes("font-size:13px; font-variant-numeric:tabular-nums"), "Time Remaining lost its compact hierarchy");
-  assert(source.includes('class="tc-scout-radar" aria-hidden="true"'), "Scout waiting state lost its intentional visual treatment");
+  const scoutStatusMarkup = sourceBlock(source, "    renderStatus(state) {", "    renderLoading() {");
+  assert(!scoutStatusMarkup.includes('class="tc-scout-radar"'), "Scout empty state retained an oversized decorative radar");
   assert(source.includes('class="tc-scout-loading"'), "Scout loading state lost its centered premium layout");
   assert(source.includes('class="tc-scout-skeleton" aria-hidden="true"'), "Scout loading state lost its translucent skeletons");
   assert(source.includes('retry.className = "tc-scout-retry"'), "Scout unavailable retry is not styled by the shared premium system");
@@ -320,7 +334,10 @@ async function run() {
   assert(source.includes("@media (prefers-reduced-motion: reduce)"), "advanced disclosure ignores reduced-motion preferences");
   assert(source.includes('source?.closest?.("#kb-session-panel")'), "advanced disclosure is not scoped to its owning Session Control panel");
   assert(!menu.includes("SESSION_RUNTIME_UNAVAILABLE"), "Session Control menu exposes a raw startup reason code");
-  assert.equal(sourceHash(source, "    const menuHtml = `", "    const bannerHtml = `"), "2e297fe803ab9083b9aea54be360d4c55f032083ad7cf91ef14b7b08b6cd119c", "Auto Play menuHtml changed");
+  assert(menu.includes("Jogadas automáticas") && menu.includes("Ritmo de jogada") && menu.includes("Fila automática"), "primary controls are not localized consistently");
+  assert(menu.includes("ASSISTENTE DE XADREZ") && menu.includes("Modo de quebra-cabeça") && menu.includes("Linhas de sugestão") && menu.includes("Resolução automática"), "secondary controls are not localized consistently");
+  assert(menu.includes('id="kb-run-delay-hint" hidden'), "Auto Move dependency hint is missing");
+  assert(menu.includes("Taxa de vitória") && menu.includes(">—</strong>"), "zero-sample win rate display regressed");
   const wrapperCss = sourceBlock(source, "        #oi-wrapper {", "        #oi-wrapper > * {");
   for (const declaration of [
     "position: absolute !important",
@@ -328,7 +345,7 @@ async function run() {
     "left: 10px !important",
     "width: max-content !important",
     "display: flex !important",
-    "align-items: stretch !important",
+    "align-items: flex-start !important",
     "gap: 12px !important",
     "z-index: 2147483647 !important",
     "pointer-events: none !important",

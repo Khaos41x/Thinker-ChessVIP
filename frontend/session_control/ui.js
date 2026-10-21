@@ -91,10 +91,11 @@ function presentAvailability(panel, action, reason) {
 
 function presentStatus(panel, status, formatDuration, startBlocker) {
   const counts = status.observedCounts;
+  const controlCounts = status.controlCounts;
   setText(panel, "kb-session-phase", phaseLabel(status.phase));
   setText(panel, "kb-session-ttl", formatDuration(status.remainingTtlMs));
   setText(panel, "kb-session-observed", `${counts.wins} V | ${counts.draws} E | ${counts.losses} D`);
-  setText(panel, "kb-session-raw", `${status.rawWinRate.toFixed(0)}%`);
+  setText(panel, "kb-session-raw", controlCounts.terminalGames === 0 ? "—" : `${status.rawWinRate.toFixed(0)}%`);
   const state = availability(status, startBlocker);
   presentAvailability(panel, "start", state.start);
   presentAvailability(panel, "stop", state.stop);
