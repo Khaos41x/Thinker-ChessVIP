@@ -199,7 +199,7 @@ const blockedStorage = vm.runInNewContext(
 );
 if (blockedStorage !== "ok") throw new Error("blocked browser storage stopped userscript initialization");
 const switchStart = source.indexOf('        const switchGroups = document.querySelectorAll(');
-const switchEnd = source.indexOf('        // Add Minimize Logic', switchStart);
+const switchEnd = source.indexOf('        const sessionMenu = document.getElementById("krypbot-container");', switchStart);
 if (switchStart < 0 || switchEnd < 0) throw new Error("switch binding block not found");
 const switchListeners = {};
 const switchAttributes = {};
@@ -271,7 +271,7 @@ const racedPoll = capturedPoll;
 pollContext.markLocalChange();
 pollContext.clearLocalPending();
 racedPoll.onload({ status: 200, responseText: '{"hint":false}' });
-if (Buffer.byteLength(source, "utf8") > 600000) {
+if (Buffer.byteLength(source, "utf8") > 640000) {
   throw new Error("userscript payload is too large for reliable Tampermonkey startup");
 }
 const start = source.indexOf("  const SCOUT_CACHE_TTL");
@@ -309,7 +309,7 @@ if (
   throw new Error("SPA-safe Tampermonkey bootstrap markers are missing");
 }
 if (
-  !source.includes("taxa de vitórias") ||
+  !source.includes("win rate") ||
   source.includes(">SCORE<") ||
   source.includes("% score")
 ) {
@@ -327,7 +327,7 @@ if (
   !/thinker-chess-banner[^`]+position:absolute!important[^`]+z-index:214748\d+[^`]+transition:none!important/s.test(source) ||
   !source.includes("function calculateThinkerBannerLayout") ||
   !source.includes("function calculateThinkerWorkspaceMargin") ||
-  !source.includes('container.style.width = "268px"') ||
+  !source.includes('container.style.width = "292px"') ||
   !/OpponentIntel\.ensureScoutWrapper\(\);\s+scheduleThinkerWorkspaceLayout\(\);\s+OpponentIntel\.startObserver\(\);/.test(source) ||
   source.includes('addEventListener("scroll", scheduleThinkerBannerPosition') ||
   reconcileSource.includes("\n    scheduleThinkerBannerPosition();") ||
@@ -405,20 +405,19 @@ context.document.createElement = () => ({
   appendChild() {},
 });
 context.document.getElementById = () => null;
-context.scout.ensureScoutWrapper = () => ({ wrapper: { appendChild: (panel) => { renderedScoutPanel = panel; } } });
+context.scout.ensureScoutWrapper = () => ({ container: { classList: { contains: () => false } }, wrapper: { appendChild: (panel) => { renderedScoutPanel = panel; } } });
 context.scout.renderStatus("waiting");
 assert(renderedScoutPanel?.dataset.state === "waiting", "waiting Scout card was not rendered");
 assert(renderedScoutPanel.style.cssText.includes("display:flex;flex-direction:column"),
   "waiting Scout card did not isolate its content vertically");
 assert(renderedScoutPanel.innerHTML.indexOf('class="tc-scout-head"') < renderedScoutPanel.innerHTML.indexOf('class="tc-scout-empty"') &&
-  renderedScoutPanel.innerHTML.indexOf('class="tc-scout-empty"') < renderedScoutPanel.innerHTML.indexOf('class="tc-scout-status"') &&
-  renderedScoutPanel.innerHTML.indexOf('class="tc-scout-status"') < renderedScoutPanel.innerHTML.indexOf('class="tc-scout-empty-detail"'),
-  "waiting Scout header, status, and explanation are not separate blocks");
-assert(renderedScoutPanel.innerHTML.includes("padding-top:16px") &&
-  renderedScoutPanel.innerHTML.includes("gap:8px") &&
-  renderedScoutPanel.innerHTML.includes("white-space:normal;overflow-wrap:anywhere"),
-  "waiting Scout spacing or text wrapping regressed");
-assert(renderedScoutPanel.innerHTML.includes('aria-label="Fechar Scout"'),
+  renderedScoutPanel.innerHTML.indexOf('class="tc-scout-empty"') < renderedScoutPanel.innerHTML.indexOf('class="tc-scout-status"'),
+  "waiting Scout header and status are not separate blocks");
+assert(renderedScoutPanel.innerHTML.includes("Public data appears after an opponent is identified."),
+  "waiting Scout explanation is not in English");
+assert(source.includes("#oi-zone2 .tc-scout-empty-detail { display:none"),
+  "waiting Scout redundant detail is not visually suppressed");
+assert(renderedScoutPanel.innerHTML.includes('aria-label="Collapse Thinker Chess panels"'),
   "waiting Scout card has no close button in the header");
 
 context.scout.lastOpponent = "rival";
@@ -565,7 +564,7 @@ assert(
 );
 
 const recoveryControl = { style: {}, dataset: {}, title: "" };
-const shellMenu = { isConnected: false, style: {} };
+const shellMenu = { isConnected: false, style: {}, classList: { contains: () => false } };
 const shellBanner = { isConnected: false, style: {} };
 const shellWrapper = { style: { setProperty(name, value) { this[name] = value; } } };
 const shellScoutPrimary = { style: {} };

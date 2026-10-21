@@ -148,7 +148,7 @@ async function run() {
   assert.equal(startContextReads, 2, "START must re-observe context and server readiness inside the authorization lock");
   assert.equal(repository.events.size, 1, "real click did not produce exactly one controller commit");
   assert.deepEqual(storage.values.get("thinker.sessionControl.authorization.v1"), { schemaVersion: 1, accounts: ["opaque-account"], contexts: ["chesscom-queue-sidebar-start-game-v1"], pools: ["chesscom-live-rapid-v1"] });
-  assert(notifications.includes("Sessão iniciada"));
+  assert(notifications.includes("Session started"));
   assert.equal(timers.length, 1);
   assert.equal(timers[0].milliseconds, 5000);
 
@@ -156,7 +156,7 @@ async function run() {
   root.dispatch(root.querySelector("#kb-session-start"));
   await tick();
   assert.equal(repository.events.size, 1);
-  assert(!notifications.includes("⚠️ Não foi possível atualizar a sessão"));
+  assert(!notifications.includes("⚠️ Unable to update session"));
   const renewalWarnings = [];
   controller.renewLeadership = async () => { throw new Error("injected renewal failure"); };
   runtime.dispose();

@@ -185,16 +185,16 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     const api = globalThis.ThinkerSessionControl;
     if (options && options.success) {
       if (api && typeof api.successLabel === "function") return api.successLabel(code);
-      if (code === "SESSION_STARTED") return "Sessão iniciada";
-      if (code === "DRAINING") return "Finalizando sessão...";
-      if (code === "SESSION_STOPPED") return "Sessão finalizada";
-      if (code === "COMPLETED") return "Concluído";
-      return "Operação concluída";
+      if (code === "SESSION_STARTED") return "Session started";
+      if (code === "DRAINING") return "Finishing session...";
+      if (code === "SESSION_STOPPED") return "Session finished";
+      if (code === "COMPLETED") return "Completed";
+      return "Operation completed";
     }
     if (api && typeof api.warningLabel === "function") return api.warningLabel(code);
-    if (code === "DDA_MAPPING_UNAVAILABLE" || code.includes("ARTIFACT")) return "⚠️ Verifique o Artefato";
-    if (code.startsWith("CALIBRATION_")) return "⚠️ Calibração não encontrada";
-    return "⚠️ Não foi possível atualizar a sessão";
+    if (code === "DDA_MAPPING_UNAVAILABLE" || code.includes("ARTIFACT")) return "⚠️ Check calibration artifact";
+    if (code.startsWith("CALIBRATION_")) return "⚠️ Calibration unavailable";
+    return "⚠️ Unable to update session";
   }
 
   let sessionToastTimer = null;
@@ -1741,14 +1741,14 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       panel.dataset.state = state;
       panel.style.cssText =
         "width:292px;box-sizing:border-box;background:rgba(20,20,25,.65);border:1px solid rgba(255,255,255,.08);border-radius:18px;box-shadow:0 24px 64px rgba(0,0,0,.48);padding:14px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#fff;margin:0;display:flex;flex-direction:column;";
-      const title = state === "waiting" ? "Aguardando adversário" : "Histórico indisponível";
+      const title = state === "waiting" ? "Waiting for opponent" : "History unavailable";
       const detail = state === "waiting"
-        ? "O Scout exibirá apenas dados públicos reais quando identificar o adversário."
-        : "Não foi possível obter partidas públicas agora. O Scout tentará novamente automaticamente.";
+        ? "Public data appears after an opponent is identified."
+        : "Public games are unavailable right now. Scout will retry automatically.";
       panel.innerHTML = `
         <div class="tc-scout-head" style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;padding-bottom:12px;border-bottom:1px solid #26282e">
-          <div style="min-width:0;font-size:14px;line-height:1.2;font-weight:800">Scout do Oponente</div>
-          <button class="tc-scout-close" type="button" aria-label="Recolher painéis do Thinker Chess">×</button>
+          <div style="min-width:0;font-size:14px;line-height:1.2;font-weight:800">Opponent Scout</div>
+          <button class="tc-scout-close" type="button" aria-label="Collapse Thinker Chess panels">×</button>
         </div>
         <div class="tc-scout-empty" style="display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;min-width:0;padding:18px 0 2px;text-align:left">
           <span class="tc-scout-status" style="display:inline-block;max-width:100%;padding:5px 8px;border:1px solid #303640;border-radius:999px;color:#c6cbd4;font-size:11px;line-height:1.3">${title}</span>
@@ -1760,7 +1760,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       if (state === "unavailable" && this.lastOpponent) {
         const retry = document.createElement("button");
         retry.type = "button";
-        retry.textContent = "Tentar novamente";
+        retry.textContent = "Try again";
         retry.className = "tc-scout-retry";
         retry.addEventListener("click", () => this.fetchData(this.lastOpponent));
         panel.querySelector(".tc-scout-empty")?.appendChild(retry);
@@ -1789,10 +1789,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       panel.innerHTML = `
         <div class="tc-scout-head">
           <div>
-            <div class="tc-scout-title">Scout do Oponente</div>
-            <div class="tc-scout-subtitle">Carregando histórico recente…</div>
+            <div class="tc-scout-title">Opponent Scout</div>
+            <div class="tc-scout-subtitle">Loading recent history…</div>
           </div>
-          <button class="tc-scout-close" type="button" aria-label="Recolher painéis do Thinker Chess">×</button>
+          <button class="tc-scout-close" type="button" aria-label="Collapse Thinker Chess panels">×</button>
         </div>
         <div class="tc-scout-loading">
           <div class="tc-scout-radar" aria-hidden="true"><span class="tc-scout-radar-dot"></span></div>
@@ -1847,7 +1847,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
 
     renderOpeningGroup(openings, totalGames, filled) {
       if (!Array.isArray(openings) || !openings.length) {
-        return '<div style="padding:8px 0;color:#777e8d;font-size:10px">Nenhuma abertura identificada.</div>';
+        return '<div style="padding:8px 0;color:#777e8d;font-size:10px">No openings identified.</div>';
       }
       return openings
         .map(
@@ -1855,14 +1855,14 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             <div class="tc-scout-opening-row">
               <span class="tc-scout-color-chip ${filled ? "is-filled" : ""}"></span>
               <span class="tc-scout-opening-name" title="${this.escapeHtml(opening.name)}">${this.escapeHtml(opening.name)}</span>
-              <span class="tc-scout-opening-count"><b>${opening.count}</b><small>de ${totalGames}</small></span>
+              <span class="tc-scout-opening-count"><b>${opening.count}</b><small>of ${totalGames}</small></span>
             </div>`,
         )
         .join("");
     },
 
     timeClassLabel(value) {
-      return ({ bullet: "Bullet", blitz: "Blitz", rapid: "Rápidas", daily: "Diárias", other: "Outras" })[
+      return ({ bullet: "Bullet", blitz: "Blitz", rapid: "Rapid", daily: "Daily", other: "Other" })[
         value
       ];
     },
@@ -1870,11 +1870,11 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     lossReasonLabel(value) {
       return (
         {
-          checkmated: "Xeque-mate",
-          timeout: "Tempo",
-          resigned: "Desistência",
-          abandoned: "Abandono",
-          repetition: "Repetição",
+          checkmated: "Checkmate",
+          timeout: "Timeout",
+          resigned: "Resignation",
+          abandoned: "Abandonment",
+          repetition: "Repetition",
         }[value] || this.cleanOpeningName(value)
       );
     },
@@ -1883,8 +1883,8 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       return `
         <div class="tc-scout-stat-row">
           <span class="tc-scout-color-chip ${filled ? "is-filled" : ""}"></span>
-          <span class="tc-scout-stat-copy"><b>${label}</b><small>${record.games} jogos · ${record.wins}V–${record.draws}E–${record.losses}D</small></span>
-          <span class="tc-scout-stat-value"><b>${record.winRate}%</b><small>vitórias</small></span>
+          <span class="tc-scout-stat-copy"><b>${label}</b><small>${record.games} games · ${record.wins}W–${record.draws}D–${record.losses}L</small></span>
+          <span class="tc-scout-stat-value"><b>${record.winRate}%</b><small>wins</small></span>
         </div>`;
     },
 
@@ -1906,7 +1906,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       const lastPlayedDate = new Date(scoutStats.lastPlayed * 1000);
       const lastPlayed = Number.isNaN(lastPlayedDate.getTime())
         ? "—"
-        : lastPlayedDate.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }).replace(".", "");
+        : lastPlayedDate.toLocaleDateString("en-US", { day: "2-digit", month: "short" }).replace(",", "");
       const winEnd = (scoutStats.wins / scoutStats.sampleSize) * 100;
       const drawEnd = ((scoutStats.wins + scoutStats.draws) / scoutStats.sampleSize) * 100;
       const donutGradient = `conic-gradient(${SCOUT_RESULT_COLORS.win} 0% ${winEnd}%,${SCOUT_RESULT_COLORS.draw} ${winEnd}% ${drawEnd}%,${SCOUT_RESULT_COLORS.loss} ${drawEnd}% 100%)`;
@@ -1915,8 +1915,8 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           (item) => `
             <div class="tc-scout-stat-row tc-scout-speed-row">
               <span class="tc-scout-speed-icon" aria-hidden="true"></span>
-              <span class="tc-scout-stat-copy"><b>${this.timeClassLabel(item.name)}</b><small>${item.games} de ${scoutStats.sampleSize} jogos</small></span>
-              <span class="tc-scout-stat-value"><b>${item.winRate}%</b><small>vitórias</small></span>
+              <span class="tc-scout-stat-copy"><b>${this.timeClassLabel(item.name)}</b><small>${item.games} of ${scoutStats.sampleSize} games</small></span>
+              <span class="tc-scout-stat-value"><b>${item.winRate}%</b><small>wins</small></span>
             </div>`,
         )
         .join("");
@@ -1950,20 +1950,20 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           #oi-zone2 .tc-scout-opening-count b{font-size:12px} #oi-zone2 .tc-scout-opening-count small{color:#9298a6;font-size:8px}
         </style>
         <div class="tc-scout-head">
-          <div><div class="tc-scout-title">Scout do Oponente</div><div class="tc-scout-subtitle">${this.escapeHtml(this.lastOpponent || "Oponente")} · ${scoutStats.sampleSize} jogos · até ${lastPlayed}</div></div>
-          <button class="tc-scout-close" type="button" aria-label="Recolher painéis do Thinker Chess">Fechar</button>
+          <div><div class="tc-scout-title">Opponent Scout</div><div class="tc-scout-subtitle">${this.escapeHtml(this.lastOpponent || "Opponent")} · ${scoutStats.sampleSize} games · through ${lastPlayed}</div></div>
+          <button class="tc-scout-close" type="button" aria-label="Collapse Thinker Chess panels">Close</button>
         </div>
         <div class="tc-scout-donut" style="background:${donutGradient}">
-          <div class="tc-scout-donut-copy"><b>${scoutStats.winRate}%</b><small>taxa de vitórias</small></div>
+          <div class="tc-scout-donut-copy"><b>${scoutStats.winRate}%</b><small>win rate</small></div>
         </div>
-        <div class="tc-scout-record"><span class="w" style="color:${SCOUT_RESULT_COLORS.win}">${scoutStats.wins} V</span> · <span class="e" style="color:${SCOUT_RESULT_COLORS.draw}">${scoutStats.draws} E</span> · <span class="l" style="color:${SCOUT_RESULT_COLORS.loss}">${scoutStats.losses} D</span></div>
+        <div class="tc-scout-record"><span class="w" style="color:${SCOUT_RESULT_COLORS.win}">${scoutStats.wins} W</span> · <span class="e" style="color:${SCOUT_RESULT_COLORS.draw}">${scoutStats.draws} D</span> · <span class="l" style="color:${SCOUT_RESULT_COLORS.loss}">${scoutStats.losses} L</span></div>
         <div class="tc-scout-section">
-          ${this.renderColorRecord("Brancas", scoutStats.colors.white, true)}
-          ${this.renderColorRecord("Pretas", scoutStats.colors.black, false)}
+          ${this.renderColorRecord("White", scoutStats.colors.white, true)}
+          ${this.renderColorRecord("Black", scoutStats.colors.black, false)}
         </div>
         <div class="tc-scout-section">${timeRows}</div>
         <div class="tc-scout-section">
-          <div class="tc-scout-section-title">Aberturas mais jogadas</div>
+          <div class="tc-scout-section-title">Most-played openings</div>
           ${this.renderOpeningGroup(scoutStats.openings.white, scoutStats.colors.white.games, true)}
           ${this.renderOpeningGroup(scoutStats.openings.black, scoutStats.colors.black.games, false)}
         </div>
@@ -5916,6 +5916,82 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #kb-session-toast { position:fixed; right:18px; bottom:18px; z-index:2147483647; max-width:320px; padding:10px 14px; border:1px solid #ffbd59; border-radius:8px; background:#18191e; color:#ffbd59; font-size:11px; font-weight:800; box-shadow:0 8px 28px rgba(0,0,0,.45); opacity:0; transform:translateY(8px); transition:opacity .16s ease,transform .16s ease; pointer-events:none; }
         #kb-session-toast[data-visible="true"] { opacity:1; transform:translateY(0); }
         #kb-session-toast[data-success="true"] { border-color:#2ad36f; color:#2ad36f; }
+        #oi-wrapper {
+          --tc-surface:rgba(20,20,24,.72); --tc-surface-subtle:rgba(255,255,255,.035); --tc-divider:rgba(255,255,255,.065);
+          --tc-radius-card:16px; --tc-radius-control:9px; --tc-accent:#35d985;
+        }
+        #krypbot-container,
+        #oi-zone2.tc-workspace-card {
+          border-radius:var(--tc-radius-card) !important; background:var(--tc-surface) !important; background-image:none !important;
+          box-shadow:0 18px 44px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.055) !important;
+        }
+        #krypbot-container { padding:12px; }
+        #krypbot-container::before,
+        #oi-zone2.tc-workspace-card::before { display:none; }
+        #krypbot-container .kb-header { margin:0 0 4px; padding:0 0 10px; }
+        #krypbot-container .kb-section { min-height:36px; }
+        #krypbot-container .kb-section-label { font-size:12px; }
+        #krypbot-container .kb-disclosure-block { margin-top:6px; border-top:1px solid var(--tc-divider); }
+        #krypbot-container .kb-disclosure-toggle {
+          width:100%; min-height:36px; display:flex; align-items:center; gap:8px; padding:0; border:0; background:transparent;
+          color:#dfe2e7; font:650 11px/1.2 var(--tc-font); text-align:left; cursor:pointer;
+        }
+        #krypbot-container .kb-disclosure-toggle:focus-visible { outline:2px solid rgba(53,217,133,.72); outline-offset:3px; border-radius:var(--tc-radius-control); }
+        #krypbot-container .kb-disclosure-summary { margin-left:auto; color:#8f97a4; font-size:10px; font-variant-numeric:tabular-nums; }
+        #krypbot-container .kb-disclosure-toggle[aria-expanded="true"] .kb-advanced-chevron { transform:rotate(180deg); }
+        #krypbot-container .kb-disclosure-panel {
+          display:grid; grid-template-rows:0fr; min-height:0; opacity:0; visibility:hidden; pointer-events:none;
+          transition:grid-template-rows .24s cubic-bezier(.16,1,.3,1), opacity .16s ease, visibility 0s linear .24s;
+        }
+        #krypbot-container .kb-disclosure-panel[data-open="true"] { grid-template-rows:1fr; opacity:1; visibility:visible; pointer-events:auto; transition:grid-template-rows .24s cubic-bezier(.16,1,.3,1), opacity .16s ease, visibility 0s; }
+        #krypbot-container .kb-disclosure-inner { min-height:0; overflow:hidden; }
+        #krypbot-container .kb-run-delay-card { min-height:0; margin-top:2px; padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; }
+        #krypbot-container .kb-run-delay-controls { padding:4px 0 8px; }
+        #krypbot-container .kb-run-delay-card[data-inactive="true"] { border-color:var(--tc-divider); background:transparent; }
+        #krypbot-container .kb-run-delay-card[data-inactive="true"] .kb-run-delay-controls { opacity:1; }
+        #krypbot-container .kb-run-delay-card[data-inactive="true"] .kb-timing-mode input:checked + label { background:rgba(255,255,255,.08); color:#d8dce2 !important; }
+        #krypbot-container .kb-run-delay-card[data-inactive="false"] .kb-timing-mode input:checked + label { background:var(--tc-accent); color:#07150e !important; }
+        #krypbot-container .kb-timing-mode { display:grid; grid-template-columns:1fr 1fr; height:30px; }
+        #krypbot-container .kb-run-delay-card .kb-timing-mode label { min-width:62px; padding:6px 7px; font-size:9px; }
+        #krypbot-container .kb-dependency-hint { padding:0 0 8px; color:#858c98; }
+        #krypbot-container .kb-strength-card { margin-top:6px; padding:9px 0 8px; border-top:1px solid var(--tc-divider); }
+        #krypbot-container .kb-strength-head,
+        #krypbot-container .kb-strength-limits { display:flex; align-items:center; justify-content:space-between; }
+        #krypbot-container .kb-strength-head { margin-bottom:8px; color:#dfe2e7; font-size:11px; font-weight:650; }
+        #krypbot-container .kb-strength-current { color:#8f97a4; font-size:9px; font-weight:550; }
+        #krypbot-container .kb-strength-current strong { margin-left:4px; color:#f4f6f8; font-size:11px; font-variant-numeric:tabular-nums; }
+        #krypbot-container .kb-strength-limits { margin-top:4px; color:#777f8c; font-size:8px; }
+        #krypbot-container .kb-slider { width:100%; height:3px; accent-color:var(--tc-accent); }
+        #krypbot-container .kb-session-panel { margin-top:4px; padding:10px 0; gap:8px; border:0; border-top:1px solid var(--tc-divider); border-radius:0; background:transparent; box-shadow:none; }
+        #krypbot-container .kb-session-actions { grid-template-columns:minmax(0,1fr) auto auto; gap:6px; }
+        #krypbot-container .kb-session-button { height:34px; border-radius:var(--tc-radius-control); }
+        #krypbot-container .kb-session-button[data-action="start"] { height:36px; border-radius:var(--tc-radius-control); background:var(--tc-accent); box-shadow:none; color:#07150e; font-size:11px; letter-spacing:.02em; }
+        #krypbot-container .kb-session-button[data-action="start"]:hover { box-shadow:none; }
+        #krypbot-container .kb-session-button[data-action="stop"] { width:auto; padding:0 10px; }
+        #krypbot-container .kb-session-button[data-action="export"] { width:auto; padding:0 9px; }
+        #krypbot-container .kb-session-button[disabled],
+        #krypbot-container .kb-session-button[aria-disabled="true"] { background:rgba(255,255,255,.045) !important; border-color:rgba(255,255,255,.055) !important; box-shadow:none !important; color:#737a85 !important; opacity:1; }
+        #krypbot-container .kb-session-status { display:flex; flex-direction:column; gap:5px; padding:1px 0 0; }
+        #krypbot-container .kb-session-primary,
+        #krypbot-container .kb-session-stats { display:flex; align-items:baseline; min-width:0; color:#7f8793; font-size:9px; line-height:1.35; }
+        #krypbot-container .kb-session-primary strong { margin-left:5px; color:#eef0f3; font-size:11px; font-weight:750; }
+        #krypbot-container .kb-session-primary #kb-session-ttl { font-variant-numeric:tabular-nums; }
+        #krypbot-container .kb-session-separator { margin:0 8px; color:#4f5661; }
+        #krypbot-container .kb-session-stats { justify-content:space-between; gap:10px; }
+        #krypbot-container .kb-session-stats strong { margin-left:4px; color:#c7ccd4; font-size:10px; font-weight:700; }
+        #krypbot-container .kb-session-panel:not([data-session-state="never-started"]):not([data-session-state="completed"]):not([data-session-state="aborted"]) #kb-session-phase { color:#67eaa7; }
+        #krypbot-container .kb-more-settings { margin-top:0; }
+        #krypbot-container .kb-more-settings .kb-disclosure-inner { padding-bottom:2px; }
+        #krypbot-container .kb-more-settings .kb-section { padding:0 2px; }
+        #krypbot-container .kb-inline-note,
+        #krypbot-container .kb-subsetting-label { margin:0; color:#858c98; font-size:10px; font-weight:500; }
+        #krypbot-container .kb-footer { margin:0; padding:8px 0 0; }
+        #krypbot-container .kb-footer > div { color:#777f8c; font-size:9px; }
+        #oi-zone2 .tc-scout-head { padding-bottom:10px !important; }
+        #oi-zone2 .tc-scout-title,
+        #oi-zone2 .tc-scout-head > div:first-child { font-size:14px !important; line-height:19px !important; }
+        #oi-zone2 .tc-scout-empty { padding:10px 0 0 !important; }
+        #oi-zone2 .tc-scout-empty-detail { display:none; }
         @media (max-width: 640px) {
           #oi-wrapper { width:calc(100vw - 20px) !important; flex-direction:column !important; align-items:flex-start !important; gap:12px !important; }
           #oi-wrapper > * { width:min(292px, calc(100vw - 20px)) !important; max-width:100% !important; }
@@ -5933,7 +6009,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           #krypbot-container,
           #krypbot-container .kb-advanced-settings,
           #krypbot-container .kb-advanced-settings[data-open="true"],
+          #krypbot-container .kb-disclosure-panel,
+          #krypbot-container .kb-disclosure-panel[data-open="true"],
           #krypbot-container .kb-advanced-toggle,
+          #krypbot-container .kb-disclosure-toggle,
           #krypbot-container .kb-session-button,
           #krypbot-container .kb-radio-group label,
           #krypbot-container .kb-radio-group::after,
@@ -5944,16 +6023,14 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
 
     const menuHtml = `
       <div id="krypbot-container">
-        <button class="kb-logo" id="kb-workspace-launcher" type="button" aria-label="Abrir painéis do Thinker Chess" aria-expanded="true">
+        <button class="kb-logo" id="kb-workspace-launcher" type="button" aria-label="Open Thinker Chess panels" aria-expanded="true">
           <span class="kb-logo-mark" aria-hidden="true">♞</span>
           <span class="kb-logo-copy">Thinker Chess</span>
         </button>
 
         <div class="kb-header">
-          <div><span class="kb-eyebrow">ASSISTENTE DE XADREZ</span><h2 class="kb-title">Thinker Chess</h2></div>
-          <button class="kb-minimize-btn" id="kb-minimize-toggle">
-            Fechar
-          </button>
+          <div><span class="kb-eyebrow">CHESS ASSISTANT</span><h2 class="kb-title">Thinker Chess</h2></div>
+          <button class="kb-minimize-btn" id="kb-minimize-toggle" type="button" aria-label="Close Thinker Chess panels">Close</button>
         </div>
 
         <div class="kb-section">
@@ -5965,136 +6042,115 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         </div>
 
         <div class="kb-section">
-          <p class="kb-section-label"><span class="kb-row-icon kb-icon-play" aria-hidden="true"></span>Jogadas automáticas</p>
+          <p class="kb-section-label"><span class="kb-row-icon kb-icon-play" aria-hidden="true"></span>Auto Moves</p>
           <div class="kb-radio-group">
             <input type="radio" id="am-on" name="kb-auto-move" value="1"><label for="am-on">ON</label>
             <input type="radio" id="am-off" name="kb-auto-move" value="0" checked><label for="am-off">OFF</label>
           </div>
         </div>
 
-        <div class="kb-section-col kb-run-delay-card" id="auto-delay-section">
-          <p class="kb-section-label" id="kb-run-delay-label" style="color:#c4c9d2;font-size:11px">Ritmo de jogada</p>
-          <div class="kb-run-delay-controls">
-            <div class="kb-delay-range">
-              <label class="kb-delay-input">
-                <input type="number" id="minDelayInput" class="kb-num-input" min="0.01" max="60" step="0.01" inputmode="decimal" aria-label="Ritmo mínimo em segundos">
-                <span class="kb-delay-unit" aria-hidden="true">s</span>
-              </label>
-              <span class="kb-delay-separator" aria-hidden="true">–</span>
-              <label class="kb-delay-input">
-                <input type="number" id="maxDelayInput" class="kb-num-input" min="0.01" max="60" step="0.01" inputmode="decimal" aria-label="Ritmo máximo em segundos">
-                <span class="kb-delay-unit" aria-hidden="true">s</span>
-              </label>
-            </div>
-            <div class="kb-radio-group" role="group" aria-labelledby="kb-run-delay-label">
-              <input type="radio" id="dm-rand" name="delayMode" value="random"><label for="dm-rand">RND</label>
-              <input type="radio" id="dm-max" name="delayMode" value="max"><label for="dm-max">IMED.</label>
-            </div>
-          </div>
-          <p class="kb-dependency-hint" id="kb-run-delay-hint" hidden>Ative Jogadas automáticas para aplicar este ritmo.</p>
-        </div>
-
-        <div class="kb-section">
-          <p class="kb-section-label"><span class="kb-row-icon kb-icon-list" aria-hidden="true"></span>Fila automática</p>
-          <div id="kb-auto-queue-controls" class="kb-radio-group">
-            <input type="radio" id="aq-on" name="kb-auto-queue" value="1"><label for="aq-on">ON</label>
-            <input type="radio" id="aq-off" name="kb-auto-queue" value="0" checked><label for="aq-off">OFF</label>
-          </div>
-        </div>
-        <p id="kb-auto-queue-session-note" class="kb-session-queue-note" hidden aria-live="polite">ON temporário — controlado pelo Auto Farm até a sessão terminar. Sua preferência salva não será alterada.</p>
-
-        <div class="kb-section">
-          <p class="kb-section-label"><span class="kb-row-icon kb-icon-gauge" aria-hidden="true"></span>Ajuste automático</p>
-          <div class="kb-radio-group">
-            <input type="radio" id="aa-on" name="kb-auto-adjust" value="1"><label for="aa-on">ON</label>
-            <input type="radio" id="aa-off" name="kb-auto-adjust" value="0" checked><label for="aa-off">OFF</label>
-          </div>
-        </div>
-
-        <div class="kb-section">
-          <p class="kb-section-label"><span class="kb-row-icon kb-icon-activity" aria-hidden="true"></span>Ritmo inteligente</p>
-          <div class="kb-radio-group">
-            <input type="radio" id="sp-on" name="kb-smart-pacing" value="1"><label for="sp-on">ON</label>
-            <input type="radio" id="sp-off" name="kb-smart-pacing" value="0" checked><label for="sp-off">OFF</label>
-          </div>
-        </div>
-
-        <div class="kb-section">
-          <p class="kb-section-label"><span class="kb-row-icon kb-icon-eye" aria-hidden="true"></span>Barra de avaliação</p>
-          <div class="kb-radio-group">
-            <input type="radio" id="eb-on" name="kb-eval-bar" value="1"><label for="eb-on">ON</label>
-            <input type="radio" id="eb-off" name="kb-eval-bar" value="0" checked><label for="eb-off">OFF</label>
-          </div>
-        </div>
-
-        <div class="kb-section-col" id="puzzle-section" style="display: none;">
-          <p class="kb-section-label">Modo de quebra-cabeça <span style="font-size:11px; color:rgba(255,255,255,0.4); font-weight:normal;">(Elo 3200)</span></p>
-          <div class="kb-section" style="margin:0">
-            <p style="font-size:12px; margin:0; color:rgba(255,255,255,0.6)">Linhas de sugestão</p>
-            <div class="kb-radio-group">
-              <input type="radio" id="ph-on" name="kb-puzzle-hint" value="1"><label for="ph-on">ON</label>
-              <input type="radio" id="ph-off" name="kb-puzzle-hint" value="0" checked><label for="ph-off">OFF</label>
+        <section class="kb-disclosure-block kb-run-delay-card" id="auto-delay-section" data-inactive="true">
+          <button class="kb-disclosure-toggle" id="kb-move-timing-toggle" type="button" aria-controls="kb-move-timing-panel" aria-expanded="false">
+            <span id="kb-run-delay-label">Move Timing</span>
+            <span class="kb-disclosure-summary" id="autoDelayDisplay">0.50–1.00 s</span>
+            <span class="kb-advanced-chevron" aria-hidden="true">⌄</span>
+          </button>
+          <div class="kb-disclosure-panel" id="kb-move-timing-panel" data-open="false" aria-hidden="true" inert>
+            <div class="kb-disclosure-inner">
+              <div class="kb-run-delay-controls">
+                <div class="kb-delay-range">
+                  <label class="kb-delay-input">
+                    <input type="number" id="minDelayInput" class="kb-num-input" min="0.01" max="60" step="0.01" inputmode="decimal" aria-label="Minimum move delay in seconds">
+                    <span class="kb-delay-unit" aria-hidden="true">s</span>
+                  </label>
+                  <span class="kb-delay-separator" aria-hidden="true">–</span>
+                  <label class="kb-delay-input">
+                    <input type="number" id="maxDelayInput" class="kb-num-input" min="0.01" max="60" step="0.01" inputmode="decimal" aria-label="Maximum move delay in seconds">
+                    <span class="kb-delay-unit" aria-hidden="true">s</span>
+                  </label>
+                </div>
+                <div class="kb-radio-group kb-timing-mode" role="group" aria-labelledby="kb-run-delay-label">
+                  <input type="radio" id="dm-rand" name="delayMode" value="random"><label for="dm-rand">Random</label>
+                  <input type="radio" id="dm-max" name="delayMode" value="max"><label for="dm-max">Immediate</label>
+                </div>
+              </div>
+              <p class="kb-dependency-hint" id="kb-run-delay-hint">Enable Auto Moves to apply this timing.</p>
             </div>
           </div>
-          <div class="kb-section" style="margin:0">
-            <p style="font-size:12px; margin:0; color:rgba(255,255,255,0.6)">Resolução automática</p>
-            <div class="kb-radio-group">
-              <input type="radio" id="pa-on" name="kb-puzzle-auto" value="1"><label for="pa-on">ON</label>
-              <input type="radio" id="pa-off" name="kb-puzzle-auto" value="0" checked><label for="pa-off">OFF</label>
-            </div>
-          </div>
-        </div>
+        </section>
 
-        <div class="kb-section-col">
-          <p class="kb-section-label" style="color:#8e94a1;font-size:10px">Nível de força</p>
-          <div class="kb-slider-group">
-            <span style="font-size:11px; color:rgba(255,255,255,0.4)">800</span>
-            <input id="kb-elo-slider" class="kb-slider" type="range" min="800" max="3200" step="100" value="3200">
-            <span id="kb-elo-val" class="kb-slider-val">3200</span>
-          </div>
-        </div>
+        <section class="kb-strength-card" aria-labelledby="kb-strength-label">
+          <div class="kb-strength-head"><span id="kb-strength-label">Strength Level</span><span class="kb-strength-current">Current <strong id="kb-elo-val">3200</strong></span></div>
+          <input id="kb-elo-slider" class="kb-slider" type="range" min="800" max="3200" step="100" value="3200" aria-labelledby="kb-strength-label">
+          <div class="kb-strength-limits"><span>Min 800</span><span>Max 3200</span></div>
+        </section>
 
         <section class="kb-session-panel" id="kb-session-panel" aria-labelledby="kb-auto-play-title">
           <div class="kb-session-title">
             <h3 id="kb-auto-play-title">Auto Play</h3>
-            <button class="kb-advanced-toggle" id="kb-advanced-settings-toggle" type="button" aria-label="Configurar Auto Play" aria-controls="advanced-settings-panel" aria-expanded="false">
-              <span>Configurar</span><span class="kb-advanced-chevron" aria-hidden="true">⌄</span>
+            <button class="kb-advanced-toggle" id="kb-advanced-settings-toggle" type="button" aria-label="Configure Auto Play" aria-controls="advanced-settings-panel" aria-expanded="false">
+              <span>Configure</span><span class="kb-advanced-chevron" aria-hidden="true">⌄</span>
             </button>
           </div>
           <div class="kb-advanced-settings" id="advanced-settings-panel" data-open="false" aria-hidden="true" inert>
             <div class="kb-advanced-settings-inner">
-              <p class="kb-advanced-heading">Configurações avançadas</p>
+              <p class="kb-advanced-heading">Session settings</p>
               <div class="kb-session-fields">
-                <label class="kb-session-field">Duração (min)<input id="kb-session-duration" type="number" min="1" max="1440" step="1" value="120"></label>
-                <label class="kb-session-field">Vitórias mín. %<input id="kb-session-min-rate" type="number" min="1" max="98" step="1" value="75"></label>
-                <label class="kb-session-field">Vitórias máx. %<input id="kb-session-max-rate" type="number" min="2" max="99" step="1" value="82"></label>
+                <label class="kb-session-field">Duration (min)<input id="kb-session-duration" type="number" min="1" max="1440" step="1" value="120"></label>
+                <label class="kb-session-field">Min wins %<input id="kb-session-min-rate" type="number" min="1" max="98" step="1" value="75"></label>
+                <label class="kb-session-field">Max wins %<input id="kb-session-max-rate" type="number" min="2" max="99" step="1" value="82"></label>
               </div>
             </div>
           </div>
           <div class="kb-session-actions">
-            <button class="kb-session-button" id="kb-session-start" data-action="start" type="button">INICIAR</button>
-            <button class="kb-session-button" id="kb-session-stop" data-action="stop" type="button">FINALIZAR</button>
-            <button class="kb-session-button" id="kb-session-export" data-action="export" type="button" aria-label="Exportar diagnóstico">⇩</button>
+            <button class="kb-session-button" id="kb-session-start" data-action="start" type="button">Start</button>
+            <button class="kb-session-button" id="kb-session-stop" data-action="stop" type="button">Finish</button>
+            <button class="kb-session-button" id="kb-session-export" data-action="export" type="button" aria-label="Export session diagnostic">Export</button>
           </div>
           <div class="kb-session-status" aria-live="polite">
-            <div class="kb-session-metric"><span>Tempo Restante</span><strong id="kb-session-ttl">00:00:00</strong></div>
-            <div class="kb-session-metric"><span>Status</span><strong id="kb-session-phase">Aguardando</strong></div>
-            <div class="kb-session-metric"><span>Placar</span><strong id="kb-session-observed">0 V | 0 E | 0 D</strong></div>
-            <div class="kb-session-metric"><span>Taxa de vitória</span><strong id="kb-session-raw">—</strong></div>
+            <div class="kb-session-primary"><span>Status</span><strong id="kb-session-phase">Idle</strong><span class="kb-session-separator" aria-hidden="true">·</span><span>Time Left</span><strong id="kb-session-ttl">00:00:00</strong></div>
+            <div class="kb-session-stats"><span>Score <strong id="kb-session-observed">0 W | 0 D | 0 L</strong></span><span>Win Rate <strong id="kb-session-raw">—</strong></span></div>
+          </div>
+        </section>
+
+        <section class="kb-disclosure-block kb-more-settings">
+          <button class="kb-disclosure-toggle" id="kb-more-settings-toggle" type="button" aria-controls="kb-more-settings-panel" aria-expanded="false">
+            <span>More Settings</span><span class="kb-advanced-chevron" aria-hidden="true">⌄</span>
+          </button>
+          <div class="kb-disclosure-panel" id="kb-more-settings-panel" data-open="false" aria-hidden="true" inert>
+            <div class="kb-disclosure-inner">
+              <div class="kb-section">
+                <p class="kb-section-label"><span class="kb-row-icon kb-icon-list" aria-hidden="true"></span>Auto Queue</p>
+                <div id="kb-auto-queue-controls" class="kb-radio-group">
+                  <input type="radio" id="aq-on" name="kb-auto-queue" value="1"><label for="aq-on">ON</label>
+                  <input type="radio" id="aq-off" name="kb-auto-queue" value="0" checked><label for="aq-off">OFF</label>
+                </div>
+              </div>
+              <p id="kb-auto-queue-session-note" class="kb-session-queue-note" hidden aria-live="polite">Temporarily enabled by Auto Play. Your saved preference is unchanged.</p>
+              <div class="kb-section">
+                <p class="kb-section-label"><span class="kb-row-icon kb-icon-gauge" aria-hidden="true"></span>Auto Rating</p>
+                <div class="kb-radio-group"><input type="radio" id="aa-on" name="kb-auto-adjust" value="1"><label for="aa-on">ON</label><input type="radio" id="aa-off" name="kb-auto-adjust" value="0" checked><label for="aa-off">OFF</label></div>
+              </div>
+              <div class="kb-section">
+                <p class="kb-section-label"><span class="kb-row-icon kb-icon-activity" aria-hidden="true"></span>Smart Pacing</p>
+                <div class="kb-radio-group"><input type="radio" id="sp-on" name="kb-smart-pacing" value="1"><label for="sp-on">ON</label><input type="radio" id="sp-off" name="kb-smart-pacing" value="0" checked><label for="sp-off">OFF</label></div>
+              </div>
+              <div class="kb-section">
+                <p class="kb-section-label"><span class="kb-row-icon kb-icon-eye" aria-hidden="true"></span>Evaluation Bar</p>
+                <div class="kb-radio-group"><input type="radio" id="eb-on" name="kb-eval-bar" value="1"><label for="eb-on">ON</label><input type="radio" id="eb-off" name="kb-eval-bar" value="0" checked><label for="eb-off">OFF</label></div>
+              </div>
+              <div class="kb-section-col" id="puzzle-section" style="display:none">
+                <p class="kb-section-label">Puzzle Mode <span class="kb-inline-note">(Elo 3200)</span></p>
+                <div class="kb-section"><p class="kb-subsetting-label">Hint Lines</p><div class="kb-radio-group"><input type="radio" id="ph-on" name="kb-puzzle-hint" value="1"><label for="ph-on">ON</label><input type="radio" id="ph-off" name="kb-puzzle-hint" value="0" checked><label for="ph-off">OFF</label></div></div>
+                <div class="kb-section"><p class="kb-subsetting-label">Auto Solve</p><div class="kb-radio-group"><input type="radio" id="pa-on" name="kb-puzzle-auto" value="1"><label for="pa-on">ON</label><input type="radio" id="pa-off" name="kb-puzzle-auto" value="0" checked><label for="pa-off">OFF</label></div></div>
+              </div>
+            </div>
           </div>
         </section>
 
         <div id="kb-session-toast" role="status" aria-live="assertive" aria-atomic="true"></div>
-
-        <div class="kb-footer">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <span style="font-size:10px; color:#8e94a1;">Tema</span>
-            <input type="color" id="kb-color-picker" class="kb-color-input" value="#00ff88">
-          </div>
-        </div>
+        <div class="kb-footer"><div><span>Theme</span><input type="color" id="kb-color-picker" class="kb-color-input" value="#00ff88" aria-label="Theme color"></div></div>
       </div>
-
-
     `;
 
     const bannerHtml = `
@@ -6222,6 +6278,13 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           });
         });
         const sessionMenu = document.getElementById("krypbot-container");
+        const setDisclosureOpen = (toggle, panel, open) => {
+          if (!toggle || !panel) return;
+          toggle.setAttribute("aria-expanded", open ? "true" : "false");
+          panel.dataset.open = open ? "true" : "false";
+          panel.setAttribute("aria-hidden", open ? "false" : "true");
+          panel.toggleAttribute("inert", !open);
+        };
         const resolveAdvancedSettings = (source) => {
           const sessionPanel = source?.closest?.("#kb-session-panel") || sessionMenu?.querySelector("#kb-session-panel");
           return {
@@ -6231,20 +6294,40 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         };
         const setAdvancedSettingsOpen = (open, source) => {
           const { toggle, panel } = resolveAdvancedSettings(source);
-          if (!toggle || !panel) return;
-          toggle.setAttribute("aria-expanded", open ? "true" : "false");
-          panel.dataset.open = open ? "true" : "false";
-          panel.setAttribute("aria-hidden", open ? "false" : "true");
-          panel.toggleAttribute("inert", !open);
+          setDisclosureOpen(toggle, panel, open);
+        };
+        const moveTimingToggle = sessionMenu?.querySelector("#kb-move-timing-toggle");
+        const moveTimingPanel = sessionMenu?.querySelector("#kb-move-timing-panel");
+        const moreSettingsToggle = sessionMenu?.querySelector("#kb-more-settings-toggle");
+        const moreSettingsPanel = sessionMenu?.querySelector("#kb-more-settings-panel");
+        const setMoveTimingOpen = (open, manual = false) => {
+          const delaySection = sessionMenu?.querySelector("#auto-delay-section");
+          if (manual && delaySection) delaySection.dataset.userExpanded = open ? "true" : "false";
+          setDisclosureOpen(moveTimingToggle, moveTimingPanel, open);
         };
         if (sessionMenu) {
           setAdvancedSettingsOpen(false);
+          setMoveTimingOpen(false);
+          setDisclosureOpen(moreSettingsToggle, moreSettingsPanel, false);
           sessionMenu.addEventListener("click", (event) => {
             const toggle = event.target?.closest?.("#kb-advanced-settings-toggle");
-            if (!toggle || !sessionMenu.contains(toggle)) return;
-            event.preventDefault();
-            event.stopPropagation();
-            setAdvancedSettingsOpen(toggle.getAttribute("aria-expanded") !== "true", toggle);
+            if (toggle && sessionMenu.contains(toggle)) {
+              event.preventDefault();
+              event.stopPropagation();
+              setAdvancedSettingsOpen(toggle.getAttribute("aria-expanded") !== "true", toggle);
+              return;
+            }
+            const timingToggle = event.target?.closest?.("#kb-move-timing-toggle");
+            if (timingToggle && sessionMenu.contains(timingToggle)) {
+              event.preventDefault();
+              setMoveTimingOpen(timingToggle.getAttribute("aria-expanded") !== "true", true);
+              return;
+            }
+            const settingsToggle = event.target?.closest?.("#kb-more-settings-toggle");
+            if (settingsToggle && sessionMenu.contains(settingsToggle)) {
+              event.preventDefault();
+              setDisclosureOpen(settingsToggle, moreSettingsPanel, settingsToggle.getAttribute("aria-expanded") !== "true");
+            }
           });
         }
         // Add Minimize Logic
@@ -6264,7 +6347,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           $("input[name='kb-auto-queue']").prop("disabled", sessionOwnsQueue);
           $("#kb-auto-queue-controls")
             .attr("aria-disabled", sessionOwnsQueue ? "true" : "false")
-            .attr("title", sessionOwnsQueue ? "A fila está sob controle do Auto Farm nesta sessão." : "");
+            .attr("title", sessionOwnsQueue ? "Auto Play controls the queue until this session ends." : "");
           const queueNote = document.getElementById("kb-auto-queue-session-note");
           if (queueNote) queueNote.hidden = !sessionOwnsQueue;
         }
@@ -6283,6 +6366,8 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           const delayHint = document.getElementById("kb-run-delay-hint");
           if (delaySection) {
             delaySection.dataset.inactive = auto_move ? "false" : "true";
+            delaySection.dataset.mode = autoDelayMode;
+            setMoveTimingOpen(auto_move || delaySection.dataset.userExpanded === "true");
           }
           if (delayHint) delayHint.hidden = auto_move;
           syncAutoQueueSessionUI();
@@ -6305,15 +6390,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           );
 
           if (autoDelayMode === "max") {
-            $(".kb-num-input").css({
-              "border-color": "#fff",
-              "box-shadow": "0 0 6px rgba(255,255,255,0.5)",
-              color: "#fff",
-            });
-            $("#autoDelayDisplay").text("IMEDIATO");
+            $("#autoDelayDisplay").text("Immediate");
           } else {
             $("#autoDelayDisplay").text(
-              `${autoDelayMin.toFixed(2)} - ${autoDelayMax.toFixed(2)}s`,
+              `${autoDelayMin.toFixed(2)}–${autoDelayMax.toFixed(2)} s`,
             );
           }
 
@@ -6526,7 +6606,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           localStorage.setItem("autoMinDelay", autoDelayMin);
           localStorage.setItem("autoMaxDelay", autoDelayMax);
           $("#autoDelayDisplay").text(
-            `${autoDelayMin.toFixed(2)} - ${autoDelayMax.toFixed(2)}s`,
+            `${autoDelayMin.toFixed(2)}–${autoDelayMax.toFixed(2)} s`,
           );
           pushToServer();
         });
@@ -6575,26 +6655,18 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             autoDelayMax = 0;
             localStorage.setItem("autoMinDelay", 0);
             localStorage.setItem("autoMaxDelay", 0);
-            $(".kb-num-input").val("0.00").css({
-              "border-color": "#fff",
-              "box-shadow": "0 0 8px rgba(255,255,255,0.6)",
-              color: "#fff",
-            });
-            $("#autoDelayDisplay").text("IMEDIATO");
+            $(".kb-num-input").val("0.00");
+            $("#autoDelayDisplay").text("Immediate");
           } else {
             // Restaurar valores padrão ao voltar para Random/Avg
             autoDelayMin = 0.5;
             autoDelayMax = 1.0;
             localStorage.setItem("autoMinDelay", 0.5);
             localStorage.setItem("autoMaxDelay", 1.0);
-            $(".kb-num-input").val("").css({
-              "border-color": "#333",
-              "box-shadow": "none",
-              color: "#fff",
-            });
-            $("#minDelayInput").val("0.50").css("color", "#fff");
-            $("#maxDelayInput").val("1.00").css("color", "#fff");
-            $("#autoDelayDisplay").text("0.50 - 1.00s");
+            $(".kb-num-input").val("");
+            $("#minDelayInput").val("0.50");
+            $("#maxDelayInput").val("1.00");
+            $("#autoDelayDisplay").text("0.50–1.00 s");
           }
 
           window.krypbotUpdateUI();
@@ -6823,7 +6895,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             localStorage.setItem("autoMaxDelay", autoDelayMax);
             $("#maxDelayInput").val(autoDelayMax.toFixed(2));
           }
-          $("#autoDelayDisplay").text(autoDelayMode === "max" ? "IMEDIATO" : autoDelayMin.toFixed(2) + " - " + autoDelayMax.toFixed(2) + "s");
+          $("#autoDelayDisplay").text(autoDelayMode === "max" ? "Immediate" : autoDelayMin.toFixed(2) + "–" + autoDelayMax.toFixed(2) + " s");
           // Color
           if (s.color && current_color !== s.color) {
             current_color = s.color;
@@ -6986,7 +7058,7 @@ factories["telemetry"]=function(module,exports,require){
 const{clone,deepFreeze,exactKeys,isPlainObject}=require("./models");const TELEMETRY_VERSION="session-control-telemetry-v1";const DIAGNOSTIC_VERSION="session-control-diagnostic-v1";const EVENT_NAMES=Object.freeze(["session_started","session_recovered","session_draining","session_completed","leader_acquired","leader_lost","lease_takeover","queue_intent_admitted","queue_intent_consumed","queue_intent_expired","game_target_pinned","result_committed","duplicate_result_ignored","dda_mode_changed","target_saturated","calibration_mismatch","session_paused",]);const FIELD_NAMES=Object.freeze(["occurredAtEpochMs","phase","revision","role","observedCounts","controlCounts","controllerMode","posteriorWinRate","offsetElo","rawTargetElo","effectiveTargetElo","saturated","reasonCode","reducerVersion","estimatorVersion","controllerVersion","rolloutStage",]);function safeCounts(value,field){exactKeys(value,["wins","draws","losses","terminalGames"],[],field);const output={};for(const key of["wins","draws","losses","terminalGames"]){if(!Number.isInteger(value[key])||value[key]<0)throw new TypeError(`${field}.${key} is invalid`);output[key]=value[key];}return output;}function sanitizeFields(input){if(!isPlainObject(input))throw new TypeError("telemetry fields must be an object");for(const key of Object.keys(input))if(!FIELD_NAMES.includes(key))throw new TypeError(`telemetry field is forbidden: ${key}`);const output={};for(const[key,value]of Object.entries(input)){if(value===undefined||value===null)continue;if(key==="observedCounts"||key==="controlCounts")output[key]=safeCounts(value,`telemetry.${key}`);else if(["occurredAtEpochMs","revision","offsetElo","rawTargetElo","effectiveTargetElo"].includes(key)){if(!Number.isInteger(value))throw new TypeError(`telemetry.${key} must be an integer`);output[key]=value;}else if(key==="posteriorWinRate"){if(!Number.isFinite(value)||value<0||value>1)throw new TypeError("telemetry.posteriorWinRate is invalid");output[key]=value;}else if(key==="saturated"){if(typeof value!=="boolean")throw new TypeError("telemetry.saturated must be boolean");output[key]=value;}else{if(typeof value!=="string"||!value||value.length>120)throw new TypeError(`telemetry.${key} must be a short string`);output[key]=value;}}return output;}function sanitizeEvent(input){if(!isPlainObject(input))throw new TypeError("telemetry event must be an object");const{schemaVersion,telemetryVersion,name,...fields}=input;if(schemaVersion!==1)throw new TypeError("telemetry schema version is unsupported");if(telemetryVersion!==TELEMETRY_VERSION)throw new TypeError("telemetry version is unsupported");if(!EVENT_NAMES.includes(name))throw new TypeError("telemetry event name is unsupported");return{schemaVersion,telemetryVersion,name,...sanitizeFields(fields)};}class BoundedTelemetry{constructor(options){const settings=options||{};this.capacity=settings.capacity===undefined?500:settings.capacity;if(!Number.isInteger(this.capacity)||this.capacity<1||this.capacity>5000)throw new TypeError("telemetry capacity is invalid");this.events=[];}record(name,fields){const event=deepFreeze(sanitizeEvent({schemaVersion:1,telemetryVersion:TELEMETRY_VERSION,name,...(fields||{})}));this.events.push(event);if(this.events.length>this.capacity)this.events.splice(0,this.events.length-this.capacity);return event;}list(){return deepFreeze(clone(this.events));}clear(){this.events.length=0;}}function diagnosticExport(status,events,generatedAtEpochMs){if(!isPlainObject(status))throw new TypeError("diagnostic status must be an object");if(!Array.isArray(events))throw new TypeError("diagnostic events must be an array");if(!Number.isInteger(generatedAtEpochMs)||generatedAtEpochMs<0)throw new TypeError("diagnostic timestamp is invalid");const allowedStatus=["phase","role","remainingTtlMs","drainDeadlineEpochMs","drainRemainingMs","observedCounts","controlCounts","rawWinRate","posteriorWinRate","wilsonLower","wilsonUpper","minWinRate","maxWinRate","controllerMode","offsetElo","opponentRating","effectiveTargetElo","targetSaturated","warningCode","rolloutStage","executionMode",];const safeStatus={};for(const key of allowedStatus)if(Object.prototype.hasOwnProperty.call(status,key))safeStatus[key]=clone(status[key]);return deepFreeze({schemaVersion:1,diagnosticVersion:DIAGNOSTIC_VERSION,generatedAtEpochMs,status:safeStatus,events:events.map(sanitizeEvent)});}module.exports={BoundedTelemetry,DIAGNOSTIC_VERSION,EVENT_NAMES,FIELD_NAMES,TELEMETRY_VERSION,diagnosticExport,sanitizeEvent,sanitizeFields};
 };
 factories["ui"]=function(module,exports,require){
-const FIELD_IDS=Object.freeze({durationMinutes:"kb-session-duration",minimumPercent:"kb-session-min-rate",maximumPercent:"kb-session-max-rate",});const TERMINAL_PHASES=Object.freeze(["IDLE","COMPLETED","ABORTED"]);const PHASE_LABELS=Object.freeze({IDLE:"Aguardando",QUEUEING:"Buscando...",IN_GAME:"Jogando...",DRAINING:"Finalizando sessão...",PAUSED_QUEUEING:"Sessão pausada",PAUSED_ACTIVE:"Sessão pausada",COMPLETED:"Concluído",ABORTED:"Interrompido",});const SUCCESS_LABELS=Object.freeze({SESSION_STARTED:"Sessão iniciada",DRAINING:"Finalizando sessão...",SESSION_STOPPED:"Sessão finalizada",COMPLETED:"Concluído",});function phaseLabel(phase){return Object.prototype.hasOwnProperty.call(PHASE_LABELS,phase)?PHASE_LABELS[phase]:"Atualizando...";}function warningLabel(code){if(!code)return "";if(code==="DDA_MAPPING_UNAVAILABLE"||code.includes("ARTIFACT"))return "⚠️ Verifique o Artefato";if(code.startsWith("CALIBRATION_"))return "⚠️ Calibração não encontrada";return "⚠️ Não foi possível atualizar a sessão";}function successLabel(code){return SUCCESS_LABELS[code]||"Operação concluída";}function reasonCode(error,fallback){if(error&&typeof error.code==="string"&&error.code)return error.code;if(error&&typeof error.reason==="string"&&error.reason)return error.reason;if(error&&typeof error.message==="string"&&/^[A-Z][A-Z0-9_]+$/.test(error.message))return error.message;return fallback;}function findById(panel,id){return panel&&typeof panel.querySelector==="function"?panel.querySelector(`#${id}`):null;}function setText(panel,id,value){const node=findById(panel,id);if(node)node.textContent=value;}function actionNode(panel,target){let node=target;while(node&&node!==panel){if(typeof node.getAttribute==="function"&&node.getAttribute("data-action"))return node;node=node.parentNode;}return null;}function availability(status,startBlocker){const terminal=TERMINAL_PHASES.includes(status.phase);return Object.freeze({start:startBlocker||(status.rolloutStage==="DISABLED"?"ROLLOUT_DISABLED":terminal?null:"ACTIVE_SESSION_EXISTS"),stop:terminal?"SESSION_NOT_ACTIVE":null,});}function presentAvailability(panel,action,reason){const button=panel.querySelector(`[data-action="${action}"]`);if(!button)return;button.toggleAttribute("disabled",Boolean(reason));button.setAttribute("aria-disabled",reason?"true":"false");if(reason){button.setAttribute("data-disabled-reason",reason);}else{button.removeAttribute("data-disabled-reason");}button.removeAttribute("title");}function presentStatus(panel,status,formatDuration,startBlocker){const counts=status.observedCounts;const controlCounts=status.controlCounts;setText(panel,"kb-session-phase",phaseLabel(status.phase));setText(panel,"kb-session-ttl",formatDuration(status.remainingTtlMs));setText(panel,"kb-session-observed",`${counts.wins} V | ${counts.draws} E | ${counts.losses} D`);setText(panel,"kb-session-raw",controlCounts.terminalGames===0?"—":`${status.rawWinRate.toFixed(0)}%`);const state=availability(status,startBlocker);presentAvailability(panel,"start",state.start);presentAvailability(panel,"stop",state.stop);return state;}function createSessionControlPresenter(options){if(!options||typeof options.getPanel!=="function")throw new TypeError("getPanel is required");const AbortControllerType=options.AbortController||globalThis.AbortController;if(typeof AbortControllerType!=="function")throw new TypeError("AbortController is required");let panel=null;let abortController=null;let currentAvailability=Object.freeze({start:"STATUS_UNAVAILABLE",stop:"STATUS_UNAVAILABLE"});let sequence=0;const draft=Object.create(null);const inFlight=new Set();function emit(type,detail){sequence+=1;if(panel){panel.setAttribute("data-session-ui-event",type);panel.setAttribute("data-session-ui-sequence",String(sequence));}if(typeof options.onTelemetry==="function")options.onTelemetry(Object.freeze({type,sequence,...(detail||{})}));}function warning(code){const value=code||"STATUS_UNAVAILABLE";if(typeof options.setWarning==="function")options.setWarning(value);const label=warningLabel(value);if(typeof options.notify==="function")options.notify(label,{transient:true});emit("warning",{code:value});}function success(code){if(typeof options.setWarning==="function")options.setWarning(null);if(typeof options.notify==="function")options.notify(successLabel(code),{transient:true,success:true});emit("success",{code});}function captureDraft(nextPanel){for(const[field,id]of Object.entries(FIELD_IDS)){const input=findById(nextPanel,id);if(!input)continue;if(Object.prototype.hasOwnProperty.call(draft,field))input.value=draft[field];else draft[field]=String(input.value);}}function readDraft(){return Object.freeze({durationMinutes:draft.durationMinutes,minimumPercent:draft.minimumPercent,maximumPercent:draft.maximumPercent,});}function readConfig(){if(typeof options.createConfig!=="function")throw new TypeError("createConfig is required");return options.createConfig(readDraft());}async function run(action){if(inFlight.has(action))return;const blocked=currentAvailability[action];if(blocked){emit("blocked",{action,code:blocked});return;}inFlight.add(action);emit("dispatch",{action});try{if(action==="start"){let config;try{config=readConfig();}catch(error){warning(reasonCode(error,"SESSION_CONFIG_INVALID"));return;}await options.start(config);success("SESSION_STARTED");}else if(action==="stop"){const result=await options.stop();if(!result||result.allowed!==true){warning(reasonCode(result,"GRACEFUL_STOP_FAILED"));return;}success(reasonCode(result,"SESSION_STOPPED"));}}catch(error){warning(reasonCode(error,action==="start"?"SESSION_START_FAILED":"GRACEFUL_STOP_FAILED"));}finally{inFlight.delete(action);update();}}function runExport(){emit("dispatch",{action:"export"});try{const diagnostic=options.exportDiagnostic();options.downloadDiagnostic(diagnostic);}catch(error){warning(reasonCode(error,"DIAGNOSTIC_EXPORT_FAILED"));}update();}function bind(nextPanel){if(nextPanel===panel&&abortController)return false;if(abortController)abortController.abort();panel=nextPanel||null;abortController=null;if(!panel)return false;captureDraft(panel);abortController=new AbortControllerType();const signal=abortController.signal;panel.addEventListener("input",(event)=>{for(const[field,id]of Object.entries(FIELD_IDS)){if(event.target&&event.target.id===id){draft[field]=String(event.target.value);emit("draft",{field});return;}}},{signal});panel.addEventListener("click",(event)=>{const button=actionNode(panel,event.target);if(!button)return;event.preventDefault();event.stopPropagation();const action=button.getAttribute("data-action");if(action==="export")runExport();else if(action==="start"||action==="stop")void run(action);},{signal});emit("bound");return true;}function update(){const nextPanel=options.getPanel();if(nextPanel!==panel)bind(nextPanel);if(!panel)return null;try{const status=options.readStatus();const startBlocker=typeof options.readStartBlocker==="function"?options.readStartBlocker():null;currentAvailability=presentStatus(panel,status,options.formatDuration,startBlocker);return status;}catch(error){warning(reasonCode(error,"STATUS_UNAVAILABLE"));return null;}}function dispose(){if(abortController)abortController.abort();abortController=null;panel=null;}return Object.freeze({bind,dispose,readConfig,readDraft,update});}module.exports={FIELD_IDS,createSessionControlPresenter,phaseLabel,presentStatus,reasonCode,successLabel,warningLabel};
+const FIELD_IDS=Object.freeze({durationMinutes:"kb-session-duration",minimumPercent:"kb-session-min-rate",maximumPercent:"kb-session-max-rate",});const TERMINAL_PHASES=Object.freeze(["IDLE","COMPLETED","ABORTED"]);const PHASE_LABELS=Object.freeze({IDLE:"Idle",QUEUEING:"Searching...",IN_GAME:"Playing...",DRAINING:"Finishing session...",PAUSED_QUEUEING:"Paused",PAUSED_ACTIVE:"Paused",COMPLETED:"Completed",ABORTED:"Stopped",});const SUCCESS_LABELS=Object.freeze({SESSION_STARTED:"Session started",DRAINING:"Finishing session...",SESSION_STOPPED:"Session finished",COMPLETED:"Completed",});function phaseLabel(phase){return Object.prototype.hasOwnProperty.call(PHASE_LABELS,phase)?PHASE_LABELS[phase]:"Updating...";}function warningLabel(code){if(!code)return "";if(code==="DDA_MAPPING_UNAVAILABLE"||code.includes("ARTIFACT"))return "⚠️ Check calibration artifact";if(code.startsWith("CALIBRATION_"))return "⚠️ Calibration unavailable";return "⚠️ Unable to update session";}function successLabel(code){return SUCCESS_LABELS[code]||"Operation completed";}function reasonCode(error,fallback){if(error&&typeof error.code==="string"&&error.code)return error.code;if(error&&typeof error.reason==="string"&&error.reason)return error.reason;if(error&&typeof error.message==="string"&&/^[A-Z][A-Z0-9_]+$/.test(error.message))return error.message;return fallback;}function findById(panel,id){return panel&&typeof panel.querySelector==="function"?panel.querySelector(`#${id}`):null;}function setText(panel,id,value){const node=findById(panel,id);if(node)node.textContent=value;}function actionNode(panel,target){let node=target;while(node&&node!==panel){if(typeof node.getAttribute==="function"&&node.getAttribute("data-action"))return node;node=node.parentNode;}return null;}function availability(status,startBlocker){const terminal=TERMINAL_PHASES.includes(status.phase);return Object.freeze({start:startBlocker||(status.rolloutStage==="DISABLED"?"ROLLOUT_DISABLED":terminal?null:"ACTIVE_SESSION_EXISTS"),stop:terminal?"SESSION_NOT_ACTIVE":null,});}function presentAvailability(panel,action,reason){const button=panel.querySelector(`[data-action="${action}"]`);if(!button)return;button.toggleAttribute("disabled",Boolean(reason));button.setAttribute("aria-disabled",reason?"true":"false");if(reason){button.setAttribute("data-disabled-reason",reason);}else{button.removeAttribute("data-disabled-reason");}button.removeAttribute("title");}function presentStatus(panel,status,formatDuration,startBlocker){const counts=status.observedCounts;const controlCounts=status.controlCounts;panel.setAttribute("data-session-state",status.phase==="IDLE"?"never-started":status.phase.toLowerCase().replace(/_/g,"-"));panel.setAttribute("data-session-history",status.phase==="IDLE"?"none":"present");setText(panel,"kb-session-phase",phaseLabel(status.phase));setText(panel,"kb-session-ttl",formatDuration(status.remainingTtlMs));setText(panel,"kb-session-observed",`${counts.wins} W | ${counts.draws} D | ${counts.losses} L`);setText(panel,"kb-session-raw",controlCounts.terminalGames===0?"—":`${status.rawWinRate.toFixed(0)}%`);const state=availability(status,startBlocker);presentAvailability(panel,"start",state.start);presentAvailability(panel,"stop",state.stop);return state;}function createSessionControlPresenter(options){if(!options||typeof options.getPanel!=="function")throw new TypeError("getPanel is required");const AbortControllerType=options.AbortController||globalThis.AbortController;if(typeof AbortControllerType!=="function")throw new TypeError("AbortController is required");let panel=null;let abortController=null;let currentAvailability=Object.freeze({start:"STATUS_UNAVAILABLE",stop:"STATUS_UNAVAILABLE"});let sequence=0;const draft=Object.create(null);const inFlight=new Set();function emit(type,detail){sequence+=1;if(panel){panel.setAttribute("data-session-ui-event",type);panel.setAttribute("data-session-ui-sequence",String(sequence));}if(typeof options.onTelemetry==="function")options.onTelemetry(Object.freeze({type,sequence,...(detail||{})}));}function warning(code){const value=code||"STATUS_UNAVAILABLE";if(typeof options.setWarning==="function")options.setWarning(value);const label=warningLabel(value);if(typeof options.notify==="function")options.notify(label,{transient:true});emit("warning",{code:value});}function success(code){if(typeof options.setWarning==="function")options.setWarning(null);if(typeof options.notify==="function")options.notify(successLabel(code),{transient:true,success:true});emit("success",{code});}function captureDraft(nextPanel){for(const[field,id]of Object.entries(FIELD_IDS)){const input=findById(nextPanel,id);if(!input)continue;if(Object.prototype.hasOwnProperty.call(draft,field))input.value=draft[field];else draft[field]=String(input.value);}}function readDraft(){return Object.freeze({durationMinutes:draft.durationMinutes,minimumPercent:draft.minimumPercent,maximumPercent:draft.maximumPercent,});}function readConfig(){if(typeof options.createConfig!=="function")throw new TypeError("createConfig is required");return options.createConfig(readDraft());}async function run(action){if(inFlight.has(action))return;const blocked=currentAvailability[action];if(blocked){emit("blocked",{action,code:blocked});return;}inFlight.add(action);emit("dispatch",{action});try{if(action==="start"){let config;try{config=readConfig();}catch(error){warning(reasonCode(error,"SESSION_CONFIG_INVALID"));return;}await options.start(config);success("SESSION_STARTED");}else if(action==="stop"){const result=await options.stop();if(!result||result.allowed!==true){warning(reasonCode(result,"GRACEFUL_STOP_FAILED"));return;}success(reasonCode(result,"SESSION_STOPPED"));}}catch(error){warning(reasonCode(error,action==="start"?"SESSION_START_FAILED":"GRACEFUL_STOP_FAILED"));}finally{inFlight.delete(action);update();}}function runExport(){emit("dispatch",{action:"export"});try{const diagnostic=options.exportDiagnostic();options.downloadDiagnostic(diagnostic);}catch(error){warning(reasonCode(error,"DIAGNOSTIC_EXPORT_FAILED"));}update();}function bind(nextPanel){if(nextPanel===panel&&abortController)return false;if(abortController)abortController.abort();panel=nextPanel||null;abortController=null;if(!panel)return false;captureDraft(panel);abortController=new AbortControllerType();const signal=abortController.signal;panel.addEventListener("input",(event)=>{for(const[field,id]of Object.entries(FIELD_IDS)){if(event.target&&event.target.id===id){draft[field]=String(event.target.value);emit("draft",{field});return;}}},{signal});panel.addEventListener("click",(event)=>{const button=actionNode(panel,event.target);if(!button)return;event.preventDefault();event.stopPropagation();const action=button.getAttribute("data-action");if(action==="export")runExport();else if(action==="start"||action==="stop")void run(action);},{signal});emit("bound");return true;}function update(){const nextPanel=options.getPanel();if(nextPanel!==panel)bind(nextPanel);if(!panel)return null;try{const status=options.readStatus();const startBlocker=typeof options.readStartBlocker==="function"?options.readStartBlocker():null;currentAvailability=presentStatus(panel,status,options.formatDuration,startBlocker);return status;}catch(error){warning(reasonCode(error,"STATUS_UNAVAILABLE"));return null;}}function dispose(){if(abortController)abortController.abort();abortController=null;panel=null;}return Object.freeze({bind,dispose,readConfig,readDraft,update});}module.exports={FIELD_IDS,createSessionControlPresenter,phaseLabel,presentStatus,reasonCode,successLabel,warningLabel};
 };
 factories["index"]=function(module,exports,require){
 module.exports=Object.freeze({...require("./clock"),...require("./controller"),...require("./leader"),...require("./models"),...require("./ports"),...require("./platform-chesscom"),...require("./reducer"),...require("./repository"),...require("./runtime"),...require("./statistics"),...require("./status"),...require("./telemetry"),...require("./ui"),});

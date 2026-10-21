@@ -9,36 +9,36 @@ const FIELD_IDS = Object.freeze({
 const TERMINAL_PHASES = Object.freeze(["IDLE", "COMPLETED", "ABORTED"]);
 
 const PHASE_LABELS = Object.freeze({
-  IDLE: "Aguardando",
-  QUEUEING: "Buscando...",
-  IN_GAME: "Jogando...",
-  DRAINING: "Finalizando sessão...",
-  PAUSED_QUEUEING: "Sessão pausada",
-  PAUSED_ACTIVE: "Sessão pausada",
-  COMPLETED: "Concluído",
-  ABORTED: "Interrompido",
+  IDLE: "Idle",
+  QUEUEING: "Searching...",
+  IN_GAME: "Playing...",
+  DRAINING: "Finishing session...",
+  PAUSED_QUEUEING: "Paused",
+  PAUSED_ACTIVE: "Paused",
+  COMPLETED: "Completed",
+  ABORTED: "Stopped",
 });
 
 const SUCCESS_LABELS = Object.freeze({
-  SESSION_STARTED: "Sessão iniciada",
-  DRAINING: "Finalizando sessão...",
-  SESSION_STOPPED: "Sessão finalizada",
-  COMPLETED: "Concluído",
+  SESSION_STARTED: "Session started",
+  DRAINING: "Finishing session...",
+  SESSION_STOPPED: "Session finished",
+  COMPLETED: "Completed",
 });
 
 function phaseLabel(phase) {
-  return Object.prototype.hasOwnProperty.call(PHASE_LABELS, phase) ? PHASE_LABELS[phase] : "Atualizando...";
+  return Object.prototype.hasOwnProperty.call(PHASE_LABELS, phase) ? PHASE_LABELS[phase] : "Updating...";
 }
 
 function warningLabel(code) {
   if (!code) return "";
-  if (code === "DDA_MAPPING_UNAVAILABLE" || code.includes("ARTIFACT")) return "⚠️ Verifique o Artefato";
-  if (code.startsWith("CALIBRATION_")) return "⚠️ Calibração não encontrada";
-  return "⚠️ Não foi possível atualizar a sessão";
+  if (code === "DDA_MAPPING_UNAVAILABLE" || code.includes("ARTIFACT")) return "⚠️ Check calibration artifact";
+  if (code.startsWith("CALIBRATION_")) return "⚠️ Calibration unavailable";
+  return "⚠️ Unable to update session";
 }
 
 function successLabel(code) {
-  return SUCCESS_LABELS[code] || "Operação concluída";
+  return SUCCESS_LABELS[code] || "Operation completed";
 }
 
 function reasonCode(error, fallback) {
@@ -92,9 +92,11 @@ function presentAvailability(panel, action, reason) {
 function presentStatus(panel, status, formatDuration, startBlocker) {
   const counts = status.observedCounts;
   const controlCounts = status.controlCounts;
+  panel.setAttribute("data-session-state", status.phase === "IDLE" ? "never-started" : status.phase.toLowerCase().replace(/_/g, "-"));
+  panel.setAttribute("data-session-history", status.phase === "IDLE" ? "none" : "present");
   setText(panel, "kb-session-phase", phaseLabel(status.phase));
   setText(panel, "kb-session-ttl", formatDuration(status.remainingTtlMs));
-  setText(panel, "kb-session-observed", `${counts.wins} V | ${counts.draws} E | ${counts.losses} D`);
+  setText(panel, "kb-session-observed", `${counts.wins} W | ${counts.draws} D | ${counts.losses} L`);
   setText(panel, "kb-session-raw", controlCounts.terminalGames === 0 ? "—" : `${status.rawWinRate.toFixed(0)}%`);
   const state = availability(status, startBlocker);
   presentAvailability(panel, "start", state.start);
