@@ -256,23 +256,31 @@ async function run() {
     assert(!menu.includes(`id="${id}"`), `Session Control menu retained advanced field ${id}`);
   }
   assert(menu.includes('id="kb-advanced-settings-toggle"'), "advanced settings gear is missing");
+  assert(menu.includes('<h3 id="kb-auto-play-title">Auto Play</h3>'), "Auto Play heading is missing");
+  assert(menu.includes('aria-labelledby="kb-auto-play-title"'), "Auto Play section is missing its accessible heading relationship");
+  assert(!menu.includes('<span>Session Control</span>'), "legacy Session Control heading is still visible");
   assert(menu.includes('aria-controls="advanced-settings-panel" aria-expanded="false"'), "advanced settings gear is missing its collapsed ARIA contract");
   assert(menu.includes('id="advanced-settings-panel" data-open="false" aria-hidden="true" inert'), "advanced settings panel is not inert and collapsed by default");
   const advancedMarkup = sourceBlock(menu, '          <div class="kb-advanced-settings"', '          <div class="kb-session-actions">');
-  for (const id of ["kb-session-duration", "kb-session-min-rate", "kb-session-max-rate", "auto-delay-section"]) {
+  for (const id of ["kb-session-duration", "kb-session-min-rate", "kb-session-max-rate"]) {
     assert(advancedMarkup.includes(`id="${id}"`), `advanced settings panel is missing ${id}`);
   }
-  assert(advancedMarkup.includes('aria-label="Run Delay mínimo em segundos"'));
-  assert(advancedMarkup.includes('aria-label="Run Delay máximo em segundos"'));
-  assert(advancedMarkup.includes('role="group" aria-labelledby="kb-run-delay-label"'));
-  const mainGlassCss = sourceBlock(source, "          position:relative; isolation:isolate; overflow:hidden; width: 320px", "        #oi-zone2.tc-workspace-card {");
+  assert(!advancedMarkup.includes('id="auto-delay-section"'), "Run Delay is incorrectly nested under Auto Play advanced settings");
+  const autoMovesIndex = menu.indexOf('name="kb-auto-move"');
+  const runDelayIndex = menu.indexOf('id="auto-delay-section"');
+  const autoQueueIndex = menu.indexOf('name="kb-auto-queue"');
+  assert(autoMovesIndex >= 0 && runDelayIndex > autoMovesIndex && autoQueueIndex > runDelayIndex, "Run Delay is not positioned with the primary Auto Moves controls");
+  assert(menu.includes('aria-label="Run Delay mínimo em segundos"'));
+  assert(menu.includes('aria-label="Run Delay máximo em segundos"'));
+  assert(menu.includes('role="group" aria-labelledby="kb-run-delay-label"'));
+  const mainGlassCss = sourceBlock(source, "          position:relative; isolation:isolate; overflow:hidden; width: 292px", "        #oi-zone2.tc-workspace-card {");
   const scoutGlassCss = sourceBlock(source, "        #oi-zone2.tc-workspace-card {", "        #krypbot-container .kb-header {");
   for (const declaration of [
     "background: var(--tc-glass-bg) !important",
     "backdrop-filter: blur(16px) !important",
     "-webkit-backdrop-filter: blur(16px) !important",
     "border: 1px solid var(--tc-glass-border) !important",
-    "border-radius: 20px !important",
+    "border-radius: 18px !important",
     "font-family: var(--tc-font) !important",
   ]) {
     assert(mainGlassCss.includes(declaration), `main-panel glass CSS is missing ${declaration}`);
@@ -281,23 +289,23 @@ async function run() {
   const wrapperTokens = sourceBlock(source, "        #oi-wrapper {", "          position: absolute !important");
   assert(wrapperTokens.includes("--tc-glass-bg: rgba(20, 20, 25, 0.65)"));
   assert(wrapperTokens.includes('--tc-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'));
-  assert(source.includes("width:320px !important; min-height:480px !important; padding:22px !important"), "Scout premium geometry regressed");
-  assert(source.includes("min-height:40px; box-sizing:border-box; display:flex; flex-direction:column"), "Session metric hierarchy regressed");
-  assert(source.includes("font-size:26px; line-height:30px; font-variant-numeric:tabular-nums"), "Time Remaining lost its premium hero hierarchy");
+  assert(source.includes("width:292px !important; min-height:430px !important; padding:18px !important"), "Scout compact geometry regressed");
+  assert(source.includes("min-height:36px; box-sizing:border-box; display:flex; flex-direction:column"), "Auto Play metric hierarchy regressed");
+  assert(source.includes("font-size:13px; font-variant-numeric:tabular-nums"), "Time Remaining lost its compact hierarchy");
   assert(source.includes('class="tc-scout-radar" aria-hidden="true"'), "Scout waiting state lost its intentional visual treatment");
   assert(source.includes('class="tc-scout-loading"'), "Scout loading state lost its centered premium layout");
   assert(source.includes('class="tc-scout-skeleton" aria-hidden="true"'), "Scout loading state lost its translucent skeletons");
   assert(source.includes('retry.className = "tc-scout-retry"'), "Scout unavailable retry is not styled by the shared premium system");
   assert(source.includes('panel.querySelector(".tc-scout-empty")?.appendChild(retry)'), "Scout unavailable retry is outside the centered empty state");
-  assert(source.includes("@media (max-width: 720px)"), "workspace lacks a narrow-viewport layout");
+  assert(source.includes("@media (max-width: 640px)"), "workspace lacks a narrow-viewport layout");
   assert(source.includes("width: 60px !important;\n          max-width: 60px !important"), "minimized panel retains the expanded inline width");
   assert(source.includes('#krypbot-container .kb-session-button[data-action="start"]'), "START lacks a dedicated primary-action style");
-  assert(source.includes("height:44px; border-radius:14px; background:linear-gradient(135deg,#42eca0 0%,#18b96a 100%)"), "START primary-action styling regressed");
+  assert(source.includes("height:38px; border-radius:12px; background:linear-gradient(135deg,#42eca0 0%,#18b96a 100%)"), "START primary-action styling regressed");
   assert(source.includes('panel.toggleAttribute("inert", !open)'), "advanced disclosure does not synchronize focus isolation");
   assert(source.includes("@media (prefers-reduced-motion: reduce)"), "advanced disclosure ignores reduced-motion preferences");
   assert(source.includes('source?.closest?.("#kb-session-panel")'), "advanced disclosure is not scoped to its owning Session Control panel");
   assert(!menu.includes("SESSION_RUNTIME_UNAVAILABLE"), "Session Control menu exposes a raw startup reason code");
-  assert.equal(sourceHash(source, "    const menuHtml = `", "    const bannerHtml = `"), "6f979262242a88d954d0d65dd579ef87a38ade5a1be820a7855f135c8bded410", "Session Control menuHtml changed");
+  assert.equal(sourceHash(source, "    const menuHtml = `", "    const bannerHtml = `"), "c5f62be5e71db8c07520b81bf5fe104654874f86d9b12c52b4d97ae4319a16ee", "Auto Play menuHtml changed");
   const wrapperCss = sourceBlock(source, "        #oi-wrapper {", "        #oi-wrapper > * {");
   for (const declaration of [
     "position: absolute !important",
@@ -306,7 +314,7 @@ async function run() {
     "width: max-content !important",
     "display: flex !important",
     "align-items: stretch !important",
-    "gap: 16px !important",
+    "gap: 12px !important",
     "z-index: 2147483647 !important",
     "pointer-events: none !important",
   ]) assert(wrapperCss.includes(declaration), `workspace wrapper is missing ${declaration}`);

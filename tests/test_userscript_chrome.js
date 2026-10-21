@@ -194,10 +194,26 @@ function createCdpClient(webSocketUrl) {
         const delayMaximum = document.getElementById("maxDelayInput");
         const delayMode = document.getElementById("dm-max");
         const sessionPanel = document.getElementById("kb-session-panel");
-        if (!toggle || !panel || !duration || !minimum || !maximum || !delayMinimum || !delayMaximum || !delayMode || !sessionPanel) return { ok: false, reason: "advanced-disclosure-missing" };
+        const delayPanel = document.getElementById("auto-delay-section");
+        if (!toggle || !panel || !duration || !minimum || !maximum || !delayMinimum || !delayMaximum || !delayMode || !sessionPanel || !delayPanel) return { ok: false, reason: "advanced-disclosure-missing" };
         const phaseBefore = window.krypbotSessionControlBridge?.status?.().phase || null;
         const sequenceBefore = sessionPanel.getAttribute("data-session-ui-sequence");
         const initial = { expanded: toggle.getAttribute("aria-expanded"), hidden: panel.getAttribute("aria-hidden"), inert: panel.hasAttribute("inert"), open: panel.dataset.open };
+        const delayStyle = getComputedStyle(delayPanel);
+        const delayInputs = Array.from(delayPanel.querySelectorAll(".kb-num-input"));
+        const delayModeLabels = Array.from(delayPanel.querySelectorAll('input[name="delayMode"] + label'));
+        const delayPlacement = {
+          outsideAutoPlay: !sessionPanel.contains(delayPanel),
+          outsideAdvanced: !panel.contains(delayPanel),
+          followsAutoMoves: delayPanel.previousElementSibling?.querySelector('input[name="kb-auto-move"]') !== null,
+          precedesAutoQueue: delayPanel.nextElementSibling?.querySelector('input[name="kb-auto-queue"]') !== null,
+          visible: delayStyle.display !== "none",
+          noOverflow: delayPanel.scrollWidth <= delayPanel.clientWidth,
+          controlsAccessible: delayInputs.every((node) => node.getBoundingClientRect().height >= 24 && parseFloat(getComputedStyle(node).fontSize) >= 9)
+            && delayModeLabels.every((node) => node.getBoundingClientRect().height >= 24 && parseFloat(getComputedStyle(node).fontSize) >= 9),
+        };
+        delayMinimum.focus();
+        const delayFocusAllowed = document.activeElement === delayMinimum;
         duration.focus();
         const collapsedFocusBlocked = document.activeElement !== duration;
         toggle.click();
@@ -212,8 +228,10 @@ function createCdpClient(webSocketUrl) {
         maximum.value = "83";
         maximum.dispatchEvent(new Event("input", { bubbles: true }));
         delayMinimum.value = "0.75";
+        delayMinimum.dispatchEvent(new Event("input", { bubbles: true }));
         delayMaximum.value = "1.80";
-        delayMode.checked = true;
+        delayMaximum.dispatchEvent(new Event("input", { bubbles: true }));
+        const delayPersisted = localStorage.getItem("autoMinDelay") === "0.75" && localStorage.getItem("autoMaxDelay") === "1.8";
         const sequenceAfterDraft = sessionPanel.getAttribute("data-session-ui-sequence");
         toggle.click();
         const closed = { expanded: toggle.getAttribute("aria-expanded"), hidden: panel.getAttribute("aria-hidden"), inert: panel.hasAttribute("inert"), open: panel.dataset.open };
@@ -237,9 +255,11 @@ function createCdpClient(webSocketUrl) {
             && closed.expanded === "false" && closed.hidden === "true" && closed.inert && closed.open === "false"
             && collapsedFocusBlocked && expandedFocusAllowed
             && retained.duration === "240" && retained.minimum === "74" && retained.maximum === "83"
-            && retained.delayMinimum === "0.75" && retained.delayMaximum === "1.80" && retained.delayMode
+            && retained.delayMinimum === "0.75" && retained.delayMaximum === "1.80"
+            && delayPlacement.outsideAutoPlay && delayPlacement.outsideAdvanced && delayPlacement.followsAutoMoves && delayPlacement.precedesAutoQueue && delayPlacement.visible && delayPlacement.noOverflow && delayPlacement.controlsAccessible
+            && delayFocusAllowed && delayPersisted
             && phaseBefore === phaseAfter && sequenceBefore === sequenceAfterOpen && sequenceAfterDraft === sequenceAfterClose && sequenceAfterClose === sequenceAfter,
-          initial, opened, closed, retained, collapsedFocusBlocked, expandedFocusAllowed, phaseBefore, phaseAfter, sequenceBefore, sequenceAfterOpen, sequenceAfterDraft, sequenceAfterClose, sequenceAfter,
+          initial, opened, closed, retained, delayPlacement, delayFocusAllowed, delayPersisted, collapsedFocusBlocked, expandedFocusAllowed, phaseBefore, phaseAfter, sequenceBefore, sequenceAfterOpen, sequenceAfterDraft, sequenceAfterClose, sequenceAfter,
           glass: { background: style.backgroundColor, backgroundImage: style.backgroundImage, radius: style.borderRadius, backdrop: style.backdropFilter || style.webkitBackdropFilter, font: style.fontFamily, width: style.width, padding: style.padding, shadow: style.boxShadow, titleFont: titleStyle.fontSize, metricFont: metricStyle.fontSize, metricSurface: metricSurface.backgroundColor, metricSurfaceImage: metricSurface.backgroundImage },
           scoutGlass: scoutStyle ? { background: scoutStyle.backgroundColor, radius: scoutStyle.borderRadius, backdrop: scoutStyle.backdropFilter || scoutStyle.webkitBackdropFilter, font: scoutStyle.fontFamily, width: scoutStyle.width, height: scout.getBoundingClientRect().height, menuHeight: menu.getBoundingClientRect().height, minHeight: scoutStyle.minHeight, emptyAlign: scoutEmptyStyle?.alignItems || null, emptyJustify: scoutEmptyStyle?.justifyContent || null } : null,
         };
@@ -250,11 +270,11 @@ function createCdpClient(webSocketUrl) {
 
     assert(disclosureSmoke.ok, `Advanced settings disclosure smoke failed: ${JSON.stringify(disclosureSmoke)}`);
     assert(disclosureSmoke.glass.background === "rgba(20, 20, 25, 0.65)", `Session panel glass background regressed: ${JSON.stringify(disclosureSmoke.glass)}`);
-    assert(disclosureSmoke.glass.radius === "20px" && disclosureSmoke.glass.backdrop.includes("16px"), `Session panel glass geometry regressed: ${JSON.stringify(disclosureSmoke.glass)}`);
+    assert(disclosureSmoke.glass.radius === "18px" && disclosureSmoke.glass.backdrop.includes("16px"), `Session panel glass geometry regressed: ${JSON.stringify(disclosureSmoke.glass)}`);
     assert(disclosureSmoke.glass.font.includes("-apple-system") || disclosureSmoke.glass.font.includes("BlinkMacSystemFont") || disclosureSmoke.glass.font.includes("Segoe UI"), `Session panel system font regressed: ${JSON.stringify(disclosureSmoke.glass)}`);
-    assert(disclosureSmoke.glass.width === "320px" && disclosureSmoke.glass.padding === "18px", `Session panel still uses compact legacy geometry: ${JSON.stringify(disclosureSmoke.glass)}`);
-    assert(disclosureSmoke.glass.titleFont === "18px" && disclosureSmoke.glass.metricFont === "26px", `Session panel typography hierarchy regressed: ${JSON.stringify(disclosureSmoke.glass)}`);
-    assert(disclosureSmoke.glass.backgroundImage.includes("linear-gradient") && disclosureSmoke.glass.shadow.includes("rgba(0, 0, 0, 0.52)") && disclosureSmoke.glass.metricSurfaceImage.includes("linear-gradient"), `Session panel still renders as a flat opaque surface: ${JSON.stringify(disclosureSmoke.glass)}`);
+    assert(disclosureSmoke.glass.width === "292px" && disclosureSmoke.glass.padding === "14px", `Session panel compact geometry regressed: ${JSON.stringify(disclosureSmoke.glass)}`);
+    assert(disclosureSmoke.glass.titleFont === "16px" && disclosureSmoke.glass.metricFont === "13px", `Session panel typography hierarchy regressed: ${JSON.stringify(disclosureSmoke.glass)}`);
+    assert(disclosureSmoke.glass.backgroundImage.includes("linear-gradient") && disclosureSmoke.glass.shadow.includes("rgba(0, 0, 0, 0.48)") && disclosureSmoke.glass.metricSurfaceImage.includes("linear-gradient"), `Session panel still renders as a flat opaque surface: ${JSON.stringify(disclosureSmoke.glass)}`);
 
     if (liveChess) {
       console.log(JSON.stringify({ state, consoleErrors }, null, 2));
@@ -394,9 +414,9 @@ function createCdpClient(webSocketUrl) {
     const module14 = module14Smoke.result.value;
 
     assert(exceptions.length === 0, `Userscript exception: ${exceptions[0]?.text || "unknown"}`);
-    assert(disclosureSmoke.scoutGlass?.background === "rgba(20, 20, 25, 0.65)" && disclosureSmoke.scoutGlass.radius === "20px" && disclosureSmoke.scoutGlass.backdrop.includes("16px"), `Scout glass styling regressed: ${JSON.stringify(disclosureSmoke.scoutGlass)}`);
+    assert(disclosureSmoke.scoutGlass?.background === "rgba(20, 20, 25, 0.65)" && disclosureSmoke.scoutGlass.radius === "18px" && disclosureSmoke.scoutGlass.backdrop.includes("16px"), `Scout glass styling regressed: ${JSON.stringify(disclosureSmoke.scoutGlass)}`);
     assert(disclosureSmoke.scoutGlass.font.includes("-apple-system") || disclosureSmoke.scoutGlass.font.includes("BlinkMacSystemFont") || disclosureSmoke.scoutGlass.font.includes("Segoe UI"), `Scout system font regressed: ${JSON.stringify(disclosureSmoke.scoutGlass)}`);
-    assert(disclosureSmoke.scoutGlass.width === "320px" && disclosureSmoke.scoutGlass.minHeight === "480px" && Math.abs(disclosureSmoke.scoutGlass.height - disclosureSmoke.scoutGlass.menuHeight) <= 1 && disclosureSmoke.scoutGlass.emptyAlign === "center" && disclosureSmoke.scoutGlass.emptyJustify === "center", `Scout waiting state retained legacy dead-space geometry: ${JSON.stringify(disclosureSmoke.scoutGlass)}`);
+    assert(disclosureSmoke.scoutGlass.width === "292px" && disclosureSmoke.scoutGlass.minHeight === "430px" && Math.abs(disclosureSmoke.scoutGlass.height - disclosureSmoke.scoutGlass.menuHeight) <= 1 && disclosureSmoke.scoutGlass.emptyAlign === "center" && disclosureSmoke.scoutGlass.emptyJustify === "center", `Scout waiting state retained legacy dead-space geometry: ${JSON.stringify(disclosureSmoke.scoutGlass)}`);
     assert(productionStart.ok, `Production START wiring smoke failed: ${JSON.stringify(productionStart)}`);
     if (!liveChess) assert(productionStart.warning === "⚠️ Verifique o Artefato" && productionStart.rawWarningCode === "DDA_MAPPING_UNAVAILABLE", `Default compatibility START did not leave IDLE: ${JSON.stringify(productionStart)}`);
     assert(module14.ok, `Module 14 browser smoke failed: ${JSON.stringify(module14)}`);
@@ -417,7 +437,7 @@ function createCdpClient(webSocketUrl) {
       `page cannot scroll to the configuration menu: ${state.documentHeight}px document / ${state.viewportHeight}px viewport`,
     );
     assert(state.bannerLayout.display === "flex", "banner is still hidden on a desktop viewport");
-    await client.send("Emulation.setDeviceMetricsOverride", { width: 680, height: 900, deviceScaleFactor: 1, mobile: false });
+    await client.send("Emulation.setDeviceMetricsOverride", { width: 640, height: 900, deviceScaleFactor: 1, mobile: false });
     await sleep(100);
     const responsiveResult = await client.send("Runtime.evaluate", {
       expression: `(() => {
@@ -439,6 +459,17 @@ function createCdpClient(webSocketUrl) {
     const responsive = responsiveResult.result.value;
     assert(responsive.direction === "column" && responsive.align === "flex-start", `Workspace did not stack on a narrow viewport: ${JSON.stringify(responsive)}`);
     assert(responsive.wrapperWidth <= responsive.viewportWidth - 20 && responsive.menuWidth <= responsive.wrapperWidth && responsive.scoutWidth <= responsive.wrapperWidth, `Workspace overflowed the narrow viewport: ${JSON.stringify(responsive)}`);
+    await client.send("Emulation.setDeviceMetricsOverride", { width: 641, height: 900, deviceScaleFactor: 1, mobile: false });
+    await sleep(100);
+    const wideBoundaryResult = await client.send("Runtime.evaluate", {
+      expression: `(() => {
+        const wrapper = document.getElementById("oi-wrapper");
+        return { direction:getComputedStyle(wrapper).flexDirection, width:wrapper.getBoundingClientRect().width, viewportWidth:innerWidth };
+      })()`,
+      returnByValue: true,
+    });
+    const wideBoundary = wideBoundaryResult.result.value;
+    assert(wideBoundary.direction === "row" && wideBoundary.width <= wideBoundary.viewportWidth - 20, `Workspace breakpoint regressed at 641px: ${JSON.stringify(wideBoundary)}`);
     await client.send("Emulation.clearDeviceMetricsOverride");
     await sleep(100);
     if (captureVisual) {

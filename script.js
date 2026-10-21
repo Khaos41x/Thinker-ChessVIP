@@ -1723,8 +1723,8 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       }
       if (container.parentNode !== wrapper) wrapper.appendChild(container);
       if (wrapper.parentNode !== document.body || wrapper.nextSibling) document.body.appendChild(wrapper);
-      container.style.width = "320px";
-      container.style.maxWidth = "320px";
+      container.style.width = "292px";
+      container.style.maxWidth = "292px";
       container.style.margin = "0";
       container.style.boxSizing = "border-box";
       return { container, wrapper };
@@ -1740,7 +1740,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       panel.className = "tc-workspace-card";
       panel.dataset.state = state;
       panel.style.cssText =
-        "width:320px;min-height:480px;box-sizing:border-box;background:rgba(20,20,25,.65);border:1px solid rgba(255,255,255,.08);border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.52);padding:22px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#fff;margin:0;display:flex;flex-direction:column;";
+        "width:292px;min-height:430px;box-sizing:border-box;background:rgba(20,20,25,.65);border:1px solid rgba(255,255,255,.08);border-radius:18px;box-shadow:0 24px 64px rgba(0,0,0,.48);padding:18px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#fff;margin:0;display:flex;flex-direction:column;";
       const title = state === "waiting" ? "Aguardando adversário" : "Histórico indisponível";
       const detail = state === "waiting"
         ? "O Scout exibirá apenas dados públicos reais quando identificar o adversário."
@@ -1786,7 +1786,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       panel.className = "tc-workspace-card";
       panel.dataset.state = "loading";
       panel.style.cssText =
-        "width:320px;min-height:480px;box-sizing:border-box;background:rgba(20,20,25,.65);border:1px solid rgba(255,255,255,.08);border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.52);padding:22px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#fff;display:flex;flex-direction:column;gap:14px;margin:0;";
+        "width:292px;min-height:430px;box-sizing:border-box;background:rgba(20,20,25,.65);border:1px solid rgba(255,255,255,.08);border-radius:18px;box-shadow:0 24px 64px rgba(0,0,0,.48);padding:18px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#fff;display:flex;flex-direction:column;gap:12px;margin:0;";
       panel.innerHTML = `
         <div class="tc-scout-head">
           <div>
@@ -1901,7 +1901,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       panel.id = "oi-zone2";
       panel.className = "tc-workspace-card";
       panel.style.cssText =
-        "width:320px;box-sizing:border-box;background:rgba(20,20,25,.65);border:1px solid rgba(255,255,255,.08);border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.52);padding:22px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#f7f8fa;display:flex;flex-direction:column;margin:0;";
+        "width:292px;box-sizing:border-box;background:rgba(20,20,25,.65);border:1px solid rgba(255,255,255,.08);border-radius:18px;box-shadow:0 24px 64px rgba(0,0,0,.48);padding:18px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#f7f8fa;display:flex;flex-direction:column;margin:0;";
       const lastPlayedDate = new Date(scoutStats.lastPlayed * 1000);
       const lastPlayed = Number.isNaN(lastPlayedDate.getTime())
         ? "—"
@@ -5514,7 +5514,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           z-index: 2147483647 !important;
           display: flex !important;
           align-items: stretch !important;
-          gap: 16px !important;
+          gap: 12px !important;
           pointer-events: none !important;
         }
 
@@ -5669,14 +5669,13 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           color: #fff; padding: 6px; border-radius: 6px; font-size: 12px; font-family: 'Inter', sans-serif;
         }
         .kb-num-input:focus { outline: none; border-color: #00ff88; }
-        .kb-delay-display { font-size: 13px; color: #00ff88; font-weight: 600; }
 
         #krypbot-container {
-          position:relative; isolation:isolate; overflow:hidden; width: 320px; max-width: 320px; box-sizing: border-box; margin: 0; padding: 18px;
+          position:relative; isolation:isolate; overflow:hidden; width: 292px; max-width: 292px; box-sizing: border-box; margin: 0; padding: 14px;
           gap: 0; background: var(--tc-glass-bg) !important;
           background-image:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.012) 42%,rgba(3,5,8,.1)) !important;
-          border: 1px solid var(--tc-glass-border) !important; border-radius: 20px !important;
-          box-shadow: 0 30px 80px rgba(0,0,0,.52), 0 8px 24px rgba(0,0,0,.24), inset 0 1px 0 var(--tc-glass-highlight);
+          border: 1px solid var(--tc-glass-border) !important; border-radius: 18px !important;
+          box-shadow: 0 24px 64px rgba(0,0,0,.48), 0 6px 20px rgba(0,0,0,.22), inset 0 1px 0 var(--tc-glass-highlight);
           backdrop-filter: blur(16px) !important; -webkit-backdrop-filter: blur(16px) !important;
           color: var(--tc-text); font-family: var(--tc-font) !important;
         }
@@ -5685,14 +5684,14 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           background:radial-gradient(110% 42% at 50% -8%,rgba(77,255,171,.13),transparent 58%);
         }
         #oi-zone2.tc-workspace-card {
-          position:relative; isolation:isolate; overflow:hidden; width:320px !important; min-height:480px !important; padding:22px !important;
+          position:relative; isolation:isolate; overflow:hidden; width:292px !important; min-height:430px !important; padding:18px !important;
           background: var(--tc-glass-bg) !important;
           background-image:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.012) 42%,rgba(3,5,8,.1)) !important;
           backdrop-filter: blur(16px) !important;
           -webkit-backdrop-filter: blur(16px) !important;
           border: 1px solid var(--tc-glass-border) !important;
-          border-radius: 20px !important;
-          box-shadow: 0 30px 80px rgba(0,0,0,.52), 0 8px 24px rgba(0,0,0,.24), inset 0 1px 0 var(--tc-glass-highlight) !important;
+          border-radius: 18px !important;
+          box-shadow: 0 24px 64px rgba(0,0,0,.48), 0 6px 20px rgba(0,0,0,.22), inset 0 1px 0 var(--tc-glass-highlight) !important;
           font-family: var(--tc-font) !important;
         }
         #oi-zone2.tc-workspace-card::before {
@@ -5705,14 +5704,14 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-eyebrow { display:block; margin-bottom:3px; color:#8f97a6; font-size:9px; line-height:1.2; font-weight:700; letter-spacing:.12em; }
         #krypbot-container .kb-title {
           margin: 0; color: #f7f8fa; background: none; -webkit-text-fill-color: currentColor;
-          font-size: 18px; line-height: 23px; font-weight: 750; letter-spacing:-.025em;
+          font-size: 16px; line-height: 21px; font-weight: 750; letter-spacing:-.025em;
         }
         #krypbot-container .kb-minimize-btn {
           width: 28px; height: 28px; padding: 0; border:1px solid rgba(255,255,255,.07); border-radius: 9px; background: rgba(255,255,255,.045);
           color: transparent; font-size: 0; background:rgba(255,255,255,.045) center/11px 11px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%237f8591' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E");
         }
         #krypbot-container .kb-section {
-          min-height: 42px; margin: 0; display: flex; align-items: center; justify-content: space-between;
+          min-height: 38px; margin: 0; display: flex; align-items: center; justify-content: space-between;
           border-bottom:1px solid rgba(255,255,255,.035);
         }
         #krypbot-container .kb-section-label {
@@ -5749,9 +5748,18 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           color: transparent !important; font-size: 0;
         }
         #krypbot-container .kb-section-col {
-          margin: 10px 0 2px; padding: 12px; gap: 8px; border: 1px solid rgba(255,255,255,.065); border-radius:15px;
+          margin: 8px 0 2px; padding: 10px; gap: 7px; border: 1px solid rgba(255,255,255,.065); border-radius:13px;
           background:rgba(5,8,12,.18); box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
         }
+        #krypbot-container .kb-run-delay-card {
+          min-height:48px; margin:6px 0 2px; padding:8px 9px; display:grid; grid-template-columns:auto minmax(0,1fr); align-items:center; gap:8px;
+          background:rgba(56,229,139,.035);
+        }
+        #krypbot-container .kb-run-delay-card > div { min-width:0; margin:0 !important; }
+        #krypbot-container .kb-run-delay-card > div:last-child { justify-content:flex-end !important; gap:5px; }
+        #krypbot-container .kb-run-delay-card .kb-num-input { width:46px; height:30px; padding:4px 6px; }
+        #krypbot-container .kb-run-delay-card .kb-radio-group:has(input[name="delayMode"]) { height:30px; }
+        #krypbot-container .kb-run-delay-card .kb-radio-group:has(input[name="delayMode"]) label { min-width:34px; padding:6px 4px; font-size:9px; }
         #krypbot-container .kb-slider-group { gap: 8px; }
         #krypbot-container .kb-slider { height: 3px; accent-color: #28d875; }
         #krypbot-container .kb-slider-val { color: var(--tc-accent); font-size: 12px; }
@@ -5772,7 +5780,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-radio-group:has(input[name="delayMode"]) input:checked + label {
           background: #2ad36f; color: #0c1710 !important; box-shadow: none;
         }
-        #krypbot-container .kb-delay-display { display: none; }
         #krypbot-container .kb-footer {
           margin: 10px 0 0; padding: 10px 0 0; border-top: 1px solid rgba(255,255,255,.06);
         }
@@ -5781,11 +5788,12 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           width: 19px; height: 19px; border: 0; border-radius: 6px; padding: 0; overflow: hidden;
         }
         #krypbot-container .kb-session-panel {
-          margin-top:10px; padding:12px; display:flex; flex-direction:column; gap:8px;
-          border:1px solid rgba(255,255,255,.075); border-radius:18px; background:rgba(5,8,12,.2);
+          margin-top:8px; padding:10px; display:flex; flex-direction:column; gap:7px;
+          border:1px solid rgba(255,255,255,.075); border-radius:15px; background:rgba(5,8,12,.2);
           box-shadow:inset 0 1px 0 rgba(255,255,255,.035), 0 8px 24px rgba(0,0,0,.12);
         }
         #krypbot-container .kb-session-title { display:flex; justify-content:space-between; align-items:center; color:#f4f5f7; font-size:13px; line-height:20px; font-weight:750; letter-spacing:-.01em; }
+        #krypbot-container .kb-session-title h3 { margin:0; color:inherit; font:inherit; letter-spacing:inherit; }
         #krypbot-container .kb-advanced-toggle {
           width:28px; height:28px; display:grid; place-items:center; padding:0; border:1px solid rgba(255,255,255,.08);
           border-radius:9px; background:rgba(255,255,255,.055); color:#aeb3bc; font-size:14px; line-height:1;
@@ -5814,8 +5822,8 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-session-actions { display:grid; grid-template-columns:minmax(0,1fr) auto auto; align-items:center; gap:8px; }
         #krypbot-container .kb-session-button { height:32px; border:1px solid transparent; border-radius:10px; color:#0c1710; font-size:10px; font-weight:800; cursor:pointer; transition:transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s ease, filter .2s ease, background .2s ease; }
         #krypbot-container .kb-session-button[data-action="start"] {
-          height:44px; border-radius:14px; background:linear-gradient(135deg,#42eca0 0%,#18b96a 100%); color:#06170e;
-          font-size:13px; letter-spacing:.07em; box-shadow:0 12px 28px rgba(23,185,103,.28), inset 0 1px 0 rgba(255,255,255,.4);
+          height:38px; border-radius:12px; background:linear-gradient(135deg,#42eca0 0%,#18b96a 100%); color:#06170e;
+          font-size:12px; letter-spacing:.07em; box-shadow:0 10px 24px rgba(23,185,103,.26), inset 0 1px 0 rgba(255,255,255,.4);
         }
         #krypbot-container .kb-session-button[data-action="start"]:hover { transform:translateY(-1px); filter:brightness(1.06); box-shadow:0 14px 30px rgba(23,185,103,.34), inset 0 1px 0 rgba(255,255,255,.4); }
         #krypbot-container .kb-session-button[data-action="start"]:active { transform:translateY(0) scale(.99); }
@@ -5827,17 +5835,13 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           display:grid; grid-template-columns:1fr 1fr; gap:6px; padding:0; border-radius:13px; background:transparent;
         }
         #krypbot-container .kb-session-metric {
-          min-width:0; min-height:40px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center; gap:3px;
+          min-width:0; min-height:36px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center; gap:3px;
           padding:7px 9px; border:1px solid rgba(255,255,255,.055); border-radius:11px; background:rgba(255,255,255,.035);
           color:#8f97a6; font-size:9px; line-height:1.2; letter-spacing:.04em; text-transform:uppercase;
         }
         #krypbot-container .kb-session-metric strong { overflow:hidden; color:#f6f8fa; font-size:11px; line-height:1.25; font-weight:750; letter-spacing:-.01em; text-overflow:ellipsis; white-space:nowrap; text-transform:none; }
-        #krypbot-container .kb-session-metric:first-child {
-          grid-column:1 / -1; min-height:76px; padding:12px 14px;
-          background:linear-gradient(135deg,rgba(56,229,139,.085),rgba(255,255,255,.025));
-        }
-        #krypbot-container .kb-session-metric:first-child strong { font-size:26px; line-height:30px; font-variant-numeric:tabular-nums; letter-spacing:-.035em; }
-        #krypbot-container .kb-session-metric:nth-child(2) { grid-column:1 / -1; min-height:42px; flex-direction:row; align-items:center; justify-content:space-between; }
+        #krypbot-container .kb-session-metric:first-child { background:linear-gradient(135deg,rgba(56,229,139,.075),rgba(255,255,255,.025)); }
+        #krypbot-container .kb-session-metric:first-child strong { font-size:13px; font-variant-numeric:tabular-nums; }
         #krypbot-container .kb-session-metric:nth-child(2) strong { color:#65eea9; }
         #krypbot-container .kb-session-warning { min-height:14px; color:#ffc765; font-size:10px; line-height:15px; overflow-wrap:anywhere; }
         #oi-zone2 .tc-scout-head { padding-bottom:17px !important; border-bottom:1px solid rgba(255,255,255,.075) !important; }
@@ -5851,8 +5855,8 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           cursor:pointer;
         }
         #oi-zone2 .tc-scout-empty {
-          flex:1 !important; min-height:350px; box-sizing:border-box; align-items:center !important; justify-content:center !important;
-          gap:12px !important; padding:34px 16px !important; text-align:center;
+          flex:1 !important; min-height:300px; box-sizing:border-box; align-items:center !important; justify-content:center !important;
+          gap:11px !important; padding:28px 14px !important; text-align:center;
         }
         #oi-zone2 .tc-scout-status { padding:6px 10px !important; border-color:rgba(255,255,255,.09) !important; background:rgba(255,255,255,.035); color:#dce1e8 !important; font-size:11px !important; }
         #oi-zone2 .tc-scout-empty-detail { max-width:230px !important; color:var(--tc-muted) !important; font-size:11px !important; line-height:1.55 !important; }
@@ -5860,12 +5864,12 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           margin-top:4px; padding:9px 14px; border:1px solid rgba(56,229,139,.3); border-radius:10px;
           background:rgba(56,229,139,.1); color:#67efaa; font:700 11px/1.2 var(--tc-font); cursor:pointer;
         }
-        #oi-zone2 .tc-scout-loading { flex:1; min-height:350px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:28px 16px; box-sizing:border-box; }
+        #oi-zone2 .tc-scout-loading { flex:1; min-height:300px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:24px 14px; box-sizing:border-box; }
         #oi-zone2 .tc-scout-loading .tc-scout-radar { margin-bottom:16px; }
         #oi-zone2 .tc-scout-skeleton { width:100%; height:52px; border:1px solid rgba(255,255,255,.045); border-radius:13px; background:linear-gradient(100deg,rgba(255,255,255,.025),rgba(255,255,255,.065),rgba(255,255,255,.025)); }
         #oi-zone2 .tc-scout-radar {
-          position:relative; width:112px; height:112px; margin-bottom:8px; border:1px solid rgba(56,229,139,.32); border-radius:50%;
-          background:repeating-radial-gradient(circle,transparent 0 18px,rgba(56,229,139,.16) 19px 20px),
+          position:relative; width:92px; height:92px; margin-bottom:6px; border:1px solid rgba(56,229,139,.32); border-radius:50%;
+          background:repeating-radial-gradient(circle,transparent 0 14px,rgba(56,229,139,.16) 15px 16px),
             conic-gradient(from 210deg,transparent 0 72%,rgba(56,229,139,.28) 88%,transparent 100%);
           box-shadow:0 0 38px rgba(56,229,139,.11),inset 0 0 28px rgba(56,229,139,.055);
         }
@@ -5877,9 +5881,9 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #kb-session-toast { position:fixed; right:18px; bottom:18px; z-index:2147483647; max-width:320px; padding:10px 14px; border:1px solid #ffbd59; border-radius:8px; background:#18191e; color:#ffbd59; font-size:11px; font-weight:800; box-shadow:0 8px 28px rgba(0,0,0,.45); opacity:0; transform:translateY(8px); transition:opacity .16s ease,transform .16s ease; pointer-events:none; }
         #kb-session-toast[data-visible="true"] { opacity:1; transform:translateY(0); }
         #kb-session-toast[data-success="true"] { border-color:#2ad36f; color:#2ad36f; }
-        @media (max-width: 720px) {
+        @media (max-width: 640px) {
           #oi-wrapper { width:calc(100vw - 20px) !important; flex-direction:column !important; align-items:flex-start !important; gap:12px !important; }
-          #oi-wrapper > * { width:min(320px, calc(100vw - 20px)) !important; max-width:100% !important; }
+          #oi-wrapper > * { width:min(292px, calc(100vw - 20px)) !important; max-width:100% !important; }
         }
         @media (prefers-reduced-motion: reduce) {
           #krypbot-container,
@@ -5918,6 +5922,23 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           <div class="kb-radio-group">
             <input type="radio" id="am-on" name="kb-auto-move" value="1"><label for="am-on">ON</label>
             <input type="radio" id="am-off" name="kb-auto-move" value="0" checked><label for="am-off">OFF</label>
+          </div>
+        </div>
+
+        <div class="kb-section-col kb-run-delay-card" id="auto-delay-section">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <p class="kb-section-label" id="kb-run-delay-label" style="color:#c4c9d2;font-size:11px">Run Delay</p>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:5px">
+            <div style="display:flex;gap:6px;align-items:center">
+              <input type="number" id="minDelayInput" class="kb-num-input" min="0.01" max="60" step="0.01" aria-label="Run Delay mínimo em segundos">
+              <span style="color:rgba(255,255,255,0.4);font-size:10px">to</span>
+              <input type="number" id="maxDelayInput" class="kb-num-input" min="0.01" max="60" step="0.01" aria-label="Run Delay máximo em segundos">
+            </div>
+            <div class="kb-radio-group" role="group" aria-labelledby="kb-run-delay-label">
+              <input type="radio" id="dm-rand" name="delayMode" value="random"><label for="dm-rand">RND</label>
+              <input type="radio" id="dm-max" name="delayMode" value="max"><label for="dm-max">INST</label>
+            </div>
           </div>
         </div>
 
@@ -5981,10 +6002,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           </div>
         </div>
 
-        <section class="kb-session-panel" id="kb-session-panel" aria-label="Session Control">
+        <section class="kb-session-panel" id="kb-session-panel" aria-labelledby="kb-auto-play-title">
           <div class="kb-session-title">
-            <span>Session Control</span>
-            <button class="kb-advanced-toggle" id="kb-advanced-settings-toggle" type="button" aria-label="Configurações avançadas" aria-controls="advanced-settings-panel" aria-expanded="false">⚙</button>
+            <h3 id="kb-auto-play-title">Auto Play</h3>
+            <button class="kb-advanced-toggle" id="kb-advanced-settings-toggle" type="button" aria-label="Configurações avançadas do Auto Play" aria-controls="advanced-settings-panel" aria-expanded="false">⚙</button>
           </div>
           <div class="kb-advanced-settings" id="advanced-settings-panel" data-open="false" aria-hidden="true" inert>
             <div class="kb-advanced-settings-inner">
@@ -5993,23 +6014,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
                 <label class="kb-session-field">Duration (min)<input id="kb-session-duration" type="number" min="1" max="1440" step="1" value="120"></label>
                 <label class="kb-session-field">Min win %<input id="kb-session-min-rate" type="number" min="1" max="98" step="1" value="75"></label>
                 <label class="kb-session-field">Max win %<input id="kb-session-max-rate" type="number" min="2" max="99" step="1" value="82"></label>
-              </div>
-              <div class="kb-section-col" id="auto-delay-section">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                  <p class="kb-section-label" id="kb-run-delay-label" style="color:#8e94a1;font-size:10px">Run Delay</p>
-                  <span id="autoDelayDisplay" class="kb-delay-display">0.50 - 2.00s</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-                  <div style="display:flex;gap:8px;align-items:center">
-                    <input type="number" id="minDelayInput" class="kb-num-input" min="0.01" step="0.01" aria-label="Run Delay mínimo em segundos">
-                    <span style="color:rgba(255,255,255,0.4);font-size:11px">to</span>
-                    <input type="number" id="maxDelayInput" class="kb-num-input" min="0.01" step="0.01" aria-label="Run Delay máximo em segundos">
-                  </div>
-                  <div class="kb-radio-group" role="group" aria-labelledby="kb-run-delay-label">
-                    <input type="radio" id="dm-rand" name="delayMode" value="random"><label for="dm-rand">RND</label>
-                    <input type="radio" id="dm-max" name="delayMode" value="max"><label for="dm-max">INST</label>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
