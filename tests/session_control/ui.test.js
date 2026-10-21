@@ -4,7 +4,7 @@ const assert = require("node:assert/strict");
 const crypto = require("node:crypto");
 const fs = require("node:fs");
 const path = require("node:path");
-const { createSessionControlPresenter } = require("../../frontend/session_control");
+const { createSessionControlPresenter, phaseLabel, successLabel, warningLabel } = require("../../frontend/session_control");
 
 class FakeElement {
   constructor(id, attributes) {
@@ -82,7 +82,7 @@ function createPanel() {
     input.value = value;
   }
   for (const [id, action] of [["kb-session-start", "start"], ["kb-session-stop", "stop"], ["kb-session-export", "export"]]) panel.append(new FakeElement(id, { "data-action": action, disabled: "" }));
-  for (const id of ["kb-session-rollout", "kb-session-phase", "kb-session-role", "kb-session-ttl", "kb-session-drain", "kb-session-observed", "kb-session-control", "kb-session-raw", "kb-session-posterior", "kb-session-band", "kb-session-dda", "kb-session-target", "kb-session-warning"]) panel.append(new FakeElement(id));
+  for (const id of ["kb-session-phase", "kb-session-ttl", "kb-session-observed", "kb-session-raw", "kb-session-warning"]) panel.append(new FakeElement(id));
   return panel;
 }
 
@@ -129,6 +129,23 @@ function sourceBlock(source, startMarker, endMarker) {
 }
 
 async function run() {
+  assert.deepEqual([
+    "IDLE", "QUEUEING", "IN_GAME", "DRAINING", "PAUSED_QUEUEING", "PAUSED_ACTIVE", "COMPLETED", "ABORTED",
+  ].map(phaseLabel), [
+    "Aguardando", "Buscando...", "Jogando...", "Finalizando sessão...", "Sessão pausada", "Sessão pausada", "Concluído", "Interrompido",
+  ]);
+  assert.equal(phaseLabel("UNKNOWN"), "Atualizando...");
+  assert.equal(phaseLabel("toString"), "Atualizando...");
+  assert.equal(warningLabel("CALIBRATION_UNAVAILABLE"), "⚠️ Calibração não encontrada");
+  assert.equal(warningLabel("CALIBRATION_EXPIRED"), "⚠️ Calibração não encontrada");
+  assert.equal(warningLabel("DDA_MAPPING_UNAVAILABLE"), "⚠️ Verifique o Artefato");
+  assert.equal(warningLabel("ARTIFACT_CHECKSUM_MISMATCH"), "⚠️ Verifique o Artefato");
+  assert.equal(warningLabel("STATUS_UNAVAILABLE"), "⚠️ Não foi possível atualizar a sessão");
+  assert.equal(warningLabel(null), "");
+  assert.equal(successLabel("SESSION_STARTED"), "Sessão iniciada");
+  assert.equal(successLabel("DRAINING"), "Finalizando sessão...");
+  assert.equal(successLabel("SESSION_STOPPED"), "Sessão finalizada");
+  assert.equal(successLabel("UNKNOWN"), "Operação concluída");
   let panel = createPanel();
   let currentStatus = status();
   let starts = 0;
@@ -152,6 +169,17 @@ async function run() {
   });
 
   presenter.update();
+  assert.equal(panel.querySelector("#kb-session-phase").textContent, "Aguardando");
+  assert.equal(panel.querySelector("#kb-session-ttl").textContent, "120000");
+  assert.equal(panel.querySelector("#kb-session-observed").textContent, "0 V | 0 E | 0 D");
+  assert.equal(panel.querySelector("#kb-session-raw").textContent, "0%");
+  currentStatus = status({ phase: "QUEUEING", observedCounts: { wins: 12, draws: 1, losses: 2 }, rawWinRate: 80.49 });
+  presenter.update();
+  assert.equal(panel.querySelector("#kb-session-phase").textContent, "Buscando...");
+  assert.equal(panel.querySelector("#kb-session-observed").textContent, "12 V | 1 E | 2 D");
+  assert.equal(panel.querySelector("#kb-session-raw").textContent, "80%");
+  currentStatus = status();
+  presenter.update();
   const duration = panel.querySelector("#kb-session-duration");
   duration.focus();
   duration.value = "240";
@@ -170,7 +198,8 @@ async function run() {
   await tick();
   assert.equal(starts, 0);
   assert.equal(panel.querySelector("#kb-session-start").getAttribute("data-disabled-reason"), "BOT_DISABLED");
-  assert(notifications.includes("BOT_DISABLED"));
+  assert.equal(panel.querySelector("#kb-session-start").getAttribute("title"), "⚠️ Não foi possível atualizar a sessão");
+  assert(notifications.includes("⚠️ Não foi possível atualizar a sessão"));
   startBlocker = null;
   presenter.update();
 
@@ -186,7 +215,7 @@ async function run() {
   panel.dispatch("click", panel.querySelector("#kb-session-stop"));
   await tick();
   assert.equal(stops, 1, "DRAIN dispatched more than once after repeated binding");
-  assert(notifications.includes("DRAINING"));
+  assert(notifications.includes("Finalizando sessão..."));
 
   currentStatus = status({ rolloutStage: "DISABLED", phase: "IDLE", warningCode: "ROLLOUT_DISABLED" });
   presenter.update();
@@ -197,9 +226,10 @@ async function run() {
   assert.equal(blockedEvent.defaultPrevented, true);
   assert.equal(start.getAttribute("aria-disabled"), "true");
   assert.equal(start.getAttribute("data-disabled-reason"), "ROLLOUT_DISABLED");
-  assert.equal(panel.querySelector("#kb-session-warning").textContent, "ROLLOUT_DISABLED");
+  assert.equal(start.getAttribute("title"), "⚠️ Não foi possível atualizar a sessão");
+  assert.equal(panel.querySelector("#kb-session-warning").textContent, "⚠️ Não foi possível atualizar a sessão");
   assert(warnings.includes("ROLLOUT_DISABLED"));
-  assert(notifications.includes("ROLLOUT_DISABLED"));
+  assert(notifications.includes("⚠️ Não foi possível atualizar a sessão"));
 
   panel.dispatch("click", panel.querySelector("#kb-session-export"));
   assert.equal(exports, 1);
@@ -218,7 +248,15 @@ async function run() {
 
   const root = path.resolve(__dirname, "../..");
   const source = fs.readFileSync(path.join(root, "script.js"), "utf8");
-  assert.equal(sourceHash(source, "    const menuHtml = `", "    const bannerHtml = `"), "d4724aa8bc799af5cd9dbb36c16821b090764fbb8151bb62cf5eef1e9f076d49", "Session Control menuHtml changed");
+  const menu = sourceBlock(source, "    const menuHtml = `", "    const bannerHtml = `");
+  for (const [label, id] of [["Tempo Restante", "kb-session-ttl"], ["Status", "kb-session-phase"], ["Placar", "kb-session-observed"], ["Win Rate", "kb-session-raw"]]) {
+    assert(menu.includes(`<span>${label}</span><strong id="${id}">`), `Session Control menu is missing ${label}`);
+  }
+  for (const id of ["kb-session-rollout", "kb-session-role", "kb-session-drain", "kb-session-control", "kb-session-posterior", "kb-session-band", "kb-session-dda", "kb-session-target"]) {
+    assert(!menu.includes(`id="${id}"`), `Session Control menu retained advanced field ${id}`);
+  }
+  assert(!menu.includes("SESSION_RUNTIME_UNAVAILABLE"), "Session Control menu exposes a raw startup reason code");
+  assert.equal(sourceHash(source, "    const menuHtml = `", "    const bannerHtml = `"), "ef9ee93a2be9a0712ccf6cdc5731ae4efb6a7eacb438a0e79c225cecd7f50cf6", "Session Control menuHtml changed");
   const wrapperCss = sourceBlock(source, "        #oi-wrapper {", "        #oi-wrapper > * {");
   for (const declaration of [
     "position: absolute !important",

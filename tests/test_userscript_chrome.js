@@ -223,14 +223,16 @@ function createCdpClient(webSocketUrl) {
         `}
         const warning = document.getElementById("kb-session-warning")?.textContent || "";
         const toast = document.getElementById("kb-session-toast")?.textContent || "";
+        const sessionStatus = window.krypbotSessionControlBridge.status();
         const bootstrapState = bootstrap.state();
         return {
-          ok: !button.hasAttribute("disabled") && disabledWarning === "BOT_DISABLED" && disabledToast === "BOT_DISABLED" && disabledPhase === "IDLE"${liveChess ? "" : ` && Boolean(warning) && window.krypbotSessionControlBridge.status().phase === "QUEUEING" && window.krypbotSessionControlBridge.status().executionMode === "COMPATIBILITY" && warning === "DDA_MAPPING_UNAVAILABLE" && toast === "SESSION_STARTED" && document.getElementById("aq-on")?.checked && document.getElementById("aq-on")?.disabled && document.getElementById("aq-off")?.disabled && !document.getElementById("kb-auto-queue-session-note")?.hidden`},
+          ok: !button.hasAttribute("disabled") && disabledWarning === "⚠️ Não foi possível atualizar a sessão" && disabledToast === "⚠️ Não foi possível atualizar a sessão" && disabledPhase === "IDLE"${liveChess ? "" : ` && Boolean(warning) && sessionStatus.phase === "QUEUEING" && sessionStatus.executionMode === "COMPATIBILITY" && sessionStatus.warningCode === "DDA_MAPPING_UNAVAILABLE" && warning === "⚠️ Verifique o Artefato" && toast === "Sessão iniciada" && document.getElementById("aq-on")?.checked && document.getElementById("aq-on")?.disabled && document.getElementById("aq-off")?.disabled && !document.getElementById("kb-auto-queue-session-note")?.hidden`},
           disabledWarning,
           disabledToast,
           disabledPhase,
           warning,
           toast,
+          rawWarningCode: sessionStatus.warningCode,
           queueOnChecked: document.getElementById("aq-on")?.checked,
           queueControlsDisabled: document.getElementById("aq-on")?.disabled && document.getElementById("aq-off")?.disabled,
           queueSessionNoteVisible: !document.getElementById("kb-auto-queue-session-note")?.hidden,
@@ -301,13 +303,12 @@ function createCdpClient(webSocketUrl) {
         const diagnosticText = JSON.stringify(bridge.exportDiagnostic());
         const ui = {
           phase: document.getElementById("kb-session-phase")?.textContent,
-          role: document.getElementById("kb-session-role")?.textContent,
           observed: document.getElementById("kb-session-observed")?.textContent,
-          dda: document.getElementById("kb-session-dda")?.textContent,
+          advancedPresent: ["kb-session-rollout", "kb-session-role", "kb-session-drain", "kb-session-control", "kb-session-posterior", "kb-session-band", "kb-session-dda", "kb-session-target"].some((id) => document.getElementById(id)),
         };
         bridge.clear();
         repository.close();
-        return { ok: commit.status === "committed" && restored.revision === 1 && duplicate.status === "duplicate" && a.status === "acquired" && b.status === "contended" && failClosedBeforeValidation && queueGate.allowed && legacySuspended && status.phase === "QUEUEING" && ui.phase === "QUEUEING" && ui.role === "LEADER" && !diagnosticText.includes("chrome-smoke") && !diagnosticText.includes("runtimeGameToken") && !diagnosticText.includes("lastFen"), commit: commit.status, recoveryRevision: restored.revision, duplicate: duplicate.status, leases: [a.status, b.status], failClosedBeforeValidation, queueGate, legacySuspended, status, ui };
+        return { ok: commit.status === "committed" && restored.revision === 1 && duplicate.status === "duplicate" && a.status === "acquired" && b.status === "contended" && failClosedBeforeValidation && queueGate.allowed && legacySuspended && status.phase === "QUEUEING" && ui.phase === "Buscando..." && ui.advancedPresent === false && !diagnosticText.includes("chrome-smoke") && !diagnosticText.includes("runtimeGameToken") && !diagnosticText.includes("lastFen"), commit: commit.status, recoveryRevision: restored.revision, duplicate: duplicate.status, leases: [a.status, b.status], failClosedBeforeValidation, queueGate, legacySuspended, status, ui };
         } catch (error) {
           return { ok: false, name: error.name, code: error.code, message: error.message, causeName: error.cause?.name, causeMessage: error.cause?.message, stack: error.stack };
         }
@@ -319,7 +320,7 @@ function createCdpClient(webSocketUrl) {
 
     assert(exceptions.length === 0, `Userscript exception: ${exceptions[0]?.text || "unknown"}`);
     assert(productionStart.ok, `Production START wiring smoke failed: ${JSON.stringify(productionStart)}`);
-    if (!liveChess) assert(productionStart.warning === "DDA_MAPPING_UNAVAILABLE", `Default compatibility START did not leave IDLE: ${JSON.stringify(productionStart)}`);
+    if (!liveChess) assert(productionStart.warning === "⚠️ Verifique o Artefato" && productionStart.rawWarningCode === "DDA_MAPPING_UNAVAILABLE", `Default compatibility START did not leave IDLE: ${JSON.stringify(productionStart)}`);
     assert(module14.ok, `Module 14 browser smoke failed: ${JSON.stringify(module14)}`);
     assert(state.menu, "configuration menu was not mounted");
     assert(state.sessionPanel, "session control panel was not mounted");

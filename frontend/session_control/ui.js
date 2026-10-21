@@ -8,6 +8,39 @@ const FIELD_IDS = Object.freeze({
 
 const TERMINAL_PHASES = Object.freeze(["IDLE", "COMPLETED", "ABORTED"]);
 
+const PHASE_LABELS = Object.freeze({
+  IDLE: "Aguardando",
+  QUEUEING: "Buscando...",
+  IN_GAME: "Jogando...",
+  DRAINING: "Finalizando sessão...",
+  PAUSED_QUEUEING: "Sessão pausada",
+  PAUSED_ACTIVE: "Sessão pausada",
+  COMPLETED: "Concluído",
+  ABORTED: "Interrompido",
+});
+
+const SUCCESS_LABELS = Object.freeze({
+  SESSION_STARTED: "Sessão iniciada",
+  DRAINING: "Finalizando sessão...",
+  SESSION_STOPPED: "Sessão finalizada",
+  COMPLETED: "Concluído",
+});
+
+function phaseLabel(phase) {
+  return Object.prototype.hasOwnProperty.call(PHASE_LABELS, phase) ? PHASE_LABELS[phase] : "Atualizando...";
+}
+
+function warningLabel(code) {
+  if (!code) return "";
+  if (code === "DDA_MAPPING_UNAVAILABLE" || code.includes("ARTIFACT")) return "⚠️ Verifique o Artefato";
+  if (code.startsWith("CALIBRATION_")) return "⚠️ Calibração não encontrada";
+  return "⚠️ Não foi possível atualizar a sessão";
+}
+
+function successLabel(code) {
+  return SUCCESS_LABELS[code] || "Operação concluída";
+}
+
 function reasonCode(error, fallback) {
   if (error && typeof error.code === "string" && error.code) return error.code;
   if (error && typeof error.reason === "string" && error.reason) return error.reason;
@@ -50,7 +83,7 @@ function presentAvailability(panel, action, reason) {
   button.setAttribute("aria-disabled", reason ? "true" : "false");
   if (reason) {
     button.setAttribute("data-disabled-reason", reason);
-    button.setAttribute("title", reason);
+    button.setAttribute("title", warningLabel(reason));
   } else {
     button.removeAttribute("data-disabled-reason");
     button.removeAttribute("title");
@@ -58,22 +91,12 @@ function presentAvailability(panel, action, reason) {
 }
 
 function presentStatus(panel, status, formatDuration, startBlocker) {
-  const counts = (value) => `${value.wins}-${value.draws}-${value.losses}`;
-  const offset = status.offsetElo >= 0 ? `+${status.offsetElo}` : String(status.offsetElo);
-  setText(panel, "kb-session-rollout", status.executionMode ? `${status.rolloutStage} · ${status.executionMode}` : status.rolloutStage);
-  setText(panel, "kb-session-phase", status.phase);
-  setText(panel, "kb-session-role", status.role);
+  const counts = status.observedCounts;
+  setText(panel, "kb-session-phase", phaseLabel(status.phase));
   setText(panel, "kb-session-ttl", formatDuration(status.remainingTtlMs));
-  const drain = status.drainDeadlineEpochMs === null ? "—" : `${new Date(status.drainDeadlineEpochMs).toLocaleTimeString()} (${formatDuration(status.drainRemainingMs)})`;
-  setText(panel, "kb-session-drain", drain);
-  setText(panel, "kb-session-observed", counts(status.observedCounts));
-  setText(panel, "kb-session-control", counts(status.controlCounts));
-  setText(panel, "kb-session-raw", `${status.rawWinRate.toFixed(2)}%`);
-  setText(panel, "kb-session-posterior", `${status.posteriorWinRate.toFixed(2)}%`);
-  setText(panel, "kb-session-band", status.minWinRate === null ? "—" : `${status.minWinRate.toFixed(0)}-${status.maxWinRate.toFixed(0)}%`);
-  setText(panel, "kb-session-dda", `${status.controllerMode} ${offset}`);
-  setText(panel, "kb-session-target", status.effectiveTargetElo === null ? "—" : `${status.opponentRating} → ${status.effectiveTargetElo}${status.targetSaturated ? " SAT" : ""}`);
-  setText(panel, "kb-session-warning", status.warningCode || "");
+  setText(panel, "kb-session-observed", `${counts.wins} V | ${counts.draws} E | ${counts.losses} D`);
+  setText(panel, "kb-session-raw", `${status.rawWinRate.toFixed(0)}%`);
+  setText(panel, "kb-session-warning", warningLabel(status.warningCode));
   const state = availability(status, startBlocker);
   presentAvailability(panel, "start", state.start);
   presentAvailability(panel, "stop", state.stop);
@@ -103,15 +126,16 @@ function createSessionControlPresenter(options) {
   function warning(code) {
     const value = code || "STATUS_UNAVAILABLE";
     if (typeof options.setWarning === "function") options.setWarning(value);
-    if (panel) setText(panel, "kb-session-warning", value);
-    if (typeof options.notify === "function") options.notify(value, { transient: true });
+    const label = warningLabel(value);
+    if (panel) setText(panel, "kb-session-warning", label);
+    if (typeof options.notify === "function") options.notify(label, { transient: true });
     emit("warning", { code: value });
   }
 
   function success(code) {
     if (typeof options.setWarning === "function") options.setWarning(null);
     if (panel) setText(panel, "kb-session-warning", "");
-    if (typeof options.notify === "function") options.notify(code, { transient: true, success: true });
+    if (typeof options.notify === "function") options.notify(successLabel(code), { transient: true, success: true });
     emit("success", { code });
   }
 
@@ -239,4 +263,4 @@ function createSessionControlPresenter(options) {
   return Object.freeze({ bind, dispose, readConfig, readDraft, update });
 }
 
-module.exports = { FIELD_IDS, createSessionControlPresenter, presentStatus, reasonCode };
+module.exports = { FIELD_IDS, createSessionControlPresenter, phaseLabel, presentStatus, reasonCode, successLabel, warningLabel };

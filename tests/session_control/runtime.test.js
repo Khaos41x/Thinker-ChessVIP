@@ -51,7 +51,7 @@ function panel() {
     input.value = value;
   }
   for (const [id, action] of [["kb-session-start", "start"], ["kb-session-stop", "stop"], ["kb-session-export", "export"]]) root.append(new Element(id, { "data-action": action }));
-  for (const id of ["kb-session-rollout", "kb-session-phase", "kb-session-role", "kb-session-ttl", "kb-session-drain", "kb-session-observed", "kb-session-control", "kb-session-raw", "kb-session-posterior", "kb-session-band", "kb-session-dda", "kb-session-target", "kb-session-warning"]) root.append(new Element(id));
+  for (const id of ["kb-session-phase", "kb-session-ttl", "kb-session-observed", "kb-session-raw", "kb-session-warning"]) root.append(new Element(id));
   return root;
 }
 
@@ -147,7 +147,7 @@ async function run() {
   assert.equal(startContextReads, 2, "START must re-observe context and server readiness inside the authorization lock");
   assert.equal(repository.events.size, 1, "real click did not produce exactly one controller commit");
   assert.deepEqual(storage.values.get("thinker.sessionControl.authorization.v1"), { schemaVersion: 1, accounts: ["opaque-account"], contexts: ["chesscom-queue-sidebar-start-game-v1"], pools: ["chesscom-live-rapid-v1"] });
-  assert(notifications.includes("SESSION_STARTED"));
+  assert(notifications.includes("Sessão iniciada"));
   assert.equal(timers.length, 1);
   assert.equal(timers[0].milliseconds, 5000);
 
@@ -155,7 +155,7 @@ async function run() {
   root.dispatch(root.querySelector("#kb-session-start"));
   await tick();
   assert.equal(repository.events.size, 1);
-  assert(notifications.includes("ACTIVE_SESSION_EXISTS"));
+  assert(notifications.includes("⚠️ Não foi possível atualizar a sessão"));
   const renewalWarnings = [];
   controller.renewLeadership = async () => { throw new Error("injected renewal failure"); };
   runtime.dispose();
