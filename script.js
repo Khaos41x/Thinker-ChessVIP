@@ -1723,8 +1723,8 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       }
       if (container.parentNode !== wrapper) wrapper.appendChild(container);
       if (wrapper.parentNode !== document.body || wrapper.nextSibling) document.body.appendChild(wrapper);
-      container.style.width = "268px";
-      container.style.maxWidth = "268px";
+      container.style.width = "320px";
+      container.style.maxWidth = "320px";
       container.style.margin = "0";
       container.style.boxSizing = "border-box";
       return { container, wrapper };
@@ -1740,7 +1740,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       panel.className = "tc-workspace-card";
       panel.dataset.state = state;
       panel.style.cssText =
-        "width:296px;min-height:520px;box-sizing:border-box;background:#111216;border:1px solid #202228;border-radius:20px;box-shadow:0 18px 42px rgba(0,0,0,.34);padding:16px 18px;font-family:Inter,Arial,sans-serif;color:#fff;margin:0;display:flex;flex-direction:column;";
+        "width:320px;min-height:480px;box-sizing:border-box;background:rgba(20,20,25,.65);border:1px solid rgba(255,255,255,.08);border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.52);padding:22px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#fff;margin:0;display:flex;flex-direction:column;";
       const title = state === "waiting" ? "Aguardando adversário" : "Histórico indisponível";
       const detail = state === "waiting"
         ? "O Scout exibirá apenas dados públicos reais quando identificar o adversário."
@@ -1748,9 +1748,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       panel.innerHTML = `
         <div class="tc-scout-head" style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;padding-bottom:12px;border-bottom:1px solid #26282e">
           <div style="min-width:0;font-size:14px;line-height:1.2;font-weight:800">Scout do Oponente</div>
-          <button class="tc-scout-close" type="button" aria-label="Fechar Scout" style="flex:none;width:20px;height:20px;padding:0;border:0;border-radius:50%;background:#202126;color:#9da3b2;cursor:pointer">×</button>
+          <button class="tc-scout-close" type="button" aria-label="Fechar Scout">×</button>
         </div>
-        <div class="tc-scout-empty" style="display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0;padding-top:16px">
+        <div class="tc-scout-empty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-width:0;padding:34px 16px;text-align:center">
+          <div class="tc-scout-radar" aria-hidden="true"><span class="tc-scout-radar-dot"></span></div>
           <span class="tc-scout-status" style="display:inline-block;max-width:100%;padding:5px 8px;border:1px solid #303640;border-radius:999px;color:#c6cbd4;font-size:11px;line-height:1.3">${title}</span>
           <p class="tc-scout-empty-detail" style="margin:0;max-width:100%;color:#9da3b2;font-size:11px;line-height:1.5;white-space:normal;overflow-wrap:anywhere">${detail}</p>
         </div>`;
@@ -1761,9 +1762,9 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         const retry = document.createElement("button");
         retry.type = "button";
         retry.textContent = "Tentar novamente";
-        retry.style.cssText = "margin-top:16px;padding:8px 12px;border:1px solid #2d7650;border-radius:8px;background:#143522;color:#63ec9d;cursor:pointer";
+        retry.className = "tc-scout-retry";
         retry.addEventListener("click", () => this.fetchData(this.lastOpponent));
-        panel.appendChild(retry);
+        panel.querySelector(".tc-scout-empty")?.appendChild(retry);
       }
       if (typeof _ghostModeActive !== "undefined" && _ghostModeActive) panel.style.display = "none";
       layout.wrapper.appendChild(panel);
@@ -1785,15 +1786,19 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       panel.className = "tc-workspace-card";
       panel.dataset.state = "loading";
       panel.style.cssText =
-        "width:296px;min-height:520px;box-sizing:border-box;background:#111216;border:1px solid #202228;border-radius:20px;box-shadow:0 18px 42px rgba(0,0,0,.34);padding:16px 18px;font-family:Inter,Arial,sans-serif;color:#fff;display:flex;flex-direction:column;gap:14px;margin:0;";
+        "width:320px;min-height:480px;box-sizing:border-box;background:rgba(20,20,25,.65);border:1px solid rgba(255,255,255,.08);border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.52);padding:22px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#fff;display:flex;flex-direction:column;gap:14px;margin:0;";
       panel.innerHTML = `
-        <div style="padding-bottom:12px;border-bottom:1px solid #25272d">
-          <div style="font-size:14px;font-weight:800;color:#f7f8fa">Scout do Oponente</div>
-          <div style="margin-top:4px;color:#8d93a1;font-size:10px">Carregando histórico recente…</div>
+        <div class="tc-scout-head">
+          <div>
+            <div class="tc-scout-title">Scout do Oponente</div>
+            <div class="tc-scout-subtitle">Carregando histórico recente…</div>
+          </div>
         </div>
-        <div style="align-self:center;width:84px;height:84px;border-radius:50%;background:#202228"></div>
-        <div style="height:52px;border-radius:10px;background:#18191e"></div>
-        <div style="height:52px;border-radius:10px;background:#18191e"></div>`;
+        <div class="tc-scout-loading">
+          <div class="tc-scout-radar" aria-hidden="true"><span class="tc-scout-radar-dot"></span></div>
+          <div class="tc-scout-skeleton" aria-hidden="true"></div>
+          <div class="tc-scout-skeleton" aria-hidden="true"></div>
+        </div>`;
       if (typeof _ghostModeActive !== "undefined" && _ghostModeActive) panel.style.display = "none";
       layout.wrapper.appendChild(panel);
     },
@@ -1896,7 +1901,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       panel.id = "oi-zone2";
       panel.className = "tc-workspace-card";
       panel.style.cssText =
-        "width:296px;box-sizing:border-box;background:#111216;border:1px solid #202228;border-radius:20px;box-shadow:0 18px 42px rgba(0,0,0,.34);padding:16px 18px 18px;font-family:Inter,Arial,sans-serif;color:#f7f8fa;display:flex;flex-direction:column;margin:0;";
+        "width:320px;box-sizing:border-box;background:rgba(20,20,25,.65);border:1px solid rgba(255,255,255,.08);border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.52);padding:22px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#f7f8fa;display:flex;flex-direction:column;margin:0;";
       const lastPlayedDate = new Date(scoutStats.lastPlayed * 1000);
       const lastPlayed = Number.isNaN(lastPlayedDate.getTime())
         ? "—"
@@ -1917,16 +1922,16 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       panel.innerHTML = `
         <style>
           #oi-zone2 .tc-scout-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-          #oi-zone2 .tc-scout-title{font-size:14px;line-height:1.2;font-weight:800;color:#f7f8fa}
-          #oi-zone2 .tc-scout-subtitle{margin-top:4px;color:#8b91a0;font-size:10px;line-height:1.25}
-          #oi-zone2 .tc-scout-close{width:20px;height:20px;padding:0;border:0;border-radius:50%;background:#202126 center/11px 11px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23808692' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E");color:transparent;font-size:0;cursor:pointer}
-          #oi-zone2 .tc-scout-donut{position:relative;width:84px;height:84px;margin:20px auto 10px;border-radius:50%}
-          #oi-zone2 .tc-scout-donut::after{content:"";position:absolute;inset:9px;border-radius:50%;background:#111216}
+          #oi-zone2 .tc-scout-title{font-size:17px;line-height:1.25;font-weight:750;color:#f7f8fa;letter-spacing:-.02em}
+          #oi-zone2 .tc-scout-subtitle{margin-top:5px;color:#9ca3b2;font-size:11px;line-height:1.35}
+          #oi-zone2 .tc-scout-close{width:28px;height:28px;padding:0;border:1px solid rgba(255,255,255,.07);border-radius:9px;background:rgba(255,255,255,.045) center/12px 12px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239ca3b2' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E");color:transparent;font-size:0;cursor:pointer}
+          #oi-zone2 .tc-scout-donut{position:relative;width:100px;height:100px;margin:24px auto 12px;border-radius:50%;box-shadow:0 0 34px rgba(56,229,139,.08)}
+          #oi-zone2 .tc-scout-donut::after{content:"";position:absolute;inset:10px;border-radius:50%;background:rgba(10,12,16,.72);box-shadow:inset 0 1px 0 rgba(255,255,255,.045)}
           #oi-zone2 .tc-scout-donut-copy{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
           #oi-zone2 .tc-scout-donut-copy b{font-size:22px;line-height:1;font-weight:850}
           #oi-zone2 .tc-scout-donut-copy small{margin-top:3px;color:#8d93a1;font-size:8px}
           #oi-zone2 .tc-scout-record{text-align:center;color:#9298a5;font-size:11px;margin:4px 0 14px}
-          #oi-zone2 .tc-scout-section{border-top:1px solid #26282e;padding:8px 0}
+          #oi-zone2 .tc-scout-section{border-top:1px solid rgba(255,255,255,.065);padding:10px 0}
           #oi-zone2 .tc-scout-section-title{padding:4px 22px 7px;color:#9da3b2;font-size:11px}
           #oi-zone2 .tc-scout-stat-row{display:grid;grid-template-columns:15px minmax(0,1fr) 72px;align-items:center;gap:9px;padding:8px 0}
           #oi-zone2 .tc-scout-color-chip{width:11px;height:11px;border:1.5px solid #747b88;border-radius:3px;box-sizing:border-box}
@@ -5494,14 +5499,22 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         }
 
         #oi-wrapper {
+          --tc-glass-bg: rgba(20, 20, 25, 0.65);
+          --tc-glass-border: rgba(255, 255, 255, 0.08);
+          --tc-glass-highlight: rgba(255, 255, 255, 0.13);
+          --tc-glass-inset: rgba(8, 10, 14, 0.24);
+          --tc-accent: #38e58b;
+          --tc-text: #f7f8fa;
+          --tc-muted: #9ca3b2;
+          --tc-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
           position: absolute !important;
           top: calc(100vh + 32px) !important;
           left: 10px !important;
           width: max-content !important;
           z-index: 2147483647 !important;
           display: flex !important;
-          align-items: flex-start !important;
-          gap: 10px !important;
+          align-items: stretch !important;
+          gap: 16px !important;
           pointer-events: none !important;
         }
 
@@ -5529,7 +5542,8 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         }
 
         #krypbot-container.minimized {
-          width: 60px;
+          width: 60px !important;
+          max-width: 60px !important;
           height: 60px;
           padding: 0;
           border-radius: 30px;
@@ -5658,42 +5672,55 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         .kb-delay-display { font-size: 13px; color: #00ff88; font-weight: 600; }
 
         #krypbot-container {
-          width: 268px; max-width: 268px; box-sizing: border-box; margin: 0; padding: 16px;
-          gap: 0; background: rgba(20, 20, 25, 0.65) !important;
-          border: 1px solid rgba(255, 255, 255, 0.08) !important; border-radius: 20px !important;
-          box-shadow: 0 24px 64px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.08);
+          position:relative; isolation:isolate; overflow:hidden; width: 320px; max-width: 320px; box-sizing: border-box; margin: 0; padding: 18px;
+          gap: 0; background: var(--tc-glass-bg) !important;
+          background-image:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.012) 42%,rgba(3,5,8,.1)) !important;
+          border: 1px solid var(--tc-glass-border) !important; border-radius: 20px !important;
+          box-shadow: 0 30px 80px rgba(0,0,0,.52), 0 8px 24px rgba(0,0,0,.24), inset 0 1px 0 var(--tc-glass-highlight);
           backdrop-filter: blur(16px) !important; -webkit-backdrop-filter: blur(16px) !important;
-          color: #f7f8fa; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+          color: var(--tc-text); font-family: var(--tc-font) !important;
+        }
+        #krypbot-container::before {
+          content:""; position:absolute; z-index:-1; inset:-1px; pointer-events:none;
+          background:radial-gradient(110% 42% at 50% -8%,rgba(77,255,171,.13),transparent 58%);
         }
         #oi-zone2.tc-workspace-card {
-          background: rgba(20, 20, 25, 0.65) !important;
+          position:relative; isolation:isolate; overflow:hidden; width:320px !important; min-height:480px !important; padding:22px !important;
+          background: var(--tc-glass-bg) !important;
+          background-image:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.012) 42%,rgba(3,5,8,.1)) !important;
           backdrop-filter: blur(16px) !important;
           -webkit-backdrop-filter: blur(16px) !important;
-          border: 1px solid rgba(255, 255, 255, 0.08) !important;
+          border: 1px solid var(--tc-glass-border) !important;
           border-radius: 20px !important;
-          box-shadow: 0 24px 64px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.08) !important;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+          box-shadow: 0 30px 80px rgba(0,0,0,.52), 0 8px 24px rgba(0,0,0,.24), inset 0 1px 0 var(--tc-glass-highlight) !important;
+          font-family: var(--tc-font) !important;
+        }
+        #oi-zone2.tc-workspace-card::before {
+          content:""; position:absolute; z-index:-1; inset:-1px; pointer-events:none;
+          background:radial-gradient(110% 42% at 50% -8%,rgba(77,205,255,.12),transparent 58%);
         }
         #krypbot-container .kb-header {
-          margin: 0 0 12px; padding: 0 0 12px; border-bottom: 1px solid #24262c;
+          margin: 0 0 8px; padding: 0 0 14px; border-bottom: 1px solid rgba(255,255,255,.075);
         }
+        #krypbot-container .kb-eyebrow { display:block; margin-bottom:3px; color:#8f97a6; font-size:9px; line-height:1.2; font-weight:700; letter-spacing:.12em; }
         #krypbot-container .kb-title {
           margin: 0; color: #f7f8fa; background: none; -webkit-text-fill-color: currentColor;
-          font-size: 14px; line-height: 20px; font-weight: 800;
+          font-size: 18px; line-height: 23px; font-weight: 750; letter-spacing:-.025em;
         }
         #krypbot-container .kb-minimize-btn {
-          width: 20px; height: 20px; padding: 0; border-radius: 50%; background: #202126;
-          color: transparent; font-size: 0; background:#202126 center/11px 11px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%237f8591' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E");
+          width: 28px; height: 28px; padding: 0; border:1px solid rgba(255,255,255,.07); border-radius: 9px; background: rgba(255,255,255,.045);
+          color: transparent; font-size: 0; background:rgba(255,255,255,.045) center/11px 11px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%237f8591' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E");
         }
         #krypbot-container .kb-section {
-          min-height: 44px; margin: 0; display: flex; align-items: center; justify-content: space-between;
+          min-height: 42px; margin: 0; display: flex; align-items: center; justify-content: space-between;
+          border-bottom:1px solid rgba(255,255,255,.035);
         }
         #krypbot-container .kb-section-label {
           display: flex; align-items: center; gap: 10px; margin: 0; color: #f4f5f7;
-          font-size: 12px; line-height: 18px; font-weight: 600;
+          font-size: 13px; line-height: 19px; font-weight: 600;
         }
         #krypbot-container .kb-row-icon {
-          width: 15px; height: 15px; display: inline-block; flex: 0 0 15px; background-position:center; background-repeat:no-repeat; background-size:14px 14px;
+          width: 17px; height: 17px; display: inline-block; flex: 0 0 17px; background-position:center; background-repeat:no-repeat; background-size:16px 16px;
         }
         #krypbot-container .kb-icon-power { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23858b97' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10'/%3E%3C/svg%3E") }
         #krypbot-container .kb-icon-play { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23858b97' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='m5 3 14 9-14 9z'/%3E%3C/svg%3E") }
@@ -5702,31 +5729,32 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-icon-activity { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23858b97' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12h4l2-7 4 14 2-7h6'/%3E%3C/svg%3E") }
         #krypbot-container .kb-icon-eye { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23858b97' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E") }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) {
-          position: relative; width: 34px; height: 20px; padding: 0; border: 0; border-radius: 999px;
-          background: #2a2c31; overflow: hidden;
+          position: relative; width: 40px; height: 24px; padding: 0; border: 1px solid rgba(255,255,255,.06); border-radius: 999px;
+          background: rgba(255,255,255,.09); overflow: hidden;
         }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"]))::after {
-          content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+          content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
           border-radius: 50%; background: #f5f6f7; box-shadow: 0 1px 3px rgba(0,0,0,.35);
           transition: transform .16s ease; pointer-events: none;
         }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):has(input[value="1"]:checked) {
-          background: #2ad36f;
+          background: rgba(42,211,111,.85); box-shadow:0 0 16px rgba(42,211,111,.22);
         }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):has(input[value="1"]:checked)::after {
-          transform: translateX(14px);
+          transform: translateX(16px);
         }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) label {
-          position: relative; z-index: 2; width: 17px; height: 20px; padding: 0; margin: 0;
+          position: relative; z-index: 2; width: 20px; height: 22px; padding: 0; margin: 0;
           border-radius: 0; background: transparent !important; box-shadow: none !important;
           color: transparent !important; font-size: 0;
         }
         #krypbot-container .kb-section-col {
-          margin: 0; padding: 11px 0; gap: 8px; border-top: 1px solid #24262c;
+          margin: 10px 0 2px; padding: 12px; gap: 8px; border: 1px solid rgba(255,255,255,.065); border-radius:15px;
+          background:rgba(5,8,12,.18); box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
         }
         #krypbot-container .kb-slider-group { gap: 8px; }
         #krypbot-container .kb-slider { height: 3px; accent-color: #28d875; }
-        #krypbot-container .kb-slider-val { color: #24df75; font-size: 11px; }
+        #krypbot-container .kb-slider-val { color: var(--tc-accent); font-size: 12px; }
         #krypbot-container .kb-num-input {
           width: 52px; height: 27px; box-sizing: border-box; padding: 4px 7px; border: 1px solid #303238;
           border-radius: 7px; background: #1a1b20; color: #fff; font-size: 11px; font-weight: 700;
@@ -5746,14 +5774,18 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         }
         #krypbot-container .kb-delay-display { display: none; }
         #krypbot-container .kb-footer {
-          margin: 0; padding: 11px 0 0; border-top: 1px solid #24262c;
+          margin: 10px 0 0; padding: 10px 0 0; border-top: 1px solid rgba(255,255,255,.06);
         }
         #krypbot-container .kb-footer > div { width: 100%; justify-content: space-between; }
         #krypbot-container .kb-color-input {
           width: 19px; height: 19px; border: 0; border-radius: 6px; padding: 0; overflow: hidden;
         }
-        #krypbot-container .kb-session-panel { border-top:1px solid rgba(255,255,255,.08); padding:12px 0 2px; display:flex; flex-direction:column; gap:9px; }
-        #krypbot-container .kb-session-title { display:flex; justify-content:space-between; align-items:center; color:#f4f5f7; font-size:11px; font-weight:800; }
+        #krypbot-container .kb-session-panel {
+          margin-top:10px; padding:12px; display:flex; flex-direction:column; gap:8px;
+          border:1px solid rgba(255,255,255,.075); border-radius:18px; background:rgba(5,8,12,.2);
+          box-shadow:inset 0 1px 0 rgba(255,255,255,.035), 0 8px 24px rgba(0,0,0,.12);
+        }
+        #krypbot-container .kb-session-title { display:flex; justify-content:space-between; align-items:center; color:#f4f5f7; font-size:13px; line-height:20px; font-weight:750; letter-spacing:-.01em; }
         #krypbot-container .kb-advanced-toggle {
           width:28px; height:28px; display:grid; place-items:center; padding:0; border:1px solid rgba(255,255,255,.08);
           border-radius:9px; background:rgba(255,255,255,.055); color:#aeb3bc; font-size:14px; line-height:1;
@@ -5771,19 +5803,19 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           transition:grid-template-rows .32s cubic-bezier(.16,1,.3,1), opacity .2s ease, transform .32s cubic-bezier(.16,1,.3,1), margin .32s ease, visibility 0s;
         }
         #krypbot-container .kb-advanced-settings-inner { min-height:0; overflow:hidden; display:flex; flex-direction:column; gap:9px; }
-        #krypbot-container .kb-advanced-heading { margin:3px 0 0; color:#8e94a1; font-size:9px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+        #krypbot-container .kb-advanced-heading { margin:3px 0 0; color:#8e94a1; font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
         #krypbot-container .kb-advanced-toggle,
         #krypbot-container .kb-num-input,
         #krypbot-container .kb-session-field input,
         #krypbot-container .kb-session-button { font-family:inherit; }
-        #krypbot-container .kb-session-fields { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
-        #krypbot-container .kb-session-field { display:flex; flex-direction:column; gap:3px; color:#858b97; font-size:8px; }
-        #krypbot-container .kb-session-field input { width:100%; height:27px; box-sizing:border-box; border:1px solid #303238; border-radius:7px; background:#1a1b20; color:#fff; padding:4px 6px; font-size:10px; }
-        #krypbot-container .kb-session-actions { display:grid; grid-template-columns:minmax(0,1fr) auto auto; align-items:center; gap:7px; }
-        #krypbot-container .kb-session-button { height:32px; border:1px solid transparent; border-radius:10px; color:#0c1710; font-size:9px; font-weight:800; cursor:pointer; transition:transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s ease, filter .2s ease, background .2s ease; }
+        #krypbot-container .kb-session-fields { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+        #krypbot-container .kb-session-field { display:flex; flex-direction:column; gap:5px; color:#929aa9; font-size:10px; line-height:1.25; }
+        #krypbot-container .kb-session-field input { width:100%; height:34px; box-sizing:border-box; border:1px solid rgba(255,255,255,.09); border-radius:10px; background:rgba(0,0,0,.22); color:#fff; padding:6px 8px; font-size:11px; }
+        #krypbot-container .kb-session-actions { display:grid; grid-template-columns:minmax(0,1fr) auto auto; align-items:center; gap:8px; }
+        #krypbot-container .kb-session-button { height:32px; border:1px solid transparent; border-radius:10px; color:#0c1710; font-size:10px; font-weight:800; cursor:pointer; transition:transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s ease, filter .2s ease, background .2s ease; }
         #krypbot-container .kb-session-button[data-action="start"] {
-          height:44px; border-radius:14px; background:linear-gradient(135deg,#36e58a 0%,#17b967 100%); color:#07180f;
-          font-size:12px; letter-spacing:.06em; box-shadow:0 10px 24px rgba(23,185,103,.25), inset 0 1px 0 rgba(255,255,255,.35);
+          height:44px; border-radius:14px; background:linear-gradient(135deg,#42eca0 0%,#18b96a 100%); color:#06170e;
+          font-size:13px; letter-spacing:.07em; box-shadow:0 12px 28px rgba(23,185,103,.28), inset 0 1px 0 rgba(255,255,255,.4);
         }
         #krypbot-container .kb-session-button[data-action="start"]:hover { transform:translateY(-1px); filter:brightness(1.06); box-shadow:0 14px 30px rgba(23,185,103,.34), inset 0 1px 0 rgba(255,255,255,.4); }
         #krypbot-container .kb-session-button[data-action="start"]:active { transform:translateY(0) scale(.99); }
@@ -5791,18 +5823,73 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-session-button[data-action="stop"] { width:48px; background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.08); color:#f4f5f7; }
         #krypbot-container .kb-session-button[data-action="export"] { width:34px; background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.08); color:#aeb3bc; }
         #krypbot-container .kb-session-button[aria-disabled="true"] { opacity:.45; cursor:not-allowed; }
-        #krypbot-container .kb-session-status { display:grid; grid-template-columns:1fr 1fr; gap:5px 8px; padding:8px; border-radius:8px; background:#18191e; }
-        #krypbot-container .kb-session-metric { display:flex; justify-content:space-between; gap:4px; color:#858b97; font-size:8px; }
-        #krypbot-container .kb-session-metric strong { color:#f4f5f7; font-size:9px; }
-        #krypbot-container .kb-session-warning { min-height:12px; color:#ffbd59; font-size:8px; line-height:12px; overflow-wrap:anywhere; }
+        #krypbot-container .kb-session-status {
+          display:grid; grid-template-columns:1fr 1fr; gap:6px; padding:0; border-radius:13px; background:transparent;
+        }
+        #krypbot-container .kb-session-metric {
+          min-width:0; min-height:40px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center; gap:3px;
+          padding:7px 9px; border:1px solid rgba(255,255,255,.055); border-radius:11px; background:rgba(255,255,255,.035);
+          color:#8f97a6; font-size:9px; line-height:1.2; letter-spacing:.04em; text-transform:uppercase;
+        }
+        #krypbot-container .kb-session-metric strong { overflow:hidden; color:#f6f8fa; font-size:11px; line-height:1.25; font-weight:750; letter-spacing:-.01em; text-overflow:ellipsis; white-space:nowrap; text-transform:none; }
+        #krypbot-container .kb-session-metric:first-child {
+          grid-column:1 / -1; min-height:76px; padding:12px 14px;
+          background:linear-gradient(135deg,rgba(56,229,139,.085),rgba(255,255,255,.025));
+        }
+        #krypbot-container .kb-session-metric:first-child strong { font-size:26px; line-height:30px; font-variant-numeric:tabular-nums; letter-spacing:-.035em; }
+        #krypbot-container .kb-session-metric:nth-child(2) { grid-column:1 / -1; min-height:42px; flex-direction:row; align-items:center; justify-content:space-between; }
+        #krypbot-container .kb-session-metric:nth-child(2) strong { color:#65eea9; }
+        #krypbot-container .kb-session-warning { min-height:14px; color:#ffc765; font-size:10px; line-height:15px; overflow-wrap:anywhere; }
+        #oi-zone2 .tc-scout-head { padding-bottom:17px !important; border-bottom:1px solid rgba(255,255,255,.075) !important; }
+        #oi-zone2 .tc-scout-title,
+        #oi-zone2 .tc-scout-head > div:first-child { font-size:17px !important; line-height:22px !important; font-weight:750 !important; letter-spacing:-.02em; }
+        #oi-zone2 .tc-scout-subtitle { margin-top:5px !important; color:var(--tc-muted) !important; font-size:11px !important; }
+        #oi-zone2 .tc-scout-close {
+          flex:none; width:28px !important; height:28px !important; min-width:28px; min-height:28px; padding:0 !important;
+          border:1px solid rgba(255,255,255,.07) !important; border-radius:9px !important;
+          background:rgba(255,255,255,.045) !important; color:#9ca3b2 !important; font-size:17px !important; line-height:1;
+          cursor:pointer;
+        }
+        #oi-zone2 .tc-scout-empty {
+          flex:1 !important; min-height:350px; box-sizing:border-box; align-items:center !important; justify-content:center !important;
+          gap:12px !important; padding:34px 16px !important; text-align:center;
+        }
+        #oi-zone2 .tc-scout-status { padding:6px 10px !important; border-color:rgba(255,255,255,.09) !important; background:rgba(255,255,255,.035); color:#dce1e8 !important; font-size:11px !important; }
+        #oi-zone2 .tc-scout-empty-detail { max-width:230px !important; color:var(--tc-muted) !important; font-size:11px !important; line-height:1.55 !important; }
+        #oi-zone2 .tc-scout-retry {
+          margin-top:4px; padding:9px 14px; border:1px solid rgba(56,229,139,.3); border-radius:10px;
+          background:rgba(56,229,139,.1); color:#67efaa; font:700 11px/1.2 var(--tc-font); cursor:pointer;
+        }
+        #oi-zone2 .tc-scout-loading { flex:1; min-height:350px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:28px 16px; box-sizing:border-box; }
+        #oi-zone2 .tc-scout-loading .tc-scout-radar { margin-bottom:16px; }
+        #oi-zone2 .tc-scout-skeleton { width:100%; height:52px; border:1px solid rgba(255,255,255,.045); border-radius:13px; background:linear-gradient(100deg,rgba(255,255,255,.025),rgba(255,255,255,.065),rgba(255,255,255,.025)); }
+        #oi-zone2 .tc-scout-radar {
+          position:relative; width:112px; height:112px; margin-bottom:8px; border:1px solid rgba(56,229,139,.32); border-radius:50%;
+          background:repeating-radial-gradient(circle,transparent 0 18px,rgba(56,229,139,.16) 19px 20px),
+            conic-gradient(from 210deg,transparent 0 72%,rgba(56,229,139,.28) 88%,transparent 100%);
+          box-shadow:0 0 38px rgba(56,229,139,.11),inset 0 0 28px rgba(56,229,139,.055);
+        }
+        #oi-zone2 .tc-scout-radar::before,
+        #oi-zone2 .tc-scout-radar::after { content:""; position:absolute; background:rgba(56,229,139,.22); }
+        #oi-zone2 .tc-scout-radar::before { left:50%; top:8px; bottom:8px; width:1px; }
+        #oi-zone2 .tc-scout-radar::after { top:50%; left:8px; right:8px; height:1px; }
+        #oi-zone2 .tc-scout-radar-dot { position:absolute; z-index:2; width:7px; height:7px; left:70%; top:30%; border-radius:50%; background:#5bf0aa; box-shadow:0 0 12px rgba(91,240,170,.8); }
         #kb-session-toast { position:fixed; right:18px; bottom:18px; z-index:2147483647; max-width:320px; padding:10px 14px; border:1px solid #ffbd59; border-radius:8px; background:#18191e; color:#ffbd59; font-size:11px; font-weight:800; box-shadow:0 8px 28px rgba(0,0,0,.45); opacity:0; transform:translateY(8px); transition:opacity .16s ease,transform .16s ease; pointer-events:none; }
         #kb-session-toast[data-visible="true"] { opacity:1; transform:translateY(0); }
         #kb-session-toast[data-success="true"] { border-color:#2ad36f; color:#2ad36f; }
+        @media (max-width: 720px) {
+          #oi-wrapper { width:calc(100vw - 20px) !important; flex-direction:column !important; align-items:flex-start !important; gap:12px !important; }
+          #oi-wrapper > * { width:min(320px, calc(100vw - 20px)) !important; max-width:100% !important; }
+        }
         @media (prefers-reduced-motion: reduce) {
+          #krypbot-container,
           #krypbot-container .kb-advanced-settings,
           #krypbot-container .kb-advanced-settings[data-open="true"],
           #krypbot-container .kb-advanced-toggle,
-          #krypbot-container .kb-session-button { transition:none !important; }
+          #krypbot-container .kb-session-button,
+          #krypbot-container .kb-radio-group label,
+          #krypbot-container .kb-radio-group::after,
+          #kb-session-toast { transition:none !important; }
         }
       </style>
     `;
@@ -5812,7 +5899,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         <div class="kb-logo">K</div>
 
         <div class="kb-header">
-          <h2 class="kb-title">Thinker Chess</h2>
+          <div><span class="kb-eyebrow">CHESS ASSISTANT</span><h2 class="kb-title">Thinker Chess</h2></div>
           <button class="kb-minimize-btn" id="kb-minimize-toggle">
             Fechar
           </button>

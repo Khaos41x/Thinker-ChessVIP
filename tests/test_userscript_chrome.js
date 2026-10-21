@@ -70,6 +70,7 @@ function createCdpClient(webSocketUrl) {
 (async () => {
   assert(fs.existsSync(chromePath), "Chrome executable not found");
   const liveChess = process.env.CHESS_LIVE === "1" || process.argv.includes("--live");
+  const captureVisual = process.argv.includes("--screenshot");
 
   const server = http.createServer((request, response) => {
     const pathname = decodeURIComponent(new URL(request.url, "http://127.0.0.1").pathname);
@@ -171,6 +172,7 @@ function createCdpClient(webSocketUrl) {
         menuDisplay: document.getElementById("krypbot-container")?.style.display || "",
         bannerDisplay: document.getElementById("thinker-chess-banner")?.style.display || "",
         menuLayout: describe(document.getElementById("krypbot-container")),
+        menuChildren: Array.from(document.getElementById("krypbot-container")?.children || []).map((node) => ({ id: node.id, className: node.className, height: node.getBoundingClientRect().height, display: getComputedStyle(node).display })),
         bannerLayout: describe(document.getElementById("thinker-chess-banner")),
         ancestors,
         mountError: document.getElementById("kb-ghost-recovery")?.dataset.mountError || "",
@@ -221,9 +223,14 @@ function createCdpClient(webSocketUrl) {
         toggle.click();
         const phaseAfter = window.krypbotSessionControlBridge?.status?.().phase || null;
         const sequenceAfter = sessionPanel.getAttribute("data-session-ui-sequence");
-        const style = getComputedStyle(document.getElementById("krypbot-container"));
+        const menu = document.getElementById("krypbot-container");
+        const style = getComputedStyle(menu);
+        const titleStyle = getComputedStyle(menu.querySelector(".kb-title"));
+        const metricStyle = getComputedStyle(menu.querySelector(".kb-session-metric strong"));
+        const metricSurface = getComputedStyle(menu.querySelector(".kb-session-metric"));
         const scout = document.getElementById("oi-zone2");
         const scoutStyle = scout ? getComputedStyle(scout) : null;
+        const scoutEmptyStyle = scout?.querySelector(".tc-scout-empty") ? getComputedStyle(scout.querySelector(".tc-scout-empty")) : null;
         return {
           ok: initial.expanded === "false" && initial.hidden === "true" && initial.inert && initial.open === "false"
             && opened.expanded === "true" && opened.hidden === "false" && !opened.inert && opened.open === "true"
@@ -233,8 +240,8 @@ function createCdpClient(webSocketUrl) {
             && retained.delayMinimum === "0.75" && retained.delayMaximum === "1.80" && retained.delayMode
             && phaseBefore === phaseAfter && sequenceBefore === sequenceAfterOpen && sequenceAfterDraft === sequenceAfterClose && sequenceAfterClose === sequenceAfter,
           initial, opened, closed, retained, collapsedFocusBlocked, expandedFocusAllowed, phaseBefore, phaseAfter, sequenceBefore, sequenceAfterOpen, sequenceAfterDraft, sequenceAfterClose, sequenceAfter,
-          glass: { background: style.backgroundColor, radius: style.borderRadius, backdrop: style.backdropFilter || style.webkitBackdropFilter, font: style.fontFamily },
-          scoutGlass: scoutStyle ? { background: scoutStyle.backgroundColor, radius: scoutStyle.borderRadius, backdrop: scoutStyle.backdropFilter || scoutStyle.webkitBackdropFilter, font: scoutStyle.fontFamily } : null,
+          glass: { background: style.backgroundColor, backgroundImage: style.backgroundImage, radius: style.borderRadius, backdrop: style.backdropFilter || style.webkitBackdropFilter, font: style.fontFamily, width: style.width, padding: style.padding, shadow: style.boxShadow, titleFont: titleStyle.fontSize, metricFont: metricStyle.fontSize, metricSurface: metricSurface.backgroundColor, metricSurfaceImage: metricSurface.backgroundImage },
+          scoutGlass: scoutStyle ? { background: scoutStyle.backgroundColor, radius: scoutStyle.borderRadius, backdrop: scoutStyle.backdropFilter || scoutStyle.webkitBackdropFilter, font: scoutStyle.fontFamily, width: scoutStyle.width, height: scout.getBoundingClientRect().height, menuHeight: menu.getBoundingClientRect().height, minHeight: scoutStyle.minHeight, emptyAlign: scoutEmptyStyle?.alignItems || null, emptyJustify: scoutEmptyStyle?.justifyContent || null } : null,
         };
       })()`,
       returnByValue: true,
@@ -245,6 +252,9 @@ function createCdpClient(webSocketUrl) {
     assert(disclosureSmoke.glass.background === "rgba(20, 20, 25, 0.65)", `Session panel glass background regressed: ${JSON.stringify(disclosureSmoke.glass)}`);
     assert(disclosureSmoke.glass.radius === "20px" && disclosureSmoke.glass.backdrop.includes("16px"), `Session panel glass geometry regressed: ${JSON.stringify(disclosureSmoke.glass)}`);
     assert(disclosureSmoke.glass.font.includes("-apple-system") || disclosureSmoke.glass.font.includes("BlinkMacSystemFont") || disclosureSmoke.glass.font.includes("Segoe UI"), `Session panel system font regressed: ${JSON.stringify(disclosureSmoke.glass)}`);
+    assert(disclosureSmoke.glass.width === "320px" && disclosureSmoke.glass.padding === "18px", `Session panel still uses compact legacy geometry: ${JSON.stringify(disclosureSmoke.glass)}`);
+    assert(disclosureSmoke.glass.titleFont === "18px" && disclosureSmoke.glass.metricFont === "26px", `Session panel typography hierarchy regressed: ${JSON.stringify(disclosureSmoke.glass)}`);
+    assert(disclosureSmoke.glass.backgroundImage.includes("linear-gradient") && disclosureSmoke.glass.shadow.includes("rgba(0, 0, 0, 0.52)") && disclosureSmoke.glass.metricSurfaceImage.includes("linear-gradient"), `Session panel still renders as a flat opaque surface: ${JSON.stringify(disclosureSmoke.glass)}`);
 
     if (liveChess) {
       console.log(JSON.stringify({ state, consoleErrors }, null, 2));
@@ -386,6 +396,7 @@ function createCdpClient(webSocketUrl) {
     assert(exceptions.length === 0, `Userscript exception: ${exceptions[0]?.text || "unknown"}`);
     assert(disclosureSmoke.scoutGlass?.background === "rgba(20, 20, 25, 0.65)" && disclosureSmoke.scoutGlass.radius === "20px" && disclosureSmoke.scoutGlass.backdrop.includes("16px"), `Scout glass styling regressed: ${JSON.stringify(disclosureSmoke.scoutGlass)}`);
     assert(disclosureSmoke.scoutGlass.font.includes("-apple-system") || disclosureSmoke.scoutGlass.font.includes("BlinkMacSystemFont") || disclosureSmoke.scoutGlass.font.includes("Segoe UI"), `Scout system font regressed: ${JSON.stringify(disclosureSmoke.scoutGlass)}`);
+    assert(disclosureSmoke.scoutGlass.width === "320px" && disclosureSmoke.scoutGlass.minHeight === "480px" && Math.abs(disclosureSmoke.scoutGlass.height - disclosureSmoke.scoutGlass.menuHeight) <= 1 && disclosureSmoke.scoutGlass.emptyAlign === "center" && disclosureSmoke.scoutGlass.emptyJustify === "center", `Scout waiting state retained legacy dead-space geometry: ${JSON.stringify(disclosureSmoke.scoutGlass)}`);
     assert(productionStart.ok, `Production START wiring smoke failed: ${JSON.stringify(productionStart)}`);
     if (!liveChess) assert(productionStart.warning === "⚠️ Verifique o Artefato" && productionStart.rawWarningCode === "DDA_MAPPING_UNAVAILABLE", `Default compatibility START did not leave IDLE: ${JSON.stringify(productionStart)}`);
     assert(module14.ok, `Module 14 browser smoke failed: ${JSON.stringify(module14)}`);
@@ -406,6 +417,38 @@ function createCdpClient(webSocketUrl) {
       `page cannot scroll to the configuration menu: ${state.documentHeight}px document / ${state.viewportHeight}px viewport`,
     );
     assert(state.bannerLayout.display === "flex", "banner is still hidden on a desktop viewport");
+    await client.send("Emulation.setDeviceMetricsOverride", { width: 680, height: 900, deviceScaleFactor: 1, mobile: false });
+    await sleep(100);
+    const responsiveResult = await client.send("Runtime.evaluate", {
+      expression: `(() => {
+        const wrapper = document.getElementById("oi-wrapper");
+        const menu = document.getElementById("krypbot-container");
+        const scout = document.getElementById("oi-zone2");
+        const style = getComputedStyle(wrapper);
+        return {
+          direction: style.flexDirection,
+          align: style.alignItems,
+          wrapperWidth: wrapper.getBoundingClientRect().width,
+          menuWidth: menu.getBoundingClientRect().width,
+          scoutWidth: scout?.getBoundingClientRect().width || 0,
+          viewportWidth: innerWidth,
+        };
+      })()`,
+      returnByValue: true,
+    });
+    const responsive = responsiveResult.result.value;
+    assert(responsive.direction === "column" && responsive.align === "flex-start", `Workspace did not stack on a narrow viewport: ${JSON.stringify(responsive)}`);
+    assert(responsive.wrapperWidth <= responsive.viewportWidth - 20 && responsive.menuWidth <= responsive.wrapperWidth && responsive.scoutWidth <= responsive.wrapperWidth, `Workspace overflowed the narrow viewport: ${JSON.stringify(responsive)}`);
+    await client.send("Emulation.clearDeviceMetricsOverride");
+    await sleep(100);
+    if (captureVisual) {
+      await client.send("Runtime.evaluate", { expression: "scrollTo(0, document.documentElement.scrollHeight)" });
+      await sleep(150);
+      const screenshot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      const artifactPath = path.join(root, "tests", "artifacts", "thinker-panels-final.png");
+      fs.writeFileSync(artifactPath, Buffer.from(screenshot.data, "base64"));
+      console.log(`Visual evidence: ${artifactPath}`);
+    }
     console.log(JSON.stringify({ state, productionStart, module14, consoleErrors }, null, 2));
     console.log(liveChess ? "Live Chess.com userscript bootstrap passed." : "Chrome userscript bootstrap passed.");
   } finally {
