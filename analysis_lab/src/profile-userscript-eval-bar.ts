@@ -100,12 +100,14 @@ async function runUserscriptEvalBarBrowserTest() {
   const maximumPendingFramesDuringBurst = maximumPendingFrames;
   await waitFrames(12);
   const negativeLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
+  const negativeFavoredColor = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.favoredColor;
   const negativeTransform = document.querySelector<HTMLElement>('.thinker-eval-v2-fill')?.style.transform;
 
   orientation = 'black';
   adapter.pollNow();
   await waitFrames(4);
   const orientationCacheLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
+  const orientationCacheFavoredColor = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.favoredColor;
 
   now = 101;
   adapter.pollNow();
@@ -118,26 +120,29 @@ async function runUserscriptEvalBarBrowserTest() {
     && requests.at(-1) === sameFenRequest
     && abortCount === abortsBeforeRefreshBoundary
     && adapter.snapshot().requestActive;
-  sameFenRequest.onProgress({ type: 'info', sequence: 1, cp: 40, mate: null, depth: 8 });
+  sameFenRequest.onProgress({ type: 'info', sequence: 1, cp: 40, mate: null, depth: 20 });
   await waitFrames(2);
   const firstProgressLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
-  sameFenRequest.onProgress({ type: 'info', sequence: 2, cp: 90, mate: null, depth: 12 });
+  now += 251;
+  sameFenRequest.onProgress({ type: 'info', sequence: 2, cp: 90, mate: null, depth: 21 });
   sameFenRequest.onProgress({ type: 'info', sequence: 1, cp: -900, mate: null, depth: 7 });
   await waitFrames(2);
   const secondProgressLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
   const oldSameFenCallbacksRejected = activeSurvivedRefresh
-    && firstProgressLabel === '-0.4'
-    && secondProgressLabel === '-0.9'
+    && firstProgressLabel === '0.4'
+    && secondProgressLabel === '0.9'
     && adapter.snapshot().requestActive;
 
   sameFenRequest.onResult({ type: 'result', sequence: 3, mate: 3, depth: 20 });
   await waitFrames(4);
   const mateBlackLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
+  const mateFavoredColor = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.favoredColor;
   now = 10303;
   adapter.pollNow();
   requests.at(-1)!.onResult({ mate: -2, depth: 20 });
   await waitFrames(4);
   const negativeMateBlackLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent;
+  const negativeMateFavoredColor = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')?.dataset.favoredColor;
   now = 15404;
   adapter.pollNow();
   requests.at(-1)!.onResult({ cp: 0, depth: 20 });
@@ -251,12 +256,14 @@ async function runUserscriptEvalBarBrowserTest() {
     overlayAligned,
     parentPreservedAfterDestroy,
     staleRejected: staleLabel === '…',
-    negativeRendered: Boolean(negativeLabel?.startsWith('-')) && Boolean(negativeTransform?.startsWith('scaleY(')),
-    cachedOrientationRendered: orientationCacheLabel === '+2.4',
+    negativeRendered: negativeLabel === '2.4'
+      && negativeFavoredColor === 'black'
+      && Boolean(negativeTransform?.startsWith('scaleY(')),
+    cachedOrientationRendered: orientationCacheLabel === '2.4' && orientationCacheFavoredColor === 'black',
     oldSameFenCallbacksRejected,
     requestIdsMonotonic: requests.every((request, index) => index === 0 || request.requestId > requests[index - 1].requestId),
-    matePerspectiveRendered: mateBlackLabel === '#-3',
-    negativeMatePerspectiveRendered: negativeMateBlackLabel === '#2',
+    matePerspectiveRendered: mateBlackLabel === '#3' && mateFavoredColor === 'white',
+    negativeMatePerspectiveRendered: negativeMateBlackLabel === '#2' && negativeMateFavoredColor === 'black',
     neutralRendered: neutralLabel === '0.0',
     contextMissPreservedVisual: beforeContextMiss === afterContextMiss && contextMissState === 'stale',
     oldContextRejected,
@@ -646,9 +653,158 @@ async function runUserscriptEvalBarReactiveFenTest() {
   };
 }
 
+async function runUserscriptEvalBarPolishTest() {
+  history.replaceState({}, '', '/analysis/final-polish');
+  const shell = document.createElement('div');
+  const board = document.createElement('div');
+  Object.assign(shell.style, { width: '480px', height: '480px', marginLeft: '80px' });
+  Object.assign(board.style, { width: '480px', height: '480px' });
+  shell.append(board);
+  document.body.append(shell);
+  let orientation: 'white' | 'black' = 'white';
+  let now = 0;
+  const initialFen = '4k3/8/8/8/8/8/P7/4K3 w - - 0 1';
+  let fen = initialFen;
+  let cacheContext = 'final-polish-fixture';
+  let authorization: 'analysis' | null = 'analysis';
+  const requests: EvalRequest[] = [];
+  const adapter = createUserscriptEvalBar({
+    window,
+    document,
+    getFen: () => fen,
+    getBoard: () => board,
+    getOrientation: () => orientation,
+    getCacheContext: () => cacheContext,
+    authorize: () => authorization,
+    shouldDisplay: () => true,
+    requestEvaluation: request => {
+      requests.push(request);
+      return { abort: () => undefined };
+    },
+    pollIntervalMs: 60000,
+    refreshIntervalMs: 60000,
+    now: () => now,
+  });
+  adapter.start(true);
+  const request = requests[0];
+  const root = document.querySelector<HTMLElement>('#thinker-eval-v2-rail')!;
+  const fill = root.querySelector<HTMLElement>('.thinker-eval-v2-fill')!;
+  const label = root.querySelector<HTMLElement>('.thinker-eval-v2-score')!;
+  const railRect = root.getBoundingClientRect();
+
+  request.onProgress({ type: 'info', sequence: 1, cp: -340, mate: null, depth: 8 });
+  await nextFrame();
+  const blackNormalRect = label.getBoundingClientRect();
+  const blackNormal = {
+    label: label.textContent,
+    favoredColor: root.dataset.favoredColor,
+    edgeDelta: Math.abs(blackNormalRect.top - railRect.top),
+    color: getComputedStyle(label).color,
+  };
+
+  orientation = 'black';
+  adapter.pollNow();
+  await nextFrame();
+  const blackInvertedRect = label.getBoundingClientRect();
+  const blackInverted = {
+    label: label.textContent,
+    favoredColor: root.dataset.favoredColor,
+    edgeDelta: Math.abs(blackInvertedRect.bottom - railRect.bottom),
+    color: getComputedStyle(label).color,
+  };
+
+  now = 10;
+  request.onProgress({ type: 'info', sequence: 2, cp: 250, mate: null, depth: 9 });
+  await nextFrame();
+  const whiteInvertedRect = label.getBoundingClientRect();
+  const whiteInverted = {
+    label: label.textContent,
+    favoredColor: root.dataset.favoredColor,
+    edgeDelta: Math.abs(whiteInvertedRect.top - railRect.top),
+    color: getComputedStyle(label).color,
+  };
+
+  orientation = 'white';
+  adapter.pollNow();
+  await nextFrame();
+  const whiteNormalRect = label.getBoundingClientRect();
+  const whiteNormal = {
+    label: label.textContent,
+    favoredColor: root.dataset.favoredColor,
+    edgeDelta: Math.abs(whiteNormalRect.bottom - railRect.bottom),
+    color: getComputedStyle(label).color,
+  };
+
+  now = 20;
+  request.onProgress({ type: 'info', sequence: 3, cp: 380, mate: null, depth: 10 });
+  await nextFrame();
+  const rootBeforeNoise = root;
+  for (let index = 0; index < 100; index += 1) {
+    now += index % 3 === 0 ? 2.1 : index % 3 === 1 ? 1.7 : 1.3;
+    request.onProgress({
+      type: 'info',
+      sequence: index + 4,
+      cp: 350 + ((index * 17) % 41),
+      mate: null,
+      depth: index + 11,
+    });
+  }
+  const duringNoise = {
+    label: label.textContent,
+    roots: document.querySelectorAll('#thinker-eval-v2-rail').length,
+    sameRoot: document.querySelector('#thinker-eval-v2-rail') === rootBeforeNoise,
+    fillOpacity: getComputedStyle(fill).opacity,
+    labelOpacity: getComputedStyle(label).opacity,
+    presentation: adapter.snapshot().presentation,
+  };
+  await new Promise(resolve => setTimeout(resolve, 280));
+  const afterTimedFlush = {
+    label: label.textContent,
+    presentation: adapter.snapshot().presentation,
+  };
+  now += 10;
+  request.onProgress({ type: 'info', sequence: 104, cp: 355, mate: null, depth: 111 });
+  fen = '4k3/8/8/8/8/8/1P6/4K3 b - - 0 2';
+  cacheContext = 'final-polish-other-context';
+  authorization = null;
+  await new Promise(resolve => setTimeout(resolve, 260));
+  const blockedPendingScore = adapter.snapshot().presentation.pending?.score;
+  const staleTimerBlocked = label.textContent === afterTimedFlush.label
+    && blockedPendingScore?.kind === 'cp'
+    && blockedPendingScore.cp === 355;
+  fen = initialFen;
+  cacheContext = 'final-polish-fixture';
+  authorization = 'analysis';
+  now = 210;
+  request.onResult({ type: 'result', sequence: 105, cp: 360, mate: null, depth: 112 });
+  await nextFrame();
+  const final = {
+    label: label.textContent,
+    favoredColor: root.dataset.favoredColor,
+    targetFraction: adapter.snapshot().targetFraction,
+    rawEvaluation: adapter.snapshot().lastEvaluation,
+    presentation: adapter.snapshot().presentation,
+    roots: document.querySelectorAll('#thinker-eval-v2-rail').length,
+  };
+  adapter.destroy();
+  shell.remove();
+  return {
+    blackNormal,
+    blackInverted,
+    whiteInverted,
+    whiteNormal,
+    duringNoise,
+    afterTimedFlush,
+    staleTimerBlocked,
+    final,
+    rootsAfterDestroy: document.querySelectorAll('#thinker-eval-v2-rail').length,
+  };
+}
+
 Object.assign(globalThis, {
   runUserscriptEvalBarBrowserTest,
   runUserscriptEvalBarVisualTest,
   runUserscriptEvalBarContinuityTest,
   runUserscriptEvalBarReactiveFenTest,
+  runUserscriptEvalBarPolishTest,
 });

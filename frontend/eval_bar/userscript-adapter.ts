@@ -1,5 +1,5 @@
-import { engineScoreFromUci, formatEvaluation, normalizeEvaluation } from '../../analysis_lab/src/analysis/evaluation';
-import type { EngineScore, EvalBarSample } from '../../analysis_lab/src/analysis/contracts';
+import { engineScoreFromUci, normalizeEvaluation } from '../../analysis_lab/src/analysis/evaluation';
+import type { Color, EngineScore, EvalBarSample } from '../../analysis_lab/src/analysis/contracts';
 import { EvalBarController } from '../../analysis_lab/src/ui/eval-bar';
 
 declare const __THINKER_EVAL_BAR_CSS__: string | undefined;
@@ -68,6 +68,20 @@ type CachedEvaluation = Readonly<{
   fraction: number;
 }>;
 
+export type EvalBarPresentation = Readonly<{
+  score: EngineScore;
+  fraction: number;
+  label: string;
+  favoredColor: Color;
+  depth: number | null;
+}>;
+
+export type EvalBarPresentationDecision = Readonly<{
+  selected: EvalBarPresentation | null;
+  rejectedDepth: boolean;
+  coalesced: boolean;
+}>;
+
 export type EvalBarConnectionState = 'idle' | 'blocked' | 'waiting' | 'loading' | 'stale' | 'connected' | 'error';
 
 export type EvalBarDiagnosticSnapshot = Readonly<{
@@ -100,6 +114,7 @@ export type EvalBarDiagnosticSnapshot = Readonly<{
   boardRetargetCount: number;
   lastFirstRenderedFrameAt: number | null;
   lastEvaluationToFirstFrameMs: number | null;
+  presentation: ReturnType<EvalBarPresentationSelector['snapshot']>;
 }>;
 
 const ROOT_ID = 'thinker-eval-v2-rail';
@@ -109,6 +124,9 @@ const DEFAULT_POLL_INTERVAL_MS = 500;
 const DEFAULT_REFRESH_INTERVAL_MS = 5000;
 const DEFAULT_BOARD_MISSING_GRACE_MS = 1500;
 const ROUTE_RECONCILE_FRAMES = 4;
+export const EVAL_BAR_PRESENTATION_INTERVAL_MS = 250;
+export const EVAL_BAR_MATERIAL_CHANGE_CP = 100;
+export const EVAL_BAR_NEUTRAL_BAND_CP = 20;
 const ROUTE_CHANGE_EVENT = 'thinker-eval-bar-route-change';
 const historyHooks = new WeakMap<Window, { references: number; pushState: History['pushState']; replaceState: History['replaceState'] }>();
 
@@ -322,16 +340,126 @@ export class BoundedLruCache<K, V> {
   }
 }
 
-function orientationLabel(score: EngineScore, orientation: 'white' | 'black'): string {
-  if (orientation === 'white') return formatEvaluation(score);
-  return formatEvaluation(score.kind === 'cp'
-    ? { kind: 'cp', cp: -score.cp }
-    : { kind: 'mate', mate: -score.mate });
-}
-
 function normalizedResult(result: EvalTransportResult): CachedEvaluation {
   const score = engineScoreFromUci({ cp: result.cp, mate: result.mate });
   return Object.freeze({ score, fraction: normalizeEvaluation(score).whiteVisualFraction });
+}
+
+function scoreValue(score: EngineScore): number {
+  return score.kind === 'cp' ? score.cp : score.mate;
+}
+
+function favoredColor(score: EngineScore, neutralFallback: Color = 'white'): Color {
+  const value = scoreValue(score);
+  return value > 0 ? 'white' : value < 0 ? 'black' : neutralFallback;
+}
+
+function absoluteEvaluationLabel(score: EngineScore): string {
+  if (score.kind === 'mate') return `#${Math.abs(score.mate)}`;
+  return (Math.abs(score.cp) / 100).toFixed(1);
+}
+
+export function projectEvalBarPresentation(
+  evaluation: CachedEvaluation,
+  depth: number | null = null,
+  neutralFallback: Color = 'white',
+): EvalBarPresentation {
+  return Object.freeze({
+    score: evaluation.score,
+    fraction: evaluation.fraction,
+    label: absoluteEvaluationLabel(evaluation.score),
+    favoredColor: favoredColor(evaluation.score, neutralFallback),
+    depth: depth !== null && Number.isFinite(depth) ? depth : null,
+  });
+}
+
+function isMateTransition(previous: EngineScore, next: EngineScore): boolean {
+  return previous.kind === 'mate' || next.kind === 'mate';
+}
+
+function isMaterialChange(previous: EngineScore, next: EngineScore): boolean {
+  if (previous.kind !== 'cp' || next.kind !== 'cp') return true;
+  return Math.abs(next.cp - previous.cp) >= EVAL_BAR_MATERIAL_CHANGE_CP;
+}
+
+function isMeaningfulSideChange(previous: EngineScore, next: EngineScore): boolean {
+  if (previous.kind !== 'cp' || next.kind !== 'cp') return favoredColor(previous) !== favoredColor(next);
+  return Math.sign(previous.cp) !== Math.sign(next.cp)
+    && Math.abs(previous.cp) > EVAL_BAR_NEUTRAL_BAND_CP
+    && Math.abs(next.cp) > EVAL_BAR_NEUTRAL_BAND_CP;
+}
+
+export class EvalBarPresentationSelector {
+  private selected: EvalBarPresentation | null = null;
+  private pending: EvalBarPresentation | null = null;
+  private highestDepth = -Infinity;
+  private lastSelectedAt = -Infinity;
+  private coalescedCount = 0;
+  private selectedCount = 0;
+
+  reset(): void {
+    this.selected = null;
+    this.pending = null;
+    this.highestDepth = -Infinity;
+    this.lastSelectedAt = -Infinity;
+    this.coalescedCount = 0;
+    this.selectedCount = 0;
+  }
+
+  beginRefresh(): void {
+    this.pending = null;
+  }
+
+  consider(candidate: EvalBarPresentation, now: number, terminal = false): EvalBarPresentationDecision {
+    const depth = candidate.depth;
+    if (!terminal && depth !== null && depth < this.highestDepth) {
+      return Object.freeze({ selected: null, rejectedDepth: true, coalesced: false });
+    }
+    if (depth !== null) this.highestDepth = Math.max(this.highestDepth, depth);
+    const immediate = terminal
+      || !this.selected
+      || isMateTransition(this.selected.score, candidate.score)
+      || isMaterialChange(this.selected.score, candidate.score)
+      || isMeaningfulSideChange(this.selected.score, candidate.score)
+      || now - this.lastSelectedAt >= EVAL_BAR_PRESENTATION_INTERVAL_MS;
+    if (immediate) {
+      return Object.freeze({ selected: this.commit(candidate, now), rejectedDepth: false, coalesced: false });
+    }
+    this.pending = candidate;
+    this.coalescedCount += 1;
+    return Object.freeze({ selected: null, rejectedDepth: false, coalesced: true });
+  }
+
+  flush(now: number): EvalBarPresentation | null {
+    if (!this.pending) return null;
+    return this.commit(this.pending, now);
+  }
+
+  snapshot(): Readonly<{
+    selected: EvalBarPresentation | null;
+    pending: EvalBarPresentation | null;
+    highestDepth: number | null;
+    lastSelectedAt: number | null;
+    coalescedCount: number;
+    selectedCount: number;
+  }> {
+    return Object.freeze({
+      selected: this.selected,
+      pending: this.pending,
+      highestDepth: Number.isFinite(this.highestDepth) ? this.highestDepth : null,
+      lastSelectedAt: Number.isFinite(this.lastSelectedAt) ? this.lastSelectedAt : null,
+      coalescedCount: this.coalescedCount,
+      selectedCount: this.selectedCount,
+    });
+  }
+
+  private commit(candidate: EvalBarPresentation, now: number): EvalBarPresentation {
+    this.selected = candidate;
+    this.pending = null;
+    this.lastSelectedAt = now;
+    this.selectedCount += 1;
+    return candidate;
+  }
 }
 
 function bundledCss(): string {
@@ -375,6 +503,7 @@ function installHistoryHook(window: Window): () => void {
 export class UserscriptEvalBar {
   private readonly cache: BoundedLruCache<string, CachedEvaluation>;
   private readonly now: () => number;
+  private readonly presentationSelector = new EvalBarPresentationSelector();
   private started = false;
   private enabled = false;
   private generation = 0;
@@ -383,7 +512,6 @@ export class UserscriptEvalBar {
   private activeSequence = -1;
   private currentFen = '';
   private currentCacheContext = '';
-  private currentOrientation: 'white' | 'black' = 'white';
   private lastRequestAt = -Infinity;
   private requestStartedAt: number | null = null;
   private lastRequestDurationMs: number | null = null;
@@ -424,6 +552,7 @@ export class UserscriptEvalBar {
   private boardMissingTimer: number | null = null;
   private routeReconcileTimer: number | null = null;
   private routeReconcileFramesRemaining = 0;
+  private presentationTimer: number | null = null;
   private readonly routeListener = (): void => {
     this.queueReconcile();
     this.scheduleRouteReconcileBurst();
@@ -504,8 +633,6 @@ export class UserscriptEvalBar {
     }
     const orientation = this.options.getOrientation();
     this.controller?.setOrientation(orientation);
-    const orientationChanged = orientation !== this.currentOrientation;
-    this.currentOrientation = orientation;
     const changed = fen !== this.currentFen || cacheContext !== this.currentCacheContext;
     if (changed) {
       const detectedAt = this.now();
@@ -519,15 +646,16 @@ export class UserscriptEvalBar {
       this.firstEvaluationGeneration = -1;
       this.pendingRenderedFen = '';
       this.pendingRenderedGeneration = -1;
+      this.resetPresentation();
       const cached = this.cache.get(this.cacheKey(fen, cacheContext));
+      const cachedPresentation = cached
+        ? this.presentationSelector.consider(projectEvalBarPresentation(cached), detectedAt, true).selected
+        : null;
       this.visualStale = this.hasRenderedEvaluation;
       this.setVisualState(cached ? 'connected' : this.visualStale ? 'stale' : 'waiting',
         cached || this.hasRenderedEvaluation ? undefined : '…');
-      this.controller?.beginSearch(this.generation, cached ? this.sample(cached, orientation) : null);
+      this.controller?.beginSearch(this.generation, cachedPresentation ? this.sample(cachedPresentation) : null);
       if (cached) this.markEvaluationAccepted(fen, true);
-    } else if (orientationChanged) {
-      const cached = this.cache.get(this.cacheKey(fen, cacheContext));
-      if (cached) this.controller?.publish(this.sample(cached, orientation));
     }
     if (this.request) return;
     if (this.now() - this.lastRequestAt < (this.options.refreshIntervalMs ?? DEFAULT_REFRESH_INTERVAL_MS)) return;
@@ -535,6 +663,8 @@ export class UserscriptEvalBar {
       this.setVisualState(this.hasRenderedEvaluation ? 'stale' : 'loading', this.hasRenderedEvaluation ? undefined : '…');
     }
     const generation = this.generation;
+    this.clearPresentationTimer();
+    this.presentationSelector.beginRefresh();
     const requestId = ++this.requestSequence;
     this.activeRequestId = requestId;
     this.activeSequence = -1;
@@ -566,6 +696,7 @@ export class UserscriptEvalBar {
             this.request = null;
             this.finishRequestTiming();
             this.lastRequestAt = this.now();
+            this.clearPresentationTimer();
             this.reportError(error);
           }
         },
@@ -651,6 +782,7 @@ export class UserscriptEvalBar {
       boardRetargetCount: this.boardRetargetCount,
       lastFirstRenderedFrameAt: this.lastFirstRenderedFrameAt,
       lastEvaluationToFirstFrameMs: this.lastEvaluationToFirstFrameMs,
+      presentation: this.presentationSelector.snapshot(),
     });
   }
 
@@ -697,9 +829,8 @@ export class UserscriptEvalBar {
     }
     this.cache.set(this.cacheKey(fen, cacheContext), evaluation);
     this.lastEvaluation = Object.freeze({ ...result });
-    this.markEvaluationAccepted(fen, false);
     this.setVisualState('connected');
-    this.controller?.publish(this.sample(evaluation, this.options.getOrientation()));
+    this.presentEvaluation(fen, evaluation, result, true);
   }
 
   private acceptProgress(
@@ -723,16 +854,71 @@ export class UserscriptEvalBar {
       return;
     }
     this.lastEvaluation = Object.freeze({ ...result });
-    this.markEvaluationAccepted(fen, false);
     this.setVisualState('connected');
-    this.controller?.publish(this.sample(evaluation, this.options.getOrientation()));
+    this.presentEvaluation(fen, evaluation, result, false);
   }
 
-  private sample(evaluation: CachedEvaluation, orientation: 'white' | 'black'): EvalBarSample {
+  private presentEvaluation(
+    fen: string,
+    evaluation: CachedEvaluation,
+    result: EvalTransportResult,
+    terminal: boolean,
+  ): void {
+    const selected = this.presentationSelector.snapshot().selected;
+    const presentation = projectEvalBarPresentation(
+      evaluation,
+      Number.isFinite(result.depth) ? Number(result.depth) : null,
+      selected?.favoredColor ?? 'white',
+    );
+    const decision = this.presentationSelector.consider(presentation, this.now(), terminal);
+    if (decision.selected) {
+      this.clearPresentationTimer();
+      this.publishPresentation(fen, decision.selected);
+    } else if (decision.coalesced) {
+      this.schedulePresentationFlush(fen, this.generation, this.currentCacheContext);
+    }
+  }
+
+  private publishPresentation(fen: string, presentation: EvalBarPresentation): void {
+    this.markEvaluationAccepted(fen, false);
+    this.controller?.publish(this.sample(presentation));
+  }
+
+  private schedulePresentationFlush(fen: string, generation: number, cacheContext: string): void {
+    if (this.presentationTimer !== null) return;
+    const lastSelectedAt = this.presentationSelector.snapshot().lastSelectedAt ?? this.now();
+    const delay = Math.max(0, EVAL_BAR_PRESENTATION_INTERVAL_MS - (this.now() - lastSelectedAt));
+    this.presentationTimer = this.options.window.setTimeout(() => {
+      this.presentationTimer = null;
+      if (!this.enabled
+        || !this.shouldDisplay()
+        || !this.safeRead(() => Boolean(this.options.authorize()), false)
+        || generation !== this.generation
+        || fen !== this.currentFen
+        || this.safeRead(() => this.options.getFen(), null) !== fen
+        || cacheContext !== this.currentCacheContext
+        || this.readCacheContext() !== cacheContext) return;
+      const presentation = this.presentationSelector.flush(this.now());
+      if (presentation) this.publishPresentation(fen, presentation);
+    }, delay);
+  }
+
+  private clearPresentationTimer(): void {
+    if (this.presentationTimer !== null) this.options.window.clearTimeout(this.presentationTimer);
+    this.presentationTimer = null;
+  }
+
+  private resetPresentation(): void {
+    this.clearPresentationTimer();
+    this.presentationSelector.reset();
+  }
+
+  private sample(presentation: EvalBarPresentation): EvalBarSample {
     return Object.freeze({
       searchId: this.generation,
-      fraction: evaluation.fraction,
-      label: orientationLabel(evaluation.score, orientation),
+      fraction: presentation.fraction,
+      label: presentation.label,
+      favoredColor: presentation.favoredColor,
     });
   }
 
@@ -742,6 +928,7 @@ export class UserscriptEvalBar {
     root.id = ROOT_ID;
     root.className = 'thinker-eval-v2-rail thinker-eval-v2-overlay';
     root.dataset.orientation = this.options.getOrientation();
+    root.dataset.favoredColor = 'white';
     root.dataset.state = 'waiting';
     root.setAttribute('aria-label', 'Position evaluation');
     const fill = this.options.document.createElement('div');
@@ -769,7 +956,8 @@ export class UserscriptEvalBar {
     if (this.currentFen) {
       const cached = this.cache.get(this.cacheKey(this.currentFen, this.currentCacheContext));
       root.dataset.state = cached ? 'fresh' : 'waiting';
-      this.controller.beginSearch(this.generation, cached ? this.sample(cached, this.options.getOrientation()) : null);
+      const presentation = cached ? projectEvalBarPresentation(cached) : null;
+      this.controller.beginSearch(this.generation, presentation ? this.sample(presentation) : null);
     }
   }
 
@@ -819,6 +1007,7 @@ export class UserscriptEvalBar {
     this.visualStale = false;
     this.pendingRenderedFen = '';
     this.pendingRenderedGeneration = -1;
+    this.resetPresentation();
     if (wasActive) this.generation += 1;
     this.unmount();
   }
@@ -871,6 +1060,7 @@ export class UserscriptEvalBar {
     if (hadPosition) this.generation += 1;
     this.pendingRenderedFen = '';
     this.pendingRenderedGeneration = -1;
+    this.resetPresentation();
     if (state === 'blocked') {
       this.hasRenderedEvaluation = false;
       this.renderedFen = '';
@@ -894,6 +1084,7 @@ export class UserscriptEvalBar {
   }
 
   private reportError(error: unknown): void {
+    this.clearPresentationTimer();
     const preserveEvaluation = this.hasRenderedEvaluation;
     this.setVisualState('error', preserveEvaluation ? undefined : '!', error);
   }
@@ -1079,6 +1270,7 @@ export class UserscriptEvalBar {
       }
       this.pendingRenderedFen = '';
       this.pendingRenderedGeneration = -1;
+      this.resetPresentation();
       this.boardMissingTimer = this.options.window.setTimeout(() => {
         this.boardMissingTimer = null;
         const board = this.safeRead(() => this.options.getBoard(), null);

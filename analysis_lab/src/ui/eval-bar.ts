@@ -1,6 +1,7 @@
 import { MODEL_VERSIONS, type EvalBarSample } from '../analysis/contracts';
 
 export const EVAL_BAR_TIME_CONSTANT_MS = 110;
+export const EVAL_BAR_MIN_LABEL_REGION_FRACTION = 0.12;
 
 type FrameCallback = (timestamp: number) => void;
 
@@ -39,6 +40,7 @@ export class EvalBarController {
   private lastTimestamp: number | null = null;
   private current = 0.5;
   private target = 0.5;
+  private pendingPresentation: Pick<EvalBarSample, 'label' | 'favoredColor'> | null = null;
 
   constructor(
     elements: EvalBarElements,
@@ -65,6 +67,7 @@ export class EvalBarController {
     this.cancelScheduledFrame();
     this.activeSearchId = searchId;
     this.mailbox = null;
+    this.pendingPresentation = null;
     this.target = this.current;
     this.lastTimestamp = null;
     if (cachedSample) this.publish(cachedSample);
@@ -88,16 +91,19 @@ export class EvalBarController {
   reset(fraction = 0.5, label = '—'): void {
     this.cancelScheduledFrame();
     this.mailbox = null;
+    this.pendingPresentation = null;
     this.lastTimestamp = null;
     this.current = clampFraction(fraction);
     this.target = this.current;
     this.elements.label.textContent = label;
+    this.elements.root.dataset.favoredColor = 'white';
     this.commitTransform();
   }
 
   destroy(): void {
     this.cancelScheduledFrame();
     this.mailbox = null;
+    this.pendingPresentation = null;
   }
 
   snapshot(): Readonly<{
@@ -122,7 +128,8 @@ export class EvalBarController {
     this.mailbox = null;
     if (sample) {
       this.target = clampFraction(sample.fraction);
-      this.elements.label.textContent = sample.label;
+      if (this.canCommitPresentation(sample.favoredColor)) this.commitPresentation(sample);
+      else this.pendingPresentation = sample;
     }
 
     const previousTimestamp = this.lastTimestamp ?? timestamp;
@@ -132,6 +139,10 @@ export class EvalBarController {
     else {
       const alpha = 1 - Math.exp(-elapsed / EVAL_BAR_TIME_CONSTANT_MS);
       this.current += (this.target - this.current) * alpha;
+    }
+
+    if (this.pendingPresentation && this.canCommitPresentation(this.pendingPresentation.favoredColor)) {
+      this.commitPresentation(this.pendingPresentation);
     }
 
     if (Math.abs(this.target - this.current) <= 0.0001 && this.mailbox === null) {
@@ -149,6 +160,19 @@ export class EvalBarController {
 
   private commitTransform(): void {
     this.elements.fill.style.transform = `scaleY(${this.current})`;
+  }
+
+  private canCommitPresentation(favoredColor: EvalBarSample['favoredColor']): boolean {
+    const currentColor = this.elements.root.dataset.favoredColor;
+    if (!currentColor || currentColor === favoredColor) return true;
+    const region = favoredColor === 'white' ? this.current : 1 - this.current;
+    return region >= EVAL_BAR_MIN_LABEL_REGION_FRACTION;
+  }
+
+  private commitPresentation(presentation: Pick<EvalBarSample, 'label' | 'favoredColor'>): void {
+    this.elements.label.textContent = presentation.label;
+    this.elements.root.dataset.favoredColor = presentation.favoredColor;
+    this.pendingPresentation = null;
   }
 
   private cancelScheduledFrame(): void {

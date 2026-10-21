@@ -53,7 +53,7 @@ describe('EvalBarController', () => {
     const { controller, label } = fixture(scheduler);
     controller.beginSearch(7);
     for (let index = 0; index < 1000; index += 1) {
-      controller.publish({ searchId: 7, fraction: index / 1000, label: String(index) });
+      controller.publish({ searchId: 7, fraction: index / 1000, label: String(index), favoredColor: 'white' });
     }
     expect(controller.snapshot().hasPendingSample).toBe(true);
     expect(scheduler.callbacks.size).toBe(1);
@@ -67,7 +67,7 @@ describe('EvalBarController', () => {
     const scheduler = new FakeScheduler();
     const { controller } = fixture(scheduler);
     controller.beginSearch(1);
-    controller.publish({ searchId: 1, fraction: 0.9, label: '+1.0' });
+    controller.publish({ searchId: 1, fraction: 0.9, label: '+1.0', favoredColor: 'white' });
     scheduler.step(110);
     expect(controller.snapshot().current).toBeCloseTo(0.5 + 0.4 * (1 - Math.exp(-1)), 12);
   });
@@ -76,20 +76,20 @@ describe('EvalBarController', () => {
     const scheduler = new FakeScheduler();
     const { controller } = fixture(scheduler);
     controller.beginSearch(1);
-    controller.publish({ searchId: 1, fraction: 0.9, label: '+1.0' });
+    controller.publish({ searchId: 1, fraction: 0.9, label: '+1.0', favoredColor: 'white' });
     scheduler.step(110);
     const beforeChange = controller.snapshot().current;
     controller.beginSearch(2);
     expect(controller.snapshot().current).toBe(beforeChange);
     expect(controller.snapshot().target).toBe(beforeChange);
-    expect(controller.publish({ searchId: 1, fraction: 0.1, label: '-1.0' })).toBe(false);
+    expect(controller.publish({ searchId: 1, fraction: 0.1, label: '-1.0', favoredColor: 'black' })).toBe(false);
     expect(scheduler.callbacks.size).toBe(0);
   });
 
   it('accepts a cache hit atomically without resetting to neutral', () => {
     const scheduler = new FakeScheduler();
     const { controller } = fixture(scheduler, 0.8);
-    controller.beginSearch(3, { searchId: 3, fraction: 0.7, label: '+0.8' });
+    controller.beginSearch(3, { searchId: 3, fraction: 0.7, label: '+0.8', favoredColor: 'white' });
     expect(controller.snapshot().current).toBe(0.8);
     expect(scheduler.callbacks.size).toBe(1);
     scheduler.step(110);
@@ -101,7 +101,7 @@ describe('EvalBarController', () => {
     const scheduler = new FakeScheduler();
     const { controller, writes } = fixture(scheduler);
     controller.beginSearch(4);
-    controller.publish({ searchId: 4, fraction: 0.6, label: '+0.2' });
+    controller.publish({ searchId: 4, fraction: 0.6, label: '+0.2', favoredColor: 'white' });
     for (let index = 0; index < 100 && scheduler.callbacks.size; index += 1) scheduler.step(16.67);
     expect(new Set(writes)).toEqual(new Set(['transform']));
     expect(controller.snapshot().current).toBeCloseTo(0.6, 4);
@@ -115,6 +115,16 @@ describe('EvalBarController', () => {
     expect(root.dataset.orientation).toBe('black');
   });
 
+  it('resets neutral presentation side together with fraction and label', () => {
+    const scheduler = new FakeScheduler();
+    const { controller, label, root } = fixture(scheduler, 0.2);
+    root.dataset.favoredColor = 'black';
+    controller.reset(0.5, '—');
+    expect(root.dataset.favoredColor).toBe('white');
+    expect(label.textContent).toBe('—');
+    expect(controller.snapshot()).toMatchObject({ current: 0.5, target: 0.5 });
+  });
+
   it('reports the first committed visual frame without changing interpolation', () => {
     const scheduler = new FakeScheduler();
     const frames: Array<ReturnType<EvalBarController['snapshot']>> = [];
@@ -126,11 +136,65 @@ describe('EvalBarController', () => {
       { scheduler, reducedMotion: false, onFrameCommitted: snapshot => frames.push(snapshot) },
     );
     controller.beginSearch(5);
-    controller.publish({ searchId: 5, fraction: 0.9, label: '+1.0' });
+    controller.publish({ searchId: 5, fraction: 0.9, label: '+1.0', favoredColor: 'white' });
     scheduler.step(16);
     expect(frames).toHaveLength(1);
     expect(frames[0].current).toBeGreaterThan(0.5);
     expect(frames[0].current).toBeLessThan(0.9);
     expect(label.textContent).toBe('+1.0');
   });
+
+  it('commits label, favored side, and target atomically on one RAF', () => {
+    const scheduler = new FakeScheduler();
+    const { controller, label, root } = fixture(scheduler);
+    controller.beginSearch(6);
+    controller.publish({ searchId: 6, fraction: 0.2, label: '3.4', favoredColor: 'black' });
+    expect(label.textContent).toBe('0.0');
+    expect(root.dataset.favoredColor).toBeUndefined();
+    scheduler.step(16);
+    expect(label.textContent).toBe('3.4');
+    expect(root.dataset.favoredColor).toBe('black');
+    expect(controller.snapshot().target).toBe(0.2);
+  });
+
+  it('waits until the newly favored region can keep its label legible', () => {
+    const scheduler = new FakeScheduler();
+    const { controller, label, root } = fixture(scheduler, 0.99);
+    root.dataset.favoredColor = 'white';
+    label.textContent = '9.0';
+    controller.beginSearch(7);
+    controller.publish({ searchId: 7, fraction: 0.01, label: '9.0', favoredColor: 'black' });
+    scheduler.step(8);
+    expect(root.dataset.favoredColor).toBe('white');
+    expect(label.textContent).toBe('9.0');
+    scheduler.step(8);
+    expect(root.dataset.favoredColor).toBe('black');
+    expect(label.textContent).toBe('9.0');
+    expect(controller.snapshot().current).toBeGreaterThan(0.01);
+  });
+
+  it.each([1000 / 30, 1000 / 60, 1000 / 120])(
+    'pursues 100 irregular targets without overshoot at %fms frames',
+    frameDuration => {
+      const scheduler = new FakeScheduler();
+      const { controller } = fixture(scheduler, 0.62);
+      controller.beginSearch(9);
+      for (let index = 0; index < 100; index += 1) {
+        const target = 0.12 + ((index * 37) % 76) / 100;
+        controller.publish({
+          searchId: 9,
+          fraction: target,
+          label: (index / 10).toFixed(1),
+          favoredColor: target >= 0.5 ? 'white' : 'black',
+        });
+        const before = controller.snapshot().current;
+        scheduler.step(frameDuration * (index % 3 === 0 ? 1.7 : 1));
+        const after = controller.snapshot().current;
+        expect(after).toBeGreaterThanOrEqual(Math.min(before, target));
+        expect(after).toBeLessThanOrEqual(Math.max(before, target));
+        expect(after).not.toBe(0.5);
+      }
+      expect(scheduler.maximumPending).toBe(1);
+    },
+  );
 });

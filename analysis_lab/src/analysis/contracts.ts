@@ -73,4 +73,5 @@ export type EvalBarSample = Readonly<{
   searchId: number;
   fraction: number;
   label: string;
+  favoredColor: Color;
 }>;

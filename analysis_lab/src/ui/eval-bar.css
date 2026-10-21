@@ -69,11 +69,26 @@
   mix-blend-mode: normal;
 }
 
+.thinker-eval-v2-rail[data-favored-color="white"] .thinker-eval-v2-score {
+  color: var(--thinker-eval-v2-dark);
+}
+
+.thinker-eval-v2-rail[data-favored-color="black"] .thinker-eval-v2-score {
+  color: var(--thinker-eval-v2-light);
+}
+
 .thinker-eval-v2-rail[data-state="error"] {
   box-shadow: inset 0 0 0 2px #b94a48;
 }
 
-.thinker-eval-v2-rail[data-orientation="black"] .thinker-eval-v2-score {
+.thinker-eval-v2-rail[data-orientation="white"][data-favored-color="black"] .thinker-eval-v2-score,
+.thinker-eval-v2-rail[data-orientation="black"][data-favored-color="white"] .thinker-eval-v2-score {
   top: 0;
   bottom: auto;
+}
+
+.thinker-eval-v2-rail[data-orientation="white"][data-favored-color="white"] .thinker-eval-v2-score,
+.thinker-eval-v2-rail[data-orientation="black"][data-favored-color="black"] .thinker-eval-v2-score {
+  top: auto;
+  bottom: 0;
 }

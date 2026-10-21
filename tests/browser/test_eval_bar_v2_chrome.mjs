@@ -186,6 +186,7 @@ try {
     throw new Error(reactiveEvaluation.exceptionDetails.exception?.description || reactiveEvaluation.exceptionDetails.text);
   }
   result.reactiveFen = reactiveEvaluation.result.value;
+  result.polish = await evaluatePromise(cdp, 'runUserscriptEvalBarPolishTest()', 15000, 'final polish fixture');
   const visualResults = [];
   const visualViewports = [
     { width: 900, height: 700 },
@@ -242,6 +243,7 @@ try {
     retainedHeapDeltaBytes: result.retainedHeapDeltaBytes,
     continuitySummary: result.continuitySummary,
     reactiveFen: result.reactiveFen,
+    polish: result.polish,
     visual: result.visual,
   }, null, 2));
   const continuityPasses = continuity.requestCount === 31
@@ -309,7 +311,7 @@ try {
       && visual.styles.mixBlendMode === 'normal'
       && visual.styles.writingMode === 'horizontal-tb'
       && visual.styles.labelTransform === 'none'
-      && visual.styles.score === '+10.3'
+      && visual.styles.score === '10.3'
       && /^scaleY\([0-9.]+\)$/.test(visual.styles.fillTransform)
       && visual.styles.fillInlineHeight === ''
       && visual.styles.paddingTop === '5px'
@@ -330,6 +332,41 @@ try {
       && visual.hostPreserved
       && visual.rootsAfterDestroy === 0;
   });
+  const polish = result.polish;
+  const polishPasses = polish.blackNormal.label === '3.4'
+    && polish.blackNormal.favoredColor === 'black'
+    && polish.blackNormal.edgeDelta <= 1
+    && polish.blackNormal.color === 'rgb(255, 255, 255)'
+    && polish.blackInverted.label === '3.4'
+    && polish.blackInverted.favoredColor === 'black'
+    && polish.blackInverted.edgeDelta <= 1
+    && polish.blackInverted.color === 'rgb(255, 255, 255)'
+    && polish.whiteInverted.label === '2.5'
+    && polish.whiteInverted.favoredColor === 'white'
+    && polish.whiteInverted.edgeDelta <= 1
+    && polish.whiteInverted.color === 'rgb(64, 61, 57)'
+    && polish.whiteNormal.label === '2.5'
+    && polish.whiteNormal.favoredColor === 'white'
+    && polish.whiteNormal.edgeDelta <= 1
+    && polish.whiteNormal.color === 'rgb(64, 61, 57)'
+    && polish.duringNoise.label === '3.8'
+    && polish.duringNoise.roots === 1
+    && polish.duringNoise.sameRoot
+    && polish.duringNoise.fillOpacity === '1'
+    && polish.duringNoise.labelOpacity === '1'
+    && polish.duringNoise.presentation.coalescedCount === 100
+    && polish.afterTimedFlush.label === '3.5'
+    && polish.afterTimedFlush.presentation.selected.score.cp === 352
+    && polish.afterTimedFlush.presentation.pending === null
+    && polish.staleTimerBlocked
+    && polish.final.label === '3.6'
+    && polish.final.favoredColor === 'white'
+    && polish.final.rawEvaluation.cp === 360
+    && polish.final.presentation.selected.score.cp === 360
+    && polish.final.presentation.pending === null
+    && polish.final.targetFraction === polish.final.presentation.selected.fraction
+    && polish.final.roots === 1
+    && polish.rootsAfterDestroy === 0;
   if (
     !behavior.domPreserved || !behavior.singleRootAfterRepeatedStart
     || !behavior.overlayAligned || !behavior.parentPreservedAfterDestroy
@@ -353,6 +390,7 @@ try {
     || !result.reactiveFen.propertyOnlyRendered
     || !result.reactiveFen.burstCoalesced
     || !result.reactiveFen.permanentBoardRemovalUnmounted
+    || !polishPasses
     || !visualPasses
   ) process.exitCode = 1;
 } finally {

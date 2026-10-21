@@ -102,11 +102,20 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
     transforms.push(document.querySelector<HTMLElement>('.thinker-eval-v2-fill')?.style.transform || '');
   }
   const whiteLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent || '';
+  const rail = document.querySelector<HTMLElement>('.thinker-eval-v2-rail')!;
+  const normalRailRect = rail.getBoundingClientRect();
+  const normalLabelRect = rail.querySelector<HTMLElement>('.thinker-eval-v2-score')!.getBoundingClientRect();
+  const normalLabelEdge = Math.abs(normalLabelRect.top - normalRailRect.top)
+    < Math.abs(normalLabelRect.bottom - normalRailRect.bottom) ? 'top' : 'bottom';
   const cpBackend = adapter.snapshot().lastEvaluation;
   board.setAttribute('orientation', 'black');
   adapter.pollNow();
   for (let frame = 0; frame < 4; frame += 1) await nextFrame();
   const blackLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent || '';
+  const invertedRailRect = rail.getBoundingClientRect();
+  const invertedLabelRect = rail.querySelector<HTMLElement>('.thinker-eval-v2-score')!.getBoundingClientRect();
+  const invertedLabelEdge = Math.abs(invertedLabelRect.top - invertedRailRect.top)
+    < Math.abs(invertedLabelRect.bottom - invertedRailRect.bottom) ? 'top' : 'bottom';
   const mateFen = '7k/5Q2/6K1/8/8/8/8/8 w - - 0 1';
   board.setAttribute('data-fen', mateFen);
   board.setAttribute('orientation', 'white');
@@ -141,7 +150,7 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
     connected: adapter.snapshot().state === 'connected',
     whiteLabel,
     blackLabel,
-    orientationInverted: whiteLabel !== blackLabel,
+    orientationInverted: whiteLabel === blackLabel && normalLabelEdge !== invertedLabelEdge,
     mateLabel,
     scaleYOnly: transforms.every(value => /^scaleY\([\d.e+-]+\)$/.test(value)),
     smoothFrames: new Set(transforms).size,

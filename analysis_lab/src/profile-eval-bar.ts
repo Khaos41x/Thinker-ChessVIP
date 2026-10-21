@@ -49,7 +49,7 @@ const startEvalBarProfile = async (): Promise<ProfileResult> => {
     for (let offset = 0; offset < 128; offset += 1) {
       const sequence = burst * 128 + offset;
       const fraction = 0.5 + Math.sin(sequence * 0.071) * 0.47;
-      controller.publish({ searchId: 1, fraction, label: fraction.toFixed(3) });
+      controller.publish({ searchId: 1, fraction, label: fraction.toFixed(3), favoredColor: fraction >= 0.5 ? 'white' : 'black' });
       samplesPublished += 1;
     }
     const timestamp = await nextFrame();
@@ -58,7 +58,7 @@ const startEvalBarProfile = async (): Promise<ProfileResult> => {
     animationFrames += 1;
   }
 
-  controller.publish({ searchId: 1, fraction: 0.82, label: '+3.2' });
+  controller.publish({ searchId: 1, fraction: 0.82, label: '+3.2', favoredColor: 'white' });
   samplesPublished += 1;
   for (let frame = 0; frame < 180 && controller.snapshot().hasScheduledFrame; frame += 1) {
     const timestamp = await nextFrame();
