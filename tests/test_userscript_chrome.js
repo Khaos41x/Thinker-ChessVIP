@@ -192,13 +192,23 @@ function createCdpClient(webSocketUrl) {
 
     if (captureBaseline) {
       await client.send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 778, deviceScaleFactor: 1, mobile: false });
-      await client.send("Runtime.evaluate", { expression: "scrollTo(0, Math.max(0, document.getElementById('oi-wrapper').offsetTop - 16))" });
+      await client.send("Runtime.evaluate", { expression: "scrollTo(0, Math.max(0, document.getElementById('oi-wrapper').offsetTop - 40))" });
       await sleep(150);
       const screenshot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
-      const artifactPath = path.join(root, "tests", "artifacts", "thinker-panels-phase-08-1-before.png");
+      const artifactPath = path.join(root, "tests", "artifacts", "thinker-console-reference-before.png");
       fs.writeFileSync(artifactPath, Buffer.from(screenshot.data, "base64"));
       console.log(`Baseline visual evidence: ${artifactPath}`);
       return;
+    }
+
+    if (captureVisual) {
+      await client.send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 778, deviceScaleFactor: 1, mobile: false });
+      await client.send("Runtime.evaluate", { expression: "scrollTo(0, Math.max(0, document.getElementById('oi-wrapper').offsetTop - 40))" });
+      await sleep(150);
+      const screenshot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      const artifactPath = path.join(root, "tests", "artifacts", "thinker-console-reference-after.png");
+      fs.writeFileSync(artifactPath, Buffer.from(screenshot.data, "base64"));
+      console.log(`Default console evidence: ${artifactPath}`);
     }
 
     const disclosureSmokeResult = await client.send("Runtime.evaluate", {
@@ -225,37 +235,21 @@ function createCdpClient(webSocketUrl) {
         const sequenceBefore = sessionPanel.getAttribute("data-session-ui-sequence");
         const initial = { advanced:state(advancedToggle, advancedPanel), timing:state(timingToggle, timingPanel), more:state(moreToggle, morePanel) };
         delayMinimum.focus();
-        const collapsedTimingFocusBlocked = document.activeElement !== delayMinimum;
-        timingToggle.click();
-        delayMinimum.focus();
         const timingFocusAllowed = document.activeElement === delayMinimum;
-        const timingOpened = state(timingToggle, timingPanel);
         const selectedModeStyle = getComputedStyle(timingCard.querySelector('input[name="delayMode"]:checked + label'));
         delayMinimum.value = "0.75";
         delayMinimum.dispatchEvent(new Event("input", { bubbles:true }));
         delayMaximum.value = "1.80";
         delayMaximum.dispatchEvent(new Event("input", { bubbles:true }));
         const delayPersisted = localStorage.getItem("autoMinDelay") === "0.75" && localStorage.getItem("autoMaxDelay") === "1.8";
-        timingToggle.click();
-        const timingClosed = state(timingToggle, timingPanel);
-        duration.focus();
-        const collapsedAdvancedFocusBlocked = document.activeElement !== duration;
-        advancedToggle.click();
         duration.focus();
         const advancedFocusAllowed = document.activeElement === duration;
         duration.value = "240"; duration.dispatchEvent(new Event("input", { bubbles:true }));
         minimum.value = "74"; minimum.dispatchEvent(new Event("input", { bubbles:true }));
         maximum.value = "83"; maximum.dispatchEvent(new Event("input", { bubbles:true }));
-        const advancedOpened = state(advancedToggle, advancedPanel);
-        advancedToggle.click();
-        const advancedClosed = state(advancedToggle, advancedPanel);
-        moreToggle.click();
-        const moreOpened = state(moreToggle, morePanel);
         const secondarySwitch = document.getElementById("aq-off")?.closest("[role=switch]");
         secondarySwitch?.focus();
         const moreFocusAllowed = document.activeElement === secondarySwitch;
-        moreToggle.click();
-        const moreClosed = state(moreToggle, morePanel);
         const sequenceAfter = sessionPanel.getAttribute("data-session-ui-sequence");
         const style = getComputedStyle(menu);
         const scoutStyle = getComputedStyle(scout);
@@ -266,21 +260,15 @@ function createCdpClient(webSocketUrl) {
         const timingShells = Array.from(timingPanel.querySelectorAll(".kb-delay-input"));
         const strengthRatio = (Number(strength.value) - Number(strength.min)) / (Number(strength.max) - Number(strength.min));
         return {
-          ok: Object.values(initial).every((item) => item.expanded === "false" && item.hidden === "true" && item.inert && item.open === "false")
-            && timingOpened.expanded === "true" && timingOpened.hidden === "false" && !timingOpened.inert
-            && timingClosed.expanded === "false" && timingClosed.hidden === "true" && timingClosed.inert
-            && advancedOpened.expanded === "true" && advancedOpened.hidden === "false" && !advancedOpened.inert
-            && advancedClosed.expanded === "false" && advancedClosed.hidden === "true" && advancedClosed.inert
-            && moreOpened.expanded === "true" && moreOpened.hidden === "false" && !moreOpened.inert
-            && moreClosed.expanded === "false" && moreClosed.hidden === "true" && moreClosed.inert
-            && collapsedTimingFocusBlocked && timingFocusAllowed && collapsedAdvancedFocusBlocked && advancedFocusAllowed && moreFocusAllowed
+          ok: Object.values(initial).every((item) => item.expanded === "true" && item.hidden === "false" && !item.inert && item.open === "true")
+            && timingFocusAllowed && advancedFocusAllowed && moreFocusAllowed
             && duration.value === "240" && minimum.value === "74" && maximum.value === "83" && delayMinimum.value === "0.75" && delayMaximum.value === "1.80" && delayPersisted
-            && !sessionPanel.contains(timingCard) && Boolean(timingCard.compareDocumentPosition(document.getElementById("aq-on")) & Node.DOCUMENT_POSITION_FOLLOWING)
-            && timingInputs.every((node) => ["none", "textfield"].includes(getComputedStyle(node).appearance)) && timingShells.every((node) => getComputedStyle(node).borderRadius === "9px")
+            && !sessionPanel.contains(timingCard) && document.querySelector(".kb-engine-module")?.contains(timingCard) && document.querySelector(".kb-core-module")?.contains(document.getElementById("aq-on"))
+            && timingInputs.every((node) => ["none", "textfield"].includes(getComputedStyle(node).appearance)) && timingShells.every((node) => getComputedStyle(node).borderRadius === "2px")
             && selectedModeStyle.backgroundColor !== "rgb(34, 197, 94)" && strength.min === "800" && strength.max === "3200" && strengthRatio >= 0 && strengthRatio <= 1
             && forbidden.length === 0 && phaseBefore === (window.krypbotSessionControlBridge?.status?.().phase || null),
-          initial, timingOpened, timingClosed, advancedOpened, advancedClosed, moreOpened, moreClosed,
-          focus:{ collapsedTimingFocusBlocked, timingFocusAllowed, collapsedAdvancedFocusBlocked, advancedFocusAllowed, moreFocusAllowed },
+          initial,
+          focus:{ timingFocusAllowed, advancedFocusAllowed, moreFocusAllowed },
           retained:{ duration:duration.value, minimum:minimum.value, maximum:maximum.value, delayMinimum:delayMinimum.value, delayMaximum:delayMaximum.value, delayPersisted },
           forbidden, visibleCopy,
           panel:{ background:style.backgroundColor, backgroundImage:style.backgroundImage, radius:style.borderRadius, font:style.fontFamily, width:style.width, height:menu.getBoundingClientRect().height, padding:style.padding },
@@ -292,10 +280,10 @@ function createCdpClient(webSocketUrl) {
     const disclosureSmoke = disclosureSmokeResult.result.value;
 
     assert(disclosureSmoke.ok, `Advanced settings disclosure smoke failed: ${JSON.stringify(disclosureSmoke)}`);
-    assert(disclosureSmoke.panel.background === "rgba(20, 20, 24, 0.72)" && disclosureSmoke.panel.backgroundImage === "none", `Session panel neutral surface regressed: ${JSON.stringify(disclosureSmoke.panel)}`);
-    assert(disclosureSmoke.panel.radius === "16px" && disclosureSmoke.panel.width === "292px", `Session panel geometry regressed: ${JSON.stringify(disclosureSmoke.panel)}`);
+    assert(disclosureSmoke.panel.background === "rgba(0, 0, 0, 0)" && disclosureSmoke.panel.backgroundImage === "none", `Session panel embedded surface regressed: ${JSON.stringify(disclosureSmoke.panel)}`);
+    assert(disclosureSmoke.panel.radius === "0px" && disclosureSmoke.panel.width === "568px", `Session panel geometry regressed: ${JSON.stringify(disclosureSmoke.panel)}`);
     assert(disclosureSmoke.panel.font.includes("Segoe UI") || disclosureSmoke.panel.font.includes("Arial"), `Session panel system font regressed: ${JSON.stringify(disclosureSmoke.panel)}`);
-    assert(disclosureSmoke.panel.height >= 450 && disclosureSmoke.panel.height <= 550, `Idle Assistant height is outside the 450–550px target: ${JSON.stringify(disclosureSmoke.panel)}`);
+    assert(disclosureSmoke.panel.height >= 400 && disclosureSmoke.panel.height <= 450, `Idle Assistant height is outside the compact 400–450px target: ${JSON.stringify(disclosureSmoke.panel)}`);
 
     const workspaceSmokeResult = await client.send("Runtime.evaluate", {
       expression: `(() => {
@@ -310,7 +298,7 @@ function createCdpClient(webSocketUrl) {
         const collapsedWidth = menu.getBoundingClientRect().width;
         const closedFromAssistant = menu.classList.contains("minimized") && getComputedStyle(scout).display === "none" && getComputedStyle(launcher).display === "flex" && launcher.getAttribute("aria-expanded") === "false" && document.activeElement === launcher && Math.abs(collapsedWidth - 154) <= 1;
         launcher.click();
-        const restoredFromAssistant = !menu.classList.contains("minimized") && getComputedStyle(scout).display === "flex" && launcher.getAttribute("aria-expanded") === "true";
+        const restoredFromAssistant = !menu.classList.contains("minimized") && getComputedStyle(scout).display === "flex" && launcher.getAttribute("aria-expanded") === "true" && document.activeElement === close;
         scoutClose.focus();
         scoutClose.click();
         const closedFromScout = menu.classList.contains("minimized") && getComputedStyle(scout).display === "none" && document.activeElement === launcher;
@@ -467,9 +455,9 @@ function createCdpClient(webSocketUrl) {
     const module14 = module14Smoke.result.value;
 
     assert(exceptions.length === 0, `Userscript exception: ${exceptions[0]?.text || "unknown"}`);
-    assert(disclosureSmoke.scout?.background === "rgba(20, 20, 24, 0.72)" && disclosureSmoke.scout.backgroundImage === "none" && disclosureSmoke.scout.radius === "16px", `Scout neutral styling regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
+    assert(disclosureSmoke.scout?.background === "rgb(32, 32, 30)" && disclosureSmoke.scout.backgroundImage === "none" && disclosureSmoke.scout.radius === "4px", `Scout neutral styling regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
     assert(disclosureSmoke.scout.font.includes("Segoe UI") || disclosureSmoke.scout.font.includes("Arial"), `Scout system font regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
-    assert(disclosureSmoke.scout.width === "292px" && disclosureSmoke.scout.height < disclosureSmoke.scout.menuHeight && !disclosureSmoke.scout.hasRadar && !disclosureSmoke.scout.emptyDetail, `Scout waiting state retained legacy dead-space geometry: ${JSON.stringify(disclosureSmoke.scout)}`);
+    assert(disclosureSmoke.scout.width === "250px" && disclosureSmoke.scout.height < disclosureSmoke.scout.menuHeight && !disclosureSmoke.scout.hasRadar && !disclosureSmoke.scout.emptyDetail, `Scout waiting state retained legacy dead-space geometry: ${JSON.stringify(disclosureSmoke.scout)}`);
     assert(disclosureSmoke.scout.rawRate === "—" && disclosureSmoke.scout.sessionState === "never-started", `Idle presentation state regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
     assert(productionStart.ok, `Production START wiring smoke failed: ${JSON.stringify(productionStart)}`);
     if (!liveChess) assert(productionStart.warning === "" && productionStart.rawWarningCode === "DDA_MAPPING_UNAVAILABLE", `Default compatibility START did not leave IDLE: ${JSON.stringify(productionStart)}`);
@@ -491,7 +479,7 @@ function createCdpClient(webSocketUrl) {
       `page cannot scroll to the configuration menu: ${state.documentHeight}px document / ${state.viewportHeight}px viewport`,
     );
     assert(state.bannerLayout.display === "flex", "banner is still hidden on a desktop viewport");
-    await client.send("Emulation.setDeviceMetricsOverride", { width: 640, height: 900, deviceScaleFactor: 1, mobile: false });
+    await client.send("Emulation.setDeviceMetricsOverride", { width: 848, height: 900, deviceScaleFactor: 1, mobile: false });
     await sleep(100);
     const responsiveResult = await client.send("Runtime.evaluate", {
       expression: `(() => {
@@ -513,7 +501,7 @@ function createCdpClient(webSocketUrl) {
     const responsive = responsiveResult.result.value;
     assert(responsive.direction === "column" && responsive.align === "flex-start", `Workspace did not stack on a narrow viewport: ${JSON.stringify(responsive)}`);
     assert(responsive.wrapperWidth <= responsive.viewportWidth - 20 && responsive.menuWidth <= responsive.wrapperWidth && responsive.scoutWidth <= responsive.wrapperWidth, `Workspace overflowed the narrow viewport: ${JSON.stringify(responsive)}`);
-    await client.send("Emulation.setDeviceMetricsOverride", { width: 641, height: 900, deviceScaleFactor: 1, mobile: false });
+    await client.send("Emulation.setDeviceMetricsOverride", { width: 849, height: 900, deviceScaleFactor: 1, mobile: false });
     await sleep(100);
     const wideBoundaryResult = await client.send("Runtime.evaluate", {
       expression: `(() => {
@@ -523,8 +511,8 @@ function createCdpClient(webSocketUrl) {
       returnByValue: true,
     });
     const wideBoundary = wideBoundaryResult.result.value;
-    assert(wideBoundary.direction === "row" && wideBoundary.width <= wideBoundary.viewportWidth - 20, `Workspace breakpoint regressed at 641px: ${JSON.stringify(wideBoundary)}`);
-    for (const [width, height, scale] of [[1280, 720, 1], [1440, 778, 1], [1440, 900, 1], [1440, 900, 1.25], [1920, 1080, 1.5]]) {
+    assert(wideBoundary.direction === "row" && wideBoundary.width <= wideBoundary.viewportWidth - 20, `Workspace breakpoint regressed at 849px: ${JSON.stringify(wideBoundary)}`);
+    for (const [width, height, scale] of [[320, 900, 1], [375, 900, 1], [640, 900, 1], [768, 900, 1], [848, 900, 1], [849, 900, 1], [1280, 720, 1], [1440, 778, 1], [1440, 900, 1], [1440, 900, 1.25], [1920, 1080, 1.5]]) {
       const cssWidth = Math.round(width / scale);
       const cssHeight = Math.round(height / scale);
       await client.send("Emulation.setDeviceMetricsOverride", { width: cssWidth, height: cssHeight, deviceScaleFactor: scale, mobile: false });
@@ -572,10 +560,23 @@ function createCdpClient(webSocketUrl) {
       returnByValue: true,
     });
     assert(switchKeyboardResult.result.value.ok, `Switch keyboard interaction regressed: ${JSON.stringify(switchKeyboardResult.result.value)}`);
+    const timingKeyboardResult = await client.send("Runtime.evaluate", {
+      expression: `(() => {
+        const random = document.getElementById("dm-rand");
+        const immediate = document.getElementById("dm-max");
+        if (!random || !immediate) return { ok:false, reason:"timing-radios-missing" };
+        random.focus();
+        const randomReachable = document.activeElement === random && getComputedStyle(random).display !== "none";
+        immediate.focus();
+        return { ok:randomReachable && document.activeElement === immediate && getComputedStyle(immediate).display !== "none" };
+      })()`,
+      returnByValue: true,
+    });
+    assert(timingKeyboardResult.result.value.ok, `Move Timing radios are not keyboard reachable: ${JSON.stringify(timingKeyboardResult.result.value)}`);
     if (captureVisual) {
       await client.send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 778, deviceScaleFactor: 1, mobile: false });
       await client.send("Runtime.evaluate", { expression: `(() => { const toast = document.getElementById("kb-session-toast"); if (toast) { toast.dataset.visible = "false"; toast.textContent = ""; } window.krypbotSessionControlUI?.update?.(); })()` });
-      await client.send("Runtime.evaluate", { expression: "scrollTo(0, Math.max(0, document.getElementById('oi-wrapper').offsetTop - 16))" });
+      await client.send("Runtime.evaluate", { expression: "scrollTo(0, Math.max(0, document.getElementById('oi-wrapper').offsetTop - 40))" });
       await sleep(150);
       const screenshot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
       const artifactPath = path.join(root, "tests", "artifacts", "thinker-panels-phase-08-1-after.png");

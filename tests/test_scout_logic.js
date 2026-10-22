@@ -438,6 +438,10 @@ context.scout.renderScout({
 const scoutColors = vm.runInContext("SCOUT_RESULT_COLORS", context);
 const renderedChart = renderedScoutPanel.innerHTML.match(/class="tc-scout-donut" style="background:([^"]+)"/);
 assert(renderedChart, "Scout W/D/L chart was not rendered");
+assert(renderedScoutPanel.innerHTML.includes("width:64px;height:64px;margin:10px auto 6px"),
+  "populated Scout retained the oversized legacy chart");
+assert(renderedScoutPanel.innerHTML.includes("grid-template-columns:11px minmax(0,1fr) 44px"),
+  "populated Scout retained the roomy legacy result rows");
 for (const [result, marker] of [["win", "w"], ["draw", "e"], ["loss", "l"]]) {
   assert(renderedChart[1].includes(scoutColors[result]) &&
     renderedScoutPanel.innerHTML.includes(`class="${marker}" style="color:${scoutColors[result]}"`),

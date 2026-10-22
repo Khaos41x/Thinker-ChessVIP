@@ -1923,31 +1923,31 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       panel.innerHTML = `
         <style>
           #oi-zone2 .tc-scout-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-          #oi-zone2 .tc-scout-title{font-size:17px;line-height:1.25;font-weight:750;color:#f7f8fa;letter-spacing:-.02em}
-          #oi-zone2 .tc-scout-subtitle{margin-top:5px;color:#9ca3b2;font-size:11px;line-height:1.35}
-          #oi-zone2 .tc-scout-close{width:28px;height:28px;padding:0;border:1px solid rgba(255,255,255,.07);border-radius:9px;background:rgba(255,255,255,.045) center/12px 12px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239ca3b2' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E");color:transparent;font-size:0;cursor:pointer}
-          #oi-zone2 .tc-scout-donut{position:relative;width:100px;height:100px;margin:24px auto 12px;border-radius:50%;box-shadow:0 0 34px rgba(56,229,139,.08)}
-          #oi-zone2 .tc-scout-donut::after{content:"";position:absolute;inset:10px;border-radius:50%;background:rgba(10,12,16,.72);box-shadow:inset 0 1px 0 rgba(255,255,255,.045)}
+          #oi-zone2 .tc-scout-title{font-size:10px;line-height:13px;font-weight:700;color:#cfcfcb;letter-spacing:.04em;text-transform:uppercase}
+          #oi-zone2 .tc-scout-subtitle{margin-top:2px;color:#777873;font-size:8px;line-height:1.3}
+          #oi-zone2 .tc-scout-close{width:20px;height:20px;padding:0;border:0;border-radius:2px;background:transparent center/10px 10px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239ca3b2' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E");color:transparent;font-size:0;cursor:pointer}
+          #oi-zone2 .tc-scout-donut{position:relative;width:64px;height:64px;margin:10px auto 6px;border-radius:50%}
+          #oi-zone2 .tc-scout-donut::after{content:"";position:absolute;inset:7px;border-radius:50%;background:#20201e}
           #oi-zone2 .tc-scout-donut-copy{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
-          #oi-zone2 .tc-scout-donut-copy b{font-size:22px;line-height:1;font-weight:850}
-          #oi-zone2 .tc-scout-donut-copy small{margin-top:3px;color:#8d93a1;font-size:8px}
-          #oi-zone2 .tc-scout-record{text-align:center;color:#9298a5;font-size:11px;margin:4px 0 14px}
-          #oi-zone2 .tc-scout-section{border-top:1px solid rgba(255,255,255,.065);padding:10px 0}
-          #oi-zone2 .tc-scout-section-title{padding:4px 22px 7px;color:#9da3b2;font-size:11px}
-          #oi-zone2 .tc-scout-stat-row{display:grid;grid-template-columns:15px minmax(0,1fr) 72px;align-items:center;gap:9px;padding:8px 0}
-          #oi-zone2 .tc-scout-color-chip{width:11px;height:11px;border:1.5px solid #747b88;border-radius:3px;box-sizing:border-box}
+          #oi-zone2 .tc-scout-donut-copy b{font-size:15px;line-height:1;font-weight:800}
+          #oi-zone2 .tc-scout-donut-copy small{margin-top:2px;color:#777873;font-size:7px}
+          #oi-zone2 .tc-scout-record{text-align:center;color:#8c8c87;font-size:9px;margin:2px 0 7px}
+          #oi-zone2 .tc-scout-section{border-top:1px solid #30302e;padding:5px 0}
+          #oi-zone2 .tc-scout-section-title{padding:3px 0 5px;color:#8c8c87;font-size:8px;text-transform:uppercase;letter-spacing:.08em}
+          #oi-zone2 .tc-scout-stat-row{display:grid;grid-template-columns:11px minmax(0,1fr) 44px;align-items:center;gap:5px;padding:4px 0}
+          #oi-zone2 .tc-scout-color-chip{width:9px;height:9px;border:1px solid #747b88;border-radius:2px;box-sizing:border-box}
           #oi-zone2 .tc-scout-color-chip.is-filled{background:#f0f1f3;border-color:#f0f1f3}
           #oi-zone2 .tc-scout-stat-copy{min-width:0;display:flex;flex-direction:column;gap:2px}
-          #oi-zone2 .tc-scout-stat-copy b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#f4f5f7;font-size:11px;font-weight:750}
-          #oi-zone2 .tc-scout-stat-copy small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#9298a6;font-size:9px}
+          #oi-zone2 .tc-scout-stat-copy b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#d9d9d5;font-size:9px;font-weight:600}
+          #oi-zone2 .tc-scout-stat-copy small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#777873;font-size:7px}
           #oi-zone2 .tc-scout-stat-value{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
-          #oi-zone2 .tc-scout-stat-value b{color:#18e878;font-size:12px;font-weight:800}
-          #oi-zone2 .tc-scout-stat-value small{color:#9298a6;font-size:8px}
-          #oi-zone2 .tc-scout-speed-icon{width:15px;height:18px;background:center/14px 14px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238d93a1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 2 3 14h9l-1 8 10-12h-9z'/%3E%3C/svg%3E")}
-          #oi-zone2 .tc-scout-opening-row{display:grid;grid-template-columns:15px minmax(0,1fr) 30px;align-items:center;gap:9px;padding:8px 0}
-          #oi-zone2 .tc-scout-opening-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#f4f5f7;font-size:10px;font-weight:700}
+          #oi-zone2 .tc-scout-stat-value b{color:#46d977;font-size:9px;font-weight:700}
+          #oi-zone2 .tc-scout-stat-value small{color:#777873;font-size:7px}
+          #oi-zone2 .tc-scout-speed-icon{width:11px;height:14px;background:center/10px 10px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238d93a1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 2 3 14h9l-1 8 10-12h-9z'/%3E%3C/svg%3E")}
+          #oi-zone2 .tc-scout-opening-row{display:grid;grid-template-columns:11px minmax(0,1fr) 25px;align-items:center;gap:5px;padding:4px 0}
+          #oi-zone2 .tc-scout-opening-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#d9d9d5;font-size:8px;font-weight:600}
           #oi-zone2 .tc-scout-opening-count{display:flex;flex-direction:column;align-items:flex-end;color:#fff}
-          #oi-zone2 .tc-scout-opening-count b{font-size:12px} #oi-zone2 .tc-scout-opening-count small{color:#9298a6;font-size:8px}
+          #oi-zone2 .tc-scout-opening-count b{font-size:9px} #oi-zone2 .tc-scout-opening-count small{color:#777873;font-size:7px}
         </style>
         <div class="tc-scout-head">
           <div><div class="tc-scout-title">Opponent Scout</div><div class="tc-scout-subtitle">${this.escapeHtml(this.lastOpponent || "Opponent")} · ${scoutStats.sampleSize} games · through ${lastPlayed}</div></div>
@@ -5374,15 +5374,17 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     const menu = document.getElementById("krypbot-container");
     if (!menu) return;
     const isCollapsed = collapsed === true;
+    const launcher = document.getElementById("kb-workspace-launcher");
+    const restoreFocus = !isCollapsed && document.activeElement === launcher;
     thinkerWorkspaceCollapsed = isCollapsed;
     menu.classList.toggle("minimized", isCollapsed);
     menu.setAttribute("data-workspace-collapsed", isCollapsed ? "true" : "false");
-    const launcher = document.getElementById("kb-workspace-launcher");
     if (launcher) launcher.setAttribute("aria-expanded", isCollapsed ? "false" : "true");
     const scout = document.getElementById("oi-zone2");
     if (scout) scout.style.display = isCollapsed || _ghostModeActive ? "none" : "flex";
     if (!isCollapsed && typeof OpponentIntel !== "undefined" && !scout) OpponentIntel.checkOpponent();
     if (isCollapsed && launcher) launcher.focus({ preventScroll: true });
+    if (restoreFocus) menu.querySelector("#kb-minimize-toggle")?.focus({ preventScroll: true });
     if (typeof scheduleThinkerWorkspaceLayout === "function") scheduleThinkerWorkspaceLayout();
   }
 
@@ -5700,10 +5702,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           backdrop-filter: blur(16px) !important; -webkit-backdrop-filter: blur(16px) !important;
           color: var(--tc-text); font-family: var(--tc-font) !important;
         }
-        #krypbot-container::before {
-          content:""; position:absolute; z-index:-1; inset:-1px; pointer-events:none;
-          background:radial-gradient(110% 42% at 50% -8%,rgba(77,255,171,.13),transparent 58%);
-        }
         #oi-zone2.tc-workspace-card {
           position:relative; isolation:isolate; overflow:hidden; width:292px !important; min-height:0 !important; padding:14px !important;
           background: var(--tc-glass-bg) !important;
@@ -5715,39 +5713,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           box-shadow: 0 24px 64px rgba(0,0,0,.48), 0 6px 20px rgba(0,0,0,.22), inset 0 1px 0 var(--tc-glass-highlight) !important;
           font-family: var(--tc-font) !important;
         }
-        #oi-zone2.tc-workspace-card::before {
-          content:""; position:absolute; z-index:-1; inset:-1px; pointer-events:none;
-          background:radial-gradient(110% 42% at 50% -8%,rgba(77,205,255,.12),transparent 58%);
-        }
-        #krypbot-container .kb-header {
-          margin: 0 0 8px; padding: 0 0 14px; border-bottom: 1px solid rgba(255,255,255,.075);
-        }
-        #krypbot-container .kb-eyebrow { display:block; margin-bottom:3px; color:#8f97a6; font-size:9px; line-height:1.2; font-weight:700; letter-spacing:.12em; }
-        #krypbot-container .kb-title {
-          margin: 0; color: #f7f8fa; background: none; -webkit-text-fill-color: currentColor;
-          font-size: 16px; line-height: 21px; font-weight: 750; letter-spacing:-.025em;
-        }
-        #krypbot-container .kb-minimize-btn {
-          width: 28px; height: 28px; padding: 0; border:1px solid rgba(255,255,255,.07); border-radius: 9px; background: rgba(255,255,255,.045);
-          color: transparent; font-size: 0; background:rgba(255,255,255,.045) center/11px 11px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%237f8591' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E");
-        }
-        #krypbot-container .kb-section {
-          min-height: 38px; margin: 0; display: flex; align-items: center; justify-content: space-between;
-          border-bottom:1px solid rgba(255,255,255,.035);
-        }
-        #krypbot-container .kb-section-label {
-          display: flex; align-items: center; gap: 10px; margin: 0; color: #f4f5f7;
-          font-size: 13px; line-height: 19px; font-weight: 600;
-        }
-        #krypbot-container .kb-row-icon {
-          width: 17px; height: 17px; display: inline-block; flex: 0 0 17px; background-position:center; background-repeat:no-repeat; background-size:16px 16px;
-        }
-        #krypbot-container .kb-icon-power { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23858b97' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10'/%3E%3C/svg%3E") }
-        #krypbot-container .kb-icon-play { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23858b97' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='m5 3 14 9-14 9z'/%3E%3C/svg%3E") }
-        #krypbot-container .kb-icon-list { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23858b97' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01'/%3E%3C/svg%3E") }
-        #krypbot-container .kb-icon-gauge { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23858b97' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M20 13a8 8 0 1 0-16 0M12 13l4-4M4 19h16'/%3E%3C/svg%3E") }
-        #krypbot-container .kb-icon-activity { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23858b97' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12h4l2-7 4 14 2-7h6'/%3E%3C/svg%3E") }
-        #krypbot-container .kb-icon-eye { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23858b97' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E") }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) {
           position: relative; width: 40px; height: 24px; padding: 0; border: 1px solid rgba(255,255,255,.06); border-radius: 999px;
           background: rgba(255,255,255,.09); overflow: hidden;
@@ -5767,10 +5732,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           position: relative; z-index: 2; width: 20px; height: 22px; padding: 0; margin: 0;
           border-radius: 0; background: transparent !important; box-shadow: none !important;
           color: transparent !important; font-size: 0;
-        }
-        #krypbot-container .kb-section-col {
-          margin: 8px 0 2px; padding: 10px; gap: 7px; border: 1px solid rgba(255,255,255,.065); border-radius:13px;
-          background:rgba(5,8,12,.18); box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
         }
         #krypbot-container .kb-run-delay-card {
           min-height:58px; margin:6px 0 2px; padding:9px; display:flex; flex-direction:column; align-items:stretch; gap:8px;
@@ -5992,9 +5953,141 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #oi-zone2 .tc-scout-head > div:first-child { font-size:14px !important; line-height:19px !important; }
         #oi-zone2 .tc-scout-empty { padding:10px 0 0 !important; }
         #oi-zone2 .tc-scout-empty-detail { display:none; }
-        @media (max-width: 640px) {
-          #oi-wrapper { width:calc(100vw - 20px) !important; flex-direction:column !important; align-items:flex-start !important; gap:12px !important; }
-          #oi-wrapper > * { width:min(292px, calc(100vw - 20px)) !important; max-width:100% !important; }
+        #oi-wrapper {
+          --tc-console-bg:#20201e; --tc-console-module:#242422; --tc-console-row:#272725; --tc-console-border:#343431;
+          --tc-console-divider:#30302e; --tc-console-text:#e5e5e2; --tc-console-muted:#8c8c87; --tc-console-accent:#46d977;
+          gap:10px !important;
+        }
+        #krypbot-container.kb-console {
+          width:568px !important; max-width:568px !important; padding:0 !important; gap:0 !important; overflow:visible;
+          border:0 !important; border-radius:0 !important;
+          background:transparent !important; background-image:none !important;
+          box-shadow:none !important; backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
+          color:var(--tc-console-text); font-family:Arial, Helvetica, sans-serif !important;
+        }
+        #krypbot-container.kb-console::before { display:none !important; }
+        #krypbot-container.kb-console.minimized {
+          width:154px !important; max-width:154px !important; padding:0 !important; border:1px solid var(--tc-console-border) !important;
+          border-radius:4px !important; background:var(--tc-console-bg) !important; box-shadow:0 2px 8px rgba(0,0,0,.2) !important;
+        }
+        #krypbot-container.kb-console:not(.minimized) > .kb-header {
+          position:absolute; top:-20px; right:0; z-index:2; width:20px; min-height:20px; margin:0 !important; padding:0 !important;
+          border:0 !important; pointer-events:none;
+        }
+        #krypbot-container.kb-console:not(.minimized) > .kb-header > div:first-child { display:none !important; }
+        #krypbot-container.kb-console:not(.minimized) > .kb-header .kb-minimize-btn { pointer-events:auto; }
+        #krypbot-container .kb-minimize-btn,
+        #oi-zone2 .tc-scout-close {
+          width:20px !important; height:20px !important; min-width:20px; min-height:20px; border:0 !important; border-radius:2px !important;
+          background:transparent center/10px 10px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239ca3b2' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E") !important;
+          color:transparent !important; font-size:0 !important; opacity:.72;
+        }
+        #krypbot-container .kb-console-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px; padding:0; }
+        #krypbot-container .kb-console-column { min-width:0; display:flex; flex-direction:column; gap:8px; }
+        #krypbot-container .kb-console-module {
+          min-width:0; margin:0 !important; padding:8px !important; gap:0 !important; border:1px solid var(--tc-console-border) !important;
+          border-radius:3px !important; background:var(--tc-console-module) !important; box-shadow:none !important;
+        }
+        #krypbot-container .kb-auto-play-module { grid-column:1 / -1; }
+        #krypbot-container .kb-console-caption {
+          display:block; margin:0 0 5px !important; padding:0 0 6px !important; border-bottom:1px solid var(--tc-console-divider);
+          color:#8b8c87 !important; font-size:8px !important; line-height:10px !important; font-weight:700 !important;
+          letter-spacing:.16em !important; text-transform:uppercase;
+        }
+        #krypbot-container .kb-console-module .kb-section {
+          min-height:30px; margin:0 !important; padding:0 1px; border-bottom:1px solid var(--tc-console-divider);
+        }
+        #krypbot-container .kb-console-module .kb-section:last-child { border-bottom:0; }
+        #krypbot-container .kb-console-module .kb-section-label { gap:0; color:#d9d9d5; font-size:10px; line-height:14px; font-weight:500; }
+        #krypbot-container .kb-console-module .kb-row-icon { display:none; }
+        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) {
+          width:30px; height:16px; padding:0; border:1px solid #3b3b38; border-radius:8px; background:#3a3a37; box-shadow:none;
+        }
+        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"]))::after {
+          top:1px; left:1px; width:12px; height:12px; box-shadow:0 1px 2px rgba(0,0,0,.45); transition:transform .14s ease;
+        }
+        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):has(input[value="1"]:checked) { background:var(--tc-console-accent); box-shadow:none; }
+        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):has(input[value="1"]:checked)::after { transform:translateX(14px); }
+        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) label { width:15px; height:14px; }
+        #krypbot-container .kb-session-queue-note { margin:4px 1px; color:#93b79e; font-size:8px; }
+        #krypbot-container .kb-strength-card,
+        #krypbot-container .kb-run-delay-card {
+          margin:0 !important; padding:8px 1px !important; border:0 !important; border-bottom:1px solid var(--tc-console-divider) !important;
+          border-radius:0 !important; background:transparent !important; box-shadow:none !important;
+        }
+        #krypbot-container .kb-strength-head,
+        #krypbot-container .kb-timing-heading { display:flex; align-items:center; justify-content:space-between; margin:0 0 6px; color:#d9d9d5; font-size:10px; font-weight:500; }
+        #krypbot-container .kb-strength-current { color:#b9bab5; font-size:9px; }
+        #krypbot-container .kb-strength-current strong { color:#d9d9d5; font-size:9px; font-weight:600; }
+        #krypbot-container .kb-strength-limits { margin-top:2px; color:#696a66; font-size:7px; }
+        #krypbot-container .kb-slider { height:2px; accent-color:var(--tc-console-accent); }
+        #krypbot-container .kb-disclosure-toggle { display:none !important; }
+        #krypbot-container .kb-disclosure-panel,
+        #krypbot-container .kb-disclosure-panel[data-open="true"],
+        #krypbot-container .kb-advanced-settings,
+        #krypbot-container .kb-advanced-settings[data-open="true"] {
+          display:block !important; grid-template-rows:1fr !important; max-height:none !important; opacity:1 !important; visibility:visible !important; pointer-events:auto !important;
+          transform:none !important; transition:none !important;
+        }
+        #krypbot-container .kb-disclosure-inner { overflow:visible; }
+        #krypbot-container .kb-run-delay-controls { display:flex; flex-direction:column; align-items:stretch; gap:6px; padding:0; }
+        #krypbot-container .kb-delay-range { justify-content:space-between; gap:4px; }
+        #krypbot-container .kb-delay-input { width:76px; height:24px; border:1px solid #353532; border-radius:2px; background:#1d1d1b; box-shadow:none; }
+        #krypbot-container .kb-delay-input .kb-num-input { width:55px; height:22px; padding-left:6px; color:#e4e4e0; font-size:9px; }
+        #krypbot-container .kb-delay-unit { color:#777873; font-size:8px; }
+        #krypbot-container .kb-delay-separator { color:#6e6f6b; font-size:8px; }
+        #krypbot-container .kb-timing-mode { width:100%; height:23px; padding:1px; border:1px solid #343431; border-radius:2px; background:#1d1d1b; }
+        #krypbot-container .kb-run-delay-card .kb-timing-mode label { min-width:0; padding:5px 4px; border-radius:1px; color:#858681; font-size:8px; }
+        #krypbot-container .kb-timing-mode input[type="radio"] { position:absolute; display:block; width:1px; height:1px; opacity:0; }
+        #krypbot-container .kb-timing-mode input[type="radio"]:focus-visible + label { outline:1px solid var(--tc-console-accent); outline-offset:-2px; }
+        #krypbot-container .kb-run-delay-card[data-inactive="true"] .kb-timing-mode input:checked + label { background:#353532; color:#d2d2ce !important; }
+        #krypbot-container .kb-run-delay-card[data-inactive="false"] .kb-timing-mode input:checked + label { background:var(--tc-console-accent); color:#0d2113 !important; }
+        #krypbot-container .kb-dependency-hint { margin:5px 0 0; padding:0; color:#70716d; font-size:8px; line-height:1.3; }
+        #krypbot-container .kb-session-title { display:block; }
+        #krypbot-container .kb-session-title .kb-advanced-toggle { display:none !important; }
+        #krypbot-container .kb-advanced-settings-inner { padding:0 !important; }
+        #krypbot-container .kb-advanced-heading { display:none; }
+        #krypbot-container .kb-session-fields { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:4px; padding:1px 0 6px; }
+        #krypbot-container .kb-session-field { position:relative; gap:3px; color:#8c8c87; font-size:8px; text-transform:uppercase; letter-spacing:.04em; }
+        #krypbot-container .kb-session-field input { width:100%; height:24px; padding:3px 5px; border:1px solid #353532; border-radius:2px; background:#1d1d1b; color:#deded9; font-size:10px; }
+        #krypbot-container .kb-session-actions { grid-template-columns:1fr auto auto; gap:4px; margin:0; }
+        #krypbot-container .kb-session-button,
+        #krypbot-container .kb-session-button[data-action="start"] { height:25px; min-height:25px; padding:0 8px; border:1px solid #3a3a37; border-radius:2px; box-shadow:none; font-size:8px; letter-spacing:.04em; }
+        #krypbot-container .kb-session-button[data-action="start"] { background:var(--tc-console-accent); color:#0c1d12; }
+        #krypbot-container .kb-session-button[data-action="start"]:hover { transform:none; filter:brightness(1.06); box-shadow:none; }
+        #krypbot-container .kb-session-status { gap:3px; margin-top:6px; }
+        #krypbot-container .kb-session-primary,
+        #krypbot-container .kb-session-stats { color:#8c8c87; font-size:8px; }
+        #krypbot-container .kb-session-primary strong,
+        #krypbot-container .kb-session-stats strong { color:#cfcfcb; font-size:9px; }
+        #krypbot-container .kb-engine-module #puzzle-section { margin:0; padding:0 1px; border:0; border-radius:0; background:transparent; box-shadow:none; }
+        #krypbot-container .kb-color-input { width:22px; height:18px; border:1px solid #3a3a37; border-radius:2px; }
+        #krypbot-container .kb-footer { width:100%; margin:0; padding:0; border:0; }
+        #krypbot-container .kb-footer > div { width:100%; min-height:30px; display:flex; align-items:center; justify-content:space-between; color:#d9d9d5; font-size:10px; }
+        #krypbot-container .kb-more-settings[hidden] { display:none !important; }
+        #oi-zone2.tc-workspace-card {
+          width:250px !important; min-height:0 !important; padding:8px !important; border:1px solid var(--tc-console-border) !important;
+          border-radius:4px !important; background:var(--tc-console-bg) !important; background-image:none !important;
+          box-shadow:0 2px 8px rgba(0,0,0,.2) !important; backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
+          font-family:Arial, Helvetica, sans-serif !important;
+        }
+        #oi-zone2.tc-workspace-card::before { display:none !important; }
+        #oi-zone2 .tc-scout-head { min-height:26px; padding:0 0 7px !important; border-bottom:1px solid var(--tc-console-divider) !important; }
+        #oi-zone2 .tc-scout-title,
+        #oi-zone2 .tc-scout-head > div:first-child { color:#cfcfcb !important; font-size:10px !important; line-height:13px !important; font-weight:600 !important; letter-spacing:.04em; text-transform:uppercase; }
+        #oi-zone2 .tc-scout-subtitle { margin-top:2px !important; color:#777873 !important; font-size:8px !important; }
+        #oi-zone2 .tc-scout-empty { gap:5px !important; padding:9px 0 1px !important; }
+        #oi-zone2 .tc-scout-status { padding:4px 6px !important; border:1px solid #343431 !important; border-radius:2px !important; background:#242422 !important; color:#b9bab5 !important; font-size:8px !important; }
+        #oi-zone2 .tc-scout-retry { margin-top:3px; padding:5px 8px; border-radius:2px; background:#2b3d30; color:#79d89a; font-size:8px; }
+        #oi-zone2 .tc-scout-loading { min-height:112px; gap:8px; padding:12px; }
+        #oi-zone2 .tc-scout-loading .tc-scout-radar { margin-bottom:5px; }
+        #oi-zone2 .tc-scout-radar { width:58px; height:58px; box-shadow:none; }
+        #oi-zone2 .tc-scout-skeleton { height:36px; border-radius:2px; background:#292927; }
+        @media (max-width: 848px) {
+          #oi-wrapper { width:calc(100vw - 20px) !important; flex-direction:column !important; align-items:flex-start !important; gap:8px !important; }
+          #oi-wrapper > #krypbot-container.kb-console { width:min(568px, calc(100vw - 20px)) !important; max-width:100% !important; }
+          #oi-wrapper > #oi-zone2.tc-workspace-card { width:min(250px, calc(100vw - 20px)) !important; max-width:100% !important; }
+          #krypbot-container .kb-console-grid { grid-template-columns:1fr; }
           #oi-wrapper > #krypbot-container.minimized { width:154px !important; max-width:154px !important; }
         }
         @media (max-width: 980px) {
@@ -6005,6 +6098,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           #krypbot-container .kb-run-delay-controls { flex-direction:column; align-items:stretch; }
           #krypbot-container .kb-run-delay-card .kb-radio-group:has(input[name="delayMode"]) { align-self:flex-start; }
         }
+        @media (max-width: 368px) { #kb-session-toast { left:10px; right:10px; max-width:none; box-sizing:border-box; } }
         @media (prefers-reduced-motion: reduce) {
           #krypbot-container,
           #krypbot-container .kb-advanced-settings,
@@ -6034,7 +6128,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         </div>
 
         <div class="kb-section">
-          <p class="kb-section-label"><span class="kb-row-icon kb-icon-power" aria-hidden="true"></span>Bot</p>
+          <p class="kb-section-label">Bot</p>
           <div class="kb-radio-group">
             <input type="radio" id="st-on" name="kb-bot-status" value="1"><label for="st-on">ON</label>
             <input type="radio" id="st-off" name="kb-bot-status" value="0" checked><label for="st-off">OFF</label>
@@ -6042,7 +6136,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         </div>
 
         <div class="kb-section">
-          <p class="kb-section-label"><span class="kb-row-icon kb-icon-play" aria-hidden="true"></span>Auto Moves</p>
+          <p class="kb-section-label">Auto Moves</p>
           <div class="kb-radio-group">
             <input type="radio" id="am-on" name="kb-auto-move" value="1"><label for="am-on">ON</label>
             <input type="radio" id="am-off" name="kb-auto-move" value="0" checked><label for="am-off">OFF</label>
@@ -6120,7 +6214,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           <div class="kb-disclosure-panel" id="kb-more-settings-panel" data-open="false" aria-hidden="true" inert>
             <div class="kb-disclosure-inner">
               <div class="kb-section">
-                <p class="kb-section-label"><span class="kb-row-icon kb-icon-list" aria-hidden="true"></span>Auto Queue</p>
+                <p class="kb-section-label">Auto Queue</p>
                 <div id="kb-auto-queue-controls" class="kb-radio-group">
                   <input type="radio" id="aq-on" name="kb-auto-queue" value="1"><label for="aq-on">ON</label>
                   <input type="radio" id="aq-off" name="kb-auto-queue" value="0" checked><label for="aq-off">OFF</label>
@@ -6128,15 +6222,15 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
               </div>
               <p id="kb-auto-queue-session-note" class="kb-session-queue-note" hidden aria-live="polite">Temporarily enabled by Auto Play. Your saved preference is unchanged.</p>
               <div class="kb-section">
-                <p class="kb-section-label"><span class="kb-row-icon kb-icon-gauge" aria-hidden="true"></span>Auto Rating</p>
+                <p class="kb-section-label">Auto Rating</p>
                 <div class="kb-radio-group"><input type="radio" id="aa-on" name="kb-auto-adjust" value="1"><label for="aa-on">ON</label><input type="radio" id="aa-off" name="kb-auto-adjust" value="0" checked><label for="aa-off">OFF</label></div>
               </div>
               <div class="kb-section">
-                <p class="kb-section-label"><span class="kb-row-icon kb-icon-activity" aria-hidden="true"></span>Smart Pacing</p>
+                <p class="kb-section-label">Smart Pacing</p>
                 <div class="kb-radio-group"><input type="radio" id="sp-on" name="kb-smart-pacing" value="1"><label for="sp-on">ON</label><input type="radio" id="sp-off" name="kb-smart-pacing" value="0" checked><label for="sp-off">OFF</label></div>
               </div>
               <div class="kb-section">
-                <p class="kb-section-label"><span class="kb-row-icon kb-icon-eye" aria-hidden="true"></span>Evaluation Bar</p>
+                <p class="kb-section-label">Evaluation Bar</p>
                 <div class="kb-radio-group"><input type="radio" id="eb-on" name="kb-eval-bar" value="1"><label for="eb-on">ON</label><input type="radio" id="eb-off" name="kb-eval-bar" value="0" checked><label for="eb-off">OFF</label></div>
               </div>
               <div class="kb-section-col" id="puzzle-section" style="display:none">
@@ -6152,6 +6246,84 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         <div class="kb-footer"><div><span>Theme</span><input type="color" id="kb-color-picker" class="kb-color-input" value="#00ff88" aria-label="Theme color"></div></div>
       </div>
     `;
+
+    const applyCompactConsoleLayout = (menu) => {
+      if (!menu || typeof menu.querySelector !== "function" || menu.dataset?.consoleLayout === "reference") return;
+      const header = menu.querySelector(".kb-header");
+      const eyebrow = header?.querySelector(".kb-eyebrow");
+      const title = header?.querySelector(".kb-title");
+      if (eyebrow) eyebrow.textContent = "THINKER CHESS";
+      if (title) title.textContent = "Control Console";
+
+      const sectionByLabel = (root, label) => Array.from(root?.querySelectorAll(".kb-section") || [])
+        .find((section) => section.querySelector(".kb-section-label")?.textContent.trim() === label) || null;
+      const module = (caption, className = "") => {
+        const section = document.createElement("section");
+        section.className = `kb-console-module ${className}`.trim();
+        const heading = document.createElement("h3");
+        heading.className = "kb-console-caption";
+        heading.textContent = caption;
+        section.appendChild(heading);
+        return section;
+      };
+
+      const grid = document.createElement("div");
+      grid.className = "kb-console-grid";
+      const primary = document.createElement("div");
+      primary.className = "kb-console-column";
+      const secondary = document.createElement("div");
+      secondary.className = "kb-console-column";
+      const core = module("Core", "kb-core-module");
+      const visuals = module("Visuals", "kb-visuals-module");
+      const engine = module("Engine Control", "kb-engine-module");
+      const autoPlay = menu.querySelector("#kb-session-panel");
+      const morePanel = menu.querySelector("#kb-more-settings-panel");
+      const moreBlock = morePanel?.closest(".kb-more-settings");
+      const bot = sectionByLabel(menu, "Bot");
+      const autoMoves = sectionByLabel(menu, "Auto Moves");
+      const autoQueue = sectionByLabel(morePanel, "Auto Queue");
+      const autoRating = sectionByLabel(morePanel, "Auto Rating");
+      const smartPacing = sectionByLabel(morePanel, "Smart Pacing");
+      const evaluationBar = sectionByLabel(morePanel, "Evaluation Bar");
+      const queueNote = menu.querySelector("#kb-auto-queue-session-note");
+      const timing = menu.querySelector("#auto-delay-section");
+      const strength = menu.querySelector(".kb-strength-card");
+      const puzzle = menu.querySelector("#puzzle-section");
+      const footer = menu.querySelector(".kb-footer");
+
+      [bot, autoMoves, autoQueue, queueNote].forEach((node) => { if (node) core.appendChild(node); });
+      [evaluationBar, footer].forEach((node) => { if (node) visuals.appendChild(node); });
+      if (timing) {
+        const timingToggle = timing.querySelector("#kb-move-timing-toggle");
+        const timingLabel = timingToggle?.querySelector("#kb-run-delay-label");
+        const timingSummary = timingToggle?.querySelector("#autoDelayDisplay");
+        if (timingToggle && timingLabel && timingSummary) {
+          const timingHeading = document.createElement("div");
+          timingHeading.className = "kb-timing-heading";
+          timingHeading.append(timingLabel, timingSummary);
+          timing.insertBefore(timingHeading, timingToggle.nextSibling);
+        }
+      }
+      [autoRating, strength, timing, smartPacing, puzzle].forEach((node) => { if (node) engine.appendChild(node); });
+      if (autoPlay) {
+        autoPlay.classList.add("kb-console-module");
+        const autoPlayTitle = autoPlay.querySelector("#kb-auto-play-title");
+        autoPlayTitle?.classList.add("kb-console-caption");
+      }
+      if (moreBlock) moreBlock.hidden = true;
+
+      primary.append(core, visuals);
+      secondary.appendChild(engine);
+      grid.append(primary, secondary);
+      if (autoPlay) {
+        autoPlay.classList.add("kb-auto-play-module");
+        grid.appendChild(autoPlay);
+      }
+      const toast = menu.querySelector("#kb-session-toast");
+      menu.insertBefore(grid, toast || null);
+      menu.classList.add("kb-console");
+      menu.dataset.consoleLayout = "reference";
+    };
 
     const bannerHtml = `
       <!-- Thinker Chess Banner -->
@@ -6175,6 +6347,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         document.body.appendChild(wrapper);
         if (!document.getElementById("krypbot-container")) wrapper.insertAdjacentHTML("beforeend", menuHtml);
         thinkerMenuNode = document.getElementById("krypbot-container");
+        applyCompactConsoleLayout(thinkerMenuNode);
         thinkerBannerNode = document.getElementById("thinker-chess-banner");
         if (!thinkerMenuNode || !thinkerBannerNode) return;
         startThinkerUiReconciler();
@@ -6261,6 +6434,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           group.setAttribute("tabindex", "0");
           group.setAttribute("aria-checked", onInput.checked ? "true" : "false");
           const toggle = () => {
+            if (group.getAttribute?.("aria-disabled") === "true") return;
             const nextInput = onInput.checked ? offInput : onInput;
             nextInput.checked = true;
             group.setAttribute("aria-checked", onInput.checked ? "true" : "false");
@@ -6306,9 +6480,9 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           setDisclosureOpen(moveTimingToggle, moveTimingPanel, open);
         };
         if (sessionMenu) {
-          setAdvancedSettingsOpen(false);
-          setMoveTimingOpen(false);
-          setDisclosureOpen(moreSettingsToggle, moreSettingsPanel, false);
+          setAdvancedSettingsOpen(true);
+          setMoveTimingOpen(true);
+          setDisclosureOpen(moreSettingsToggle, moreSettingsPanel, true);
           sessionMenu.addEventListener("click", (event) => {
             const toggle = event.target?.closest?.("#kb-advanced-settings-toggle");
             if (toggle && sessionMenu.contains(toggle)) {
@@ -6367,7 +6541,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           if (delaySection) {
             delaySection.dataset.inactive = auto_move ? "false" : "true";
             delaySection.dataset.mode = autoDelayMode;
-            setMoveTimingOpen(auto_move || delaySection.dataset.userExpanded === "true");
+            setMoveTimingOpen(true);
           }
           if (delayHint) delayHint.hidden = auto_move;
           syncAutoQueueSessionUI();

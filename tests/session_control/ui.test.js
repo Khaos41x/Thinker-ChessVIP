@@ -308,13 +308,7 @@ async function run() {
   assert(menu.includes('id="kb-workspace-launcher"'));
   assert(menu.includes('<span class="kb-logo-copy">Thinker Chess</span>'));
   assert(!menu.includes('<div class="kb-logo">K</div>'));
-  assert(source.includes("--tc-radius-card:16px"), "neutral card radius token is missing");
-  assert(source.includes("--tc-radius-control:9px"), "neutral control radius token is missing");
   assert(source.includes("background-image:none !important"), "decorative panel gradients were not removed");
-  const wrapperTokens = sourceBlock(source, "        #oi-wrapper {", "          position: absolute !important");
-  assert(wrapperTokens.includes("--tc-glass-bg: rgba(20, 20, 25, 0.65)"));
-  assert(wrapperTokens.includes('--tc-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'));
-  assert(source.includes("width:292px !important; min-height:0 !important; padding:14px !important"), "Scout compact geometry regressed");
   assert(source.includes(".kb-session-primary"), "Auto Play primary summary is missing");
   assert(source.includes(".kb-session-stats"), "Auto Play stats summary is missing");
   const scoutStatusMarkup = sourceBlock(source, "    renderStatus(state) {", "    renderLoading() {");
@@ -323,12 +317,11 @@ async function run() {
   assert(source.includes('class="tc-scout-skeleton" aria-hidden="true"'), "Scout loading state lost its translucent skeletons");
   assert(source.includes('retry.className = "tc-scout-retry"'), "Scout unavailable retry is not styled by the shared premium system");
   assert(source.includes('panel.querySelector(".tc-scout-empty")?.appendChild(retry)'), "Scout unavailable retry is outside the centered empty state");
-  assert(source.includes("@media (max-width: 640px)"), "workspace lacks a narrow-viewport layout");
+  assert(source.includes("@media (max-width: 848px)"), "workspace lacks a narrow-viewport layout");
   assert(source.includes("width: 154px !important;\n          max-width: 154px !important"), "workspace launcher lost its compact branded width");
   assert(source.includes("setThinkerWorkspaceCollapsed(true)"), "panel close does not collapse the complete workspace");
   assert(source.includes("setThinkerWorkspaceCollapsed(false)"), "workspace launcher does not restore the complete workspace");
   assert(source.includes('#krypbot-container .kb-session-button[data-action="start"]'), "START lacks a dedicated primary-action style");
-  assert(source.includes("height:36px; border-radius:var(--tc-radius-control); background:var(--tc-accent); box-shadow:none"), "Start primary-action styling regressed");
   assert(source.includes('panel.toggleAttribute("inert", !open)'), "advanced disclosure does not synchronize focus isolation");
   assert(source.includes("@media (prefers-reduced-motion: reduce)"), "advanced disclosure ignores reduced-motion preferences");
   assert(source.includes('source?.closest?.("#kb-session-panel")'), "advanced disclosure is not scoped to its owning Session Control panel");
@@ -345,6 +338,18 @@ async function run() {
   for (const forbidden of ["Assistente de Xadrez", "Jogadas automáticas", "Ritmo de jogada", "Nível de força", "Mais ajustes", "Aguardando", "Concluído", "Iniciar", "Finalizar", "Configurar", "Taxa de vitória", "Tema", "Scout do Oponente"]) {
     assert(!menu.includes(forbidden), `Portuguese UI text remains: ${forbidden}`);
   }
+  assert(source.includes('grid.className = "kb-console-grid"'), "reference console grid is not assembled");
+  assert(source.includes('const core = module("Core", "kb-core-module")'), "Core module is missing");
+  assert(source.includes('const visuals = module("Visuals", "kb-visuals-module")'), "Visuals module is missing");
+  assert(source.includes('const engine = module("Engine Control", "kb-engine-module")'), "Engine Control module is missing");
+  assert(source.includes('[bot, autoMoves, autoQueue, queueNote]'), "Core controls are not grouped together");
+  assert(source.includes('[autoRating, strength, timing, smartPacing, puzzle]'), "Engine controls are not grouped together");
+  assert(source.includes("width:568px !important; max-width:568px !important"), "compact two-column console width is missing");
+  assert(source.includes("border:0 !important; border-radius:0 !important"), "embedded console shell is not visually removed");
+  assert(source.includes("backdrop-filter:none !important"), "glass blur is not neutralized");
+  assert(source.includes("grid-template-columns:minmax(0,1fr) minmax(0,1fr)"), "desktop console is not two-column");
+  assert(source.includes("text-transform:uppercase"), "compact uppercase module captions are missing");
+  assert(source.includes("width:30px; height:16px"), "compact switch geometry is missing");
   const wrapperCss = sourceBlock(source, "        #oi-wrapper {", "        #oi-wrapper > * {");
   for (const declaration of [
     "position: absolute !important",
