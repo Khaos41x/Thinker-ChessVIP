@@ -168,6 +168,10 @@ function createCdpClient(webSocketUrl) {
             ...details,
           });
         }
+        const board = document.querySelector("wc-chess-board, chess-board, #board-single, .board, .chess-board, [class*='board-component']");
+        const sidebar = document.querySelector(".play-controller-component:not(.stale-controller)");
+        const gameplayBottom = Math.max(board?.getBoundingClientRect().bottom || 0, sidebar?.getBoundingClientRect().bottom || 0) + scrollY;
+        const wrapperTop = (document.getElementById("oi-wrapper")?.getBoundingClientRect().top || 0) + scrollY;
         return ({
         readyState: document.readyState,
         menu: Boolean(document.getElementById("krypbot-container")),
@@ -183,6 +187,7 @@ function createCdpClient(webSocketUrl) {
         bannerLayout: describe(document.getElementById("thinker-chess-banner")),
         ancestors,
         mountError: document.getElementById("kb-ghost-recovery")?.dataset.mountError || "",
+        workspaceGap: wrapperTop - gameplayBottom,
         href: location.href,
       });
       })()`,
@@ -281,9 +286,9 @@ function createCdpClient(webSocketUrl) {
 
     assert(disclosureSmoke.ok, `Advanced settings disclosure smoke failed: ${JSON.stringify(disclosureSmoke)}`);
     assert(disclosureSmoke.panel.background === "rgba(0, 0, 0, 0)" && disclosureSmoke.panel.backgroundImage === "none", `Session panel embedded surface regressed: ${JSON.stringify(disclosureSmoke.panel)}`);
-    assert(disclosureSmoke.panel.radius === "0px" && disclosureSmoke.panel.width === "608px", `Session panel geometry regressed: ${JSON.stringify(disclosureSmoke.panel)}`);
+    assert(disclosureSmoke.panel.radius === "0px" && disclosureSmoke.panel.width === "700px", `Session panel geometry regressed: ${JSON.stringify(disclosureSmoke.panel)}`);
     assert(disclosureSmoke.panel.font.includes("Segoe UI") || disclosureSmoke.panel.font.includes("Arial"), `Session panel system font regressed: ${JSON.stringify(disclosureSmoke.panel)}`);
-    assert(disclosureSmoke.panel.height >= 420 && disclosureSmoke.panel.height <= 490, `Idle Assistant height is outside the compact 420–490px target: ${JSON.stringify(disclosureSmoke.panel)}`);
+    assert(disclosureSmoke.panel.height >= 480 && disclosureSmoke.panel.height <= 580, `Idle Assistant height is outside the 480–580px target: ${JSON.stringify(disclosureSmoke.panel)}`);
 
     const workspaceSmokeResult = await client.send("Runtime.evaluate", {
       expression: `(() => {
@@ -446,7 +451,7 @@ function createCdpClient(webSocketUrl) {
     assert(exceptions.length === 0, `Userscript exception: ${exceptions[0]?.text || "unknown"}`);
     assert(disclosureSmoke.scout?.background === "rgb(32, 32, 30)" && disclosureSmoke.scout.backgroundImage === "none" && disclosureSmoke.scout.radius === "6px", `Scout neutral styling regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
     assert(disclosureSmoke.scout.font.includes("Segoe UI") || disclosureSmoke.scout.font.includes("Arial"), `Scout system font regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
-    assert(disclosureSmoke.scout.width === "260px" && disclosureSmoke.scout.height < disclosureSmoke.scout.menuHeight && !disclosureSmoke.scout.hasRadar && !disclosureSmoke.scout.emptyDetail, `Scout waiting state retained legacy dead-space geometry: ${JSON.stringify(disclosureSmoke.scout)}`);
+    assert(disclosureSmoke.scout.width === "300px" && disclosureSmoke.scout.height < disclosureSmoke.scout.menuHeight && !disclosureSmoke.scout.hasRadar && !disclosureSmoke.scout.emptyDetail, `Scout waiting state retained legacy dead-space geometry: ${JSON.stringify(disclosureSmoke.scout)}`);
     assert(disclosureSmoke.scout.rawRate === "—" && disclosureSmoke.scout.sessionState === "never-started", `Idle presentation state regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
     assert(productionStart.ok, `Production START wiring smoke failed: ${JSON.stringify(productionStart)}`);
     if (!liveChess) assert(productionStart.warning === "" && productionStart.rawWarningCode === "DDA_MAPPING_UNAVAILABLE", `Default compatibility START did not leave IDLE: ${JSON.stringify(productionStart)}`);
@@ -463,12 +468,13 @@ function createCdpClient(webSocketUrl) {
       state.menuLayout.rect.y >= state.viewportHeight,
       `configuration menu overlaps the initial viewport: ${JSON.stringify(state.menuLayout.rect)}`,
     );
+    assert(state.workspaceGap >= 112, `Workspace gap is below 112px: ${state.workspaceGap}`);
     assert(
       state.documentHeight > state.viewportHeight,
       `page cannot scroll to the configuration menu: ${state.documentHeight}px document / ${state.viewportHeight}px viewport`,
     );
     assert(state.bannerLayout.display === "flex", "banner is still hidden on a desktop viewport");
-    await client.send("Emulation.setDeviceMetricsOverride", { width: 900, height: 900, deviceScaleFactor: 1, mobile: false });
+    await client.send("Emulation.setDeviceMetricsOverride", { width: 1050, height: 900, deviceScaleFactor: 1, mobile: false });
     await sleep(100);
     const responsiveResult = await client.send("Runtime.evaluate", {
       expression: `(() => {
@@ -490,7 +496,7 @@ function createCdpClient(webSocketUrl) {
     const responsive = responsiveResult.result.value;
     assert(responsive.direction === "column" && responsive.align === "flex-start", `Workspace did not stack on a narrow viewport: ${JSON.stringify(responsive)}`);
     assert(responsive.wrapperWidth <= responsive.viewportWidth - 20 && responsive.menuWidth <= responsive.wrapperWidth && responsive.scoutWidth <= responsive.wrapperWidth, `Workspace overflowed the narrow viewport: ${JSON.stringify(responsive)}`);
-    await client.send("Emulation.setDeviceMetricsOverride", { width: 901, height: 900, deviceScaleFactor: 1, mobile: false });
+    await client.send("Emulation.setDeviceMetricsOverride", { width: 1051, height: 900, deviceScaleFactor: 1, mobile: false });
     await sleep(100);
     const wideBoundaryResult = await client.send("Runtime.evaluate", {
       expression: `(() => {
@@ -500,8 +506,8 @@ function createCdpClient(webSocketUrl) {
       returnByValue: true,
     });
     const wideBoundary = wideBoundaryResult.result.value;
-    assert(wideBoundary.direction === "row" && wideBoundary.width <= wideBoundary.viewportWidth - 20, `Workspace breakpoint regressed at 901px: ${JSON.stringify(wideBoundary)}`);
-    for (const [width, height, scale] of [[320, 900, 1], [375, 900, 1], [640, 900, 1], [768, 900, 1], [900, 900, 1], [901, 900, 1], [1280, 720, 1], [1440, 778, 1], [1440, 900, 1], [1440, 900, 1.25], [1920, 1080, 1.5]]) {
+    assert(wideBoundary.direction === "row" && wideBoundary.width <= wideBoundary.viewportWidth - 20, `Workspace breakpoint regressed at 1051px: ${JSON.stringify(wideBoundary)}`);
+    for (const [width, height, scale] of [[320, 900, 1], [375, 900, 1], [640, 900, 1], [768, 900, 1], [820, 900, 1], [900, 900, 1], [1024, 900, 1], [1050, 900, 1], [1051, 900, 1], [1280, 720, 1], [1440, 778, 1], [1440, 900, 1], [1440, 900, 1.25], [1920, 1080, 1.5]]) {
       const cssWidth = Math.round(width / scale);
       const cssHeight = Math.round(height / scale);
       await client.send("Emulation.setDeviceMetricsOverride", { width: cssWidth, height: cssHeight, deviceScaleFactor: scale, mobile: false });

@@ -317,7 +317,7 @@ async function run() {
   assert(source.includes('class="tc-scout-skeleton" aria-hidden="true"'), "Scout loading state lost its translucent skeletons");
   assert(source.includes('retry.className = "tc-scout-retry"'), "Scout unavailable retry is not styled by the shared premium system");
   assert(source.includes('panel.querySelector(".tc-scout-empty")?.appendChild(retry)'), "Scout unavailable retry is outside the centered empty state");
-  assert(source.includes("@media (max-width: 900px)"), "workspace lacks a narrow-viewport layout");
+  assert(source.includes("@media (max-width: 1050px)"), "workspace lacks a narrow-viewport layout");
   assert(source.includes("width: 154px !important;\n          max-width: 154px !important"), "workspace launcher lost its compact branded width");
   assert(source.includes("setThinkerWorkspaceCollapsed(false)"), "workspace launcher does not restore the complete workspace");
   assert(!menu.includes('id="kb-minimize-toggle"') && !source.includes('<button class="tc-scout-close"'), "dismiss controls remain in the workspace markup");
@@ -344,16 +344,16 @@ async function run() {
   assert(source.includes('const engine = module("Engine Control", "kb-engine-module")'), "Engine Control module is missing");
   assert(source.includes('[bot, autoMoves, autoQueue, queueNote]'), "Core controls are not grouped together");
   assert(source.includes('[autoRating, strength, timing, smartPacing, puzzle]'), "Engine controls are not grouped together");
-  assert(source.includes("width:608px !important; max-width:608px !important"), "compact two-column console width is missing");
+  assert(source.includes("width:700px !important; max-width:700px !important"), "compact two-column console width is missing");
   assert(source.includes("border:0 !important; border-radius:0 !important"), "embedded console shell is not visually removed");
   assert(source.includes("backdrop-filter:none !important"), "glass blur is not neutralized");
   assert(source.includes("grid-template-columns:minmax(0,1fr) minmax(0,1fr)"), "desktop console is not two-column");
   assert(source.includes("text-transform:uppercase"), "compact uppercase module captions are missing");
-  assert(source.includes("width:32px; height:18px"), "compact switch geometry is missing");
+  assert(source.includes("width:40px; height:22px"), "compact switch geometry is missing");
   const wrapperCss = sourceBlock(source, "        #oi-wrapper {", "        #oi-wrapper > * {");
   for (const declaration of [
     "position: absolute !important",
-    "top: calc(100vh + 52px) !important",
+    "top: calc(100vh + ${THINKER_WORKSPACE_GAP_PX}px) !important",
     "left: 10px !important",
     "width: max-content !important",
     "display: flex !important",
@@ -368,6 +368,8 @@ async function run() {
   assert(childCss.includes("pointer-events: auto !important"));
   const workspaceLayout = sourceBlock(source, "        function updateWorkspaceLayout() {", "        scheduleThinkerWorkspaceLayout = () => {");
   assert(workspaceLayout.includes("document.body.appendChild(wrapper)"));
+  assert(source.includes("THINKER_WORKSPACE_GAP_PX = 112"), "workspace gap is not centralized");
+  assert(workspaceLayout.includes("window.innerHeight + THINKER_WORKSPACE_GAP_PX") && workspaceLayout.includes("gameplayDocumentBottom + THINKER_WORKSPACE_GAP_PX"), "runtime layout does not preserve the requested board gap");
   assert(workspaceLayout.includes("setProperty(\"top\""));
   assert(workspaceLayout.includes("setProperty(\"left\""));
   assert(/document\.body\.appendChild\(wrapper\);\r?\n\s+if \(!document\.getElementById\("krypbot-container"\)\) wrapper\.insertAdjacentHTML/.test(source));

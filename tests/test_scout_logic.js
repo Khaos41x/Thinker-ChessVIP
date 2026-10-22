@@ -69,7 +69,7 @@ const nativeMountContext = {
   setInterval: (callback) => { mountCallback = callback; return 1; },
 };
 vm.runInNewContext(
-  "const THINKER_BANNER_ARTWORK_SCALE=3.4; let thinkerUiBound=false, thinkerMountTimer=null, thinkerMenuNode=null, thinkerBannerNode=null, thinkerBannerFrame=null, scheduleThinkerBannerPosition=()=>{}, $=null;\n" +
+  "const THINKER_BANNER_ARTWORK_SCALE=3.4, THINKER_WORKSPACE_GAP_PX=112; let thinkerUiBound=false, thinkerMountTimer=null, thinkerMenuNode=null, thinkerBannerNode=null, thinkerBannerFrame=null, scheduleThinkerBannerPosition=()=>{}, $=null;\n" +
     source.slice(nativeMountStart, nativeMountEnd) + "\nglobalThis.mount=createMenu;",
   nativeMountContext,
 );
@@ -562,8 +562,8 @@ assert(
   "unsafe narrow viewport was not resolved by the bounded fallback",
 );
 assert(
-  context.calculateWorkspaceMargin(836, 895) === 121 &&
-    context.calculateWorkspaceMargin(836, 1080) === 306,
+  context.calculateWorkspaceMargin(836, 895) === 201 &&
+    context.calculateWorkspaceMargin(836, 1080) === 386,
   "workspace was not placed below normal and fullscreen viewport folds",
 );
 

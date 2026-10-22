@@ -5408,6 +5408,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
   const THINKER_BANNER_PREFERRED_WIDTH_PX = 170;
   const THINKER_BANNER_MIN_WIDTH_PX = 96;
   const THINKER_BANNER_ARTWORK_SCALE = 3.4;
+  const THINKER_WORKSPACE_GAP_PX = 112;
 
   function calculateThinkerBannerLayout(
     sidebarRect,
@@ -5448,7 +5449,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
 
   function calculateThinkerWorkspaceMargin(naturalDocumentTop, viewportHeight, gameplayDocumentBottom = 0) {
     const baseMargin = 30;
-    const safeTop = Math.max(Math.max(0, viewportHeight) + 32, Math.max(0, gameplayDocumentBottom) + 32);
+    const safeTop = Math.max(Math.max(0, viewportHeight) + THINKER_WORKSPACE_GAP_PX, Math.max(0, gameplayDocumentBottom) + THINKER_WORKSPACE_GAP_PX);
     return Math.ceil(baseMargin + Math.max(0, safeTop - naturalDocumentTop));
   }
 
@@ -5518,7 +5519,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           --tc-muted: #9ca3b2;
           --tc-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
           position: absolute !important;
-          top: calc(100vh + 52px) !important;
+          top: calc(100vh + ${THINKER_WORKSPACE_GAP_PX}px) !important;
           left: 10px !important;
           width: max-content !important;
           z-index: 2147483647 !important;
@@ -5942,7 +5943,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           gap:10px !important;
         }
         #krypbot-container.kb-console {
-          width:608px !important; max-width:608px !important; padding:0 !important; gap:0 !important; overflow:visible;
+          width:700px !important; max-width:700px !important; padding:0 !important; gap:0 !important; overflow:visible;
           border:0 !important; border-radius:0 !important;
           background:transparent !important; background-image:none !important;
           box-shadow:none !important; backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
@@ -5953,33 +5954,33 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           width:154px !important; max-width:154px !important; padding:0 !important; border:1px solid var(--tc-console-border) !important;
           border-radius:4px !important; background:var(--tc-console-bg) !important; box-shadow:0 2px 8px rgba(0,0,0,.2) !important;
         }
-        #krypbot-container .kb-console-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px; padding:0; }
-        #krypbot-container .kb-console-column { min-width:0; display:flex; flex-direction:column; gap:8px; }
+        #krypbot-container .kb-console-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; padding:0; }
+        #krypbot-container .kb-console-column { min-width:0; display:flex; flex-direction:column; gap:10px; }
         #krypbot-container .kb-console-module {
-          min-width:0; margin:0 !important; padding:9px !important; gap:0 !important; border:1px solid var(--tc-console-border) !important;
+          min-width:0; margin:0 !important; padding:12px !important; gap:0 !important; border:1px solid var(--tc-console-border) !important;
           border-radius:6px !important; background:var(--tc-console-module) !important; box-shadow:none !important;
         }
         #krypbot-container .kb-auto-play-module { grid-column:1 / -1; }
         #krypbot-container .kb-console-caption {
-          display:block; margin:0 0 5px !important; padding:0 0 6px !important; border-bottom:1px solid var(--tc-console-divider);
-          color:#8b8c87 !important; font-size:9px !important; line-height:11px !important; font-weight:700 !important;
+          display:block; margin:0 0 6px !important; padding:0 0 8px !important; border-bottom:1px solid var(--tc-console-divider);
+          color:#8b8c87 !important; font-size:10px !important; line-height:12px !important; font-weight:700 !important;
           letter-spacing:.16em !important; text-transform:uppercase;
         }
         #krypbot-container .kb-console-module .kb-section {
-          min-height:32px; margin:0 !important; padding:0 1px; border-bottom:1px solid var(--tc-console-divider);
+          min-height:36px; margin:0 !important; padding:0 2px; border-bottom:1px solid var(--tc-console-divider);
         }
         #krypbot-container .kb-console-module .kb-section:last-child { border-bottom:0; }
-        #krypbot-container .kb-console-module .kb-section-label { gap:0; color:#d9d9d5; font-size:11px; line-height:15px; font-weight:500; }
+        #krypbot-container .kb-console-module .kb-section-label { gap:0; color:#d9d9d5; font-size:12px; line-height:16px; font-weight:500; }
         #krypbot-container .kb-console-module .kb-row-icon { display:none; }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) {
-          width:32px; height:18px; padding:0; border:1px solid #3b3b38; border-radius:9px; background:#3a3a37; box-shadow:none;
+          width:40px; height:22px; padding:0; border:1px solid #3b3b38; border-radius:11px; background:#3a3a37; box-shadow:none;
         }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"]))::after {
-          top:1px; left:1px; width:14px; height:14px; box-shadow:0 1px 2px rgba(0,0,0,.45); transition:transform .14s ease;
+          top:1px; left:1px; width:18px; height:18px; box-shadow:0 1px 2px rgba(0,0,0,.45); transition:transform .14s ease;
         }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):has(input[value="1"]:checked) { background:var(--tc-console-accent); box-shadow:none; }
-        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):has(input[value="1"]:checked)::after { transform:translateX(14px); }
-        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) label { width:16px; height:16px; }
+        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):has(input[value="1"]:checked)::after { transform:translateX(18px); }
+        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) label { width:20px; height:20px; }
         #krypbot-container .kb-session-queue-note { margin:4px 1px; color:#93b79e; font-size:8px; }
         #krypbot-container .kb-strength-card,
         #krypbot-container .kb-run-delay-card {
@@ -5987,7 +5988,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           border-radius:0 !important; background:transparent !important; box-shadow:none !important;
         }
         #krypbot-container .kb-strength-head,
-        #krypbot-container .kb-timing-heading { display:flex; align-items:center; justify-content:space-between; margin:0 0 6px; color:#d9d9d5; font-size:11px; font-weight:500; }
+        #krypbot-container .kb-timing-heading { display:flex; align-items:center; justify-content:space-between; margin:0 0 7px; color:#d9d9d5; font-size:12px; font-weight:500; }
         #krypbot-container .kb-strength-current { color:#b9bab5; font-size:9px; }
         #krypbot-container .kb-strength-current strong { color:#d9d9d5; font-size:9px; font-weight:600; }
         #krypbot-container .kb-strength-limits { margin-top:2px; color:#696a66; font-size:7px; }
@@ -6003,11 +6004,11 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-disclosure-inner { overflow:visible; }
         #krypbot-container .kb-run-delay-controls { display:flex; flex-direction:column; align-items:stretch; gap:6px; padding:0; }
         #krypbot-container .kb-delay-range { justify-content:space-between; gap:4px; }
-        #krypbot-container .kb-delay-input { width:80px; height:26px; border:1px solid #353532; border-radius:4px; background:#1d1d1b; box-shadow:none; }
-        #krypbot-container .kb-delay-input .kb-num-input { width:58px; height:24px; padding-left:6px; color:#e4e4e0; font-size:10px; }
+        #krypbot-container .kb-delay-input { width:92px; height:30px; border:1px solid #353532; border-radius:4px; background:#1d1d1b; box-shadow:none; }
+        #krypbot-container .kb-delay-input .kb-num-input { width:68px; height:28px; padding-left:7px; color:#e4e4e0; font-size:11px; }
         #krypbot-container .kb-delay-unit { color:#777873; font-size:8px; }
         #krypbot-container .kb-delay-separator { color:#6e6f6b; font-size:8px; }
-        #krypbot-container .kb-timing-mode { width:100%; height:25px; padding:1px; border:1px solid #343431; border-radius:4px; background:#1d1d1b; }
+        #krypbot-container .kb-timing-mode { width:100%; height:29px; padding:1px; border:1px solid #343431; border-radius:4px; background:#1d1d1b; }
         #krypbot-container .kb-run-delay-card .kb-timing-mode label { min-width:0; padding:5px 4px; border-radius:1px; color:#858681; font-size:8px; }
         #krypbot-container .kb-timing-mode input[type="radio"] { position:absolute; display:block; width:1px; height:1px; opacity:0; }
         #krypbot-container .kb-timing-mode input[type="radio"]:focus-visible + label { outline:1px solid var(--tc-console-accent); outline-offset:-2px; }
@@ -6019,16 +6020,16 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-advanced-settings-inner { padding:0 !important; }
         #krypbot-container .kb-advanced-heading { display:none; }
         #krypbot-container .kb-session-fields { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:4px; padding:1px 0 6px; }
-        #krypbot-container .kb-session-field { position:relative; gap:3px; color:#8c8c87; font-size:8px; text-transform:uppercase; letter-spacing:.04em; }
-        #krypbot-container .kb-session-field input { width:100%; height:26px; padding:3px 6px; border:1px solid #353532; border-radius:4px; background:#1d1d1b; color:#deded9; font-size:10px; }
+        #krypbot-container .kb-session-field { position:relative; gap:4px; color:#8c8c87; font-size:9px; text-transform:uppercase; letter-spacing:.04em; }
+        #krypbot-container .kb-session-field input { width:100%; height:30px; padding:4px 7px; border:1px solid #353532; border-radius:4px; background:#1d1d1b; color:#deded9; font-size:11px; }
         #krypbot-container .kb-session-actions { grid-template-columns:1fr auto auto; gap:4px; margin:0; }
         #krypbot-container .kb-session-button,
-        #krypbot-container .kb-session-button[data-action="start"] { height:27px; min-height:27px; padding:0 9px; border:1px solid #3a3a37; border-radius:4px; box-shadow:none; font-size:8px; letter-spacing:.04em; }
+        #krypbot-container .kb-session-button[data-action="start"] { height:34px; min-height:34px; padding:0 11px; border:1px solid #3a3a37; border-radius:4px; box-shadow:none; font-size:10px; letter-spacing:.04em; }
         #krypbot-container .kb-session-button[data-action="start"] { background:var(--tc-console-accent); color:#0c1d12; }
         #krypbot-container .kb-session-button[data-action="start"]:hover { transform:none; filter:brightness(1.06); box-shadow:none; }
         #krypbot-container .kb-session-status { gap:3px; margin-top:6px; }
         #krypbot-container .kb-session-primary,
-        #krypbot-container .kb-session-stats { color:#8c8c87; font-size:8px; }
+        #krypbot-container .kb-session-stats { color:#9b9c96; font-size:9px; }
         #krypbot-container .kb-session-primary strong,
         #krypbot-container .kb-session-stats strong { color:#cfcfcb; font-size:9px; }
         #krypbot-container .kb-engine-module #puzzle-section { margin:0; padding:0 1px; border:0; border-radius:0; background:transparent; box-shadow:none; }
@@ -6037,7 +6038,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-footer > div { width:100%; min-height:30px; display:flex; align-items:center; justify-content:space-between; color:#d9d9d5; font-size:10px; }
         #krypbot-container .kb-more-settings[hidden] { display:none !important; }
         #oi-zone2.tc-workspace-card {
-          width:260px !important; min-height:0 !important; padding:9px !important; border:1px solid var(--tc-console-border) !important;
+          width:300px !important; min-height:0 !important; padding:12px !important; border:1px solid var(--tc-console-border) !important;
           border-radius:6px !important; background:var(--tc-console-bg) !important; background-image:none !important;
           box-shadow:0 2px 8px rgba(0,0,0,.2) !important; backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
           font-family:Arial, Helvetica, sans-serif !important;
@@ -6045,19 +6046,19 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #oi-zone2.tc-workspace-card::before { display:none !important; }
         #oi-zone2 .tc-scout-head { min-height:26px; padding:0 0 7px !important; border-bottom:1px solid var(--tc-console-divider) !important; }
         #oi-zone2 .tc-scout-title,
-        #oi-zone2 .tc-scout-head > div:first-child { color:#cfcfcb !important; font-size:11px !important; line-height:14px !important; font-weight:600 !important; letter-spacing:.04em; text-transform:uppercase; }
+        #oi-zone2 .tc-scout-head > div:first-child { color:#cfcfcb !important; font-size:12px !important; line-height:16px !important; font-weight:600 !important; letter-spacing:.04em; text-transform:uppercase; }
         #oi-zone2 .tc-scout-subtitle { margin-top:2px !important; color:#777873 !important; font-size:8px !important; }
         #oi-zone2 .tc-scout-empty { gap:5px !important; padding:9px 0 1px !important; }
-        #oi-zone2 .tc-scout-status { padding:5px 7px !important; border:1px solid #343431 !important; border-radius:4px !important; background:#242422 !important; color:#b9bab5 !important; font-size:9px !important; }
+        #oi-zone2 .tc-scout-status { padding:6px 8px !important; border:1px solid #343431 !important; border-radius:4px !important; background:#242422 !important; color:#b9bab5 !important; font-size:10px !important; }
         #oi-zone2 .tc-scout-retry { margin-top:3px; padding:5px 8px; border-radius:2px; background:#2b3d30; color:#79d89a; font-size:8px; }
         #oi-zone2 .tc-scout-loading { min-height:112px; gap:8px; padding:12px; }
         #oi-zone2 .tc-scout-loading .tc-scout-radar { margin-bottom:5px; }
         #oi-zone2 .tc-scout-radar { width:58px; height:58px; box-shadow:none; }
         #oi-zone2 .tc-scout-skeleton { height:36px; border-radius:2px; background:#292927; }
-        @media (max-width: 900px) {
+        @media (max-width: 1050px) {
           #oi-wrapper { width:calc(100vw - 20px) !important; flex-direction:column !important; align-items:flex-start !important; gap:8px !important; }
-          #oi-wrapper > #krypbot-container.kb-console { width:min(608px, calc(100vw - 20px)) !important; max-width:100% !important; }
-          #oi-wrapper > #oi-zone2.tc-workspace-card { width:min(260px, calc(100vw - 20px)) !important; max-width:100% !important; }
+          #oi-wrapper > #krypbot-container.kb-console { width:min(700px, calc(100vw - 20px)) !important; max-width:100% !important; }
+          #oi-wrapper > #oi-zone2.tc-workspace-card { width:min(300px, calc(100vw - 20px)) !important; max-width:100% !important; }
           #krypbot-container .kb-console-grid { grid-template-columns:1fr; }
           #oi-wrapper > #krypbot-container.minimized { width:154px !important; max-width:154px !important; }
         }
@@ -6344,7 +6345,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             boardRect?.bottom || 0,
             getThinkerRect(sidebar)?.bottom || 0,
           ) + window.scrollY;
-          const safeTop = Math.max(window.innerHeight + 32, gameplayDocumentBottom + 32);
+          const safeTop = Math.max(window.innerHeight + THINKER_WORKSPACE_GAP_PX, gameplayDocumentBottom + THINKER_WORKSPACE_GAP_PX);
           const candidateLeft = Math.max(10, Math.round((boardRect?.left || 0) + window.scrollX));
           const wrapperWidth = Math.max(wrapper.scrollWidth || 0, wrapper.getBoundingClientRect().width || 0);
           const maxLeft = Math.max(10, Math.floor(window.scrollX + window.innerWidth - wrapperWidth - 10));
@@ -6365,12 +6366,17 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         };
         window.addEventListener("resize", thinkerResizeHandler, { passive: true });
         thinkerBannerLayoutObserver = new MutationObserver(() => {
+          scheduleThinkerWorkspaceLayout();
           const currentSidebar = getThinkerBannerSidebar();
           const sidebarChanged = currentSidebar !== thinkerObservedBannerSidebar;
           const banner = document.getElementById("thinker-chess-banner");
           if (!shouldShowThinkerBanner()) {
             if (banner) banner.style.display = "none";
             return;
+          }
+          if (thinkerBannerResizeObserver) {
+            const currentBoard = document.querySelector("wc-chess-board, chess-board, #board-single, .board, .chess-board, [class*='board-component']");
+            if (currentBoard) thinkerBannerResizeObserver.observe(currentBoard);
           }
           if (sidebarChanged || banner?.style.display === "none") scheduleThinkerBannerPosition();
         });
@@ -6379,7 +6385,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           subtree: true,
         });
         if (typeof ResizeObserver === "function") {
-          thinkerBannerResizeObserver = new ResizeObserver(scheduleThinkerBannerPosition);
+          thinkerBannerResizeObserver = new ResizeObserver(() => {
+            scheduleThinkerBannerPosition();
+            scheduleThinkerWorkspaceLayout();
+          });
         }
         scheduleThinkerBannerPosition();
         scheduleThinkerWorkspaceLayout();
