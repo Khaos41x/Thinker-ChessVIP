@@ -264,7 +264,7 @@ function createCdpClient(webSocketUrl) {
             && timingFocusAllowed && advancedFocusAllowed && moreFocusAllowed
             && duration.value === "240" && minimum.value === "74" && maximum.value === "83" && delayMinimum.value === "0.75" && delayMaximum.value === "1.80" && delayPersisted
             && !sessionPanel.contains(timingCard) && document.querySelector(".kb-engine-module")?.contains(timingCard) && document.querySelector(".kb-core-module")?.contains(document.getElementById("aq-on"))
-            && timingInputs.every((node) => ["none", "textfield"].includes(getComputedStyle(node).appearance)) && timingShells.every((node) => getComputedStyle(node).borderRadius === "2px")
+            && timingInputs.every((node) => ["none", "textfield"].includes(getComputedStyle(node).appearance)) && timingShells.every((node) => getComputedStyle(node).borderRadius === "4px")
             && selectedModeStyle.backgroundColor !== "rgb(34, 197, 94)" && strength.min === "800" && strength.max === "3200" && strengthRatio >= 0 && strengthRatio <= 1
             && forbidden.length === 0 && phaseBefore === (window.krypbotSessionControlBridge?.status?.().phase || null),
           initial,
@@ -281,35 +281,24 @@ function createCdpClient(webSocketUrl) {
 
     assert(disclosureSmoke.ok, `Advanced settings disclosure smoke failed: ${JSON.stringify(disclosureSmoke)}`);
     assert(disclosureSmoke.panel.background === "rgba(0, 0, 0, 0)" && disclosureSmoke.panel.backgroundImage === "none", `Session panel embedded surface regressed: ${JSON.stringify(disclosureSmoke.panel)}`);
-    assert(disclosureSmoke.panel.radius === "0px" && disclosureSmoke.panel.width === "568px", `Session panel geometry regressed: ${JSON.stringify(disclosureSmoke.panel)}`);
+    assert(disclosureSmoke.panel.radius === "0px" && disclosureSmoke.panel.width === "608px", `Session panel geometry regressed: ${JSON.stringify(disclosureSmoke.panel)}`);
     assert(disclosureSmoke.panel.font.includes("Segoe UI") || disclosureSmoke.panel.font.includes("Arial"), `Session panel system font regressed: ${JSON.stringify(disclosureSmoke.panel)}`);
-    assert(disclosureSmoke.panel.height >= 400 && disclosureSmoke.panel.height <= 450, `Idle Assistant height is outside the compact 400–450px target: ${JSON.stringify(disclosureSmoke.panel)}`);
+    assert(disclosureSmoke.panel.height >= 420 && disclosureSmoke.panel.height <= 490, `Idle Assistant height is outside the compact 420–490px target: ${JSON.stringify(disclosureSmoke.panel)}`);
 
     const workspaceSmokeResult = await client.send("Runtime.evaluate", {
       expression: `(() => {
         const menu = document.getElementById("krypbot-container");
         const scout = document.getElementById("oi-zone2");
-        const close = document.getElementById("kb-minimize-toggle");
-        const scoutClose = scout?.querySelector(".tc-scout-close");
         const launcher = document.getElementById("kb-workspace-launcher");
-        if (!menu || !scout || !close || !scoutClose || !launcher) return { ok:false, reason:"workspace-controls-missing" };
-        close.focus();
-        close.click();
-        const collapsedWidth = menu.getBoundingClientRect().width;
-        const closedFromAssistant = menu.classList.contains("minimized") && getComputedStyle(scout).display === "none" && getComputedStyle(launcher).display === "flex" && launcher.getAttribute("aria-expanded") === "false" && document.activeElement === launcher && Math.abs(collapsedWidth - 154) <= 1;
-        launcher.click();
-        const restoredFromAssistant = !menu.classList.contains("minimized") && getComputedStyle(scout).display === "flex" && launcher.getAttribute("aria-expanded") === "true" && document.activeElement === close;
-        scoutClose.focus();
-        scoutClose.click();
-        const closedFromScout = menu.classList.contains("minimized") && getComputedStyle(scout).display === "none" && document.activeElement === launcher;
-        launcher.click();
-        const restoredFromScout = !menu.classList.contains("minimized") && getComputedStyle(scout).display === "flex" && document.getElementById("oi-zone2") === scout;
-        return { ok:closedFromAssistant && restoredFromAssistant && closedFromScout && restoredFromScout, closedFromAssistant, restoredFromAssistant, closedFromScout, restoredFromScout, launcherText:launcher.textContent.trim(), collapsedWidth };
+        if (!menu || !scout || !launcher) return { ok:false, reason:"workspace-missing" };
+        const assistantClose = document.getElementById("kb-minimize-toggle");
+        const scoutClose = scout.querySelector(".tc-scout-close");
+        return { ok:!assistantClose && !scoutClose && !menu.classList.contains("minimized") && getComputedStyle(scout).display === "flex", assistantClose:Boolean(assistantClose), scoutClose:Boolean(scoutClose), launcherText:launcher.textContent.trim() };
       })()`,
       returnByValue: true,
     });
     const workspaceSmoke = workspaceSmokeResult.result.value;
-    assert(workspaceSmoke.ok, `Workspace close/restore smoke failed: ${JSON.stringify(workspaceSmoke)}`);
+    assert(workspaceSmoke.ok, `Workspace dismiss-control smoke failed: ${JSON.stringify(workspaceSmoke)}`);
     assert(workspaceSmoke.launcherText.includes("Thinker Chess"), `Workspace launcher lost product identity: ${JSON.stringify(workspaceSmoke)}`);
 
     if (liveChess) {
@@ -455,9 +444,9 @@ function createCdpClient(webSocketUrl) {
     const module14 = module14Smoke.result.value;
 
     assert(exceptions.length === 0, `Userscript exception: ${exceptions[0]?.text || "unknown"}`);
-    assert(disclosureSmoke.scout?.background === "rgb(32, 32, 30)" && disclosureSmoke.scout.backgroundImage === "none" && disclosureSmoke.scout.radius === "4px", `Scout neutral styling regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
+    assert(disclosureSmoke.scout?.background === "rgb(32, 32, 30)" && disclosureSmoke.scout.backgroundImage === "none" && disclosureSmoke.scout.radius === "6px", `Scout neutral styling regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
     assert(disclosureSmoke.scout.font.includes("Segoe UI") || disclosureSmoke.scout.font.includes("Arial"), `Scout system font regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
-    assert(disclosureSmoke.scout.width === "250px" && disclosureSmoke.scout.height < disclosureSmoke.scout.menuHeight && !disclosureSmoke.scout.hasRadar && !disclosureSmoke.scout.emptyDetail, `Scout waiting state retained legacy dead-space geometry: ${JSON.stringify(disclosureSmoke.scout)}`);
+    assert(disclosureSmoke.scout.width === "260px" && disclosureSmoke.scout.height < disclosureSmoke.scout.menuHeight && !disclosureSmoke.scout.hasRadar && !disclosureSmoke.scout.emptyDetail, `Scout waiting state retained legacy dead-space geometry: ${JSON.stringify(disclosureSmoke.scout)}`);
     assert(disclosureSmoke.scout.rawRate === "—" && disclosureSmoke.scout.sessionState === "never-started", `Idle presentation state regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
     assert(productionStart.ok, `Production START wiring smoke failed: ${JSON.stringify(productionStart)}`);
     if (!liveChess) assert(productionStart.warning === "" && productionStart.rawWarningCode === "DDA_MAPPING_UNAVAILABLE", `Default compatibility START did not leave IDLE: ${JSON.stringify(productionStart)}`);
@@ -479,7 +468,7 @@ function createCdpClient(webSocketUrl) {
       `page cannot scroll to the configuration menu: ${state.documentHeight}px document / ${state.viewportHeight}px viewport`,
     );
     assert(state.bannerLayout.display === "flex", "banner is still hidden on a desktop viewport");
-    await client.send("Emulation.setDeviceMetricsOverride", { width: 848, height: 900, deviceScaleFactor: 1, mobile: false });
+    await client.send("Emulation.setDeviceMetricsOverride", { width: 900, height: 900, deviceScaleFactor: 1, mobile: false });
     await sleep(100);
     const responsiveResult = await client.send("Runtime.evaluate", {
       expression: `(() => {
@@ -501,7 +490,7 @@ function createCdpClient(webSocketUrl) {
     const responsive = responsiveResult.result.value;
     assert(responsive.direction === "column" && responsive.align === "flex-start", `Workspace did not stack on a narrow viewport: ${JSON.stringify(responsive)}`);
     assert(responsive.wrapperWidth <= responsive.viewportWidth - 20 && responsive.menuWidth <= responsive.wrapperWidth && responsive.scoutWidth <= responsive.wrapperWidth, `Workspace overflowed the narrow viewport: ${JSON.stringify(responsive)}`);
-    await client.send("Emulation.setDeviceMetricsOverride", { width: 849, height: 900, deviceScaleFactor: 1, mobile: false });
+    await client.send("Emulation.setDeviceMetricsOverride", { width: 901, height: 900, deviceScaleFactor: 1, mobile: false });
     await sleep(100);
     const wideBoundaryResult = await client.send("Runtime.evaluate", {
       expression: `(() => {
@@ -511,8 +500,8 @@ function createCdpClient(webSocketUrl) {
       returnByValue: true,
     });
     const wideBoundary = wideBoundaryResult.result.value;
-    assert(wideBoundary.direction === "row" && wideBoundary.width <= wideBoundary.viewportWidth - 20, `Workspace breakpoint regressed at 849px: ${JSON.stringify(wideBoundary)}`);
-    for (const [width, height, scale] of [[320, 900, 1], [375, 900, 1], [640, 900, 1], [768, 900, 1], [848, 900, 1], [849, 900, 1], [1280, 720, 1], [1440, 778, 1], [1440, 900, 1], [1440, 900, 1.25], [1920, 1080, 1.5]]) {
+    assert(wideBoundary.direction === "row" && wideBoundary.width <= wideBoundary.viewportWidth - 20, `Workspace breakpoint regressed at 901px: ${JSON.stringify(wideBoundary)}`);
+    for (const [width, height, scale] of [[320, 900, 1], [375, 900, 1], [640, 900, 1], [768, 900, 1], [900, 900, 1], [901, 900, 1], [1280, 720, 1], [1440, 778, 1], [1440, 900, 1], [1440, 900, 1.25], [1920, 1080, 1.5]]) {
       const cssWidth = Math.round(width / scale);
       const cssHeight = Math.round(height / scale);
       await client.send("Emulation.setDeviceMetricsOverride", { width: cssWidth, height: cssHeight, deviceScaleFactor: scale, mobile: false });
@@ -582,12 +571,6 @@ function createCdpClient(webSocketUrl) {
       const artifactPath = path.join(root, "tests", "artifacts", "thinker-panels-phase-08-1-after.png");
       fs.writeFileSync(artifactPath, Buffer.from(screenshot.data, "base64"));
       console.log(`Visual evidence: ${artifactPath}`);
-      await client.send("Runtime.evaluate", { expression: "document.getElementById('kb-minimize-toggle')?.click()" });
-      await sleep(150);
-      const launcherScreenshot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
-      const launcherArtifactPath = path.join(root, "tests", "artifacts", "thinker-launcher-phase-08-1-after.png");
-      fs.writeFileSync(launcherArtifactPath, Buffer.from(launcherScreenshot.data, "base64"));
-      console.log(`Launcher evidence: ${launcherArtifactPath}`);
     }
     console.log(JSON.stringify({ state, productionStart, module14, consoleErrors }, null, 2));
     console.log(liveChess ? "Live Chess.com userscript bootstrap passed." : "Chrome userscript bootstrap passed.");

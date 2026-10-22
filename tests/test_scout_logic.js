@@ -417,8 +417,8 @@ assert(renderedScoutPanel.innerHTML.includes("Public data appears after an oppon
   "waiting Scout explanation is not in English");
 assert(source.includes("#oi-zone2 .tc-scout-empty-detail { display:none"),
   "waiting Scout redundant detail is not visually suppressed");
-assert(renderedScoutPanel.innerHTML.includes('aria-label="Collapse Thinker Chess panels"'),
-  "waiting Scout card has no close button in the header");
+assert(!renderedScoutPanel.innerHTML.includes('class="tc-scout-close"'),
+  "waiting Scout card retained a dismiss control");
 
 context.scout.lastOpponent = "rival";
 context.scout.renderScout({

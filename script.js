@@ -1748,15 +1748,11 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       panel.innerHTML = `
         <div class="tc-scout-head" style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;padding-bottom:12px;border-bottom:1px solid #26282e">
           <div style="min-width:0;font-size:14px;line-height:1.2;font-weight:800">Opponent Scout</div>
-          <button class="tc-scout-close" type="button" aria-label="Collapse Thinker Chess panels">×</button>
         </div>
         <div class="tc-scout-empty" style="display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;min-width:0;padding:18px 0 2px;text-align:left">
           <span class="tc-scout-status" style="display:inline-block;max-width:100%;padding:5px 8px;border:1px solid #303640;border-radius:999px;color:#c6cbd4;font-size:11px;line-height:1.3">${title}</span>
           <p class="tc-scout-empty-detail" style="margin:0;max-width:100%;color:#9da3b2;font-size:11px;line-height:1.5;white-space:normal;overflow-wrap:anywhere">${detail}</p>
         </div>`;
-      panel.querySelector(".tc-scout-close")?.addEventListener("click", () => {
-        setThinkerWorkspaceCollapsed(true);
-      });
       if (state === "unavailable" && this.lastOpponent) {
         const retry = document.createElement("button");
         retry.type = "button";
@@ -1792,14 +1788,12 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             <div class="tc-scout-title">Opponent Scout</div>
             <div class="tc-scout-subtitle">Loading recent history…</div>
           </div>
-          <button class="tc-scout-close" type="button" aria-label="Collapse Thinker Chess panels">×</button>
         </div>
         <div class="tc-scout-loading">
           <div class="tc-scout-radar" aria-hidden="true"><span class="tc-scout-radar-dot"></span></div>
           <div class="tc-scout-skeleton" aria-hidden="true"></div>
           <div class="tc-scout-skeleton" aria-hidden="true"></div>
         </div>`;
-      panel.querySelector(".tc-scout-close")?.addEventListener("click", () => setThinkerWorkspaceCollapsed(true));
       if ((typeof _ghostModeActive !== "undefined" && _ghostModeActive) || layout.container.classList.contains("minimized")) panel.style.display = "none";
       layout.wrapper.appendChild(panel);
     },
@@ -1925,7 +1919,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           #oi-zone2 .tc-scout-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
           #oi-zone2 .tc-scout-title{font-size:10px;line-height:13px;font-weight:700;color:#cfcfcb;letter-spacing:.04em;text-transform:uppercase}
           #oi-zone2 .tc-scout-subtitle{margin-top:2px;color:#777873;font-size:8px;line-height:1.3}
-          #oi-zone2 .tc-scout-close{width:20px;height:20px;padding:0;border:0;border-radius:2px;background:transparent center/10px 10px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239ca3b2' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E");color:transparent;font-size:0;cursor:pointer}
           #oi-zone2 .tc-scout-donut{position:relative;width:64px;height:64px;margin:10px auto 6px;border-radius:50%}
           #oi-zone2 .tc-scout-donut::after{content:"";position:absolute;inset:7px;border-radius:50%;background:#20201e}
           #oi-zone2 .tc-scout-donut-copy{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
@@ -1951,7 +1944,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         </style>
         <div class="tc-scout-head">
           <div><div class="tc-scout-title">Opponent Scout</div><div class="tc-scout-subtitle">${this.escapeHtml(this.lastOpponent || "Opponent")} · ${scoutStats.sampleSize} games · through ${lastPlayed}</div></div>
-          <button class="tc-scout-close" type="button" aria-label="Collapse Thinker Chess panels">Close</button>
         </div>
         <div class="tc-scout-donut" style="background:${donutGradient}">
           <div class="tc-scout-donut-copy"><b>${scoutStats.winRate}%</b><small>win rate</small></div>
@@ -1970,9 +1962,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         `;
       if ((typeof _ghostModeActive !== "undefined" && _ghostModeActive) || layout.container.classList.contains("minimized")) panel.style.display = "none";
       layout.wrapper.appendChild(panel);
-      panel.querySelector(".tc-scout-close")?.addEventListener("click", () => {
-        setThinkerWorkspaceCollapsed(true);
-      });
     },
 
     renderEntry(entry) {
@@ -5384,7 +5373,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     if (scout) scout.style.display = isCollapsed || _ghostModeActive ? "none" : "flex";
     if (!isCollapsed && typeof OpponentIntel !== "undefined" && !scout) OpponentIntel.checkOpponent();
     if (isCollapsed && launcher) launcher.focus({ preventScroll: true });
-    if (restoreFocus) menu.querySelector("#kb-minimize-toggle")?.focus({ preventScroll: true });
+    if (restoreFocus) menu.querySelector("input:not([disabled]), button:not(#kb-workspace-launcher)")?.focus({ preventScroll: true });
     if (typeof scheduleThinkerWorkspaceLayout === "function") scheduleThinkerWorkspaceLayout();
   }
 
@@ -5529,7 +5518,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           --tc-muted: #9ca3b2;
           --tc-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
           position: absolute !important;
-          top: calc(100vh + 32px) !important;
+          top: calc(100vh + 52px) !important;
           left: 10px !important;
           width: max-content !important;
           z-index: 2147483647 !important;
@@ -5843,12 +5832,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #oi-zone2 .tc-scout-title,
         #oi-zone2 .tc-scout-head > div:first-child { font-size:17px !important; line-height:22px !important; font-weight:750 !important; letter-spacing:-.02em; }
         #oi-zone2 .tc-scout-subtitle { margin-top:5px !important; color:var(--tc-muted) !important; font-size:11px !important; }
-        #oi-zone2 .tc-scout-close {
-          flex:none; width:28px !important; height:28px !important; min-width:28px; min-height:28px; padding:0 !important;
-          border:1px solid rgba(255,255,255,.07) !important; border-radius:9px !important;
-          background:rgba(255,255,255,.045) !important; color:#9ca3b2 !important; font-size:17px !important; line-height:1;
-          cursor:pointer;
-        }
         #oi-zone2 .tc-scout-empty {
           flex:0 0 auto !important; min-height:0; box-sizing:border-box; align-items:flex-start !important; justify-content:center !important;
           gap:8px !important; padding:18px 0 2px !important; text-align:left;
@@ -5959,7 +5942,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           gap:10px !important;
         }
         #krypbot-container.kb-console {
-          width:568px !important; max-width:568px !important; padding:0 !important; gap:0 !important; overflow:visible;
+          width:608px !important; max-width:608px !important; padding:0 !important; gap:0 !important; overflow:visible;
           border:0 !important; border-radius:0 !important;
           background:transparent !important; background-image:none !important;
           box-shadow:none !important; backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
@@ -5970,45 +5953,33 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           width:154px !important; max-width:154px !important; padding:0 !important; border:1px solid var(--tc-console-border) !important;
           border-radius:4px !important; background:var(--tc-console-bg) !important; box-shadow:0 2px 8px rgba(0,0,0,.2) !important;
         }
-        #krypbot-container.kb-console:not(.minimized) > .kb-header {
-          position:absolute; top:-20px; right:0; z-index:2; width:20px; min-height:20px; margin:0 !important; padding:0 !important;
-          border:0 !important; pointer-events:none;
-        }
-        #krypbot-container.kb-console:not(.minimized) > .kb-header > div:first-child { display:none !important; }
-        #krypbot-container.kb-console:not(.minimized) > .kb-header .kb-minimize-btn { pointer-events:auto; }
-        #krypbot-container .kb-minimize-btn,
-        #oi-zone2 .tc-scout-close {
-          width:20px !important; height:20px !important; min-width:20px; min-height:20px; border:0 !important; border-radius:2px !important;
-          background:transparent center/10px 10px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239ca3b2' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E") !important;
-          color:transparent !important; font-size:0 !important; opacity:.72;
-        }
         #krypbot-container .kb-console-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px; padding:0; }
         #krypbot-container .kb-console-column { min-width:0; display:flex; flex-direction:column; gap:8px; }
         #krypbot-container .kb-console-module {
-          min-width:0; margin:0 !important; padding:8px !important; gap:0 !important; border:1px solid var(--tc-console-border) !important;
-          border-radius:3px !important; background:var(--tc-console-module) !important; box-shadow:none !important;
+          min-width:0; margin:0 !important; padding:9px !important; gap:0 !important; border:1px solid var(--tc-console-border) !important;
+          border-radius:6px !important; background:var(--tc-console-module) !important; box-shadow:none !important;
         }
         #krypbot-container .kb-auto-play-module { grid-column:1 / -1; }
         #krypbot-container .kb-console-caption {
           display:block; margin:0 0 5px !important; padding:0 0 6px !important; border-bottom:1px solid var(--tc-console-divider);
-          color:#8b8c87 !important; font-size:8px !important; line-height:10px !important; font-weight:700 !important;
+          color:#8b8c87 !important; font-size:9px !important; line-height:11px !important; font-weight:700 !important;
           letter-spacing:.16em !important; text-transform:uppercase;
         }
         #krypbot-container .kb-console-module .kb-section {
-          min-height:30px; margin:0 !important; padding:0 1px; border-bottom:1px solid var(--tc-console-divider);
+          min-height:32px; margin:0 !important; padding:0 1px; border-bottom:1px solid var(--tc-console-divider);
         }
         #krypbot-container .kb-console-module .kb-section:last-child { border-bottom:0; }
-        #krypbot-container .kb-console-module .kb-section-label { gap:0; color:#d9d9d5; font-size:10px; line-height:14px; font-weight:500; }
+        #krypbot-container .kb-console-module .kb-section-label { gap:0; color:#d9d9d5; font-size:11px; line-height:15px; font-weight:500; }
         #krypbot-container .kb-console-module .kb-row-icon { display:none; }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) {
-          width:30px; height:16px; padding:0; border:1px solid #3b3b38; border-radius:8px; background:#3a3a37; box-shadow:none;
+          width:32px; height:18px; padding:0; border:1px solid #3b3b38; border-radius:9px; background:#3a3a37; box-shadow:none;
         }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"]))::after {
-          top:1px; left:1px; width:12px; height:12px; box-shadow:0 1px 2px rgba(0,0,0,.45); transition:transform .14s ease;
+          top:1px; left:1px; width:14px; height:14px; box-shadow:0 1px 2px rgba(0,0,0,.45); transition:transform .14s ease;
         }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):has(input[value="1"]:checked) { background:var(--tc-console-accent); box-shadow:none; }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):has(input[value="1"]:checked)::after { transform:translateX(14px); }
-        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) label { width:15px; height:14px; }
+        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) label { width:16px; height:16px; }
         #krypbot-container .kb-session-queue-note { margin:4px 1px; color:#93b79e; font-size:8px; }
         #krypbot-container .kb-strength-card,
         #krypbot-container .kb-run-delay-card {
@@ -6016,7 +5987,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           border-radius:0 !important; background:transparent !important; box-shadow:none !important;
         }
         #krypbot-container .kb-strength-head,
-        #krypbot-container .kb-timing-heading { display:flex; align-items:center; justify-content:space-between; margin:0 0 6px; color:#d9d9d5; font-size:10px; font-weight:500; }
+        #krypbot-container .kb-timing-heading { display:flex; align-items:center; justify-content:space-between; margin:0 0 6px; color:#d9d9d5; font-size:11px; font-weight:500; }
         #krypbot-container .kb-strength-current { color:#b9bab5; font-size:9px; }
         #krypbot-container .kb-strength-current strong { color:#d9d9d5; font-size:9px; font-weight:600; }
         #krypbot-container .kb-strength-limits { margin-top:2px; color:#696a66; font-size:7px; }
@@ -6032,11 +6003,11 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-disclosure-inner { overflow:visible; }
         #krypbot-container .kb-run-delay-controls { display:flex; flex-direction:column; align-items:stretch; gap:6px; padding:0; }
         #krypbot-container .kb-delay-range { justify-content:space-between; gap:4px; }
-        #krypbot-container .kb-delay-input { width:76px; height:24px; border:1px solid #353532; border-radius:2px; background:#1d1d1b; box-shadow:none; }
-        #krypbot-container .kb-delay-input .kb-num-input { width:55px; height:22px; padding-left:6px; color:#e4e4e0; font-size:9px; }
+        #krypbot-container .kb-delay-input { width:80px; height:26px; border:1px solid #353532; border-radius:4px; background:#1d1d1b; box-shadow:none; }
+        #krypbot-container .kb-delay-input .kb-num-input { width:58px; height:24px; padding-left:6px; color:#e4e4e0; font-size:10px; }
         #krypbot-container .kb-delay-unit { color:#777873; font-size:8px; }
         #krypbot-container .kb-delay-separator { color:#6e6f6b; font-size:8px; }
-        #krypbot-container .kb-timing-mode { width:100%; height:23px; padding:1px; border:1px solid #343431; border-radius:2px; background:#1d1d1b; }
+        #krypbot-container .kb-timing-mode { width:100%; height:25px; padding:1px; border:1px solid #343431; border-radius:4px; background:#1d1d1b; }
         #krypbot-container .kb-run-delay-card .kb-timing-mode label { min-width:0; padding:5px 4px; border-radius:1px; color:#858681; font-size:8px; }
         #krypbot-container .kb-timing-mode input[type="radio"] { position:absolute; display:block; width:1px; height:1px; opacity:0; }
         #krypbot-container .kb-timing-mode input[type="radio"]:focus-visible + label { outline:1px solid var(--tc-console-accent); outline-offset:-2px; }
@@ -6049,10 +6020,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-advanced-heading { display:none; }
         #krypbot-container .kb-session-fields { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:4px; padding:1px 0 6px; }
         #krypbot-container .kb-session-field { position:relative; gap:3px; color:#8c8c87; font-size:8px; text-transform:uppercase; letter-spacing:.04em; }
-        #krypbot-container .kb-session-field input { width:100%; height:24px; padding:3px 5px; border:1px solid #353532; border-radius:2px; background:#1d1d1b; color:#deded9; font-size:10px; }
+        #krypbot-container .kb-session-field input { width:100%; height:26px; padding:3px 6px; border:1px solid #353532; border-radius:4px; background:#1d1d1b; color:#deded9; font-size:10px; }
         #krypbot-container .kb-session-actions { grid-template-columns:1fr auto auto; gap:4px; margin:0; }
         #krypbot-container .kb-session-button,
-        #krypbot-container .kb-session-button[data-action="start"] { height:25px; min-height:25px; padding:0 8px; border:1px solid #3a3a37; border-radius:2px; box-shadow:none; font-size:8px; letter-spacing:.04em; }
+        #krypbot-container .kb-session-button[data-action="start"] { height:27px; min-height:27px; padding:0 9px; border:1px solid #3a3a37; border-radius:4px; box-shadow:none; font-size:8px; letter-spacing:.04em; }
         #krypbot-container .kb-session-button[data-action="start"] { background:var(--tc-console-accent); color:#0c1d12; }
         #krypbot-container .kb-session-button[data-action="start"]:hover { transform:none; filter:brightness(1.06); box-shadow:none; }
         #krypbot-container .kb-session-status { gap:3px; margin-top:6px; }
@@ -6066,27 +6037,27 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-footer > div { width:100%; min-height:30px; display:flex; align-items:center; justify-content:space-between; color:#d9d9d5; font-size:10px; }
         #krypbot-container .kb-more-settings[hidden] { display:none !important; }
         #oi-zone2.tc-workspace-card {
-          width:250px !important; min-height:0 !important; padding:8px !important; border:1px solid var(--tc-console-border) !important;
-          border-radius:4px !important; background:var(--tc-console-bg) !important; background-image:none !important;
+          width:260px !important; min-height:0 !important; padding:9px !important; border:1px solid var(--tc-console-border) !important;
+          border-radius:6px !important; background:var(--tc-console-bg) !important; background-image:none !important;
           box-shadow:0 2px 8px rgba(0,0,0,.2) !important; backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
           font-family:Arial, Helvetica, sans-serif !important;
         }
         #oi-zone2.tc-workspace-card::before { display:none !important; }
         #oi-zone2 .tc-scout-head { min-height:26px; padding:0 0 7px !important; border-bottom:1px solid var(--tc-console-divider) !important; }
         #oi-zone2 .tc-scout-title,
-        #oi-zone2 .tc-scout-head > div:first-child { color:#cfcfcb !important; font-size:10px !important; line-height:13px !important; font-weight:600 !important; letter-spacing:.04em; text-transform:uppercase; }
+        #oi-zone2 .tc-scout-head > div:first-child { color:#cfcfcb !important; font-size:11px !important; line-height:14px !important; font-weight:600 !important; letter-spacing:.04em; text-transform:uppercase; }
         #oi-zone2 .tc-scout-subtitle { margin-top:2px !important; color:#777873 !important; font-size:8px !important; }
         #oi-zone2 .tc-scout-empty { gap:5px !important; padding:9px 0 1px !important; }
-        #oi-zone2 .tc-scout-status { padding:4px 6px !important; border:1px solid #343431 !important; border-radius:2px !important; background:#242422 !important; color:#b9bab5 !important; font-size:8px !important; }
+        #oi-zone2 .tc-scout-status { padding:5px 7px !important; border:1px solid #343431 !important; border-radius:4px !important; background:#242422 !important; color:#b9bab5 !important; font-size:9px !important; }
         #oi-zone2 .tc-scout-retry { margin-top:3px; padding:5px 8px; border-radius:2px; background:#2b3d30; color:#79d89a; font-size:8px; }
         #oi-zone2 .tc-scout-loading { min-height:112px; gap:8px; padding:12px; }
         #oi-zone2 .tc-scout-loading .tc-scout-radar { margin-bottom:5px; }
         #oi-zone2 .tc-scout-radar { width:58px; height:58px; box-shadow:none; }
         #oi-zone2 .tc-scout-skeleton { height:36px; border-radius:2px; background:#292927; }
-        @media (max-width: 848px) {
+        @media (max-width: 900px) {
           #oi-wrapper { width:calc(100vw - 20px) !important; flex-direction:column !important; align-items:flex-start !important; gap:8px !important; }
-          #oi-wrapper > #krypbot-container.kb-console { width:min(568px, calc(100vw - 20px)) !important; max-width:100% !important; }
-          #oi-wrapper > #oi-zone2.tc-workspace-card { width:min(250px, calc(100vw - 20px)) !important; max-width:100% !important; }
+          #oi-wrapper > #krypbot-container.kb-console { width:min(608px, calc(100vw - 20px)) !important; max-width:100% !important; }
+          #oi-wrapper > #oi-zone2.tc-workspace-card { width:min(260px, calc(100vw - 20px)) !important; max-width:100% !important; }
           #krypbot-container .kb-console-grid { grid-template-columns:1fr; }
           #oi-wrapper > #krypbot-container.minimized { width:154px !important; max-width:154px !important; }
         }
@@ -6121,11 +6092,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           <span class="kb-logo-mark" aria-hidden="true">♞</span>
           <span class="kb-logo-copy">Thinker Chess</span>
         </button>
-
-        <div class="kb-header">
-          <div><span class="kb-eyebrow">CHESS ASSISTANT</span><h2 class="kb-title">Thinker Chess</h2></div>
-          <button class="kb-minimize-btn" id="kb-minimize-toggle" type="button" aria-label="Close Thinker Chess panels">Close</button>
-        </div>
 
         <div class="kb-section">
           <p class="kb-section-label">Bot</p>
@@ -6504,11 +6470,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             }
           });
         }
-        // Add Minimize Logic
-        $("#kb-minimize-toggle").on("click", function (e) {
-          e.stopPropagation();
-          setThinkerWorkspaceCollapsed(true);
-        });
         $("#kb-workspace-launcher").on("click", function (e) {
           e.preventDefault();
           e.stopPropagation();

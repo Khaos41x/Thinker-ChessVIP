@@ -317,17 +317,17 @@ async function run() {
   assert(source.includes('class="tc-scout-skeleton" aria-hidden="true"'), "Scout loading state lost its translucent skeletons");
   assert(source.includes('retry.className = "tc-scout-retry"'), "Scout unavailable retry is not styled by the shared premium system");
   assert(source.includes('panel.querySelector(".tc-scout-empty")?.appendChild(retry)'), "Scout unavailable retry is outside the centered empty state");
-  assert(source.includes("@media (max-width: 848px)"), "workspace lacks a narrow-viewport layout");
+  assert(source.includes("@media (max-width: 900px)"), "workspace lacks a narrow-viewport layout");
   assert(source.includes("width: 154px !important;\n          max-width: 154px !important"), "workspace launcher lost its compact branded width");
-  assert(source.includes("setThinkerWorkspaceCollapsed(true)"), "panel close does not collapse the complete workspace");
   assert(source.includes("setThinkerWorkspaceCollapsed(false)"), "workspace launcher does not restore the complete workspace");
+  assert(!menu.includes('id="kb-minimize-toggle"') && !source.includes('<button class="tc-scout-close"'), "dismiss controls remain in the workspace markup");
   assert(source.includes('#krypbot-container .kb-session-button[data-action="start"]'), "START lacks a dedicated primary-action style");
   assert(source.includes('panel.toggleAttribute("inert", !open)'), "advanced disclosure does not synchronize focus isolation");
   assert(source.includes("@media (prefers-reduced-motion: reduce)"), "advanced disclosure ignores reduced-motion preferences");
   assert(source.includes('source?.closest?.("#kb-session-panel")'), "advanced disclosure is not scoped to its owning Session Control panel");
   assert(!menu.includes("SESSION_RUNTIME_UNAVAILABLE"), "Session Control menu exposes a raw startup reason code");
   assert(menu.includes("Auto Moves") && menu.includes("Move Timing") && menu.includes("Auto Queue"), "primary controls are not English consistently");
-  assert(menu.includes("CHESS ASSISTANT") && menu.includes("Puzzle Mode") && menu.includes("Hint Lines") && menu.includes("Auto Solve"), "secondary controls are not English consistently");
+  assert(menu.includes("Puzzle Mode") && menu.includes("Hint Lines") && menu.includes("Auto Solve"), "secondary controls are not English consistently");
   assert(menu.includes('id="kb-run-delay-hint"'), "Auto Move dependency hint is missing");
   assert(menu.includes("Win Rate") && menu.includes(">—</strong>"), "zero-sample win rate display regressed");
   assert(menu.includes('id="kb-more-settings-toggle"') && menu.includes('aria-controls="kb-more-settings-panel" aria-expanded="false"'), "More Settings disclosure is missing");
@@ -344,16 +344,16 @@ async function run() {
   assert(source.includes('const engine = module("Engine Control", "kb-engine-module")'), "Engine Control module is missing");
   assert(source.includes('[bot, autoMoves, autoQueue, queueNote]'), "Core controls are not grouped together");
   assert(source.includes('[autoRating, strength, timing, smartPacing, puzzle]'), "Engine controls are not grouped together");
-  assert(source.includes("width:568px !important; max-width:568px !important"), "compact two-column console width is missing");
+  assert(source.includes("width:608px !important; max-width:608px !important"), "compact two-column console width is missing");
   assert(source.includes("border:0 !important; border-radius:0 !important"), "embedded console shell is not visually removed");
   assert(source.includes("backdrop-filter:none !important"), "glass blur is not neutralized");
   assert(source.includes("grid-template-columns:minmax(0,1fr) minmax(0,1fr)"), "desktop console is not two-column");
   assert(source.includes("text-transform:uppercase"), "compact uppercase module captions are missing");
-  assert(source.includes("width:30px; height:16px"), "compact switch geometry is missing");
+  assert(source.includes("width:32px; height:18px"), "compact switch geometry is missing");
   const wrapperCss = sourceBlock(source, "        #oi-wrapper {", "        #oi-wrapper > * {");
   for (const declaration of [
     "position: absolute !important",
-    "top: calc(100vh + 32px) !important",
+    "top: calc(100vh + 52px) !important",
     "left: 10px !important",
     "width: max-content !important",
     "display: flex !important",
