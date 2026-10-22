@@ -95,7 +95,9 @@ const polishMetricsExpression = `(() => {
   const sliderPaddingRight = Number.parseFloat(sliderStyle?.paddingRight || "0");
   const swatchNode = document.querySelector("#kb-color-picker");
   const swatchStyle = swatchNode ? getComputedStyle(swatchNode) : null;
-  const dotStyle = getComputedStyle(document.querySelector("#oi-zone2 .tc-scout-status"), "::before");
+  const statusNode = document.querySelector("#oi-zone2 .tc-scout-status");
+  const dotNode = document.querySelector("#oi-zone2 .tc-scout-status-dot");
+  const dotStyle = dotNode ? getComputedStyle(dotNode) : getComputedStyle(statusNode, "::before");
   const hint = rect("#kb-run-delay-hint");
   const smart = document.querySelector(".kb-engine-module #sp-on")?.closest(".kb-section") || null;
   const smartStyle = smart ? getComputedStyle(smart) : null;
@@ -122,6 +124,39 @@ const polishMetricsExpression = `(() => {
       suffix:font(".kb-delay-unit"), minLabel:font(".kb-strength-limits span:first-child"), maxLabel:font(".kb-strength-limits span:last-child"),
     },
     buttonStates:{ start:buttonStates("#kb-session-start"), finish:buttonStates("#kb-session-stop"), export:buttonStates("#kb-session-export") },
+  };
+})()`;
+
+const roundThreeMetricsExpression = `(() => {
+  const round = (value) => Math.round(value * 100) / 100;
+  const box = (node) => {
+    if (!node) return null;
+    const value=node.getBoundingClientRect();
+    return { x:round(value.x), y:round(value.y), width:round(value.width), height:round(value.height), right:round(value.right), bottom:round(value.bottom) };
+  };
+  const style = (node, pseudo) => {
+    if (!node) return null;
+    const value=getComputedStyle(node, pseudo);
+    return { fontSize:value.fontSize, fontWeight:value.fontWeight, color:value.color, lineHeight:value.lineHeight, fontVariantNumeric:value.fontVariantNumeric, backgroundColor:value.backgroundColor, display:value.display, alignItems:value.alignItems };
+  };
+  const rgb = (value) => (value.match(/[\\d.]+/g) || []).slice(0,3).map(Number);
+  const luminance = (values) => { const channels=values.map((value) => { const part=value/255; return part <= .03928 ? part/12.92 : Math.pow((part+.055)/1.055,2.4); }); return .2126*channels[0]+.7152*channels[1]+.0722*channels[2]; };
+  const contrast = (foreground, background) => { const a=luminance(rgb(foreground)); const b=luminance(rgb(background)); return round((Math.max(a,b)+.05)/(Math.min(a,b)+.05)); };
+  const status=document.querySelector("#oi-zone2[data-state='waiting'] .tc-scout-status");
+  const dot=status?.querySelector(".tc-scout-status-dot") || null;
+  const pseudo=style(status, "::before");
+  const panel=document.getElementById("oi-zone2");
+  const panelBackground=getComputedStyle(panel).backgroundColor;
+  const dotColor=dot ? getComputedStyle(dot).backgroundColor : pseudo?.backgroundColor || "";
+  const current=document.querySelector(".kb-strength-current");
+  const currentValue=document.getElementById("kb-elo-val");
+  const timing=document.getElementById("autoDelayDisplay");
+  const suffix=document.querySelector(".kb-delay-unit");
+  const rightItems=Array.from(document.querySelectorAll(".kb-session-status-item-right"));
+  return {
+    scout:{ statusRect:box(status), textRect:box(status?.querySelector(".tc-scout-status-text")), dotRect:box(dot), dotSource:dot ? "element" : "pseudo", dotWidth:dot ? box(dot).width : Number.parseFloat(pseudo?.width || "0"), dotHeight:dot ? box(dot).height : Number.parseFloat(pseudo?.height || "0"), dotColor, panelBackground, contrast:contrast(dotColor,panelBackground), statusStyle:style(status) },
+    headings:{ current:style(current), currentValue:style(currentValue), timing:style(timing), suffix:style(suffix) },
+    statusRight:rightItems.map((item) => ({ label:item.querySelector("span")?.textContent || "", labelRect:box(item.querySelector("span")), value:item.querySelector("strong")?.textContent || "", valueRect:box(item.querySelector("strong")) })),
   };
 })()`;
 
@@ -380,9 +415,11 @@ function createCdpClient(webSocketUrl) {
       await sleep(150);
       const geometry = await client.send("Runtime.evaluate", { expression: geometryExpression, returnByValue: true });
       const polishMetrics = await client.send("Runtime.evaluate", { expression: polishMetricsExpression, returnByValue: true });
+      const roundThreeMetrics = await client.send("Runtime.evaluate", { expression: roundThreeMetricsExpression, returnByValue: true });
       printGeometryTable("ANTES", geometry.result.value);
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-geometry-before.json"), JSON.stringify(geometry.result.value, null, 2));
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-polish-before.json"), JSON.stringify(polishMetrics.result.value, null, 2));
+      fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-polish-round3-before.json"), JSON.stringify(roundThreeMetrics.result.value, null, 2));
       await client.send("Runtime.evaluate", { expression: hideFixtureDecorationsExpression });
       const screenshot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
       await client.send("Runtime.evaluate", { expression: restoreFixtureDecorationsExpression });
@@ -394,14 +431,17 @@ function createCdpClient(webSocketUrl) {
 
     if (captureVisual) {
       const layoutAudits = {};
+      const roundThreeStackedAudits = {};
       await client.send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 778, deviceScaleFactor: 1, mobile: false });
       await client.send("Runtime.evaluate", { expression: "scrollTo(0, Math.max(0, document.getElementById('oi-wrapper').offsetTop - 40))" });
       await sleep(150);
       const geometry = await client.send("Runtime.evaluate", { expression: geometryExpression, returnByValue: true });
       const polishMetrics = await client.send("Runtime.evaluate", { expression: polishMetricsExpression, returnByValue: true });
+      const roundThreeMetrics = await client.send("Runtime.evaluate", { expression: roundThreeMetricsExpression, returnByValue: true });
       printGeometryTable("DEPOIS", geometry.result.value);
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-geometry-after.json"), JSON.stringify(geometry.result.value, null, 2));
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-polish-after.json"), JSON.stringify(polishMetrics.result.value, null, 2));
+      fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-polish-round3-after.json"), JSON.stringify(roundThreeMetrics.result.value, null, 2));
       await client.send("Runtime.evaluate", { expression: hideFixtureDecorationsExpression });
       const screenshot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
       await client.send("Runtime.evaluate", { expression: restoreFixtureDecorationsExpression });
@@ -431,6 +471,39 @@ function createCdpClient(webSocketUrl) {
         assert(audit.injectionWidth === width, `Injection width mismatch at ${width}px: ${JSON.stringify(audit)}`);
         assert(audit.layoutMode === (audit.injectionWidth >= 1034 ? "desktop" : "stacked"), `Container breakpoint failed at ${width}px: ${JSON.stringify(audit)}`);
       }
+      for (const width of [1033, 800]) {
+        await client.send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: false });
+        await sleep(150);
+        await client.send("Runtime.evaluate", { expression: hideFixtureDecorationsExpression });
+        const stackedResult = await client.send("Runtime.evaluate", {
+          expression: `(() => {
+            const wrapper=document.getElementById("oi-wrapper"); const grid=document.querySelector(".kb-console-grid");
+            const panels=[".kb-core-module",".kb-visuals-module",".kb-engine-module",".kb-auto-play-module","#oi-zone2"].map((selector) => document.querySelector(selector).getBoundingClientRect());
+            const wrapperRect=wrapper.getBoundingClientRect(); const gridRect=grid.getBoundingClientRect();
+            const controls=Array.from(grid.querySelectorAll("button,input:not([type=radio]),[role=switch],label[for='dm-rand'],label[for='dm-max']")).filter((node) => !node.hidden && !node.closest("[inert]") && getComputedStyle(node).display !== "none" && node.getClientRects().length);
+            return { mode:wrapper.dataset.layoutMode, width:wrapperRect.width, insetLeft:gridRect.left-wrapperRect.left, insetRight:wrapperRect.right-gridRect.right,
+              gaps:panels.slice(1).map((panel,index) => panel.top-panels[index].bottom), horizontalOverflow:wrapper.scrollWidth>wrapper.clientWidth,
+              allReachable:controls.every((node) => { const rect=node.getBoundingClientRect(); return rect.width>0 && rect.height>0 && rect.left>=0 && rect.right<=innerWidth; }),
+              capture:{ x:wrapperRect.left+scrollX, y:wrapperRect.top+scrollY, width:wrapperRect.width, height:wrapperRect.height } };
+          })()`, returnByValue:true,
+        });
+        const stacked=stackedResult.result.value;
+        roundThreeStackedAudits[String(width)]=stacked;
+        assert(stacked.mode === "stacked" && stacked.insetLeft === 12 && stacked.insetRight === 12 && stacked.gaps.every((gap) => gap === 12) && !stacked.horizontalOverflow && stacked.allReachable, `Stacked evidence failed at ${width}px: ${JSON.stringify(stacked)}`);
+        const stackedShot=await client.send("Page.captureScreenshot", { format:"png", captureBeyondViewport:true, clip:{ ...stacked.capture, scale:1 } });
+        await client.send("Runtime.evaluate", { expression: restoreFixtureDecorationsExpression });
+        fs.writeFileSync(path.join(root,"tests","artifacts",`thinker-console-polish-round3-${width}-stacked.png`),Buffer.from(stackedShot.data,"base64"));
+      }
+      fs.writeFileSync(path.join(root,"tests","artifacts","thinker-console-polish-round3-stacked.json"),JSON.stringify(roundThreeStackedAudits,null,2));
+      await client.send("Emulation.setDeviceMetricsOverride", { width:1440, height:900, deviceScaleFactor:1, mobile:false });
+      await sleep(150);
+      await client.send("Runtime.evaluate", { expression: hideFixtureDecorationsExpression });
+      const captureRectsResult=await client.send("Runtime.evaluate", { expression:`(() => { const wrapper=document.getElementById("oi-wrapper").getBoundingClientRect(); const status=document.querySelector("#oi-zone2 .tc-scout-status").getBoundingClientRect(); return { wrapper:{x:wrapper.left+scrollX,y:wrapper.top+scrollY,width:wrapper.width,height:wrapper.height}, scout:{x:Math.max(0,status.left+scrollX-16),y:Math.max(0,status.top+scrollY-16),width:status.width+32,height:status.height+32} }; })()`, returnByValue:true });
+      for (const [name,clip] of Object.entries(captureRectsResult.result.value)) {
+        const shot=await client.send("Page.captureScreenshot", { format:"png", captureBeyondViewport:true, clip:{...clip,scale:1} });
+        fs.writeFileSync(path.join(root,"tests","artifacts",name === "wrapper" ? "thinker-console-polish-round3-1440.png" : "thinker-console-scout-waiting-zoom.png"),Buffer.from(shot.data,"base64"));
+      }
+      await client.send("Runtime.evaluate", { expression: restoreFixtureDecorationsExpression });
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-layout-audits-after.json"), JSON.stringify(layoutAudits, null, 2));
       await client.send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
       await sleep(150);
@@ -681,6 +754,8 @@ function createCdpClient(webSocketUrl) {
     const module14 = module14Smoke.result.value;
     const polishResult = await client.send("Runtime.evaluate", { expression: polishMetricsExpression, returnByValue: true });
     const polish = polishResult.result.value;
+    const roundThreeResult = await client.send("Runtime.evaluate", { expression: roundThreeMetricsExpression, returnByValue: true });
+    const roundThree = roundThreeResult.result.value;
     const [statusCell, timeCell, scoreCell, rateCell] = polish.status;
     const typeMetrics = Object.values(polish.typography);
     const buttonStateMetrics = Object.values(polish.buttonStates).flatMap((states) => [states.enabled, states.disabled]);
@@ -712,6 +787,11 @@ function createCdpClient(webSocketUrl) {
     assert(buttonStateMetrics.every((metric) => Number.parseFloat(metric.fontSize) >= 11 && metric.contrast >= 4.5), `Button state typography is undersized or low contrast: ${JSON.stringify(polish.buttonStates)}`);
     assert(polish.typography.start.fontSize === polish.typography.finish.fontSize && polish.typography.finish.fontSize === polish.typography.export.fontSize, `Action button type sizes diverge: ${JSON.stringify(polish.typography)}`);
     assert(polish.typography.random.fontSize === polish.typography.immediate.fontSize, `Segmented-control type sizes diverge: ${JSON.stringify(polish.typography)}`);
+    assert(roundThree.scout.dotSource === "element" && roundThree.scout.dotRect?.width >= 6 && roundThree.scout.dotRect?.width <= 8 && roundThree.scout.dotRect.width === roundThree.scout.dotRect.height && roundThree.scout.contrast >= 3, `Scout waiting dot is missing or low contrast: ${JSON.stringify(roundThree.scout)}`);
+    assert(["flex", "inline-flex"].includes(roundThree.scout.statusStyle.display) && roundThree.scout.statusStyle.alignItems === "center" && roundThree.scout.textRect, `Scout waiting text is not aligned with its dot: ${JSON.stringify(roundThree.scout)}`);
+    assert([roundThree.headings.current, roundThree.headings.currentValue, roundThree.headings.timing].every((metric) => Number.parseFloat(metric.fontSize) >= 11 && metric.fontSize === roundThree.headings.current.fontSize && metric.fontWeight === roundThree.headings.current.fontWeight && metric.color === roundThree.headings.current.color && metric.fontVariantNumeric === "tabular-nums"), `Section summary typography diverged: ${JSON.stringify(roundThree.headings)}`);
+    assert(Number.parseFloat(roundThree.headings.suffix.fontSize) >= 11, `Move Timing suffix is undersized: ${JSON.stringify(roundThree.headings.suffix)}`);
+    assert(roundThree.statusRight.length === 2 && roundThree.statusRight[0].labelRect.x === roundThree.statusRight[1].labelRect.x && roundThree.statusRight[0].valueRect.x === roundThree.statusRight[1].valueRect.x && roundThree.statusRight[0].valueRect.right === roundThree.statusRight[1].valueRect.right && roundThree.statusRight[0].valueRect.right === polish.content.autoPlayRight, `Right status values do not share a content-edge column: ${JSON.stringify(roundThree.statusRight)}`);
     assert(disclosureSmoke.scout?.background === "rgb(37, 37, 35)" && disclosureSmoke.scout.backgroundImage === "none" && disclosureSmoke.scout.radius === "8px", `Scout neutral styling regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
     assert(disclosureSmoke.scout.font.includes("Segoe UI") || disclosureSmoke.scout.font.includes("Arial"), `Scout system font regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
     assert(disclosureSmoke.scout.width === "296px" && disclosureSmoke.scout.height === disclosureSmoke.scout.menuHeight && !disclosureSmoke.scout.hasRadar && disclosureSmoke.scout.emptyDetail, `Scout waiting state did not fill the named grid: ${JSON.stringify(disclosureSmoke.scout)}`);
@@ -769,7 +849,7 @@ function createCdpClient(webSocketUrl) {
     });
     const wideBoundary = wideBoundaryResult.result.value;
     assert(wideBoundary.mode === "desktop" && wideBoundary.width === 1034, `Workspace breakpoint regressed at 1034px: ${JSON.stringify(wideBoundary)}`);
-    for (const [width, height, scale] of [[320, 900, 1], [375, 900, 1], [640, 900, 1], [768, 900, 1], [820, 900, 1], [900, 900, 1], [1024, 900, 1], [1033, 900, 1], [1034, 900, 1], [1086, 900, 1], [1280, 720, 1], [1440, 778, 1], [1440, 900, 1], [1440, 900, 1.25], [1920, 1080, 1.5]]) {
+    for (const [width, height, scale] of [[320, 900, 1], [375, 900, 1], [640, 900, 1], [768, 900, 1], [800, 900, 1], [820, 900, 1], [900, 900, 1], [1024, 900, 1], [1033, 900, 1], [1034, 900, 1], [1086, 900, 1], [1280, 720, 1], [1440, 778, 1], [1440, 900, 1], [1440, 900, 1.25], [1920, 1080, 1.5]]) {
       const cssWidth = Math.round(width / scale);
       const cssHeight = Math.round(height / scale);
       await client.send("Emulation.setDeviceMetricsOverride", { width: cssWidth, height: cssHeight, deviceScaleFactor: scale, mobile: false });
@@ -779,7 +859,9 @@ function createCdpClient(webSocketUrl) {
           const wrapper = document.getElementById("oi-wrapper");
           const menu = document.getElementById("krypbot-container");
           const scout = document.getElementById("oi-zone2");
-          const controls = Array.from(menu.querySelectorAll("button, input:not([type=radio]), [role=switch]")).filter((node) => !node.hidden && !node.closest("[inert]") && getComputedStyle(node).display !== "none" && node.getClientRects().length > 0);
+          const grid = menu.querySelector(".kb-console-grid");
+          const panels = [".kb-core-module",".kb-visuals-module",".kb-engine-module",".kb-auto-play-module","#oi-zone2"].map((selector) => document.querySelector(selector).getBoundingClientRect());
+          const controls = Array.from(menu.querySelectorAll("button, input:not([type=radio]), [role=switch], label[for='dm-rand'], label[for='dm-max']")).filter((node) => !node.hidden && !node.closest("[inert]") && getComputedStyle(node).display !== "none" && node.getClientRects().length > 0);
           const hiddenControls = controls.filter((node) => { const rect = node.getBoundingClientRect(); return rect.width <= 0 || rect.height <= 0 || rect.left < 0 || rect.right > innerWidth; }).map((node) => node.id || node.type);
           const wrapperRect = wrapper.getBoundingClientRect();
           return {
@@ -794,12 +876,16 @@ function createCdpClient(webSocketUrl) {
             switchCount: controls.filter((node) => node.getAttribute("role") === "switch").length,
             allReachable: hiddenControls.length === 0,
             hiddenControls,
+            insetLeft:grid.getBoundingClientRect().left-wrapperRect.left,
+            insetRight:wrapperRect.right-grid.getBoundingClientRect().right,
+            stackedGaps:panels.slice(1).map((panel,index) => panel.top-panels[index].bottom),
           };
         })()`,
         returnByValue: true,
       });
       const viewport = viewportResult.result.value;
       assert(viewport.wrapper <= viewport.width && viewport.wrapperLeft >= 0 && viewport.wrapperRight <= viewport.width && viewport.wrapperBottom <= viewport.documentHeight + 1 && viewport.menu <= viewport.width && viewport.scout <= viewport.width && viewport.switchCount > 0 && viewport.allReachable, `Workspace failed responsive ${width}×${height} @ ${Math.round(scale * 100)}%: ${JSON.stringify(viewport)}`);
+      if (viewport.wrapper < 1034) assert(viewport.insetLeft === 12 && viewport.insetRight === 12 && viewport.stackedGaps.every((gap) => gap === 12), `Stacked spacing failed responsive ${width}×${height}: ${JSON.stringify(viewport)}`);
     }
     await client.send("Emulation.clearDeviceMetricsOverride");
     await sleep(100);

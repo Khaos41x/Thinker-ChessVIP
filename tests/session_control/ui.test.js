@@ -359,7 +359,8 @@ async function run() {
   assert(source.includes('.kb-color-input::-webkit-color-swatch-wrapper { padding:0; }') && source.includes('.kb-color-input::-webkit-color-swatch { border:0; }') && source.includes('.kb-color-input::-moz-color-swatch { border:0; }'), "Theme swatch retains native nested framing");
   assert(source.includes('.kb-run-delay-card + .kb-section { border-top:1px solid var(--tc-console-divider) !important; }'), "Move Timing / Smart Pacing divider is missing");
   assert(source.includes('font-size:11px !important; line-height:16px'), "segmented-control typography remains below 11px");
-  assert(source.includes('content:\"\"; width:6px; height:6px') && source.includes('background:var(--tc-console-muted)'), "Scout waiting indicator lacks the muted status dot");
+  assert(source.includes('${state === "waiting" ? \'<span class="tc-scout-status-dot" aria-hidden="true"></span>\' : ""}') && source.includes('#oi-zone2[data-state="waiting"] .tc-scout-status-dot {\n          display:block; width:6px; height:6px; flex:0 0 6px; border-radius:50%; background:var(--tc-console-muted);'), "Scout waiting indicator lacks the measurable muted status dot or leaks into other states");
+  assert(source.includes('#krypbot-container #autoDelayDisplay {\n          color:#b8b9b4 !important; font-size:11px !important; line-height:16px !important;\n          font-weight:550 !important; font-variant-numeric:tabular-nums;'), "Strength and Move Timing summaries do not share typography");
   assert(source.includes("text-transform:uppercase"), "compact uppercase module captions are missing");
   assert(source.includes("width:40px; height:24px"), "compact switch geometry is missing");
   const wrapperCss = sourceBlock(source, "        #oi-wrapper {", "        #oi-wrapper > * {");

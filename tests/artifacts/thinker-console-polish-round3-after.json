@@ -1,0 +1,128 @@
+{
+  "scout": {
+    "statusRect": {
+      "x": 942,
+      "y": 174,
+      "width": 122.25,
+      "height": 14,
+      "right": 1064.25,
+      "bottom": 188
+    },
+    "textRect": {
+      "x": 956,
+      "y": 174,
+      "width": 108.25,
+      "height": 14,
+      "right": 1064.25,
+      "bottom": 188
+    },
+    "dotRect": {
+      "x": 942,
+      "y": 178,
+      "width": 6,
+      "height": 6,
+      "right": 948,
+      "bottom": 184
+    },
+    "dotSource": "element",
+    "dotWidth": 6,
+    "dotHeight": 6,
+    "dotColor": "rgb(160, 161, 155)",
+    "panelBackground": "rgb(37, 37, 35)",
+    "contrast": 5.9,
+    "statusStyle": {
+      "fontSize": "11px",
+      "fontWeight": "500",
+      "color": "rgb(196, 197, 191)",
+      "lineHeight": "14px",
+      "fontVariantNumeric": "normal",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "display": "flex",
+      "alignItems": "center"
+    }
+  },
+  "headings": {
+    "current": {
+      "fontSize": "11px",
+      "fontWeight": "550",
+      "color": "rgb(184, 185, 180)",
+      "lineHeight": "16px",
+      "fontVariantNumeric": "tabular-nums",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "display": "block",
+      "alignItems": "normal"
+    },
+    "currentValue": {
+      "fontSize": "11px",
+      "fontWeight": "550",
+      "color": "rgb(184, 185, 180)",
+      "lineHeight": "16px",
+      "fontVariantNumeric": "tabular-nums",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "display": "inline",
+      "alignItems": "normal"
+    },
+    "timing": {
+      "fontSize": "11px",
+      "fontWeight": "550",
+      "color": "rgb(184, 185, 180)",
+      "lineHeight": "16px",
+      "fontVariantNumeric": "tabular-nums",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "display": "block",
+      "alignItems": "normal"
+    },
+    "suffix": {
+      "fontSize": "11px",
+      "fontWeight": "500",
+      "color": "rgb(140, 141, 135)",
+      "lineHeight": "16px",
+      "fontVariantNumeric": "normal",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "display": "block",
+      "alignItems": "normal"
+    }
+  },
+  "statusRight": [
+    {
+      "label": "Time Left",
+      "labelRect": {
+        "x": 809.27,
+        "y": 663,
+        "width": 44.78,
+        "height": 15,
+        "right": 854.05,
+        "bottom": 678
+      },
+      "value": "00:00:00",
+      "valueRect": {
+        "x": 862.05,
+        "y": 663,
+        "width": 41.95,
+        "height": 15,
+        "right": 904,
+        "bottom": 678
+      }
+    },
+    {
+      "label": "Win Rate",
+      "labelRect": {
+        "x": 809.27,
+        "y": 686,
+        "width": 44.78,
+        "height": 15,
+        "right": 854.05,
+        "bottom": 701
+      },
+      "value": "—",
+      "valueRect": {
+        "x": 862.05,
+        "y": 686,
+        "width": 41.95,
+        "height": 15,
+        "right": 904,
+        "bottom": 701
+      }
+    }
+  ]
+}

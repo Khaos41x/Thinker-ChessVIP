@@ -1756,7 +1756,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           <div class="tc-scout-title">Opponent Scout</div>
         </div>
         <div class="tc-scout-empty" style="display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;min-width:0;padding:18px 0 2px;text-align:left">
-          <span class="tc-scout-status" style="display:inline-block;max-width:100%;padding:5px 8px;border:1px solid #303640;border-radius:999px;color:#c6cbd4;font-size:11px;line-height:1.3">${title}</span>
+          <span class="tc-scout-status" style="display:inline-block;max-width:100%;padding:5px 8px;border:1px solid #303640;border-radius:999px;color:#c6cbd4;font-size:11px;line-height:1.3">${state === "waiting" ? '<span class="tc-scout-status-dot" aria-hidden="true"></span>' : ""}<span class="tc-scout-status-text">${title}</span></span>
           <p class="tc-scout-empty-detail" style="margin:0;max-width:100%;color:#9da3b2;font-size:11px;line-height:1.5;white-space:normal;overflow-wrap:anywhere">${detail}</p>
         </div>`;
       if (state === "unavailable" && this.lastOpponent) {
@@ -6234,7 +6234,11 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-strength-head,
         #krypbot-container .kb-timing-heading { min-height:16px; margin:0 0 var(--space-2); align-items:baseline; }
         #krypbot-container .kb-strength-current,
-        #krypbot-container .kb-strength-current strong { font-size:11px; line-height:16px; }
+        #krypbot-container .kb-strength-current strong,
+        #krypbot-container #autoDelayDisplay {
+          color:#b8b9b4 !important; font-size:11px !important; line-height:16px !important;
+          font-weight:550 !important; font-variant-numeric:tabular-nums;
+        }
         #krypbot-container .kb-slider {
           --kb-slider-fill:calc(1 * (100% - 16px) + 8px);
           width:100%; height:16px; margin:var(--space-1) 0; padding:0; background:transparent;
@@ -6307,16 +6311,17 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-session-status-item-right strong { text-align:right; }
         #oi-zone2 .tc-scout-empty { align-items:flex-start !important; justify-content:center; gap:var(--space-2) !important; padding:var(--space-3) 0 0 !important; }
         #oi-zone2[data-state="waiting"] .tc-scout-status {
-          display:flex; align-items:center; gap:var(--space-2); padding:0 !important; border:0 !important;
+          display:inline-flex !important; align-items:center; gap:var(--space-2); padding:0 !important; border:0 !important;
           border-radius:0 !important; background:transparent !important; color:#c4c5bf !important;
+          font-size:11px !important; line-height:14px !important;
         }
         #oi-zone2[data-state="waiting"] .tc-scout-head > .tc-scout-title { flex:1 1 auto; width:100%; }
         #oi-zone2.tc-workspace-card .tc-scout-head > div.tc-scout-title:first-child {
           color:var(--tc-console-muted) !important; font-size:11px !important; line-height:16px !important;
           font-weight:600 !important; letter-spacing:.08em !important;
         }
-        #oi-zone2[data-state="waiting"] .tc-scout-status::before {
-          content:""; width:6px; height:6px; flex:0 0 6px; border-radius:50%; background:var(--tc-console-muted);
+        #oi-zone2[data-state="waiting"] .tc-scout-status-dot {
+          display:block; width:6px; height:6px; flex:0 0 6px; border-radius:50%; background:var(--tc-console-muted);
         }
         #oi-zone2 .tc-scout-empty-detail { display:block; color:#aaaBa5 !important; font-size:11px !important; line-height:15px !important; }
         #oi-zone2 .tc-scout-subtitle,
