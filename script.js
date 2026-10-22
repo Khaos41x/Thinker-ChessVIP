@@ -1730,6 +1730,12 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       return { container, wrapper };
     },
 
+    mountScoutPanel(layout, panel) {
+      const grid = layout.container.querySelector(".kb-console-grid");
+      panel.classList.add("kb-scout-module");
+      (grid || layout.wrapper).appendChild(panel);
+    },
+
     renderStatus(state) {
       const layout = this.ensureScoutWrapper();
       if (!layout) return;
@@ -1747,7 +1753,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         : "Public games are unavailable right now. Scout will retry automatically.";
       panel.innerHTML = `
         <div class="tc-scout-head" style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;padding-bottom:12px;border-bottom:1px solid #26282e">
-          <div style="min-width:0;font-size:14px;line-height:1.2;font-weight:800">Opponent Scout</div>
+          <div class="tc-scout-title">Opponent Scout</div>
         </div>
         <div class="tc-scout-empty" style="display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;min-width:0;padding:18px 0 2px;text-align:left">
           <span class="tc-scout-status" style="display:inline-block;max-width:100%;padding:5px 8px;border:1px solid #303640;border-radius:999px;color:#c6cbd4;font-size:11px;line-height:1.3">${title}</span>
@@ -1762,7 +1768,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         panel.querySelector(".tc-scout-empty")?.appendChild(retry);
       }
       if ((typeof _ghostModeActive !== "undefined" && _ghostModeActive) || layout.container.classList.contains("minimized")) panel.style.display = "none";
-      layout.wrapper.appendChild(panel);
+      this.mountScoutPanel(layout, panel);
     },
 
     renderLoading() {
@@ -1795,7 +1801,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           <div class="tc-scout-skeleton" aria-hidden="true"></div>
         </div>`;
       if ((typeof _ghostModeActive !== "undefined" && _ghostModeActive) || layout.container.classList.contains("minimized")) panel.style.display = "none";
-      layout.wrapper.appendChild(panel);
+      this.mountScoutPanel(layout, panel);
     },
 
     hide() {
@@ -1961,7 +1967,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         </div>
         `;
       if ((typeof _ghostModeActive !== "undefined" && _ghostModeActive) || layout.container.classList.contains("minimized")) panel.style.display = "none";
-      layout.wrapper.appendChild(panel);
+      this.mountScoutPanel(layout, panel);
     },
 
     renderEntry(entry) {
@@ -2255,8 +2261,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     autoDelayMode = localStorage.getItem("autoDelayMode") || DEFAULT_DELAY_MODE;
 
   // Validacao inicial
-  if (isNaN(autoDelayMin) || autoDelayMin < 0) autoDelayMin = DEFAULT_MIN_DELAY;
-  if (isNaN(autoDelayMax) || autoDelayMax < 0) autoDelayMax = DEFAULT_MAX_DELAY;
+  if (autoDelayMode !== "max") {
+    autoDelayMin = Number.isFinite(autoDelayMin) ? Math.min(10, Math.max(0.01, autoDelayMin)) : DEFAULT_MIN_DELAY;
+    autoDelayMax = Number.isFinite(autoDelayMax) ? Math.min(10, Math.max(0.01, autoDelayMax)) : DEFAULT_MAX_DELAY;
+  }
   if (autoDelayMin > autoDelayMax)
     [autoDelayMin, autoDelayMax] = [autoDelayMax, autoDelayMin];
 
@@ -6139,6 +6147,176 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           #krypbot-container .kb-run-delay-card .kb-radio-group:has(input[name="delayMode"]) { align-self:flex-start; }
         }
         @media (max-width: 368px) { #kb-session-toast { left:10px; right:10px; max-width:none; box-sizing:border-box; } }
+        #oi-wrapper {
+          --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
+          --panel-gap:12px; --panel-padding:12px; --field-gap:8px;
+          --row-height:36px; --control-height:32px;
+          --radius-panel:8px; --radius-control:5px;
+          width:min(1034px,100vw) !important; max-width:none !important; padding:var(--space-3) !important;
+          display:block !important; box-sizing:border-box !important; gap:0 !important;
+        }
+        #oi-wrapper,
+        #oi-wrapper *,
+        #oi-wrapper *::before,
+        #oi-wrapper *::after { box-sizing:border-box; }
+        #oi-wrapper > #krypbot-container.kb-console {
+          width:100% !important; max-width:none !important; min-width:0 !important;
+        }
+        #oi-wrapper > #krypbot-container.kb-console.minimized {
+          width:154px !important; max-width:154px !important;
+        }
+        #krypbot-container .kb-console-grid {
+          width:100%; min-width:0; display:grid; grid-template-columns:minmax(0,1fr);
+          grid-template-areas:"core" "visuals" "engine" "autoplay" "scout";
+          gap:var(--panel-gap); align-items:stretch; padding:0;
+        }
+        #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-console-grid {
+          grid-template-columns:345px 345px 296px;
+          grid-template-rows:auto minmax(0,1fr) auto;
+          grid-template-areas:
+            "core engine scout"
+            "visuals engine scout"
+            "autoplay autoplay scout";
+        }
+        #krypbot-container .kb-core-module { grid-area:core; }
+        #krypbot-container .kb-visuals-module { grid-area:visuals; }
+        #krypbot-container .kb-engine-module { grid-area:engine; }
+        #krypbot-container .kb-auto-play-module { grid-area:autoplay; }
+        #krypbot-container .kb-scout-module { grid-area:scout; }
+        #krypbot-container .kb-console-column { display:contents; }
+        #krypbot-container .kb-console-module,
+        #oi-zone2.tc-workspace-card {
+          width:auto !important; max-width:none !important; min-width:0 !important; height:auto;
+          margin:0 !important; padding:var(--panel-padding) !important;
+          border:1px solid var(--tc-console-border) !important; border-radius:var(--radius-panel) !important;
+          align-self:stretch; background:var(--tc-console-module) !important;
+        }
+        #krypbot-container .kb-visuals-module { display:flex; flex-direction:column; }
+        #krypbot-container .kb-visuals-module > :not(.kb-console-caption) { flex:0 0 auto; }
+        #krypbot-container .kb-console-caption,
+        #oi-zone2 .tc-scout-title {
+          display:block; height:25px; margin:0 !important; padding:0 0 var(--space-2) !important;
+          border-bottom:1px solid var(--tc-console-divider) !important;
+          color:var(--tc-console-muted) !important; font:600 11px/16px var(--tc-console-font) !important;
+          letter-spacing:.08em !important; text-transform:uppercase;
+        }
+        #oi-zone2 .tc-scout-head {
+          min-height:25px; height:auto; margin:0; padding:0 !important; border:0 !important;
+        }
+        #oi-zone2 .tc-scout-head > div:first-child:not(.tc-scout-title) { min-width:0; width:100%; }
+        #oi-zone2 .tc-scout-head > div:first-child:not(.tc-scout-title) > .tc-scout-title { width:100%; }
+        #krypbot-container .kb-console-module .kb-section,
+        #krypbot-container .kb-footer > div {
+          min-height:var(--row-height); height:var(--row-height); margin:0 !important; padding:0 !important;
+          display:flex; align-items:center; border:0 !important;
+        }
+        #krypbot-container .kb-console-module .kb-section + .kb-section,
+        #krypbot-container .kb-footer { border-top:1px solid var(--tc-console-divider) !important; }
+        #krypbot-container .kb-console-module .kb-section-label,
+        #krypbot-container .kb-footer > div > span,
+        #krypbot-container .kb-strength-head,
+        #krypbot-container .kb-timing-heading {
+          color:#deded9; font-size:13px; line-height:16px; font-weight:500; letter-spacing:0; text-transform:none;
+        }
+        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) { margin-left:auto; }
+        #krypbot-container .kb-color-input {
+          width:24px; height:24px; margin-left:auto; padding:0; border:1px solid var(--tc-console-border);
+          border-radius:var(--radius-control); background:currentColor;
+        }
+        #krypbot-container .kb-strength-card,
+        #krypbot-container .kb-run-delay-card {
+          margin:0 !important; padding:var(--space-3) 0 !important; border:0 !important;
+          border-top:1px solid var(--tc-console-divider) !important; border-radius:0 !important;
+        }
+        #krypbot-container .kb-strength-head,
+        #krypbot-container .kb-timing-heading { min-height:16px; margin:0 0 var(--space-2); align-items:baseline; }
+        #krypbot-container .kb-strength-current,
+        #krypbot-container .kb-strength-current strong { line-height:16px; }
+        #krypbot-container .kb-slider {
+          --kb-slider-fill:calc(1 * (100% - 16px) + 8px);
+          width:100%; height:16px; margin:var(--space-1) 0; padding:0 8px; background:transparent;
+        }
+        #krypbot-container .kb-slider::-webkit-slider-runnable-track {
+          height:4px; border-radius:2px;
+          background:linear-gradient(to right,var(--tc-console-accent) 0,var(--tc-console-accent) var(--kb-slider-fill),#42423e var(--kb-slider-fill),#42423e 100%);
+        }
+        #krypbot-container .kb-slider::-webkit-slider-thumb { width:16px; height:16px; margin-top:-6px; }
+        #krypbot-container .kb-slider::-moz-range-track { height:4px; border-radius:2px; background:#42423e; }
+        #krypbot-container .kb-slider::-moz-range-progress { height:4px; border-radius:2px; background:var(--tc-console-accent); }
+        #krypbot-container .kb-slider::-moz-range-thumb { width:16px; height:16px; }
+        #krypbot-container .kb-strength-limits { display:flex; justify-content:space-between; margin:var(--space-1) 0 0; font-size:11px; line-height:14px; }
+        #krypbot-container .kb-run-delay-controls { display:grid; gap:var(--field-gap); }
+        #krypbot-container .kb-delay-range { display:flex; align-items:center; width:100%; gap:var(--field-gap); }
+        #krypbot-container .kb-delay-input {
+          flex:1 1 0; width:auto; min-width:0; height:var(--control-height); display:grid;
+          grid-template-columns:minmax(0,1fr) 24px; align-items:center;
+        }
+        #krypbot-container .kb-delay-input .kb-num-input {
+          width:100%; min-width:0; height:30px; padding:0 10px; border:0; background:transparent;
+          color:#e8e8e4; font-size:12px; line-height:30px; text-align:left; font-variant-numeric:tabular-nums;
+        }
+        #krypbot-container .kb-delay-unit { width:24px; padding-right:10px; font-size:11px; line-height:16px; text-align:right; pointer-events:none; }
+        #krypbot-container .kb-delay-separator { flex:0 0 11px; color:#a0a19b; font-size:13px; line-height:16px; text-align:center; }
+        #krypbot-container .kb-timing-mode { height:var(--control-height); }
+        #krypbot-container .kb-run-delay-card .kb-timing-mode label { height:28px; padding:6px 8px; font-size:11px; line-height:16px; }
+        #krypbot-container .kb-dependency-hint { margin:var(--space-2) 0 0; color:#aaaBa5; font-size:11px; line-height:15px; }
+        #krypbot-container .kb-session-fields {
+          display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--field-gap); padding:var(--space-2) 0;
+        }
+        #krypbot-container .kb-session-field {
+          gap:var(--space-1); color:var(--tc-console-muted); font-size:12px; line-height:16px;
+          font-weight:500; text-transform:none; letter-spacing:0;
+        }
+        #krypbot-container .kb-session-field input {
+          height:var(--control-height); padding:0 10px; font-size:12px; line-height:30px;
+        }
+        #krypbot-container .kb-session-actions {
+          display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--field-gap); margin:0;
+        }
+        #krypbot-container #kb-session-start { grid-column:1 / 3; }
+        #krypbot-container .kb-session-secondary-actions {
+          grid-column:3; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--field-gap);
+        }
+        #krypbot-container .kb-session-button,
+        #krypbot-container .kb-session-button[data-action="start"] {
+          width:100%; min-width:0; height:var(--control-height); min-height:var(--control-height); padding:0 var(--space-2);
+        }
+        #krypbot-container .kb-session-button[disabled],
+        #krypbot-container .kb-session-button[aria-disabled="true"] {
+          border-color:#565752 !important; color:rgba(236,236,232,.5) !important; opacity:1;
+        }
+        #krypbot-container .kb-session-status {
+          display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:var(--space-2) var(--field-gap);
+          margin:var(--space-3) 0 0; padding:var(--space-3) 0 0; border-top:1px solid var(--tc-console-divider);
+        }
+        #krypbot-container .kb-session-status-item {
+          min-width:0; display:flex; align-items:baseline; justify-content:space-between; gap:var(--space-2);
+          color:#9b9c96; font-size:11px; line-height:15px;
+        }
+        #krypbot-container .kb-session-status-item-right { text-align:right; }
+        #krypbot-container .kb-session-status-item-right span { margin-left:auto; }
+        #krypbot-container .kb-session-status-item strong {
+          color:#d7d7d2; font-size:11px; line-height:15px; font-weight:600; font-variant-numeric:tabular-nums;
+        }
+        #oi-zone2 .tc-scout-empty { align-items:flex-start !important; justify-content:center; gap:var(--space-2) !important; padding:var(--space-3) 0 0 !important; }
+        #oi-zone2[data-state="waiting"] .tc-scout-status {
+          display:flex; align-items:center; gap:var(--space-2); padding:0 !important; border:0 !important;
+          border-radius:0 !important; background:transparent !important; color:#c4c5bf !important;
+        }
+        #oi-zone2[data-state="waiting"] .tc-scout-head > .tc-scout-title { flex:1 1 auto; width:100%; }
+        #oi-zone2.tc-workspace-card .tc-scout-head > div.tc-scout-title:first-child {
+          color:var(--tc-console-muted) !important; font-size:11px !important; line-height:16px !important;
+          font-weight:600 !important; letter-spacing:.08em !important;
+        }
+        #oi-zone2[data-state="waiting"] .tc-scout-status::before {
+          content:""; width:6px; height:6px; flex:0 0 6px; border-radius:50%; background:var(--tc-console-muted);
+        }
+        #oi-zone2 .tc-scout-empty-detail { display:block; color:#aaaBa5 !important; font-size:11px !important; line-height:15px !important; }
+        #oi-zone2 .tc-scout-subtitle,
+        #oi-zone2 .tc-scout-record,
+        #oi-zone2 .tc-scout-stat-copy small,
+        #oi-zone2 .tc-scout-stat-value small { font-size:11px !important; line-height:15px !important; }
+        #oi-wrapper:not([data-layout-mode="desktop"]) #krypbot-container .kb-console-grid { grid-template-columns:minmax(0,1fr); }
         @media (prefers-reduced-motion: reduce) {
           #krypbot-container,
           #krypbot-container .kb-advanced-settings,
@@ -6189,12 +6367,12 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
               <div class="kb-run-delay-controls">
                 <div class="kb-delay-range">
                   <label class="kb-delay-input">
-                    <input type="number" id="minDelayInput" class="kb-num-input" min="0.01" max="60" step="0.01" inputmode="decimal" aria-label="Minimum move delay in seconds">
+                    <input type="text" id="minDelayInput" class="kb-num-input" inputmode="decimal" aria-label="Minimum move delay in seconds">
                     <span class="kb-delay-unit" aria-hidden="true">s</span>
                   </label>
                   <span class="kb-delay-separator" aria-hidden="true">–</span>
                   <label class="kb-delay-input">
-                    <input type="number" id="maxDelayInput" class="kb-num-input" min="0.01" max="60" step="0.01" inputmode="decimal" aria-label="Maximum move delay in seconds">
+                    <input type="text" id="maxDelayInput" class="kb-num-input" inputmode="decimal" aria-label="Maximum move delay in seconds">
                     <span class="kb-delay-unit" aria-hidden="true">s</span>
                   </label>
                 </div>
@@ -6225,20 +6403,24 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             <div class="kb-advanced-settings-inner">
               <p class="kb-advanced-heading">Session settings</p>
               <div class="kb-session-fields">
-                <label class="kb-session-field">Duration (min)<input id="kb-session-duration" type="number" min="1" max="1440" step="1" value="120"></label>
-                <label class="kb-session-field">Min wins %<input id="kb-session-min-rate" type="number" min="1" max="98" step="1" value="75"></label>
-                <label class="kb-session-field">Max wins %<input id="kb-session-max-rate" type="number" min="2" max="99" step="1" value="82"></label>
+                <label class="kb-session-field">Duration (Min)<input id="kb-session-duration" type="number" min="1" max="1440" step="1" value="120"></label>
+                <label class="kb-session-field">Min Wins %<input id="kb-session-min-rate" type="number" min="1" max="98" step="1" value="75"></label>
+                <label class="kb-session-field">Max Wins %<input id="kb-session-max-rate" type="number" min="2" max="99" step="1" value="82"></label>
               </div>
             </div>
           </div>
           <div class="kb-session-actions">
             <button class="kb-session-button" id="kb-session-start" data-action="start" type="button">Start</button>
-            <button class="kb-session-button" id="kb-session-stop" data-action="stop" type="button">Finish</button>
-            <button class="kb-session-button" id="kb-session-export" data-action="export" type="button" aria-label="Export session diagnostic">Export</button>
+            <div class="kb-session-secondary-actions">
+              <button class="kb-session-button" id="kb-session-stop" data-action="stop" type="button">Finish</button>
+              <button class="kb-session-button" id="kb-session-export" data-action="export" type="button" aria-label="Export session diagnostic">Export</button>
+            </div>
           </div>
           <div class="kb-session-status" aria-live="polite">
-            <div class="kb-session-primary"><span>Status</span><strong id="kb-session-phase">Idle</strong><span class="kb-session-separator" aria-hidden="true">·</span><span>Time Left</span><strong id="kb-session-ttl">00:00:00</strong></div>
-            <div class="kb-session-stats"><span>Score <strong id="kb-session-observed">0 W | 0 D | 0 L</strong></span><span>Win Rate <strong id="kb-session-raw">—</strong></span></div>
+            <div class="kb-session-status-item"><span>Status</span><strong id="kb-session-phase">Idle</strong></div>
+            <div class="kb-session-status-item kb-session-status-item-right"><span>Time Left</span><strong id="kb-session-ttl">00:00:00</strong></div>
+            <div class="kb-session-status-item"><span>Score</span><strong id="kb-session-observed">0 W | 0 D | 0 L</strong></div>
+            <div class="kb-session-status-item kb-session-status-item-right"><span>Win Rate</span><strong id="kb-session-raw">—</strong></div>
           </div>
         </section>
 
@@ -6304,10 +6486,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
 
       const grid = document.createElement("div");
       grid.className = "kb-console-grid";
-      const primary = document.createElement("div");
-      primary.className = "kb-console-column";
-      const secondary = document.createElement("div");
-      secondary.className = "kb-console-column";
       const core = module("Core", "kb-core-module");
       const visuals = module("Visuals", "kb-visuals-module");
       const engine = module("Engine Control", "kb-engine-module");
@@ -6347,12 +6525,15 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       }
       if (moreBlock) moreBlock.hidden = true;
 
-      primary.append(core, visuals);
-      secondary.appendChild(engine);
-      grid.append(primary, secondary);
+      grid.append(core, visuals, engine);
       if (autoPlay) {
         autoPlay.classList.add("kb-auto-play-module");
         grid.appendChild(autoPlay);
+      }
+      const scout = document.getElementById("oi-zone2");
+      if (scout) {
+        scout.classList.add("kb-scout-module");
+        grid.appendChild(scout);
       }
       const toast = menu.querySelector("#kb-session-toast");
       menu.insertBefore(grid, toast || null);
@@ -6414,10 +6595,11 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             getThinkerRect(sidebar)?.bottom || 0,
           ) + window.scrollY;
           const safeTop = Math.max(window.innerHeight + THINKER_WORKSPACE_GAP_PX, gameplayDocumentBottom + THINKER_WORKSPACE_GAP_PX);
-          const candidateLeft = Math.max(10, Math.round((boardRect?.left || 0) + window.scrollX));
-          const wrapperWidth = Math.max(wrapper.scrollWidth || 0, wrapper.getBoundingClientRect().width || 0);
-          const maxLeft = Math.max(10, Math.floor(window.scrollX + window.innerWidth - wrapperWidth - 10));
-          const safeLeft = Math.min(candidateLeft, maxLeft);
+          const wrapperWidth = Math.min(1034, Math.max(0, window.innerWidth));
+          wrapper.style.setProperty("width", wrapperWidth + "px", "important");
+          const measuredWrapperWidth = Math.round(wrapper.getBoundingClientRect().width);
+          wrapper.dataset.layoutMode = measuredWrapperWidth >= 1034 ? "desktop" : "stacked";
+          const safeLeft = Math.round(window.scrollX + Math.max(0, (window.innerWidth - measuredWrapperWidth) / 2));
           wrapper.style.setProperty("top", Math.ceil(safeTop) + "px", "important");
           wrapper.style.setProperty("left", safeLeft + "px", "important");
         }
@@ -6564,6 +6746,46 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           if (queueNote) queueNote.hidden = !sessionOwnsQueue;
         }
 
+        const clampDelay = (value, fallback) => {
+          const normalized = String(value).trim().replace(",", ".");
+          if (!/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(normalized)) return fallback;
+          const parsed = Number(normalized);
+          return Number.isFinite(parsed) ? Math.min(10, Math.max(0.01, parsed)) : fallback;
+        };
+        const formatDelay = (value) => Number(value).toFixed(2);
+        const setStrengthProgress = (value) => {
+          const slider = document.getElementById("kb-elo-slider");
+          if (!slider) return;
+          const minimum = Number(slider.min);
+          const maximum = Number(slider.max);
+          const ratio = maximum > minimum ? Math.min(1, Math.max(0, (Number(value) - minimum) / (maximum - minimum))) : 0;
+          slider.style.setProperty("--kb-slider-fill", `calc(${ratio.toFixed(4)} * (100% - 16px) + 8px)`);
+        };
+        const syncDelayPresentation = () => {
+          const immediate = autoDelayMode === "max";
+          $("#minDelayInput").val(immediate ? "0.00" : formatDelay(autoDelayMin));
+          $("#maxDelayInput").val(immediate ? "0.00" : formatDelay(autoDelayMax));
+          $("#autoDelayDisplay").text(immediate ? "Immediate" : `${formatDelay(autoDelayMin)}–${formatDelay(autoDelayMax)} s`);
+        };
+        const commitDelayInputs = () => {
+          if (autoDelayMode === "max") {
+            syncDelayPresentation();
+            return;
+          }
+          let minimum = clampDelay($("#minDelayInput").val(), autoDelayMin);
+          let maximum = clampDelay($("#maxDelayInput").val(), autoDelayMax);
+          if (minimum > maximum) [minimum, maximum] = [maximum, minimum];
+          const changed = minimum !== autoDelayMin || maximum !== autoDelayMax;
+          autoDelayMin = minimum;
+          autoDelayMax = maximum;
+          syncDelayPresentation();
+          if (changed) {
+            localStorage.setItem("autoMinDelay", String(autoDelayMin));
+            localStorage.setItem("autoMaxDelay", String(autoDelayMax));
+            pushToServer();
+          }
+        };
+
         window.krypbotUpdateUI = function () {
           detectGameMode();
           $(`input[name="kb-bot-status"][value="${hint ? 1 : 0}"]`).prop(
@@ -6594,20 +6816,11 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             `input[name="kb-auto-adjust"][value="${autoAdjust.isEnabled() ? 1 : 0}"]`,
           ).prop("checked", true);
 
-          $("#minDelayInput").val(autoDelayMin.toFixed(2));
-          $("#maxDelayInput").val(autoDelayMax.toFixed(2));
+          syncDelayPresentation();
           $(`input[name="delayMode"][value="${autoDelayMode}"]`).prop(
             "checked",
             true,
           );
-
-          if (autoDelayMode === "max") {
-            $("#autoDelayDisplay").text("Immediate");
-          } else {
-            $("#autoDelayDisplay").text(
-              `${autoDelayMin.toFixed(2)}–${autoDelayMax.toFixed(2)} s`,
-            );
-          }
 
           const legacyDisplayElo = isLegacyAutoAdjustEffective()
             ? autoAdjust.getCurrentDifficulty()
@@ -6615,6 +6828,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           const displayElo = sessionControlBridge.moveSelectionElo(legacyDisplayElo);
           $("#kb-elo-val").text(displayElo);
           $("#kb-elo-slider").val(displayElo);
+          setStrengthProgress(displayElo);
           $("#kb-color-picker").val(current_color);
 
           // Show/hide puzzle section based on current mode
@@ -6805,23 +7019,16 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           pushToServer();
         });
 
-        $("#minDelayInput, #maxDelayInput").on("input change", function () {
-          let min = parseFloat($("#minDelayInput").val()) || 0.1;
-          let max = parseFloat($("#maxDelayInput").val()) || 0.1;
-          if (min > max) {
-            autoDelayMin = max;
-            autoDelayMax = min;
-          } else {
-            autoDelayMin = min;
-            autoDelayMax = max;
-          }
-          localStorage.setItem("autoMinDelay", autoDelayMin);
-          localStorage.setItem("autoMaxDelay", autoDelayMax);
-          $("#autoDelayDisplay").text(
-            `${autoDelayMin.toFixed(2)}–${autoDelayMax.toFixed(2)} s`,
-          );
-          pushToServer();
-        });
+        $("#minDelayInput, #maxDelayInput")
+          .on("keydown", function (event) {
+            if (event.key !== "Enter") return;
+            event.preventDefault();
+            commitDelayInputs();
+            this.blur();
+          })
+          .on("blur", function () {
+            commitDelayInputs();
+          });
 
         // --- SMART PACING TOGGLE ---
         $('input[name="kb-smart-pacing"]').on("change", function () {
@@ -6867,20 +7074,15 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             autoDelayMax = 0;
             localStorage.setItem("autoMinDelay", 0);
             localStorage.setItem("autoMaxDelay", 0);
-            $(".kb-num-input").val("0.00");
-            $("#autoDelayDisplay").text("Immediate");
           } else {
             // Restaurar valores padrão ao voltar para Random/Avg
             autoDelayMin = 0.5;
             autoDelayMax = 1.0;
             localStorage.setItem("autoMinDelay", 0.5);
             localStorage.setItem("autoMaxDelay", 1.0);
-            $(".kb-num-input").val("");
-            $("#minDelayInput").val("0.50");
-            $("#maxDelayInput").val("1.00");
-            $("#autoDelayDisplay").text("0.50–1.00 s");
           }
 
+          syncDelayPresentation();
           window.krypbotUpdateUI();
           pushToServer();
         });
@@ -6888,6 +7090,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         $("#kb-elo-slider").on("input", function () {
           chessBot.elo = parseInt($(this).val());
           autoAdjust.updateBaseElo(chessBot.elo);
+          setStrengthProgress(chessBot.elo);
           window.krypbotUpdateUI();
           pushToServer();
         });
@@ -7087,6 +7290,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           if (typeof s.elo === "number" && chessBot.elo !== s.elo) {
             chessBot.elo = s.elo;
             $("#kb-elo-slider").val(s.elo);
+            setStrengthProgress(s.elo);
             autoAdjust.updateBaseElo(s.elo);
           }
           // Delay Mode
@@ -7095,19 +7299,20 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             localStorage.setItem("autoDelayMode", autoDelayMode);
             $('input[name="delayMode"][value="' + autoDelayMode + '"]').prop("checked", true);
           }
-          // Min Delay
-          if (typeof s.minDelay === "number" && autoDelayMin !== s.minDelay) {
-            autoDelayMin = s.minDelay;
-            localStorage.setItem("autoMinDelay", autoDelayMin);
-            $("#minDelayInput").val(autoDelayMin.toFixed(2));
+          const nextDelayMin = autoDelayMode === "max" ? 0 : clampDelay(s.minDelay, autoDelayMin || DEFAULT_MIN_DELAY);
+          const nextDelayMax = autoDelayMode === "max" ? 0 : clampDelay(s.maxDelay, autoDelayMax || DEFAULT_MAX_DELAY);
+          let normalizedDelayMin = nextDelayMin;
+          let normalizedDelayMax = nextDelayMax;
+          if (autoDelayMode !== "max" && normalizedDelayMin > normalizedDelayMax) {
+            [normalizedDelayMin, normalizedDelayMax] = [normalizedDelayMax, normalizedDelayMin];
           }
-          // Max Delay
-          if (typeof s.maxDelay === "number" && autoDelayMax !== s.maxDelay) {
-            autoDelayMax = s.maxDelay;
-            localStorage.setItem("autoMaxDelay", autoDelayMax);
-            $("#maxDelayInput").val(autoDelayMax.toFixed(2));
+          if (autoDelayMin !== normalizedDelayMin || autoDelayMax !== normalizedDelayMax) {
+            autoDelayMin = normalizedDelayMin;
+            autoDelayMax = normalizedDelayMax;
+            localStorage.setItem("autoMinDelay", String(autoDelayMin));
+            localStorage.setItem("autoMaxDelay", String(autoDelayMax));
           }
-          $("#autoDelayDisplay").text(autoDelayMode === "max" ? "Immediate" : autoDelayMin.toFixed(2) + "–" + autoDelayMax.toFixed(2) + " s");
+          syncDelayPresentation();
           // Color
           if (s.color && current_color !== s.color) {
             current_color = s.color;

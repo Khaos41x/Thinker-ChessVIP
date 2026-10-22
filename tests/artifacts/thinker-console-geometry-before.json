@@ -1,0 +1,164 @@
+{
+  "workspace": {
+    "x": 227,
+    "y": 40,
+    "width": 1010,
+    "height": 526,
+    "right": 1237,
+    "bottom": 566
+  },
+  "assistant": {
+    "x": 227,
+    "y": 40,
+    "width": 700,
+    "height": 526,
+    "right": 927,
+    "bottom": 566
+  },
+  "core": {
+    "x": 227,
+    "y": 40,
+    "width": 345,
+    "height": 164,
+    "right": 572,
+    "bottom": 204
+  },
+  "visuals": {
+    "x": 227,
+    "y": 214,
+    "width": 345,
+    "height": 120,
+    "right": 572,
+    "bottom": 334
+  },
+  "engine": {
+    "x": 582,
+    "y": 40,
+    "width": 345,
+    "height": 334,
+    "right": 927,
+    "bottom": 374
+  },
+  "autoPlay": {
+    "x": 227,
+    "y": 384,
+    "width": 700,
+    "height": 182,
+    "right": 927,
+    "bottom": 566
+  },
+  "scout": {
+    "x": 937,
+    "y": 40,
+    "width": 300,
+    "height": 98,
+    "right": 1237,
+    "bottom": 138
+  },
+  "coreTitle": {
+    "x": 240,
+    "y": 53,
+    "width": 319,
+    "height": 21,
+    "right": 559,
+    "bottom": 74
+  },
+  "engineTitle": {
+    "x": 595,
+    "y": 53,
+    "width": 319,
+    "height": 21,
+    "right": 914,
+    "bottom": 74
+  },
+  "scoutTitle": null,
+  "duration": {
+    "x": 240,
+    "y": 443,
+    "width": 220.66,
+    "height": 30,
+    "right": 460.66,
+    "bottom": 473
+  },
+  "minWins": {
+    "x": 466.66,
+    "y": 443,
+    "width": 220.67,
+    "height": 30,
+    "right": 687.33,
+    "bottom": 473
+  },
+  "maxWins": {
+    "x": 693.33,
+    "y": 443,
+    "width": 220.67,
+    "height": 30,
+    "right": 914,
+    "bottom": 473
+  },
+  "start": {
+    "x": 240,
+    "y": 483,
+    "width": 563.78,
+    "height": 34,
+    "right": 803.78,
+    "bottom": 517
+  },
+  "finish": {
+    "x": 807.78,
+    "y": 483,
+    "width": 50.33,
+    "height": 34,
+    "right": 858.11,
+    "bottom": 517
+  },
+  "export": {
+    "x": 862.11,
+    "y": 483,
+    "width": 51.89,
+    "height": 34,
+    "right": 914,
+    "bottom": 517
+  },
+  "status": null,
+  "stats": null,
+  "minDelay": {
+    "x": 596,
+    "y": 228,
+    "width": 68,
+    "height": 28,
+    "right": 664,
+    "bottom": 256
+  },
+  "maxDelay": {
+    "x": 827,
+    "y": 228,
+    "width": 68,
+    "height": 28,
+    "right": 895,
+    "bottom": 256
+  },
+  "strength": {
+    "x": 595,
+    "y": 163,
+    "width": 319,
+    "height": 2,
+    "right": 914,
+    "bottom": 165
+  },
+  "theme": {
+    "x": 535,
+    "y": 294,
+    "width": 24,
+    "height": 24,
+    "right": 559,
+    "bottom": 318
+  },
+  "viewport": {
+    "width": 1440,
+    "height": 778,
+    "scrollWidth": 1440,
+    "injectionWidth": 1010,
+    "layoutMode": ""
+  }
+}

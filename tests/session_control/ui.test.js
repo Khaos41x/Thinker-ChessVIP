@@ -309,15 +309,15 @@ async function run() {
   assert(menu.includes('<span class="kb-logo-copy">Thinker Chess</span>'));
   assert(!menu.includes('<div class="kb-logo">K</div>'));
   assert(source.includes("background-image:none !important"), "decorative panel gradients were not removed");
-  assert(source.includes(".kb-session-primary"), "Auto Play primary summary is missing");
-  assert(source.includes(".kb-session-stats"), "Auto Play stats summary is missing");
+  assert(menu.includes('class="kb-session-status-item"') && menu.includes('class="kb-session-status-item kb-session-status-item-right"'), "Auto Play 2x2 status grid is missing");
+  assert(!menu.includes('kb-session-separator'), "loose Time Left separator remains");
   const scoutStatusMarkup = sourceBlock(source, "    renderStatus(state) {", "    renderLoading() {");
   assert(!scoutStatusMarkup.includes('class="tc-scout-radar"'), "Scout empty state retained an oversized decorative radar");
   assert(source.includes('class="tc-scout-loading"'), "Scout loading state lost its centered premium layout");
   assert(source.includes('class="tc-scout-skeleton" aria-hidden="true"'), "Scout loading state lost its translucent skeletons");
   assert(source.includes('retry.className = "tc-scout-retry"'), "Scout unavailable retry is not styled by the shared premium system");
   assert(source.includes('panel.querySelector(".tc-scout-empty")?.appendChild(retry)'), "Scout unavailable retry is outside the centered empty state");
-  assert(source.includes("@media (max-width: 1050px)"), "workspace lacks a narrow-viewport layout");
+  assert(source.includes('const measuredWrapperWidth = Math.round(wrapper.getBoundingClientRect().width)') && source.includes('wrapper.dataset.layoutMode = measuredWrapperWidth >= 1034 ? "desktop" : "stacked"'), "workspace breakpoint is not based on measured injection-container width");
   assert(source.includes("width: 154px !important;\n          max-width: 154px !important"), "workspace launcher lost its compact branded width");
   assert(source.includes("setThinkerWorkspaceCollapsed(false)"), "workspace launcher does not restore the complete workspace");
   assert(!menu.includes('id="kb-minimize-toggle"') && !source.includes('<button class="tc-scout-close"'), "dismiss controls remain in the workspace markup");
@@ -344,12 +344,17 @@ async function run() {
   assert(source.includes('const engine = module("Engine Control", "kb-engine-module")'), "Engine Control module is missing");
   assert(source.includes('[bot, autoMoves, autoQueue, queueNote]'), "Core controls are not grouped together");
   assert(source.includes('[autoRating, strength, timing, smartPacing, puzzle]'), "Engine controls are not grouped together");
-  assert(source.includes("width:700px !important; max-width:700px !important"), "compact two-column console width is missing");
+  assert(source.includes("grid-template-columns:345px 345px 296px"), "three-column named console grid is missing");
   assert(source.includes("border:0 !important; border-radius:0 !important"), "embedded console shell is not visually removed");
   assert(source.includes("backdrop-filter:none !important"), "glass blur is not neutralized");
-  assert(source.includes("grid-template-columns:minmax(0,1fr) minmax(0,1fr)"), "desktop console is not two-column");
+  assert(source.includes('"core engine scout"') && source.includes('"visuals engine scout"') && source.includes('"autoplay autoplay scout"'), "desktop named grid areas are incomplete");
+  assert(source.includes('type="text" id="minDelayInput"') && source.includes('type="text" id="maxDelayInput"'), "Move Timing still relies on locale-sensitive number inputs");
+  assert(source.includes('Math.min(10, Math.max(0.01'), "Move Timing does not clamp to 0.01–10 seconds");
+  assert(source.includes('String(value).trim().replace(",", ".")'), "Move Timing does not normalize comma decimals");
+  assert(source.includes('.on("blur", function ()') && source.includes('commitDelayInputs();'), "Move Timing does not commit on blur");
+  assert(source.includes('calc(${ratio.toFixed(4)} * (100% - 16px) + 8px)'), "Strength fill lacks thumb compensation");
   assert(source.includes("text-transform:uppercase"), "compact uppercase module captions are missing");
-  assert(source.includes("width:40px; height:22px"), "compact switch geometry is missing");
+  assert(source.includes("width:40px; height:24px"), "compact switch geometry is missing");
   const wrapperCss = sourceBlock(source, "        #oi-wrapper {", "        #oi-wrapper > * {");
   for (const declaration of [
     "position: absolute !important",
@@ -376,3 +381,5 @@ async function run() {
 }
 
 module.exports = { run };
+
+if (require.main === module) run();

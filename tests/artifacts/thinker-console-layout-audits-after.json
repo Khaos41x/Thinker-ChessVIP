@@ -1,0 +1,622 @@
+{
+  "1033": {
+    "viewport": 1033,
+    "injectionWidth": 1033,
+    "layoutMode": "stacked",
+    "desktop": false,
+    "margins": {
+      "left": 0,
+      "right": 0,
+      "topInset": 12
+    },
+    "bottoms": {
+      "visualsEngine": -370,
+      "scoutAutoPlay": 127
+    },
+    "gaps": null,
+    "titles": [
+      {
+        "y": 137,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 308,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 444,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 814,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 1046,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      }
+    ],
+    "rows": [
+      36,
+      36,
+      36,
+      36,
+      36,
+      36
+    ],
+    "rightEdges": {
+      "core": [
+        1008,
+        1008,
+        1008
+      ],
+      "visuals": [
+        1008,
+        1008
+      ],
+      "engine": [
+        436,
+        1008,
+        1008
+      ],
+      "autoPlay": [
+        1008,
+        1008,
+        1008
+      ]
+    },
+    "waitingInteractive": false,
+    "hint": {
+      "fontSize": "11px",
+      "contrast": 9.077696016487806
+    },
+    "integerRects": false,
+    "horizontalOverflow": false,
+    "ok": false
+  },
+  "1034": {
+    "viewport": 1034,
+    "injectionWidth": 1034,
+    "layoutMode": "desktop",
+    "desktop": true,
+    "margins": {
+      "left": 0,
+      "right": 0,
+      "topInset": 12
+    },
+    "bottoms": {
+      "visualsEngine": 0,
+      "scoutAutoPlay": 0
+    },
+    "gaps": {
+      "horizontal": 12,
+      "vertical": 12,
+      "scout": 12
+    },
+    "titles": [
+      {
+        "y": 137,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 308,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 137,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 507,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 137,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      }
+    ],
+    "rows": [
+      36,
+      36,
+      36,
+      36,
+      36,
+      36
+    ],
+    "rightEdges": {
+      "core": [
+        344,
+        344,
+        344
+      ],
+      "visuals": [
+        344,
+        344
+      ],
+      "engine": [
+        701,
+        701,
+        701
+      ],
+      "autoPlay": [
+        701,
+        701,
+        701
+      ]
+    },
+    "waitingInteractive": false,
+    "hint": {
+      "fontSize": "11px",
+      "contrast": 9.077696016487806
+    },
+    "integerRects": true,
+    "horizontalOverflow": false,
+    "ok": true
+  },
+  "1086": {
+    "viewport": 1086,
+    "injectionWidth": 1034,
+    "layoutMode": "desktop",
+    "desktop": true,
+    "margins": {
+      "left": 26,
+      "right": 26,
+      "topInset": 12
+    },
+    "bottoms": {
+      "visualsEngine": 0,
+      "scoutAutoPlay": 0
+    },
+    "gaps": {
+      "horizontal": 12,
+      "vertical": 12,
+      "scout": 12
+    },
+    "titles": [
+      {
+        "y": 137,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 308,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 137,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 507,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 137,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      }
+    ],
+    "rows": [
+      36,
+      36,
+      36,
+      36,
+      36,
+      36
+    ],
+    "rightEdges": {
+      "core": [
+        370,
+        370,
+        370
+      ],
+      "visuals": [
+        370,
+        370
+      ],
+      "engine": [
+        727,
+        727,
+        727
+      ],
+      "autoPlay": [
+        727,
+        727,
+        727
+      ]
+    },
+    "waitingInteractive": false,
+    "hint": {
+      "fontSize": "11px",
+      "contrast": 9.077696016487806
+    },
+    "integerRects": true,
+    "horizontalOverflow": false,
+    "ok": true
+  },
+  "1280": {
+    "viewport": 1280,
+    "injectionWidth": 1034,
+    "layoutMode": "desktop",
+    "desktop": true,
+    "margins": {
+      "left": 123,
+      "right": 123,
+      "topInset": 12
+    },
+    "bottoms": {
+      "visualsEngine": 0,
+      "scoutAutoPlay": 0
+    },
+    "gaps": {
+      "horizontal": 12,
+      "vertical": 12,
+      "scout": 12
+    },
+    "titles": [
+      {
+        "y": 137,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 308,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 137,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 507,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 137,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      }
+    ],
+    "rows": [
+      36,
+      36,
+      36,
+      36,
+      36,
+      36
+    ],
+    "rightEdges": {
+      "core": [
+        467,
+        467,
+        467
+      ],
+      "visuals": [
+        467,
+        467
+      ],
+      "engine": [
+        824,
+        824,
+        824
+      ],
+      "autoPlay": [
+        824,
+        824,
+        824
+      ]
+    },
+    "waitingInteractive": false,
+    "hint": {
+      "fontSize": "11px",
+      "contrast": 9.077696016487806
+    },
+    "integerRects": true,
+    "horizontalOverflow": false,
+    "ok": true
+  },
+  "1440": {
+    "viewport": 1440,
+    "injectionWidth": 1034,
+    "layoutMode": "desktop",
+    "desktop": true,
+    "margins": {
+      "left": 203,
+      "right": 203,
+      "topInset": 12
+    },
+    "bottoms": {
+      "visualsEngine": 0,
+      "scoutAutoPlay": 0
+    },
+    "gaps": {
+      "horizontal": 12,
+      "vertical": 12,
+      "scout": 12
+    },
+    "titles": [
+      {
+        "y": 137,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 308,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 137,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 507,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 137,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      }
+    ],
+    "rows": [
+      36,
+      36,
+      36,
+      36,
+      36,
+      36
+    ],
+    "rightEdges": {
+      "core": [
+        547,
+        547,
+        547
+      ],
+      "visuals": [
+        547,
+        547
+      ],
+      "engine": [
+        904,
+        904,
+        904
+      ],
+      "autoPlay": [
+        904,
+        904,
+        904
+      ]
+    },
+    "waitingInteractive": false,
+    "hint": {
+      "fontSize": "11px",
+      "contrast": 9.077696016487806
+    },
+    "integerRects": true,
+    "horizontalOverflow": false,
+    "ok": true
+  },
+  "1920": {
+    "viewport": 1920,
+    "injectionWidth": 1034,
+    "layoutMode": "desktop",
+    "desktop": true,
+    "margins": {
+      "left": 443,
+      "right": 443,
+      "topInset": 12
+    },
+    "bottoms": {
+      "visualsEngine": 0,
+      "scoutAutoPlay": 0
+    },
+    "gaps": {
+      "horizontal": 12,
+      "vertical": 12,
+      "scout": 12
+    },
+    "titles": [
+      {
+        "y": 137,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 308,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 137,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 507,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      },
+      {
+        "y": 137,
+        "height": 25,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "fontWeight": "600",
+        "color": "rgb(160, 161, 155)",
+        "letterSpacing": "0.88px"
+      }
+    ],
+    "rows": [
+      36,
+      36,
+      36,
+      36,
+      36,
+      36
+    ],
+    "rightEdges": {
+      "core": [
+        787,
+        787,
+        787
+      ],
+      "visuals": [
+        787,
+        787
+      ],
+      "engine": [
+        1144,
+        1144,
+        1144
+      ],
+      "autoPlay": [
+        1144,
+        1144,
+        1144
+      ]
+    },
+    "waitingInteractive": false,
+    "hint": {
+      "fontSize": "11px",
+      "contrast": 9.077696016487806
+    },
+    "integerRects": true,
+    "horizontalOverflow": false,
+    "ok": true
+  }
+}
