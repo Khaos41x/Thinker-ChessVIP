@@ -5993,22 +5993,34 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           min-height:36px; margin:0 !important; padding:0; border-bottom:1px solid var(--tc-console-divider);
         }
         #krypbot-container .kb-console-module .kb-section:last-child { border-bottom:0; }
+        #krypbot-container .kb-console-module .kb-section:has(#am-on),
+        #krypbot-container .kb-console-module .kb-section:has(#aq-on),
+        #krypbot-container .kb-console-module .kb-section:has(#sp-on) {
+          border-top:0 !important; background-image:linear-gradient(var(--tc-console-divider),var(--tc-console-divider));
+          background-position:top; background-repeat:no-repeat; background-size:100% 1px;
+        }
         #krypbot-container .kb-console-module .kb-section-label { gap:0; color:#deded9; font-size:12px; line-height:16px; font-weight:500; letter-spacing:-.005em; }
         #krypbot-container .kb-console-module .kb-row-icon { display:none; }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) {
-          width:40px; height:24px; padding:0; border:1px solid #44443f; border-radius:12px; background:#3a3a37; box-shadow:none;
+          display:flex; align-items:center; box-sizing:border-box; width:40px; height:24px; padding:0 1px; border:1px solid #44443f; border-radius:12px; background:#3a3a37; box-shadow:none;
           transition:background-color .14s ease,border-color .14s ease;
         }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"]))::after {
-          top:1px; left:1px; width:18px; height:18px; border:1px solid #d5d6d2; background:#f1f1ee; box-shadow:none; transition:transform .14s ease;
+          display:none;
+        }
+        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) .kb-toggle-thumb {
+          position:relative; z-index:1; flex:0 0 18px; width:18px; height:18px; margin:0; border:1px solid #d5d6d2; border-radius:50%;
+          background:#f1f1ee; box-shadow:none; pointer-events:none; transition:transform .14s ease;
         }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):not([aria-disabled="true"]):hover { border-color:#555650; }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):not([aria-disabled="true"]):focus-within { outline:2px solid var(--tc-console-focus); outline-offset:2px; }
         #krypbot-container .kb-radio-group[aria-disabled="true"] { border-color:#343431; background:#30302e; }
         #krypbot-container .kb-radio-group[aria-disabled="true"]:focus-within { outline:2px solid #666760; outline-offset:2px; }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):has(input[value="1"]:checked) { border-color:var(--tc-console-accent); background:var(--tc-console-accent); box-shadow:none; }
-        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):has(input[value="1"]:checked)::after { transform:translateX(18px); }
-        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) label { width:20px; height:22px; }
+        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):has(input[value="1"]:checked) .kb-toggle-thumb { transform:translateX(18px); }
+        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) label { position:absolute; top:0; bottom:0; z-index:2; width:50%; height:auto; }
+        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) input[value="1"] + label { left:0; }
+        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) input[value="0"] + label { right:0; }
         #krypbot-container .kb-session-queue-note { margin:4px 1px; color:#9ab7a3; font-size:9px; line-height:13px; }
         #krypbot-container .kb-strength-card,
         #krypbot-container .kb-run-delay-card {
@@ -6340,6 +6352,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           #krypbot-container .kb-session-button,
           #krypbot-container .kb-radio-group label,
           #krypbot-container .kb-radio-group::after,
+          #krypbot-container .kb-toggle-thumb,
           #kb-session-toast { transition:none !important; }
         }
       </style>
@@ -6357,6 +6370,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           <div class="kb-radio-group">
             <input type="radio" id="st-on" name="kb-bot-status" value="1"><label for="st-on">ON</label>
             <input type="radio" id="st-off" name="kb-bot-status" value="0" checked><label for="st-off">OFF</label>
+            <span class="kb-toggle-thumb" aria-hidden="true"></span>
           </div>
         </div>
 
@@ -6365,6 +6379,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           <div class="kb-radio-group">
             <input type="radio" id="am-on" name="kb-auto-move" value="1"><label for="am-on">ON</label>
             <input type="radio" id="am-off" name="kb-auto-move" value="0" checked><label for="am-off">OFF</label>
+            <span class="kb-toggle-thumb" aria-hidden="true"></span>
           </div>
         </div>
 
@@ -6447,20 +6462,21 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
                 <div id="kb-auto-queue-controls" class="kb-radio-group">
                   <input type="radio" id="aq-on" name="kb-auto-queue" value="1"><label for="aq-on">ON</label>
                   <input type="radio" id="aq-off" name="kb-auto-queue" value="0" checked><label for="aq-off">OFF</label>
+                  <span class="kb-toggle-thumb" aria-hidden="true"></span>
                 </div>
               </div>
               <p id="kb-auto-queue-session-note" class="kb-session-queue-note" hidden aria-live="polite">Temporarily enabled by Auto Play. Your saved preference is unchanged.</p>
               <div class="kb-section">
                 <p class="kb-section-label">Auto Rating</p>
-                <div class="kb-radio-group"><input type="radio" id="aa-on" name="kb-auto-adjust" value="1"><label for="aa-on">ON</label><input type="radio" id="aa-off" name="kb-auto-adjust" value="0" checked><label for="aa-off">OFF</label></div>
+                <div class="kb-radio-group"><input type="radio" id="aa-on" name="kb-auto-adjust" value="1"><label for="aa-on">ON</label><input type="radio" id="aa-off" name="kb-auto-adjust" value="0" checked><label for="aa-off">OFF</label><span class="kb-toggle-thumb" aria-hidden="true"></span></div>
               </div>
               <div class="kb-section">
                 <p class="kb-section-label">Smart Pacing</p>
-                <div class="kb-radio-group"><input type="radio" id="sp-on" name="kb-smart-pacing" value="1"><label for="sp-on">ON</label><input type="radio" id="sp-off" name="kb-smart-pacing" value="0" checked><label for="sp-off">OFF</label></div>
+                <div class="kb-radio-group"><input type="radio" id="sp-on" name="kb-smart-pacing" value="1"><label for="sp-on">ON</label><input type="radio" id="sp-off" name="kb-smart-pacing" value="0" checked><label for="sp-off">OFF</label><span class="kb-toggle-thumb" aria-hidden="true"></span></div>
               </div>
               <div class="kb-section">
                 <p class="kb-section-label">Evaluation Bar</p>
-                <div class="kb-radio-group"><input type="radio" id="eb-on" name="kb-eval-bar" value="1"><label for="eb-on">ON</label><input type="radio" id="eb-off" name="kb-eval-bar" value="0" checked><label for="eb-off">OFF</label></div>
+                <div class="kb-radio-group"><input type="radio" id="eb-on" name="kb-eval-bar" value="1"><label for="eb-on">ON</label><input type="radio" id="eb-off" name="kb-eval-bar" value="0" checked><label for="eb-off">OFF</label><span class="kb-toggle-thumb" aria-hidden="true"></span></div>
               </div>
               <div class="kb-section-col" id="puzzle-section" style="display:none">
                 <p class="kb-section-label">Puzzle Mode <span class="kb-inline-note">(Elo 3200)</span></p>

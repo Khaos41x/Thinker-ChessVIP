@@ -117,7 +117,7 @@ const polishMetricsExpression = `(() => {
     },
     swatch:{ rect:rect("#kb-color-picker"), borderWidth:swatchStyle?.borderWidth || "", borderColor:swatchStyle?.borderColor || "", inputBorderColor:getComputedStyle(document.querySelector(".kb-delay-input")).borderColor, padding:swatchStyle?.padding || "" },
     scout:{ dotWidth:dotStyle.width, dotHeight:dotStyle.height, dotColor:dotStyle.backgroundColor, text:document.querySelector("#oi-zone2 .tc-scout-status")?.textContent?.trim() || "", detail:document.querySelector("#oi-zone2 .tc-scout-empty-detail")?.textContent?.trim() || "" },
-    divider:{ hintBottom:hint?.bottom || null, smartTop:smart ? round(smart.getBoundingClientRect().top) : null, borderTopWidth:smartStyle?.borderTopWidth || "", borderTopColor:smartStyle?.borderTopColor || "", tokenColor:getComputedStyle(document.querySelector(".kb-strength-card")).borderTopColor, engineHeight:round(document.querySelector(".kb-engine-module").getBoundingClientRect().height) },
+    divider:{ hintBottom:hint?.bottom || null, smartTop:smart ? round(smart.getBoundingClientRect().top) : null, borderTopWidth:smartStyle?.borderTopWidth || "", borderTopColor:smartStyle?.borderTopColor || "", backgroundImage:smartStyle?.backgroundImage || "", tokenColor:getComputedStyle(document.querySelector(".kb-strength-card")).borderTopColor, engineHeight:round(document.querySelector(".kb-engine-module").getBoundingClientRect().height) },
     typography:{
       start:font("#kb-session-start"), finish:font("#kb-session-stop"), export:font("#kb-session-export"),
       random:font("label[for='dm-rand']"), immediate:font("label[for='dm-max']"), current:font(".kb-strength-current"),
@@ -158,6 +158,81 @@ const roundThreeMetricsExpression = `(() => {
     headings:{ current:style(current), currentValue:style(currentValue), timing:style(timing), suffix:style(suffix) },
     statusRight:rightItems.map((item) => ({ label:item.querySelector("span")?.textContent || "", labelRect:box(item.querySelector("span")), value:item.querySelector("strong")?.textContent || "", valueRect:box(item.querySelector("strong")) })),
   };
+})()`;
+
+const toggleAlignmentMetricsExpression = `(async () => {
+  const definitions = [
+    ["Bot", "st-on", "st-off"],
+    ["Auto Moves", "am-on", "am-off"],
+    ["Auto Queue", "aq-on", "aq-off"],
+    ["Auto Rating", "aa-on", "aa-off"],
+    ["Evaluation Bar", "eb-on", "eb-off"],
+    ["Smart Pacing", "sp-on", "sp-off"],
+  ];
+  const round = (value) => Math.round(value * 100) / 100;
+  const settle = (group) => {
+    void group.offsetWidth;
+    for (const animation of group.getAnimations({ subtree:true })) {
+      try { animation.finish(); } catch (_error) {}
+    }
+  };
+  const rect = (value) => ({ top:round(value.top), bottom:round(value.bottom), left:round(value.left), right:round(value.right), width:round(value.width), height:round(value.height) });
+  const transformOffset = (transform) => {
+    if (!transform || transform === "none") return { x:0, y:0 };
+    const values=(transform.match(/[-0-9.]+/g) || []).map(Number);
+    return transform.startsWith("matrix3d") ? { x:values[12] || 0, y:values[13] || 0 } : { x:values[4] || 0, y:values[5] || 0 };
+  };
+  const read = (group, state) => {
+    const trackBox=group.getBoundingClientRect();
+    const trackStyle=getComputedStyle(group);
+    const border={ top:Number.parseFloat(trackStyle.borderTopWidth), bottom:Number.parseFloat(trackStyle.borderBottomWidth), left:Number.parseFloat(trackStyle.borderLeftWidth), right:Number.parseFloat(trackStyle.borderRightWidth) };
+    const thumb=group.querySelector(".kb-toggle-thumb");
+    let thumbBox;
+    let source;
+    if (thumb) {
+      thumbBox=thumb.getBoundingClientRect();
+      source="element:getBoundingClientRect";
+    } else {
+      const style=getComputedStyle(group, "::after");
+      const offset=transformOffset(style.transform);
+      const top=trackBox.top + Number.parseFloat(style.top) + offset.y;
+      const left=trackBox.left + Number.parseFloat(style.left) + offset.x;
+      const width=Number.parseFloat(style.width);
+      const height=Number.parseFloat(style.height);
+      thumbBox={ top, bottom:top+height, left, right:left+width, width, height };
+      source="pseudo:computed-style-derived";
+    }
+    const inner={ top:trackBox.top+border.top, bottom:trackBox.bottom-border.bottom, left:trackBox.left+border.left, right:trackBox.right-border.right };
+    const row=group.closest(".kb-section")?.getBoundingClientRect();
+    const rowStyle=group.closest(".kb-section") ? getComputedStyle(group.closest(".kb-section")) : null;
+    const thumbStyle=thumb ? getComputedStyle(thumb) : getComputedStyle(group, "::after");
+    return {
+      state,
+      source,
+      track:rect(trackBox),
+      thumb:rect(thumbBox),
+      border,
+      innerSpace:{ above:round(thumbBox.top-inner.top), below:round(inner.bottom-thumbBox.bottom), left:round(thumbBox.left-inner.left), right:round(inner.right-thumbBox.right) },
+      verticalDifference:round(Math.abs((thumbBox.top-inner.top)-(inner.bottom-thumbBox.bottom))),
+      rowHeight:round(row?.height || 0),
+      row:row ? rect(row) : null,
+      rowBorder:{ top:Number.parseFloat(rowStyle?.borderTopWidth || "0"), bottom:Number.parseFloat(rowStyle?.borderBottomWidth || "0") },
+      trackRight:round(trackBox.right),
+      styles:{ display:trackStyle.display, alignItems:trackStyle.alignItems, boxSizing:trackStyle.boxSizing, transform:thumbStyle.transform, top:thumbStyle.top, margin:thumbStyle.margin },
+      integerGeometry:[trackBox.top,trackBox.bottom,trackBox.right,trackBox.width,trackBox.height,thumbBox.top,thumbBox.bottom,thumbBox.left,thumbBox.right,thumbBox.width,thumbBox.height,row?.height || 0].every(Number.isInteger),
+    };
+  };
+  const output={};
+  for (const [name,onId,offId] of definitions) {
+    const on=document.getElementById(onId); const off=document.getElementById(offId); const group=on?.closest(".kb-radio-group");
+    if (!on || !off || !group) { output[name]={ missing:true }; continue; }
+    const original=on.checked ? "on" : "off";
+    off.checked=true; settle(group); const offMetrics=read(group,"off");
+    on.checked=true; settle(group); const onMetrics=read(group,"on");
+    (original === "on" ? on : off).checked=true; settle(group);
+    output[name]={ off:offMetrics, on:onMetrics };
+  }
+  return output;
 })()`;
 
 const hideFixtureDecorationsExpression = `(() => {
@@ -416,10 +491,13 @@ function createCdpClient(webSocketUrl) {
       const geometry = await client.send("Runtime.evaluate", { expression: geometryExpression, returnByValue: true });
       const polishMetrics = await client.send("Runtime.evaluate", { expression: polishMetricsExpression, returnByValue: true });
       const roundThreeMetrics = await client.send("Runtime.evaluate", { expression: roundThreeMetricsExpression, returnByValue: true });
+      const toggleMetrics = await client.send("Runtime.evaluate", { expression: toggleAlignmentMetricsExpression, awaitPromise:true, returnByValue:true });
       printGeometryTable("ANTES", geometry.result.value);
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-geometry-before.json"), JSON.stringify(geometry.result.value, null, 2));
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-polish-before.json"), JSON.stringify(polishMetrics.result.value, null, 2));
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-polish-round3-before.json"), JSON.stringify(roundThreeMetrics.result.value, null, 2));
+      fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-toggle-alignment-before.json"), JSON.stringify(toggleMetrics.result.value, null, 2));
+      console.log(`Toggle alignment ANTES: ${JSON.stringify(toggleMetrics.result.value)}`);
       await client.send("Runtime.evaluate", { expression: hideFixtureDecorationsExpression });
       const screenshot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
       await client.send("Runtime.evaluate", { expression: restoreFixtureDecorationsExpression });
@@ -438,16 +516,37 @@ function createCdpClient(webSocketUrl) {
       const geometry = await client.send("Runtime.evaluate", { expression: geometryExpression, returnByValue: true });
       const polishMetrics = await client.send("Runtime.evaluate", { expression: polishMetricsExpression, returnByValue: true });
       const roundThreeMetrics = await client.send("Runtime.evaluate", { expression: roundThreeMetricsExpression, returnByValue: true });
+      const toggleMetrics = await client.send("Runtime.evaluate", { expression: toggleAlignmentMetricsExpression, awaitPromise:true, returnByValue:true });
       printGeometryTable("DEPOIS", geometry.result.value);
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-geometry-after.json"), JSON.stringify(geometry.result.value, null, 2));
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-polish-after.json"), JSON.stringify(polishMetrics.result.value, null, 2));
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-polish-round3-after.json"), JSON.stringify(roundThreeMetrics.result.value, null, 2));
+      fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-toggle-alignment-after.json"), JSON.stringify(toggleMetrics.result.value, null, 2));
+      console.log(`Toggle alignment DEPOIS: ${JSON.stringify(toggleMetrics.result.value)}`);
+      for (const [name, states] of Object.entries(toggleMetrics.result.value)) {
+        assert(!states.missing, `${name} toggle is missing`);
+        for (const state of [states.off, states.on]) {
+          assert(state.source === "element:getBoundingClientRect", `${name} ${state.state} thumb is not directly measurable: ${JSON.stringify(state)}`);
+          assert(state.track.width === 40 && state.track.height === 24 && state.thumb.width === 18 && state.thumb.height === 18, `${name} ${state.state} external dimensions changed: ${JSON.stringify(state)}`);
+          assert(state.border.top === 1 && state.border.bottom === 1 && state.innerSpace.above === state.innerSpace.below && state.verticalDifference === 0, `${name} ${state.state} thumb is not vertically centered: ${JSON.stringify(state)}`);
+          assert(state.integerGeometry && state.rowHeight === 36, `${name} ${state.state} has fractional geometry or changed row height: ${JSON.stringify(state)}`);
+        }
+        assert(states.off.innerSpace.left === states.on.innerSpace.right && states.on.thumb.left-states.off.thumb.left === 18 && states.off.trackRight === states.on.trackRight && states.off.thumb.top === states.on.thumb.top && states.off.thumb.bottom === states.on.thumb.bottom, `${name} lateral padding, travel, or vertical axis changes by state: ${JSON.stringify(states)}`);
+      }
       await client.send("Runtime.evaluate", { expression: hideFixtureDecorationsExpression });
       const screenshot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
       await client.send("Runtime.evaluate", { expression: restoreFixtureDecorationsExpression });
       const artifactPath = path.join(root, "tests", "artifacts", "thinker-console-reference-after.png");
       fs.writeFileSync(artifactPath, Buffer.from(screenshot.data, "base64"));
       console.log(`Default console evidence: ${artifactPath}`);
+      const toggleCapture = async (state) => {
+        const result=await client.send("Runtime.evaluate", { expression:`(async () => { const on=document.getElementById("st-on"); const off=document.getElementById("st-off"); const original=on.checked ? "on" : "off"; ${state === "on" ? "on" : "off"}.checked=true; await new Promise((resolve) => setTimeout(resolve,190)); const box=on.closest(".kb-radio-group").getBoundingClientRect(); return { original, clip:{ x:box.left+scrollX-12, y:box.top+scrollY-12, width:box.width+24, height:box.height+24 } }; })()`, awaitPromise:true, returnByValue:true });
+        const shot=await client.send("Page.captureScreenshot", { format:"png", captureBeyondViewport:true, clip:{ ...result.result.value.clip, scale:3 } });
+        fs.writeFileSync(path.join(root,"tests","artifacts",`thinker-toggle-${state}-300.png`),Buffer.from(shot.data,"base64"));
+        await client.send("Runtime.evaluate", { expression:`(() => { document.getElementById(${JSON.stringify(result.result.value.original === "on" ? "st-on" : "st-off")}).checked=true; })()` });
+      };
+      await toggleCapture("off");
+      await toggleCapture("on");
       for (const width of [1086, 1280, 1440, 1920]) {
         await client.send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: false });
         await client.send("Runtime.evaluate", { expression: "scrollTo(0, Math.max(0, document.getElementById('oi-wrapper').offsetTop - 40))" });
@@ -756,6 +855,8 @@ function createCdpClient(webSocketUrl) {
     const polish = polishResult.result.value;
     const roundThreeResult = await client.send("Runtime.evaluate", { expression: roundThreeMetricsExpression, returnByValue: true });
     const roundThree = roundThreeResult.result.value;
+    const toggleAlignmentResult = await client.send("Runtime.evaluate", { expression: toggleAlignmentMetricsExpression, awaitPromise:true, returnByValue:true });
+    const toggleAlignment = toggleAlignmentResult.result.value;
     const [statusCell, timeCell, scoreCell, rateCell] = polish.status;
     const typeMetrics = Object.values(polish.typography);
     const buttonStateMetrics = Object.values(polish.buttonStates).flatMap((states) => [states.enabled, states.disabled]);
@@ -782,7 +883,7 @@ function createCdpClient(webSocketUrl) {
     assert(polish.swatch.rect.width === 24 && polish.swatch.rect.height === 24 && polish.swatch.borderWidth === "1px" && polish.swatch.padding === "0px" && polish.swatch.borderColor === polish.swatch.inputBorderColor, `Theme swatch frame regressed: ${JSON.stringify(polish.swatch)}`);
     assert(Number.parseFloat(polish.scout.dotWidth) >= 6 && Number.parseFloat(polish.scout.dotWidth) <= 8 && polish.scout.dotWidth === polish.scout.dotHeight && polish.scout.text === "Waiting for opponent", `Scout waiting indicator regressed: ${JSON.stringify(polish.scout)}`);
     assert(polish.scout.detail === "Public data appears after an opponent is identified.", `Pre-existing Scout explanation was lost: ${JSON.stringify(polish.scout)}`);
-    assert(polish.divider.borderTopWidth === "1px" && polish.divider.borderTopColor === polish.divider.tokenColor && polish.divider.engineHeight === 358, `Move Timing / Smart Pacing divider is inconsistent or changed panel height: ${JSON.stringify(polish.divider)}`);
+    assert(((polish.divider.borderTopWidth === "1px" && polish.divider.borderTopColor === polish.divider.tokenColor) || (polish.divider.borderTopWidth === "0px" && polish.divider.backgroundImage.includes(polish.divider.tokenColor))) && polish.divider.engineHeight === 358, `Move Timing / Smart Pacing divider is inconsistent or changed panel height: ${JSON.stringify(polish.divider)}`);
     assert(typeMetrics.every((metric) => Number.parseFloat(metric.fontSize) >= 11 && metric.contrast >= 4.5), `Polish typography is undersized or low contrast: ${JSON.stringify(polish.typography)}`);
     assert(buttonStateMetrics.every((metric) => Number.parseFloat(metric.fontSize) >= 11 && metric.contrast >= 4.5), `Button state typography is undersized or low contrast: ${JSON.stringify(polish.buttonStates)}`);
     assert(polish.typography.start.fontSize === polish.typography.finish.fontSize && polish.typography.finish.fontSize === polish.typography.export.fontSize, `Action button type sizes diverge: ${JSON.stringify(polish.typography)}`);
@@ -792,6 +893,14 @@ function createCdpClient(webSocketUrl) {
     assert([roundThree.headings.current, roundThree.headings.currentValue, roundThree.headings.timing].every((metric) => Number.parseFloat(metric.fontSize) >= 11 && metric.fontSize === roundThree.headings.current.fontSize && metric.fontWeight === roundThree.headings.current.fontWeight && metric.color === roundThree.headings.current.color && metric.fontVariantNumeric === "tabular-nums"), `Section summary typography diverged: ${JSON.stringify(roundThree.headings)}`);
     assert(Number.parseFloat(roundThree.headings.suffix.fontSize) >= 11, `Move Timing suffix is undersized: ${JSON.stringify(roundThree.headings.suffix)}`);
     assert(roundThree.statusRight.length === 2 && roundThree.statusRight[0].labelRect.x === roundThree.statusRight[1].labelRect.x && roundThree.statusRight[0].valueRect.x === roundThree.statusRight[1].valueRect.x && roundThree.statusRight[0].valueRect.right === roundThree.statusRight[1].valueRect.right && roundThree.statusRight[0].valueRect.right === polish.content.autoPlayRight, `Right status values do not share a content-edge column: ${JSON.stringify(roundThree.statusRight)}`);
+    for (const [name, states] of Object.entries(toggleAlignment)) {
+      assert(!states.missing, `${name} toggle is missing`);
+      for (const state of [states.off, states.on]) {
+        assert(state.source === "element:getBoundingClientRect" && state.track.width === 40 && state.track.height === 24 && state.thumb.width === 18 && state.thumb.height === 18, `${name} ${state.state} toggle dimensions or measurable thumb regressed: ${JSON.stringify(state)}`);
+        assert(state.border.top === 1 && state.border.bottom === 1 && state.innerSpace.above === state.innerSpace.below && state.verticalDifference === 0 && state.integerGeometry && state.rowHeight === 36, `${name} ${state.state} toggle alignment regressed: ${JSON.stringify(state)}`);
+      }
+      assert(states.off.innerSpace.left === states.on.innerSpace.right && states.on.thumb.left-states.off.thumb.left === 18 && states.off.trackRight === states.on.trackRight && states.off.thumb.top === states.on.thumb.top && states.off.thumb.bottom === states.on.thumb.bottom, `${name} toggle state geometry regressed: ${JSON.stringify(states)}`);
+    }
     assert(disclosureSmoke.scout?.background === "rgb(37, 37, 35)" && disclosureSmoke.scout.backgroundImage === "none" && disclosureSmoke.scout.radius === "8px", `Scout neutral styling regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
     assert(disclosureSmoke.scout.font.includes("Segoe UI") || disclosureSmoke.scout.font.includes("Arial"), `Scout system font regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
     assert(disclosureSmoke.scout.width === "296px" && disclosureSmoke.scout.height === disclosureSmoke.scout.menuHeight && !disclosureSmoke.scout.hasRadar && disclosureSmoke.scout.emptyDetail, `Scout waiting state did not fill the named grid: ${JSON.stringify(disclosureSmoke.scout)}`);

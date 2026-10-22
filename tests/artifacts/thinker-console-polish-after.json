@@ -140,8 +140,9 @@
   "divider": {
     "hintBottom": 421,
     "smartTop": 433,
-    "borderTopWidth": "1px",
-    "borderTopColor": "rgb(50, 50, 47)",
+    "borderTopWidth": "0px",
+    "borderTopColor": "rgb(236, 236, 232)",
+    "backgroundImage": "linear-gradient(rgb(50, 50, 47), rgb(50, 50, 47))",
     "tokenColor": "rgb(50, 50, 47)",
     "engineHeight": 358
   },
