@@ -1,0 +1,175 @@
+{
+  "segmented": {
+    "random": {
+      "state": "random",
+      "container": {
+        "top": 368,
+        "bottom": 398,
+        "left": 585,
+        "right": 904,
+        "width": 319,
+        "height": 30
+      },
+      "inner": {
+        "top": 368,
+        "bottom": 398,
+        "left": 585,
+        "right": 904
+      },
+      "border": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0
+      },
+      "padding": "2px",
+      "gap": "normal",
+      "overflow": "visible",
+      "borderRadius": "8px",
+      "backgroundColor": "rgb(25, 26, 31)",
+      "random": {
+        "rect": {
+          "top": 370,
+          "bottom": 398,
+          "left": 587,
+          "right": 744.5,
+          "width": 157.5,
+          "height": 28
+        },
+        "backgroundColor": "rgb(58, 58, 54)",
+        "color": "rgb(222, 222, 217)",
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "display": "block",
+        "alignItems": "normal",
+        "justifyContent": "normal",
+        "borderRadius": "3px",
+        "contrast": 8.46
+      },
+      "immediate": {
+        "rect": {
+          "top": 370,
+          "bottom": 398,
+          "left": 744.5,
+          "right": 902,
+          "width": 157.5,
+          "height": 28
+        },
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(133, 139, 150)",
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "display": "block",
+        "alignItems": "normal",
+        "justifyContent": "normal",
+        "borderRadius": "3px",
+        "contrast": 6.13
+      },
+      "coverage": {
+        "top": 2,
+        "bottom": 0,
+        "left": 2,
+        "right": 2,
+        "between": 0
+      },
+      "integerGeometry": false
+    },
+    "immediate": {
+      "state": "immediate",
+      "container": {
+        "top": 368,
+        "bottom": 398,
+        "left": 585,
+        "right": 904,
+        "width": 319,
+        "height": 30
+      },
+      "inner": {
+        "top": 368,
+        "bottom": 398,
+        "left": 585,
+        "right": 904
+      },
+      "border": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0
+      },
+      "padding": "2px",
+      "gap": "normal",
+      "overflow": "visible",
+      "borderRadius": "8px",
+      "backgroundColor": "rgb(25, 26, 31)",
+      "random": {
+        "rect": {
+          "top": 370,
+          "bottom": 398,
+          "left": 587,
+          "right": 744.5,
+          "width": 157.5,
+          "height": 28
+        },
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(133, 139, 150)",
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "display": "block",
+        "alignItems": "normal",
+        "justifyContent": "normal",
+        "borderRadius": "3px",
+        "contrast": 6.13
+      },
+      "immediate": {
+        "rect": {
+          "top": 370,
+          "bottom": 398,
+          "left": 744.5,
+          "right": 902,
+          "width": 157.5,
+          "height": 28
+        },
+        "backgroundColor": "rgb(58, 58, 54)",
+        "color": "rgb(222, 222, 217)",
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "display": "block",
+        "alignItems": "normal",
+        "justifyContent": "normal",
+        "borderRadius": "3px",
+        "contrast": 8.46
+      },
+      "coverage": {
+        "top": 2,
+        "bottom": 0,
+        "left": 2,
+        "right": 2,
+        "between": 0
+      },
+      "integerGeometry": false
+    }
+  },
+  "footer": {
+    "rect": {
+      "top": 650,
+      "bottom": 701,
+      "left": 228,
+      "right": 904,
+      "width": 676,
+      "height": 51
+    },
+    "panelContent": {
+      "left": 228,
+      "right": 904
+    },
+    "borderTopWidth": "1px",
+    "borderTopColor": "rgb(50, 50, 47)",
+    "borderRadius": "13px",
+    "overflow": "visible",
+    "panelHeight": 220,
+    "edgeDifference": {
+      "left": 0,
+      "right": 0
+    }
+  }
+}

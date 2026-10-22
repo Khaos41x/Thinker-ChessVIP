@@ -6064,6 +6064,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-run-delay-card .kb-timing-mode label { min-width:0; padding:5px 4px; border-radius:3px; color:#999a94; font-size:9px; line-height:16px; font-weight:500; transition:background-color .14s ease,color .14s ease; }
         #krypbot-container .kb-run-delay-card .kb-timing-mode label:hover { color:#cacac5; }
         #krypbot-container .kb-timing-mode input[type="radio"] { position:absolute; display:block; width:1px; height:1px; opacity:0; }
+        #krypbot-container .kb-timing-mode input[type="radio"]:focus + label,
         #krypbot-container .kb-timing-mode input[type="radio"]:focus-visible + label { outline:2px solid var(--tc-console-focus); outline-offset:-2px; }
         #krypbot-container .kb-run-delay-card[data-inactive="true"] .kb-timing-mode input:checked + label { background:#3a3a36; color:#deded9 !important; }
         #krypbot-container .kb-run-delay-card[data-inactive="false"] .kb-timing-mode input:checked + label { background:var(--tc-console-accent); color:#0d2113 !important; }
@@ -6276,8 +6277,20 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         }
         #krypbot-container .kb-delay-unit { width:24px; padding-right:10px; font-size:11px; line-height:16px; text-align:right; pointer-events:none; }
         #krypbot-container .kb-delay-separator { flex:0 0 11px; color:#a0a19b; font-size:13px; line-height:16px; text-align:center; }
-        #krypbot-container .kb-timing-mode { height:var(--control-height); }
-        #krypbot-container .kb-run-delay-card .kb-timing-mode label { height:28px; padding:6px 8px; font-size:11px !important; line-height:16px; }
+        #krypbot-container .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) {
+          display:grid; grid-template-columns:var(--kb-timing-columns,repeat(2,minmax(0,1fr))); justify-content:space-between; align-items:stretch;
+          width:100%; height:var(--control-height); padding:0; gap:0; box-sizing:border-box;
+          border:1px solid var(--tc-console-border); border-radius:var(--radius-control); overflow:hidden; background:var(--tc-console-border);
+        }
+        #krypbot-container .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]):focus-within { border-color:var(--tc-console-focus); }
+        #krypbot-container .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) label {
+          display:flex; align-items:center; justify-content:center; width:100%; height:100%; min-width:0; padding:0;
+          box-sizing:border-box; border:0; border-radius:0; background:var(--tc-console-module); color:#c4c5bf;
+          font-size:11px !important; line-height:16px; font-weight:500;
+        }
+        #krypbot-container .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) label:hover { background:var(--tc-console-row); color:#e1e1dc; }
+        #krypbot-container .kb-run-delay-card[data-inactive="true"] .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) input:checked + label { background:var(--tc-console-border); color:#deded9 !important; }
+        #krypbot-container .kb-run-delay-card[data-inactive="false"] .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) input:checked + label { background:var(--tc-console-accent); color:#0d2113 !important; }
         #krypbot-container .kb-dependency-hint { margin:var(--space-2) 0 0; color:#aaaBa5; font-size:11px; line-height:15px; }
         #krypbot-container .kb-run-delay-card + .kb-section { border-top:1px solid var(--tc-console-divider) !important; }
         #krypbot-container .kb-session-fields {
@@ -6310,6 +6323,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           display:grid; grid-template-columns:max-content minmax(0,1fr) max-content max-content;
           gap:var(--space-2) var(--field-gap); align-items:baseline;
           margin:var(--space-3) 0 0; padding:var(--space-3) 0 0; border-top:1px solid var(--tc-console-divider);
+          border-radius:0; overflow:visible; background:transparent;
         }
         #krypbot-container .kb-session-status-item {
           min-width:0; display:grid; grid-template-columns:subgrid; grid-column:span 2; align-items:baseline;
@@ -6492,6 +6506,17 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       </div>
     `;
 
+    const syncTimingModeGeometry = (menu = document.getElementById("krypbot-container")) => {
+      const group = menu?.querySelector?.(".kb-timing-mode");
+      if (!group) return;
+      const style = getComputedStyle(group);
+      const innerWidth = Math.max(0, Math.round(group.getBoundingClientRect().width)
+        - Math.round(Number.parseFloat(style.borderLeftWidth) || 0)
+        - Math.round(Number.parseFloat(style.borderRightWidth) || 0));
+      const columnWidth = Math.floor(innerWidth / 2);
+      group.style.setProperty("--kb-timing-columns", `${columnWidth}px ${columnWidth}px`);
+    };
+
     const applyCompactConsoleLayout = (menu) => {
       if (!menu || typeof menu.querySelector !== "function" || menu.dataset?.consoleLayout === "reference") return;
       const header = menu.querySelector(".kb-header");
@@ -6567,6 +6592,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       menu.insertBefore(grid, toast || null);
       menu.classList.add("kb-console");
       menu.dataset.consoleLayout = "reference";
+      syncTimingModeGeometry(menu);
     };
 
     const bannerHtml = `
@@ -6627,6 +6653,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           wrapper.style.setProperty("width", wrapperWidth + "px", "important");
           const measuredWrapperWidth = Math.round(wrapper.getBoundingClientRect().width);
           wrapper.dataset.layoutMode = measuredWrapperWidth >= 1034 ? "desktop" : "stacked";
+          syncTimingModeGeometry(thinkerMenuNode);
           const safeLeft = Math.round(window.scrollX + Math.max(0, (window.innerWidth - measuredWrapperWidth) / 2));
           wrapper.style.setProperty("top", Math.ceil(safeTop) + "px", "important");
           wrapper.style.setProperty("left", safeLeft + "px", "important");

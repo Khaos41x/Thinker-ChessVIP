@@ -235,6 +235,52 @@ const toggleAlignmentMetricsExpression = `(async () => {
   return output;
 })()`;
 
+const segmentedFooterMetricsExpression = `(() => {
+  const round = (value) => Math.round(value * 100) / 100;
+  const box = (node) => {
+    const value=node.getBoundingClientRect();
+    return { top:round(value.top), bottom:round(value.bottom), left:round(value.left), right:round(value.right), width:round(value.width), height:round(value.height) };
+  };
+  const rgb = (value) => (value.match(/[0-9.]+/g) || []).slice(0,3).map(Number);
+  const luminance = (values) => { const channels=values.map((value) => { const part=value/255; return part <= .03928 ? part/12.92 : Math.pow((part+.055)/1.055,2.4); }); return .2126*channels[0]+.7152*channels[1]+.0722*channels[2]; };
+  const contrast = (foreground, background) => { const a=luminance(rgb(foreground)); const b=luminance(rgb(background)); return round((Math.max(a,b)+.05)/(Math.min(a,b)+.05)); };
+  const group=document.querySelector(".kb-timing-mode");
+  const random=document.querySelector("label[for='dm-rand']");
+  const immediate=document.querySelector("label[for='dm-max']");
+  const randomInput=document.getElementById("dm-rand");
+  const immediateInput=document.getElementById("dm-max");
+  const card=group.closest(".kb-run-delay-card");
+  const previousFocus=document.activeElement;
+  const original=randomInput.checked ? "random" : "immediate";
+  const originalInactive=card.dataset.inactive;
+  const settle = () => { void group.offsetWidth; for (const animation of group.getAnimations({ subtree:true })) { try { animation.finish(); } catch (_error) {} } };
+  const readOption = (node) => { const style=getComputedStyle(node); return { rect:box(node), backgroundColor:style.backgroundColor, color:style.color, fontSize:style.fontSize, lineHeight:style.lineHeight, display:style.display, alignItems:style.alignItems, justifyContent:style.justifyContent, borderRadius:style.borderRadius, contrast:contrast(style.color,style.backgroundColor) }; };
+  const readState = (state) => {
+    const style=getComputedStyle(group); const rect=box(group);
+    const border={ top:Number.parseFloat(style.borderTopWidth), bottom:Number.parseFloat(style.borderBottomWidth), left:Number.parseFloat(style.borderLeftWidth), right:Number.parseFloat(style.borderRightWidth) };
+    const inner={ top:round(rect.top+border.top), bottom:round(rect.bottom-border.bottom), left:round(rect.left+border.left), right:round(rect.right-border.right) };
+    const randomOption=readOption(random); const immediateOption=readOption(immediate);
+    return { state, container:rect, inner, border, padding:style.padding, gap:style.gap, overflow:style.overflow, borderRadius:style.borderRadius, backgroundColor:style.backgroundColor, random:randomOption, immediate:immediateOption,
+      coverage:{ top:round(Math.min(randomOption.rect.top,immediateOption.rect.top)-inner.top), bottom:round(inner.bottom-Math.max(randomOption.rect.bottom,immediateOption.rect.bottom)), left:round(randomOption.rect.left-inner.left), right:round(inner.right-immediateOption.rect.right), between:round(immediateOption.rect.left-randomOption.rect.right) },
+      integerGeometry:[rect.top,rect.bottom,rect.left,rect.right,rect.width,rect.height,randomOption.rect.top,randomOption.rect.bottom,randomOption.rect.left,randomOption.rect.right,randomOption.rect.width,randomOption.rect.height,immediateOption.rect.top,immediateOption.rect.bottom,immediateOption.rect.left,immediateOption.rect.right,immediateOption.rect.width,immediateOption.rect.height].every(Number.isInteger) };
+  };
+  card.dataset.inactive="true";
+  randomInput.checked=true; settle(); const randomState=readState("random");
+  immediateInput.checked=true; settle(); const immediateState=readState("immediate");
+  card.dataset.inactive="false";
+  randomInput.checked=true; settle(); const activeRandomState=readState("active-random");
+  immediateInput.checked=true; settle(); const activeImmediateState=readState("active-immediate");
+  const beforeFocus=box(group); const borderColorBeforeFocus=getComputedStyle(group).borderTopColor; randomInput.focus(); const afterFocus=box(group); const computedFocusStyle=getComputedStyle(group); const focusStyle={ borderColorBefore:borderColorBeforeFocus, borderColorAfter:computedFocusStyle.borderTopColor, activeElement:document.activeElement?.id || "" };
+  (original === "random" ? randomInput : immediateInput).checked=true; settle();
+  card.dataset.inactive=originalInactive;
+  if (previousFocus && previousFocus !== document.body && typeof previousFocus.focus === "function") previousFocus.focus();
+  else randomInput.blur();
+  const status=document.querySelector(".kb-session-status"); const panel=document.querySelector(".kb-auto-play-module");
+  const statusRect=box(status); const panelRect=box(panel); const panelStyle=getComputedStyle(panel); const statusStyle=getComputedStyle(status);
+  const panelContent={ left:round(panelRect.left+Number.parseFloat(panelStyle.borderLeftWidth)+Number.parseFloat(panelStyle.paddingLeft)), right:round(panelRect.right-Number.parseFloat(panelStyle.borderRightWidth)-Number.parseFloat(panelStyle.paddingRight)) };
+  return { segmented:{ random:randomState, immediate:immediateState, activeRandom:activeRandomState, activeImmediate:activeImmediateState }, focus:{ before:beforeFocus, after:afterFocus, ...focusStyle }, footer:{ rect:statusRect, panelContent, borderTopWidth:statusStyle.borderTopWidth, borderTopColor:statusStyle.borderTopColor, borderRadius:statusStyle.borderRadius, overflow:statusStyle.overflow, panelHeight:panelRect.height, edgeDifference:{ left:round(statusRect.left-panelContent.left), right:round(panelContent.right-statusRect.right) } } };
+})()`;
+
 const hideFixtureDecorationsExpression = `(() => {
   for (const node of document.querySelectorAll(".chess-navigation, .ad-rail")) node.style.setProperty("display", "none", "important");
 })()`;
@@ -492,11 +538,13 @@ function createCdpClient(webSocketUrl) {
       const polishMetrics = await client.send("Runtime.evaluate", { expression: polishMetricsExpression, returnByValue: true });
       const roundThreeMetrics = await client.send("Runtime.evaluate", { expression: roundThreeMetricsExpression, returnByValue: true });
       const toggleMetrics = await client.send("Runtime.evaluate", { expression: toggleAlignmentMetricsExpression, awaitPromise:true, returnByValue:true });
+      const segmentedFooterMetrics = await client.send("Runtime.evaluate", { expression: segmentedFooterMetricsExpression, returnByValue:true });
       printGeometryTable("ANTES", geometry.result.value);
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-geometry-before.json"), JSON.stringify(geometry.result.value, null, 2));
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-polish-before.json"), JSON.stringify(polishMetrics.result.value, null, 2));
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-polish-round3-before.json"), JSON.stringify(roundThreeMetrics.result.value, null, 2));
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-toggle-alignment-before.json"), JSON.stringify(toggleMetrics.result.value, null, 2));
+      fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-segmented-footer-before.json"), JSON.stringify(segmentedFooterMetrics.result.value, null, 2));
       console.log(`Toggle alignment ANTES: ${JSON.stringify(toggleMetrics.result.value)}`);
       await client.send("Runtime.evaluate", { expression: hideFixtureDecorationsExpression });
       const screenshot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
@@ -517,11 +565,13 @@ function createCdpClient(webSocketUrl) {
       const polishMetrics = await client.send("Runtime.evaluate", { expression: polishMetricsExpression, returnByValue: true });
       const roundThreeMetrics = await client.send("Runtime.evaluate", { expression: roundThreeMetricsExpression, returnByValue: true });
       const toggleMetrics = await client.send("Runtime.evaluate", { expression: toggleAlignmentMetricsExpression, awaitPromise:true, returnByValue:true });
+      const segmentedFooterMetrics = await client.send("Runtime.evaluate", { expression: segmentedFooterMetricsExpression, returnByValue:true });
       printGeometryTable("DEPOIS", geometry.result.value);
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-geometry-after.json"), JSON.stringify(geometry.result.value, null, 2));
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-polish-after.json"), JSON.stringify(polishMetrics.result.value, null, 2));
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-polish-round3-after.json"), JSON.stringify(roundThreeMetrics.result.value, null, 2));
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-toggle-alignment-after.json"), JSON.stringify(toggleMetrics.result.value, null, 2));
+      fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-segmented-footer-after.json"), JSON.stringify(segmentedFooterMetrics.result.value, null, 2));
       console.log(`Toggle alignment DEPOIS: ${JSON.stringify(toggleMetrics.result.value)}`);
       for (const [name, states] of Object.entries(toggleMetrics.result.value)) {
         assert(!states.missing, `${name} toggle is missing`);
@@ -533,6 +583,16 @@ function createCdpClient(webSocketUrl) {
         }
         assert(states.off.innerSpace.left === states.on.innerSpace.right && states.on.thumb.left-states.off.thumb.left === 18 && states.off.trackRight === states.on.trackRight && states.off.thumb.top === states.on.thumb.top && states.off.thumb.bottom === states.on.thumb.bottom, `${name} lateral padding, travel, or vertical axis changes by state: ${JSON.stringify(states)}`);
       }
+      for (const state of Object.values(segmentedFooterMetrics.result.value.segmented)) {
+        assert(state.container.height === 32 && state.padding === "0px" && state.gap === "0px" && state.overflow === "hidden", `Segmented container geometry regressed: ${JSON.stringify(state)}`);
+        assert(state.random.rect.width === state.immediate.rect.width && state.random.rect.height === 30 && state.immediate.rect.height === 30 && state.integerGeometry, `Segmented options are unequal or fractional: ${JSON.stringify(state)}`);
+        assert(state.coverage.top === 0 && state.coverage.bottom === 0 && state.coverage.left === 0 && state.coverage.right === 0 && [0,1].includes(state.coverage.between), `Segmented options do not cover the container interior: ${JSON.stringify(state)}`);
+        assert(state.random.backgroundColor !== state.immediate.backgroundColor, `Segmented selected and unselected surfaces are indistinguishable: ${JSON.stringify(state)}`);
+        for (const option of [state.random,state.immediate]) assert(option.display === "flex" && option.alignItems === "center" && option.justifyContent === "center" && Number.parseFloat(option.fontSize) === 11 && option.contrast >= 4.5, `Segmented option styling regressed: ${JSON.stringify(option)}`);
+      }
+      assert(segmentedFooterMetrics.result.value.focus.before.left === segmentedFooterMetrics.result.value.focus.after.left && segmentedFooterMetrics.result.value.focus.before.top === segmentedFooterMetrics.result.value.focus.after.top && segmentedFooterMetrics.result.value.focus.before.width === segmentedFooterMetrics.result.value.focus.after.width && segmentedFooterMetrics.result.value.focus.before.height === segmentedFooterMetrics.result.value.focus.after.height && segmentedFooterMetrics.result.value.focus.borderColorBefore !== segmentedFooterMetrics.result.value.focus.borderColorAfter && segmentedFooterMetrics.result.value.focus.activeElement === "dm-rand", `Segmented focus feedback changed geometry or is invisible: ${JSON.stringify(segmentedFooterMetrics.result.value.focus)}`);
+      const footerMetrics=segmentedFooterMetrics.result.value.footer;
+      assert(footerMetrics.borderTopWidth === "1px" && footerMetrics.borderTopColor === "rgb(50, 50, 47)" && footerMetrics.borderRadius === "0px" && footerMetrics.overflow === "visible" && footerMetrics.edgeDifference.left === 0 && footerMetrics.edgeDifference.right === 0 && footerMetrics.panelHeight === 220, `Auto Play status divider regressed: ${JSON.stringify(footerMetrics)}`);
       await client.send("Runtime.evaluate", { expression: hideFixtureDecorationsExpression });
       const screenshot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
       await client.send("Runtime.evaluate", { expression: restoreFixtureDecorationsExpression });
@@ -547,6 +607,16 @@ function createCdpClient(webSocketUrl) {
       };
       await toggleCapture("off");
       await toggleCapture("on");
+      const segmentedCapture = async (state) => {
+        const result=await client.send("Runtime.evaluate", { expression:`(() => { document.activeElement?.blur?.(); const input=document.getElementById(${JSON.stringify(state === "random" ? "dm-rand" : "dm-max")}); input.checked=true; const group=input.closest(".kb-timing-mode"); void group.offsetWidth; for (const animation of group.getAnimations({subtree:true})) { try { animation.finish(); } catch (_error) {} } const box=group.getBoundingClientRect(); return { x:box.left+scrollX-8,y:box.top+scrollY-8,width:box.width+16,height:box.height+16 }; })()`, returnByValue:true });
+        const shot=await client.send("Page.captureScreenshot", { format:"png", captureBeyondViewport:true, clip:{...result.result.value,scale:3} });
+        fs.writeFileSync(path.join(root,"tests","artifacts",`thinker-segmented-${state}-300.png`),Buffer.from(shot.data,"base64"));
+      };
+      await segmentedCapture("random");
+      await segmentedCapture("immediate");
+      const dividerCapture=await client.send("Runtime.evaluate", { expression:`(() => { const node=document.querySelector(".kb-session-status"); const box=node.getBoundingClientRect(); return {x:box.left+scrollX-8,y:box.top+scrollY-8,width:box.width+16,height:25}; })()`, returnByValue:true });
+      const dividerShot=await client.send("Page.captureScreenshot", { format:"png", captureBeyondViewport:true, clip:{...dividerCapture.result.value,scale:3} });
+      fs.writeFileSync(path.join(root,"tests","artifacts","thinker-autoplay-divider-300.png"),Buffer.from(dividerShot.data,"base64"));
       for (const width of [1086, 1280, 1440, 1920]) {
         await client.send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: false });
         await client.send("Runtime.evaluate", { expression: "scrollTo(0, Math.max(0, document.getElementById('oi-wrapper').offsetTop - 40))" });
@@ -580,15 +650,17 @@ function createCdpClient(webSocketUrl) {
             const panels=[".kb-core-module",".kb-visuals-module",".kb-engine-module",".kb-auto-play-module","#oi-zone2"].map((selector) => document.querySelector(selector).getBoundingClientRect());
             const wrapperRect=wrapper.getBoundingClientRect(); const gridRect=grid.getBoundingClientRect();
             const controls=Array.from(grid.querySelectorAll("button,input:not([type=radio]),[role=switch],label[for='dm-rand'],label[for='dm-max']")).filter((node) => !node.hidden && !node.closest("[inert]") && getComputedStyle(node).display !== "none" && node.getClientRects().length);
+            const timing=document.querySelector(".kb-timing-mode").getBoundingClientRect(); const options=Array.from(document.querySelectorAll(".kb-timing-mode label")).map((node) => node.getBoundingClientRect());
             return { mode:wrapper.dataset.layoutMode, width:wrapperRect.width, insetLeft:gridRect.left-wrapperRect.left, insetRight:wrapperRect.right-gridRect.right,
               gaps:panels.slice(1).map((panel,index) => panel.top-panels[index].bottom), horizontalOverflow:wrapper.scrollWidth>wrapper.clientWidth,
               allReachable:controls.every((node) => { const rect=node.getBoundingClientRect(); return rect.width>0 && rect.height>0 && rect.left>=0 && rect.right<=innerWidth; }),
+              segmented:{ container:{left:timing.left,right:timing.right,width:timing.width}, widths:options.map((rect) => rect.width), integer:[timing.left,timing.right,timing.width,...options.flatMap((rect) => [rect.left,rect.right,rect.width])].every(Number.isInteger) },
               capture:{ x:wrapperRect.left+scrollX, y:wrapperRect.top+scrollY, width:wrapperRect.width, height:wrapperRect.height } };
           })()`, returnByValue:true,
         });
         const stacked=stackedResult.result.value;
         roundThreeStackedAudits[String(width)]=stacked;
-        assert(stacked.mode === "stacked" && stacked.insetLeft === 12 && stacked.insetRight === 12 && stacked.gaps.every((gap) => gap === 12) && !stacked.horizontalOverflow && stacked.allReachable, `Stacked evidence failed at ${width}px: ${JSON.stringify(stacked)}`);
+        assert(stacked.mode === "stacked" && stacked.insetLeft === 12 && stacked.insetRight === 12 && stacked.gaps.every((gap) => gap === 12) && !stacked.horizontalOverflow && stacked.allReachable && stacked.segmented.integer && stacked.segmented.widths[0] === stacked.segmented.widths[1], `Stacked evidence failed at ${width}px: ${JSON.stringify(stacked)}`);
         const stackedShot=await client.send("Page.captureScreenshot", { format:"png", captureBeyondViewport:true, clip:{ ...stacked.capture, scale:1 } });
         await client.send("Runtime.evaluate", { expression: restoreFixtureDecorationsExpression });
         fs.writeFileSync(path.join(root,"tests","artifacts",`thinker-console-polish-round3-${width}-stacked.png`),Buffer.from(stackedShot.data,"base64"));
@@ -857,6 +929,12 @@ function createCdpClient(webSocketUrl) {
     const roundThree = roundThreeResult.result.value;
     const toggleAlignmentResult = await client.send("Runtime.evaluate", { expression: toggleAlignmentMetricsExpression, awaitPromise:true, returnByValue:true });
     const toggleAlignment = toggleAlignmentResult.result.value;
+    const segmentedFooterResult = await client.send("Runtime.evaluate", { expression: segmentedFooterMetricsExpression, returnByValue:true });
+    const segmentedFooter = segmentedFooterResult.result.value;
+    const segmentedHoverBefore = await client.send("Runtime.evaluate", { expression:`(() => { const node=document.querySelector("label[for='dm-max']"); const rect=node.getBoundingClientRect(); const style=getComputedStyle(node); return { rect:{left:rect.left,top:rect.top,width:rect.width,height:rect.height}, backgroundColor:style.backgroundColor, point:{x:rect.left+rect.width/2,y:rect.top+rect.height/2} }; })()`, returnByValue:true });
+    await client.send("Input.dispatchMouseEvent", { type:"mouseMoved", x:segmentedHoverBefore.result.value.point.x, y:segmentedHoverBefore.result.value.point.y });
+    const segmentedHoverAfter = await client.send("Runtime.evaluate", { expression:`(() => { const node=document.querySelector("label[for='dm-max']"); const rect=node.getBoundingClientRect(); return { rect:{left:rect.left,top:rect.top,width:rect.width,height:rect.height}, backgroundColor:getComputedStyle(node).backgroundColor }; })()`, returnByValue:true });
+    await client.send("Input.dispatchMouseEvent", { type:"mouseMoved", x:0, y:0 });
     const [statusCell, timeCell, scoreCell, rateCell] = polish.status;
     const typeMetrics = Object.values(polish.typography);
     const buttonStateMetrics = Object.values(polish.buttonStates).flatMap((states) => [states.enabled, states.disabled]);
@@ -883,7 +961,7 @@ function createCdpClient(webSocketUrl) {
     assert(polish.swatch.rect.width === 24 && polish.swatch.rect.height === 24 && polish.swatch.borderWidth === "1px" && polish.swatch.padding === "0px" && polish.swatch.borderColor === polish.swatch.inputBorderColor, `Theme swatch frame regressed: ${JSON.stringify(polish.swatch)}`);
     assert(Number.parseFloat(polish.scout.dotWidth) >= 6 && Number.parseFloat(polish.scout.dotWidth) <= 8 && polish.scout.dotWidth === polish.scout.dotHeight && polish.scout.text === "Waiting for opponent", `Scout waiting indicator regressed: ${JSON.stringify(polish.scout)}`);
     assert(polish.scout.detail === "Public data appears after an opponent is identified.", `Pre-existing Scout explanation was lost: ${JSON.stringify(polish.scout)}`);
-    assert(((polish.divider.borderTopWidth === "1px" && polish.divider.borderTopColor === polish.divider.tokenColor) || (polish.divider.borderTopWidth === "0px" && polish.divider.backgroundImage.includes(polish.divider.tokenColor))) && polish.divider.engineHeight === 358, `Move Timing / Smart Pacing divider is inconsistent or changed panel height: ${JSON.stringify(polish.divider)}`);
+    assert(((polish.divider.borderTopWidth === "1px" && polish.divider.borderTopColor === polish.divider.tokenColor) || (polish.divider.borderTopWidth === "0px" && polish.divider.backgroundImage.includes(polish.divider.tokenColor))) && polish.divider.engineHeight === 360, `Move Timing / Smart Pacing divider is inconsistent or changed panel height: ${JSON.stringify(polish.divider)}`);
     assert(typeMetrics.every((metric) => Number.parseFloat(metric.fontSize) >= 11 && metric.contrast >= 4.5), `Polish typography is undersized or low contrast: ${JSON.stringify(polish.typography)}`);
     assert(buttonStateMetrics.every((metric) => Number.parseFloat(metric.fontSize) >= 11 && metric.contrast >= 4.5), `Button state typography is undersized or low contrast: ${JSON.stringify(polish.buttonStates)}`);
     assert(polish.typography.start.fontSize === polish.typography.finish.fontSize && polish.typography.finish.fontSize === polish.typography.export.fontSize, `Action button type sizes diverge: ${JSON.stringify(polish.typography)}`);
@@ -901,6 +979,15 @@ function createCdpClient(webSocketUrl) {
       }
       assert(states.off.innerSpace.left === states.on.innerSpace.right && states.on.thumb.left-states.off.thumb.left === 18 && states.off.trackRight === states.on.trackRight && states.off.thumb.top === states.on.thumb.top && states.off.thumb.bottom === states.on.thumb.bottom, `${name} toggle state geometry regressed: ${JSON.stringify(states)}`);
     }
+    for (const state of Object.values(segmentedFooter.segmented)) {
+      assert(state.container.height === 32 && state.padding === "0px" && state.gap === "0px" && state.overflow === "hidden" && state.random.rect.width === state.immediate.rect.width && state.random.rect.height === 30 && state.immediate.rect.height === 30 && state.integerGeometry, `Segmented geometry regressed: ${JSON.stringify(state)}`);
+      assert(state.coverage.top === 0 && state.coverage.bottom === 0 && state.coverage.left === 0 && state.coverage.right === 0 && [0,1].includes(state.coverage.between), `Segmented coverage regressed: ${JSON.stringify(state.coverage)}`);
+      assert(state.random.backgroundColor !== state.immediate.backgroundColor, `Segmented state surfaces regressed: ${JSON.stringify(state)}`);
+      for (const option of [state.random,state.immediate]) assert(option.display === "flex" && option.alignItems === "center" && option.justifyContent === "center" && Number.parseFloat(option.fontSize) === 11 && option.contrast >= 4.5, `Segmented option regressed: ${JSON.stringify(option)}`);
+    }
+    assert(JSON.stringify(segmentedFooter.focus.before) === JSON.stringify(segmentedFooter.focus.after) && segmentedFooter.focus.borderColorBefore !== segmentedFooter.focus.borderColorAfter && segmentedFooter.focus.activeElement === "dm-rand", `Segmented focus feedback changed geometry or is invisible: ${JSON.stringify(segmentedFooter.focus)}`);
+    assert(JSON.stringify(segmentedHoverBefore.result.value.rect) === JSON.stringify(segmentedHoverAfter.result.value.rect) && segmentedHoverBefore.result.value.backgroundColor !== segmentedHoverAfter.result.value.backgroundColor, `Segmented hover feedback changed geometry or is invisible: ${JSON.stringify({ before:segmentedHoverBefore.result.value, after:segmentedHoverAfter.result.value })}`);
+    assert(segmentedFooter.footer.borderTopWidth === "1px" && segmentedFooter.footer.borderTopColor === "rgb(50, 50, 47)" && segmentedFooter.footer.borderRadius === "0px" && segmentedFooter.footer.overflow === "visible" && segmentedFooter.footer.edgeDifference.left === 0 && segmentedFooter.footer.edgeDifference.right === 0 && segmentedFooter.footer.panelHeight === 220, `Auto Play divider regressed: ${JSON.stringify(segmentedFooter.footer)}`);
     assert(disclosureSmoke.scout?.background === "rgb(37, 37, 35)" && disclosureSmoke.scout.backgroundImage === "none" && disclosureSmoke.scout.radius === "8px", `Scout neutral styling regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
     assert(disclosureSmoke.scout.font.includes("Segoe UI") || disclosureSmoke.scout.font.includes("Arial"), `Scout system font regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
     assert(disclosureSmoke.scout.width === "296px" && disclosureSmoke.scout.height === disclosureSmoke.scout.menuHeight && !disclosureSmoke.scout.hasRadar && disclosureSmoke.scout.emptyDetail, `Scout waiting state did not fill the named grid: ${JSON.stringify(disclosureSmoke.scout)}`);
