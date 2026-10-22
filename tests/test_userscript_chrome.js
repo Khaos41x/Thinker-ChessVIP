@@ -35,6 +35,103 @@ const geometryExpression = `(() => {
   return values;
 })()`;
 
+const polishMetricsExpression = `(() => {
+  const round = (value) => Math.round(value * 100) / 100;
+  const rgba = (value) => {
+    const parts = (value.match(/[\\d.]+/g) || []).map(Number);
+    return { r:parts[0] || 0, g:parts[1] || 0, b:parts[2] || 0, a:parts.length > 3 ? parts[3] : 1 };
+  };
+  const composite = (front, back) => ({ r:front.r * front.a + back.r * (1-front.a), g:front.g * front.a + back.g * (1-front.a), b:front.b * front.a + back.b * (1-front.a), a:1 });
+  const luminance = ({r,g,b}) => .2126 * [r,g,b].map((v) => { const s=v/255; return s <= .03928 ? s/12.92 : Math.pow((s+.055)/1.055,2.4); })[0]
+    + .7152 * [r,g,b].map((v) => { const s=v/255; return s <= .03928 ? s/12.92 : Math.pow((s+.055)/1.055,2.4); })[1]
+    + .0722 * [r,g,b].map((v) => { const s=v/255; return s <= .03928 ? s/12.92 : Math.pow((s+.055)/1.055,2.4); })[2];
+  const opaqueBackground = (node) => {
+    if (!node) return {r:255,g:255,b:255,a:1};
+    const own=rgba(getComputedStyle(node).backgroundColor);
+    const behind=node.parentElement ? opaqueBackground(node.parentElement) : {r:255,g:255,b:255,a:1};
+    return composite(own, behind);
+  };
+  const nodeRect = (node) => {
+    if (!node) return null;
+    const box = node.getBoundingClientRect();
+    return { x:round(box.x), y:round(box.y), width:round(box.width), height:round(box.height), right:round(box.right), bottom:round(box.bottom) };
+  };
+  const rect = (selector) => {
+    const node = document.querySelector(selector);
+    return nodeRect(node);
+  };
+  const font = (selector) => {
+    const node = document.querySelector(selector);
+    if (!node) return null;
+    const style = getComputedStyle(node);
+    const background=opaqueBackground(node);
+    const foreground=composite(rgba(style.color), background);
+    const a=luminance(foreground); const b=luminance(background);
+    return { fontSize:style.fontSize, lineHeight:style.lineHeight, color:style.color, backgroundColor:style.backgroundColor, contrast:round((Math.max(a,b)+.05)/(Math.min(a,b)+.05)) };
+  };
+  const buttonStates = (selector) => {
+    const node=document.querySelector(selector);
+    const disabled=node.hasAttribute("disabled"); const aria=node.getAttribute("aria-disabled");
+    node.removeAttribute("disabled"); node.setAttribute("aria-disabled", "false"); const enabled=font(selector);
+    node.setAttribute("disabled", ""); node.setAttribute("aria-disabled", "true"); const unavailable=font(selector);
+    node.toggleAttribute("disabled", disabled);
+    if (aria === null) node.removeAttribute("aria-disabled"); else node.setAttribute("aria-disabled", aria);
+    return { enabled, disabled:unavailable };
+  };
+  const contentEdges = (selector) => {
+    const node=document.querySelector(selector); const box=node.getBoundingClientRect(); const style=getComputedStyle(node);
+    return { left:round(box.left + Number.parseFloat(style.borderLeftWidth) + Number.parseFloat(style.paddingLeft)), right:round(box.right - Number.parseFloat(style.borderRightWidth) - Number.parseFloat(style.paddingRight)) };
+  };
+  const status = Array.from(document.querySelectorAll(".kb-session-status-item")).map((item) => ({
+    label:item.querySelector("span")?.textContent || "",
+    labelRect:nodeRect(item.querySelector("span")),
+    value:item.querySelector("strong")?.textContent || "",
+    valueRect:nodeRect(item.querySelector("strong")),
+  }));
+  const sliderNode = document.querySelector("#kb-elo-slider");
+  const sliderStyle = sliderNode ? getComputedStyle(sliderNode) : null;
+  const sliderRect = sliderNode?.getBoundingClientRect() || null;
+  const sliderPaddingLeft = Number.parseFloat(sliderStyle?.paddingLeft || "0");
+  const sliderPaddingRight = Number.parseFloat(sliderStyle?.paddingRight || "0");
+  const swatchNode = document.querySelector("#kb-color-picker");
+  const swatchStyle = swatchNode ? getComputedStyle(swatchNode) : null;
+  const dotStyle = getComputedStyle(document.querySelector("#oi-zone2 .tc-scout-status"), "::before");
+  const hint = rect("#kb-run-delay-hint");
+  const smart = document.querySelector(".kb-engine-module #sp-on")?.closest(".kb-section") || null;
+  const smartStyle = smart ? getComputedStyle(smart) : null;
+  const autoPlayContent=contentEdges(".kb-auto-play-module");
+  const engineContent=contentEdges(".kb-engine-module");
+  return {
+    content:{ autoPlayLeft:autoPlayContent.left, autoPlayRight:autoPlayContent.right, engineLeft:engineContent.left, engineRight:engineContent.right },
+    status,
+    slider:{
+      rect:sliderRect ? { x:round(sliderRect.x), y:round(sliderRect.y), width:round(sliderRect.width), height:round(sliderRect.height), right:round(sliderRect.right) } : null,
+      paddingLeft:sliderPaddingLeft,
+      paddingRight:sliderPaddingRight,
+      trackLeft:sliderRect ? round(sliderRect.left + sliderPaddingLeft) : null,
+      trackRight:sliderRect ? round(sliderRect.right - sliderPaddingRight) : null,
+      minLabel:rect(".kb-strength-limits span:first-child"),
+      maxLabel:rect(".kb-strength-limits span:last-child"),
+    },
+    swatch:{ rect:rect("#kb-color-picker"), borderWidth:swatchStyle?.borderWidth || "", borderColor:swatchStyle?.borderColor || "", inputBorderColor:getComputedStyle(document.querySelector(".kb-delay-input")).borderColor, padding:swatchStyle?.padding || "" },
+    scout:{ dotWidth:dotStyle.width, dotHeight:dotStyle.height, dotColor:dotStyle.backgroundColor, text:document.querySelector("#oi-zone2 .tc-scout-status")?.textContent?.trim() || "", detail:document.querySelector("#oi-zone2 .tc-scout-empty-detail")?.textContent?.trim() || "" },
+    divider:{ hintBottom:hint?.bottom || null, smartTop:smart ? round(smart.getBoundingClientRect().top) : null, borderTopWidth:smartStyle?.borderTopWidth || "", borderTopColor:smartStyle?.borderTopColor || "", tokenColor:getComputedStyle(document.querySelector(".kb-strength-card")).borderTopColor, engineHeight:round(document.querySelector(".kb-engine-module").getBoundingClientRect().height) },
+    typography:{
+      start:font("#kb-session-start"), finish:font("#kb-session-stop"), export:font("#kb-session-export"),
+      random:font("label[for='dm-rand']"), immediate:font("label[for='dm-max']"), current:font(".kb-strength-current"),
+      suffix:font(".kb-delay-unit"), minLabel:font(".kb-strength-limits span:first-child"), maxLabel:font(".kb-strength-limits span:last-child"),
+    },
+    buttonStates:{ start:buttonStates("#kb-session-start"), finish:buttonStates("#kb-session-stop"), export:buttonStates("#kb-session-export") },
+  };
+})()`;
+
+const hideFixtureDecorationsExpression = `(() => {
+  for (const node of document.querySelectorAll(".chess-navigation, .ad-rail")) node.style.setProperty("display", "none", "important");
+})()`;
+const restoreFixtureDecorationsExpression = `(() => {
+  for (const node of document.querySelectorAll(".chess-navigation, .ad-rail")) node.style.removeProperty("display");
+})()`;
+
 const layoutAuditExpression = `(() => {
   const q = (selector) => document.querySelector(selector);
   const rect = (selector) => q(selector)?.getBoundingClientRect() || null;
@@ -282,9 +379,13 @@ function createCdpClient(webSocketUrl) {
       await client.send("Runtime.evaluate", { expression: "scrollTo(0, Math.max(0, document.getElementById('oi-wrapper').offsetTop - 40))" });
       await sleep(150);
       const geometry = await client.send("Runtime.evaluate", { expression: geometryExpression, returnByValue: true });
+      const polishMetrics = await client.send("Runtime.evaluate", { expression: polishMetricsExpression, returnByValue: true });
       printGeometryTable("ANTES", geometry.result.value);
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-geometry-before.json"), JSON.stringify(geometry.result.value, null, 2));
+      fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-polish-before.json"), JSON.stringify(polishMetrics.result.value, null, 2));
+      await client.send("Runtime.evaluate", { expression: hideFixtureDecorationsExpression });
       const screenshot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      await client.send("Runtime.evaluate", { expression: restoreFixtureDecorationsExpression });
       const artifactPath = path.join(root, "tests", "artifacts", "thinker-console-reference-before.png");
       fs.writeFileSync(artifactPath, Buffer.from(screenshot.data, "base64"));
       console.log(`Baseline visual evidence: ${artifactPath}`);
@@ -297,9 +398,13 @@ function createCdpClient(webSocketUrl) {
       await client.send("Runtime.evaluate", { expression: "scrollTo(0, Math.max(0, document.getElementById('oi-wrapper').offsetTop - 40))" });
       await sleep(150);
       const geometry = await client.send("Runtime.evaluate", { expression: geometryExpression, returnByValue: true });
+      const polishMetrics = await client.send("Runtime.evaluate", { expression: polishMetricsExpression, returnByValue: true });
       printGeometryTable("DEPOIS", geometry.result.value);
       fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-geometry-after.json"), JSON.stringify(geometry.result.value, null, 2));
+      fs.writeFileSync(path.join(root, "tests", "artifacts", "thinker-console-polish-after.json"), JSON.stringify(polishMetrics.result.value, null, 2));
+      await client.send("Runtime.evaluate", { expression: hideFixtureDecorationsExpression });
       const screenshot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      await client.send("Runtime.evaluate", { expression: restoreFixtureDecorationsExpression });
       const artifactPath = path.join(root, "tests", "artifacts", "thinker-console-reference-after.png");
       fs.writeFileSync(artifactPath, Buffer.from(screenshot.data, "base64"));
       console.log(`Default console evidence: ${artifactPath}`);
@@ -312,7 +417,9 @@ function createCdpClient(webSocketUrl) {
         layoutAudits[String(width)] = audit;
         console.log(`Layout audit ${width}px: ${JSON.stringify(audit)}`);
         assert(audit.ok, `Layout invariant failed at ${width}px: ${JSON.stringify(audit)}`);
+        await client.send("Runtime.evaluate", { expression: hideFixtureDecorationsExpression });
         const viewportShot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+        await client.send("Runtime.evaluate", { expression: restoreFixtureDecorationsExpression });
         fs.writeFileSync(path.join(root, "tests", "artifacts", `thinker-console-${width}-after.png`), Buffer.from(viewportShot.data, "base64"));
       }
       for (const width of [1033, 1034]) {
@@ -572,8 +679,39 @@ function createCdpClient(webSocketUrl) {
       returnByValue: true,
     });
     const module14 = module14Smoke.result.value;
+    const polishResult = await client.send("Runtime.evaluate", { expression: polishMetricsExpression, returnByValue: true });
+    const polish = polishResult.result.value;
+    const [statusCell, timeCell, scoreCell, rateCell] = polish.status;
+    const typeMetrics = Object.values(polish.typography);
+    const buttonStateMetrics = Object.values(polish.buttonStates).flatMap((states) => [states.enabled, states.disabled]);
+    const longStatusResult = await client.send("Runtime.evaluate", {
+      expression: `(() => {
+        const phase=document.getElementById("kb-session-phase"); const observed=document.getElementById("kb-session-observed");
+        const oldPhase=phase.textContent; const oldObserved=observed.textContent;
+        phase.textContent="Finishing session..."; observed.textContent="999 W | 999 D | 999 L";
+        const status=document.querySelector(".kb-session-status").getBoundingClientRect();
+        const nodes=[phase,observed,document.getElementById("kb-session-ttl"),document.getElementById("kb-session-raw")];
+        const fits=nodes.every((node) => { const box=node.getBoundingClientRect(); return box.left >= status.left && box.right <= status.right && node.scrollWidth <= node.clientWidth; });
+        phase.textContent=oldPhase; observed.textContent=oldObserved; return { fits };
+      })()`,
+      returnByValue:true,
+    });
 
     assert(exceptions.length === 0, `Userscript exception: ${exceptions[0]?.text || "unknown"}`);
+    assert(statusCell.labelRect.x === scoreCell.labelRect.x && statusCell.valueRect.x === scoreCell.valueRect.x, `Left status columns are not aligned: ${JSON.stringify(polish.status)}`);
+    assert(timeCell.labelRect.x === rateCell.labelRect.x && timeCell.valueRect.right === polish.content.autoPlayRight && rateCell.valueRect.right === polish.content.autoPlayRight, `Right status columns are not aligned: ${JSON.stringify(polish.status)}`);
+    assert(scoreCell.valueRect.right <= timeCell.labelRect.x && timeCell.valueRect.right <= polish.content.autoPlayRight, `Status values clip or overlap: ${JSON.stringify(polish.status)}`);
+    assert(longStatusResult.result.value.fits, "Long Auto Play status values clip or overlap");
+    assert(polish.slider.paddingLeft === 0 && polish.slider.paddingRight === 0 && polish.slider.trackLeft === polish.content.engineLeft && polish.slider.trackRight === polish.content.engineRight, `Strength track is inset from content edges: ${JSON.stringify(polish.slider)}`);
+    assert(polish.slider.minLabel.x === polish.content.engineLeft && polish.slider.maxLabel.right === polish.content.engineRight, `Strength labels do not align with slider endpoints: ${JSON.stringify(polish.slider)}`);
+    assert(polish.swatch.rect.width === 24 && polish.swatch.rect.height === 24 && polish.swatch.borderWidth === "1px" && polish.swatch.padding === "0px" && polish.swatch.borderColor === polish.swatch.inputBorderColor, `Theme swatch frame regressed: ${JSON.stringify(polish.swatch)}`);
+    assert(Number.parseFloat(polish.scout.dotWidth) >= 6 && Number.parseFloat(polish.scout.dotWidth) <= 8 && polish.scout.dotWidth === polish.scout.dotHeight && polish.scout.text === "Waiting for opponent", `Scout waiting indicator regressed: ${JSON.stringify(polish.scout)}`);
+    assert(polish.scout.detail === "Public data appears after an opponent is identified.", `Pre-existing Scout explanation was lost: ${JSON.stringify(polish.scout)}`);
+    assert(polish.divider.borderTopWidth === "1px" && polish.divider.borderTopColor === polish.divider.tokenColor && polish.divider.engineHeight === 358, `Move Timing / Smart Pacing divider is inconsistent or changed panel height: ${JSON.stringify(polish.divider)}`);
+    assert(typeMetrics.every((metric) => Number.parseFloat(metric.fontSize) >= 11 && metric.contrast >= 4.5), `Polish typography is undersized or low contrast: ${JSON.stringify(polish.typography)}`);
+    assert(buttonStateMetrics.every((metric) => Number.parseFloat(metric.fontSize) >= 11 && metric.contrast >= 4.5), `Button state typography is undersized or low contrast: ${JSON.stringify(polish.buttonStates)}`);
+    assert(polish.typography.start.fontSize === polish.typography.finish.fontSize && polish.typography.finish.fontSize === polish.typography.export.fontSize, `Action button type sizes diverge: ${JSON.stringify(polish.typography)}`);
+    assert(polish.typography.random.fontSize === polish.typography.immediate.fontSize, `Segmented-control type sizes diverge: ${JSON.stringify(polish.typography)}`);
     assert(disclosureSmoke.scout?.background === "rgb(37, 37, 35)" && disclosureSmoke.scout.backgroundImage === "none" && disclosureSmoke.scout.radius === "8px", `Scout neutral styling regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
     assert(disclosureSmoke.scout.font.includes("Segoe UI") || disclosureSmoke.scout.font.includes("Arial"), `Scout system font regressed: ${JSON.stringify(disclosureSmoke.scout)}`);
     assert(disclosureSmoke.scout.width === "296px" && disclosureSmoke.scout.height === disclosureSmoke.scout.menuHeight && !disclosureSmoke.scout.hasRadar && disclosureSmoke.scout.emptyDetail, `Scout waiting state did not fill the named grid: ${JSON.stringify(disclosureSmoke.scout)}`);
@@ -697,7 +835,9 @@ function createCdpClient(webSocketUrl) {
       await client.send("Runtime.evaluate", { expression: `(() => { const toast = document.getElementById("kb-session-toast"); if (toast) { toast.dataset.visible = "false"; toast.textContent = ""; } window.krypbotSessionControlUI?.update?.(); })()` });
       await client.send("Runtime.evaluate", { expression: "scrollTo(0, Math.max(0, document.getElementById('oi-wrapper').offsetTop - 40))" });
       await sleep(150);
+      await client.send("Runtime.evaluate", { expression: hideFixtureDecorationsExpression });
       const screenshot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      await client.send("Runtime.evaluate", { expression: restoreFixtureDecorationsExpression });
       const artifactPath = path.join(root, "tests", "artifacts", "thinker-panels-phase-08-1-after.png");
       fs.writeFileSync(artifactPath, Buffer.from(screenshot.data, "base64"));
       console.log(`Visual evidence: ${artifactPath}`);

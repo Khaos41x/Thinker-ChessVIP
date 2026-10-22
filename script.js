@@ -6220,9 +6220,12 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) { margin-left:auto; }
         #krypbot-container .kb-color-input {
-          width:24px; height:24px; margin-left:auto; padding:0; border:1px solid var(--tc-console-border);
-          border-radius:var(--radius-control); background:currentColor;
+          width:24px; height:24px; margin-left:auto; padding:0; overflow:hidden;
+          border:1px solid var(--tc-console-border); border-radius:var(--radius-control); background:transparent;
         }
+        #krypbot-container .kb-color-input::-webkit-color-swatch-wrapper { padding:0; }
+        #krypbot-container .kb-color-input::-webkit-color-swatch { border:0; }
+        #krypbot-container .kb-color-input::-moz-color-swatch { border:0; }
         #krypbot-container .kb-strength-card,
         #krypbot-container .kb-run-delay-card {
           margin:0 !important; padding:var(--space-3) 0 !important; border:0 !important;
@@ -6231,10 +6234,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-strength-head,
         #krypbot-container .kb-timing-heading { min-height:16px; margin:0 0 var(--space-2); align-items:baseline; }
         #krypbot-container .kb-strength-current,
-        #krypbot-container .kb-strength-current strong { line-height:16px; }
+        #krypbot-container .kb-strength-current strong { font-size:11px; line-height:16px; }
         #krypbot-container .kb-slider {
           --kb-slider-fill:calc(1 * (100% - 16px) + 8px);
-          width:100%; height:16px; margin:var(--space-1) 0; padding:0 8px; background:transparent;
+          width:100%; height:16px; margin:var(--space-1) 0; padding:0; background:transparent;
         }
         #krypbot-container .kb-slider::-webkit-slider-runnable-track {
           height:4px; border-radius:2px;
@@ -6258,8 +6261,9 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-delay-unit { width:24px; padding-right:10px; font-size:11px; line-height:16px; text-align:right; pointer-events:none; }
         #krypbot-container .kb-delay-separator { flex:0 0 11px; color:#a0a19b; font-size:13px; line-height:16px; text-align:center; }
         #krypbot-container .kb-timing-mode { height:var(--control-height); }
-        #krypbot-container .kb-run-delay-card .kb-timing-mode label { height:28px; padding:6px 8px; font-size:11px; line-height:16px; }
+        #krypbot-container .kb-run-delay-card .kb-timing-mode label { height:28px; padding:6px 8px; font-size:11px !important; line-height:16px; }
         #krypbot-container .kb-dependency-hint { margin:var(--space-2) 0 0; color:#aaaBa5; font-size:11px; line-height:15px; }
+        #krypbot-container .kb-run-delay-card + .kb-section { border-top:1px solid var(--tc-console-divider) !important; }
         #krypbot-container .kb-session-fields {
           display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--field-gap); padding:var(--space-2) 0;
         }
@@ -6280,24 +6284,27 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-session-button,
         #krypbot-container .kb-session-button[data-action="start"] {
           width:100%; min-width:0; height:var(--control-height); min-height:var(--control-height); padding:0 var(--space-2);
+          font-size:11px; line-height:16px;
         }
         #krypbot-container .kb-session-button[disabled],
         #krypbot-container .kb-session-button[aria-disabled="true"] {
-          border-color:#565752 !important; color:rgba(236,236,232,.5) !important; opacity:1;
+          border-color:#565752 !important; color:rgba(236,236,232,.55) !important; opacity:1;
         }
         #krypbot-container .kb-session-status {
-          display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:var(--space-2) var(--field-gap);
+          display:grid; grid-template-columns:max-content minmax(0,1fr) max-content max-content;
+          gap:var(--space-2) var(--field-gap); align-items:baseline;
           margin:var(--space-3) 0 0; padding:var(--space-3) 0 0; border-top:1px solid var(--tc-console-divider);
         }
         #krypbot-container .kb-session-status-item {
-          min-width:0; display:flex; align-items:baseline; justify-content:space-between; gap:var(--space-2);
+          min-width:0; display:grid; grid-template-columns:subgrid; grid-column:span 2; align-items:baseline;
           color:#9b9c96; font-size:11px; line-height:15px;
         }
-        #krypbot-container .kb-session-status-item-right { text-align:right; }
-        #krypbot-container .kb-session-status-item-right span { margin-left:auto; }
+        #krypbot-container .kb-session-status-item span { min-width:0; text-align:left; }
         #krypbot-container .kb-session-status-item strong {
-          color:#d7d7d2; font-size:11px; line-height:15px; font-weight:600; font-variant-numeric:tabular-nums;
+          min-width:0; color:#d7d7d2; font-size:11px; line-height:15px; font-weight:600;
+          text-align:left; white-space:nowrap; font-variant-numeric:tabular-nums;
         }
+        #krypbot-container .kb-session-status-item-right strong { text-align:right; }
         #oi-zone2 .tc-scout-empty { align-items:flex-start !important; justify-content:center; gap:var(--space-2) !important; padding:var(--space-3) 0 0 !important; }
         #oi-zone2[data-state="waiting"] .tc-scout-status {
           display:flex; align-items:center; gap:var(--space-2); padding:0 !important; border:0 !important;

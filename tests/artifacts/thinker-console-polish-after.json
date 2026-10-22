@@ -1,0 +1,263 @@
+{
+  "content": {
+    "autoPlayLeft": 228,
+    "autoPlayRight": 904,
+    "engineLeft": 585,
+    "engineRight": 904
+  },
+  "status": [
+    {
+      "label": "Status",
+      "labelRect": {
+        "x": 228,
+        "y": 663,
+        "width": 29.44,
+        "height": 15,
+        "right": 257.44,
+        "bottom": 678
+      },
+      "value": "Idle",
+      "valueRect": {
+        "x": 265.44,
+        "y": 663,
+        "width": 535.83,
+        "height": 15,
+        "right": 801.27,
+        "bottom": 678
+      }
+    },
+    {
+      "label": "Time Left",
+      "labelRect": {
+        "x": 809.27,
+        "y": 663,
+        "width": 44.78,
+        "height": 15,
+        "right": 854.05,
+        "bottom": 678
+      },
+      "value": "00:00:00",
+      "valueRect": {
+        "x": 862.05,
+        "y": 663,
+        "width": 41.95,
+        "height": 15,
+        "right": 904,
+        "bottom": 678
+      }
+    },
+    {
+      "label": "Score",
+      "labelRect": {
+        "x": 228,
+        "y": 686,
+        "width": 29.44,
+        "height": 15,
+        "right": 257.44,
+        "bottom": 701
+      },
+      "value": "0 W | 0 D | 0 L",
+      "valueRect": {
+        "x": 265.44,
+        "y": 686,
+        "width": 535.83,
+        "height": 15,
+        "right": 801.27,
+        "bottom": 701
+      }
+    },
+    {
+      "label": "Win Rate",
+      "labelRect": {
+        "x": 809.27,
+        "y": 686,
+        "width": 44.78,
+        "height": 15,
+        "right": 854.05,
+        "bottom": 701
+      },
+      "value": "—",
+      "valueRect": {
+        "x": 862.05,
+        "y": 686,
+        "width": 41.95,
+        "height": 15,
+        "right": 904,
+        "bottom": 701
+      }
+    }
+  ],
+  "slider": {
+    "rect": {
+      "x": 585,
+      "y": 240,
+      "width": 319,
+      "height": 16,
+      "right": 904
+    },
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "trackLeft": 585,
+    "trackRight": 904,
+    "minLabel": {
+      "x": 585,
+      "y": 264,
+      "width": 39.58,
+      "height": 14,
+      "right": 624.58,
+      "bottom": 278
+    },
+    "maxLabel": {
+      "x": 856.73,
+      "y": 264,
+      "width": 47.27,
+      "height": 14,
+      "right": 904,
+      "bottom": 278
+    }
+  },
+  "swatch": {
+    "rect": {
+      "x": 523,
+      "y": 376,
+      "width": 24,
+      "height": 24,
+      "right": 547,
+      "bottom": 400
+    },
+    "borderWidth": "1px",
+    "borderColor": "rgb(58, 58, 54)",
+    "inputBorderColor": "rgb(58, 58, 54)",
+    "padding": "0px"
+  },
+  "scout": {
+    "dotWidth": "6px",
+    "dotHeight": "6px",
+    "dotColor": "rgb(160, 161, 155)",
+    "text": "Waiting for opponent",
+    "detail": "Public data appears after an opponent is identified."
+  },
+  "divider": {
+    "hintBottom": 421,
+    "smartTop": 433,
+    "borderTopWidth": "1px",
+    "borderTopColor": "rgb(50, 50, 47)",
+    "tokenColor": "rgb(50, 50, 47)",
+    "engineHeight": 358
+  },
+  "typography": {
+    "start": {
+      "fontSize": "11px",
+      "lineHeight": "16px",
+      "color": "rgba(236, 236, 232, 0.55)",
+      "backgroundColor": "rgb(43, 43, 41)",
+      "contrast": 4.73
+    },
+    "finish": {
+      "fontSize": "11px",
+      "lineHeight": "16px",
+      "color": "rgba(236, 236, 232, 0.55)",
+      "backgroundColor": "rgb(43, 43, 41)",
+      "contrast": 4.73
+    },
+    "export": {
+      "fontSize": "11px",
+      "lineHeight": "16px",
+      "color": "rgb(174, 179, 188)",
+      "backgroundColor": "rgba(255, 255, 255, 0.05)",
+      "contrast": 6.29
+    },
+    "random": {
+      "fontSize": "11px",
+      "lineHeight": "16px",
+      "color": "rgb(222, 222, 217)",
+      "backgroundColor": "rgb(58, 58, 54)",
+      "contrast": 8.46
+    },
+    "immediate": {
+      "fontSize": "11px",
+      "lineHeight": "16px",
+      "color": "rgb(133, 139, 150)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "contrast": 5.07
+    },
+    "current": {
+      "fontSize": "11px",
+      "lineHeight": "16px",
+      "color": "rgb(184, 185, 180)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "contrast": 7.78
+    },
+    "suffix": {
+      "fontSize": "11px",
+      "lineHeight": "16px",
+      "color": "rgb(140, 141, 135)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "contrast": 5.04
+    },
+    "minLabel": {
+      "fontSize": "11px",
+      "lineHeight": "14px",
+      "color": "rgb(150, 151, 145)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "contrast": 5.22
+    },
+    "maxLabel": {
+      "fontSize": "11px",
+      "lineHeight": "14px",
+      "color": "rgb(150, 151, 145)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "contrast": 5.22
+    }
+  },
+  "buttonStates": {
+    "start": {
+      "enabled": {
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "color": "rgb(12, 29, 18)",
+        "backgroundColor": "rgb(70, 217, 119)",
+        "contrast": 9.54
+      },
+      "disabled": {
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "color": "rgba(236, 236, 232, 0.55)",
+        "backgroundColor": "rgb(43, 43, 41)",
+        "contrast": 4.73
+      }
+    },
+    "finish": {
+      "enabled": {
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "color": "rgb(244, 245, 247)",
+        "backgroundColor": "rgba(255, 255, 255, 0.08)",
+        "contrast": 11.03
+      },
+      "disabled": {
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "color": "rgba(236, 236, 232, 0.55)",
+        "backgroundColor": "rgb(43, 43, 41)",
+        "contrast": 4.73
+      }
+    },
+    "export": {
+      "enabled": {
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "color": "rgb(174, 179, 188)",
+        "backgroundColor": "rgba(255, 255, 255, 0.05)",
+        "contrast": 6.29
+      },
+      "disabled": {
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "color": "rgba(236, 236, 232, 0.55)",
+        "backgroundColor": "rgb(43, 43, 41)",
+        "contrast": 4.73
+      }
+    }
+  }
+}

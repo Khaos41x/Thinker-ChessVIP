@@ -353,6 +353,13 @@ async function run() {
   assert(source.includes('String(value).trim().replace(",", ".")'), "Move Timing does not normalize comma decimals");
   assert(source.includes('.on("blur", function ()') && source.includes('commitDelayInputs();'), "Move Timing does not commit on blur");
   assert(source.includes('calc(${ratio.toFixed(4)} * (100% - 16px) + 8px)'), "Strength fill lacks thumb compensation");
+  assert(source.includes('width:100%; height:16px; margin:var(--space-1) 0; padding:0; background:transparent'), "Strength slider retains duplicate endpoint padding");
+  assert(source.includes('grid-template-columns:max-content minmax(0,1fr) max-content max-content'), "Auto Play status is not a shared four-column grid");
+  assert(source.includes('display:grid; grid-template-columns:subgrid; grid-column:span 2; align-items:baseline'), "Auto Play status cells do not share baseline-aligned column tracks");
+  assert(source.includes('.kb-color-input::-webkit-color-swatch-wrapper { padding:0; }') && source.includes('.kb-color-input::-webkit-color-swatch { border:0; }') && source.includes('.kb-color-input::-moz-color-swatch { border:0; }'), "Theme swatch retains native nested framing");
+  assert(source.includes('.kb-run-delay-card + .kb-section { border-top:1px solid var(--tc-console-divider) !important; }'), "Move Timing / Smart Pacing divider is missing");
+  assert(source.includes('font-size:11px !important; line-height:16px'), "segmented-control typography remains below 11px");
+  assert(source.includes('content:\"\"; width:6px; height:6px') && source.includes('background:var(--tc-console-muted)'), "Scout waiting indicator lacks the muted status dot");
   assert(source.includes("text-transform:uppercase"), "compact uppercase module captions are missing");
   assert(source.includes("width:40px; height:24px"), "compact switch geometry is missing");
   const wrapperCss = sourceBlock(source, "        #oi-wrapper {", "        #oi-wrapper > * {");

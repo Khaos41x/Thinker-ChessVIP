@@ -130,17 +130,17 @@
   "status": {
     "x": 228,
     "y": 663,
-    "width": 334,
+    "width": 573.27,
     "height": 15,
-    "right": 562,
+    "right": 801.27,
     "bottom": 678
   },
   "stats": {
     "x": 228,
     "y": 686,
-    "width": 334,
+    "width": 573.27,
     "height": 15,
-    "right": 562,
+    "right": 801.27,
     "bottom": 701
   },
   "minDelay": {
