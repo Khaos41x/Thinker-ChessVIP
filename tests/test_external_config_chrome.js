@@ -66,6 +66,7 @@ async function evaluate(client, expression) {
     clients.push(board);
     await board.ready;
     await board.send('Page.enable');
+    await board.send('Emulation.setDeviceMetricsOverride', { width: 1433, height: 900, deviceScaleFactor: 1, mobile: false });
     await board.send('Page.navigate', { url: base + '/tests/fixtures/userscript_bootstrap.html?delay=50' });
     await waitFor(() => evaluate(board, `Boolean(document.getElementById('bn-on'))`));
     await evaluate(board, `(() => {
@@ -91,6 +92,16 @@ async function evaluate(client, expression) {
     await waitFor(() => evaluate(panel, `document.getElementById('save-state').textContent==='Applied in a Chess.com tab'`));
     await evaluate(board, `document.getElementById('bn-on').closest('[role="switch"]').click()`);
     await waitFor(() => evaluate(panel, `document.querySelector('[data-key="banner"]').getAttribute('aria-checked')==='true'`));
+    assert.equal(await evaluate(panel, `document.getElementById('elo').value`), '3200', 'External panel did not default to maximum strength');
+    await waitFor(() => evaluate(board, `document.getElementById('kb-elo-slider').value==='3200'`));
+    await evaluate(board, `(() => {
+      scrollTo(0,document.documentElement.scrollHeight);
+      const sidebar=document.querySelector('.play-controller-component:not(.stale-controller)');
+      sidebar.replaceWith(sidebar.cloneNode(true));
+    })()`);
+    await waitFor(() => evaluate(board, `window.thinkerChessDiagnostics().banner.reason==='visible'&&getComputedStyle(document.getElementById('thinker-chess-banner')).display==='flex'`));
+    const scrolledBanner=await evaluate(board, `(() => {const b=document.getElementById('thinker-chess-banner').getBoundingClientRect(),s=document.querySelector('.play-controller-component:not(.stale-controller)').getBoundingClientRect();return {scrollY,topDelta:b.top-s.top,bottomDelta:b.bottom-s.bottom};})()`);
+    assert(scrolledBanner.scrollY>879&&scrolledBanner.topDelta===0&&scrolledBanner.bottomDelta===0,JSON.stringify(scrolledBanner));
     await evaluate(panel, `document.querySelector('[data-key="recentForm"]').click()`);
     await waitFor(() => evaluate(board, `document.getElementById('rf-on').checked===false`));
     await evaluate(panel, `(() => {const a=document.getElementById('minDelay'),b=document.getElementById('maxDelay');a.value='2.00';b.value='0.50';a.dispatchEvent(new Event('input'));b.dispatchEvent(new Event('input'));a.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));})()`);
@@ -162,7 +173,7 @@ async function evaluate(client, expression) {
     assert(exportFit.fits && exportFit.text==='Export Diagnostics',JSON.stringify(exportFit));
     const diagnostic = await evaluate(board, `window.thinkerChessDiagnostics().externalConfig`);
     assert.equal(diagnostic.error, null);
-    console.log(JSON.stringify({ bidirectionalSync: true, timingSwap: true, focusedDraftPreserved: true, invalidDraftPreserved:true, stalePollRejected:true, disjointEditsPreserved:true, saveRetry:true, offlineRecovery: true, exportFit, diagnostic, metrics }, null, 2));
+    console.log(JSON.stringify({ bidirectionalSync: true, defaultStrength:3200, scrolledBanner, timingSwap: true, focusedDraftPreserved: true, invalidDraftPreserved:true, stalePollRejected:true, disjointEditsPreserved:true, saveRetry:true, offlineRecovery: true, exportFit, diagnostic, metrics }, null, 2));
   } finally {
     clients.forEach(client => client.close());
     chrome.kill();

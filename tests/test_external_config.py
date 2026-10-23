@@ -33,6 +33,7 @@ class ExternalConfigTests(unittest.TestCase):
         self.assertTrue(initial['banner'] and initial['recentForm'])
         self.assertFalse(initial['hint'] or initial['autoMove'])
         self.assertEqual(initial['delayMode'], 'random')
+        self.assertEqual(initial['elo'], 3200)
         response = self.client.post('/config/save', json={'banner': False}).json
         self.assertEqual(response['revision'], 1)
         self.assertFalse(response['config']['banner'])

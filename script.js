@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-23.4
+// @version      2026-10-23.5
 // @description  Chess Bot com Servidor Local
 // @author       You
 // @match        https://www.chess.com/*
@@ -5241,6 +5241,11 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
   }
 
   function findThinkerSidebar() {
+    const availableSidebar = candidate => {
+      if (!isRenderableThinkerLayoutNode(candidate, { minWidth: 240, minHeight: 300 })) return false;
+      const rect = getThinkerRect(candidate);
+      return rect.right > 0 && rect.left < (document.documentElement?.clientWidth || window.innerWidth);
+    };
     const knownSelectors = [
       ".play-controller-component",
       ".board-layout-sidebar",
@@ -5265,7 +5270,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     knownCandidates.sort((first, second) => first.priority - second.priority);
     for (const { candidate } of knownCandidates) {
       if (isExcludedThinkerSidebarCandidate(candidate)) continue;
-      if (!isVisibleThinkerLayoutNode(candidate, { minWidth: 240, minHeight: 300 })) continue;
+      if (!availableSidebar(candidate)) continue;
       const rect = getThinkerRect(candidate);
       if (boardRect && (candidate.contains?.(board) || thinkerRectsOverlap(rect, boardRect, 4))) continue;
       if (boardRect && (rect.left < boardRect.right || rect.left - boardRect.right > 160)) continue;
@@ -5279,7 +5284,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       "aside, [role='complementary'], [class*='sidebar'], [class*='controller'], [class*='board-layout'], [class*='game-panel']",
     )) {
       if (isExcludedThinkerSidebarCandidate(candidate)) continue;
-      if (candidate.contains?.(board) || !isVisibleThinkerLayoutNode(candidate, { minWidth: 240, minHeight: 300 })) continue;
+      if (candidate.contains?.(board) || !availableSidebar(candidate)) continue;
       const rect = getThinkerRect(candidate);
       const gap = rect.left - boardRect.right;
       if (gap < 0 || gap > 160 || rect.width < 240 || rect.width > 500 || rect.height < 300) continue;
@@ -5295,7 +5300,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       for (const candidate of Array.from(ancestor.children || [])) {
         if (candidate === boardBranch || candidate.contains?.(board)) continue;
         if (isExcludedThinkerSidebarCandidate(candidate)) continue;
-        if (!isVisibleThinkerLayoutNode(candidate, { minWidth: 240, minHeight: 300 })) continue;
+        if (!availableSidebar(candidate)) continue;
         const rect = getThinkerRect(candidate);
         const gap = rect.left - boardRect.right;
         const verticalOverlap = Math.min(rect.bottom, boardRect.bottom) - Math.max(rect.top, boardRect.top);
@@ -5365,7 +5370,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     let fenAvailable = false;
     try { fenAvailable = typeof game?.getFEN?.() === "string"; } catch (_) {}
     return {
-      version: "2026-10-23.4",
+      version: "2026-10-23.5",
       route: window.location.pathname,
       externalConfig: { appliedRevision: _externalAppliedRevision, error: _externalConfigError },
       banner: { enabled: thinkerBannerEnabled, shown: Boolean(banner && banner.style.display !== "none"), reason, minimumWidth: THINKER_BANNER_MIN_WIDTH_PX, geometry: layout },
@@ -7073,7 +7078,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             banner: thinkerBannerEnabled,
             recentForm: recentFormEnabled,
             smartPacing: typeof smartPacingEnabled !== "undefined" ? smartPacingEnabled : false,
-            elo: typeof chessBot !== "undefined" ? chessBot.elo : 1500,
+            elo: typeof chessBot !== "undefined" ? chessBot.elo : 3200,
             delayMode: typeof autoDelayMode !== "undefined" ? autoDelayMode : "random",
             minDelay: typeof autoDelayMin !== "undefined" ? autoDelayMin : 0.5,
             maxDelay: typeof autoDelayMax !== "undefined" ? autoDelayMax : 2.0,

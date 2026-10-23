@@ -154,6 +154,12 @@ window.scrollY = 837;
 context.position();
 assert(banner.style.top === "637px" && banner.style.height === "742px",
   "observed sidebar lost its document anchoring after leaving the viewport");
+context.setObservedSidebar(null);
+sidebarRect = { left: 900, top: -900, right: 1248, bottom: -158, width: 348, height: 742 };
+window.scrollY = 1537;
+context.position();
+assert(banner.style.display === "flex" && banner.style.top === "637px",
+  "enabling Banner while scrolled below the board failed without a previously observed sidebar");
 sidebarRect = { left: 900, top: 137, right: 1248, bottom: 879, width: 348, height: 742 };
 window.scrollY = 500;
 

@@ -12,7 +12,7 @@ from flask import Blueprint, jsonify, request, send_from_directory
 DEFAULT_CONFIG = {
     "hint": False, "autoMove": False, "autoQueue": False,
     "autoAdjust": False, "evalBar": False, "smartPacing": False,
-    "banner": True, "recentForm": True, "elo": 1500,
+    "banner": True, "recentForm": True, "elo": 3200,
     "delayMode": "random", "minDelay": 0.5, "maxDelay": 2.0,
     "color": "#10B981", "ghostMode": False,
 }
