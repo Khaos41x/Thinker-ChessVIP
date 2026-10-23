@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="246 246 762 762" role="img" aria-labelledby="title description">
+  <title id="title">Thinker Chess knight icon</title>
+  <desc id="description">A simplified flat symmetrical chess knight for small icon sizes.</desc>
+  <defs>
+    <g id="icon-half">
+      <path d="M628 246 572 272 558 304 546 330C540 310 534 290 522 276L508 254C504 288 504 320 510 342L528 370 508 416 514 448 504 498 528 526 520 574C522 618 506 670 474 724L514 804H628ZM628 806H508C500 806 496 814 496 826S500 846 508 846H628ZM628 846H496C492 868 482 886 466 900V934H628ZM628 944H438C432 944 426 950 426 956V1006H628Z" fill="#DEDED9"/>
+      <path d="M528 372C548 380 566 390 582 400L598 440 606 566 580 506 552 486 542 474Z" fill="#B9B9B3"/>
+      <path d="M536 442 574 460 580 490 552 486 542 474Z" fill="#10B981"/>
+    </g>
+  </defs>
+  <rect x="246" y="246" width="762" height="762" fill="#252523"/>
+  <use href="#icon-half"/>
+  <use href="#icon-half" transform="translate(1254 0) scale(-1 1)"/>
+</svg>

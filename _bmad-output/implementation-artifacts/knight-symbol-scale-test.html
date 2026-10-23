@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Knight symbol scale test</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px; background: #171717; color: #deded9; font: 12px/1.4 Arial, sans-serif; }
+  h1 { margin: 0 0 20px; font-size: 16px; }
+  h2 { margin: 0 0 8px; font-size: 12px; font-weight: 600; }
+  section + section { margin-top: 24px; }
+  .row { display: flex; align-items: center; gap: 24px; min-height: 272px; }
+  figure { display: grid; place-items: center; gap: 8px; margin: 0; }
+  figcaption { color: #b9b9b3; }
+  img { display: block; width: var(--size); height: var(--size); }
+  .squint img { filter: grayscale(1) blur(var(--blur)); }
+</style>
+<h1>Thinker Chess knight — scale validation</h1>
+<section>
+  <h2>Native color</h2>
+  <div class="row">
+    <figure><img src="../../assets/knight-symbol.svg" style="--size:16px"><figcaption>16 px</figcaption></figure>
+    <figure><img src="../../assets/knight-symbol.svg" style="--size:32px"><figcaption>32 px</figcaption></figure>
+    <figure><img src="../../assets/knight-symbol.svg" style="--size:64px"><figcaption>64 px</figcaption></figure>
+    <figure><img src="../../assets/knight-symbol.svg" style="--size:128px"><figcaption>128 px</figcaption></figure>
+    <figure><img src="../../assets/knight-symbol.svg" style="--size:256px"><figcaption>256 px</figcaption></figure>
+  </div>
+</section>
+<section class="squint">
+  <h2>Grayscale + scale-normalized Gaussian blur</h2>
+  <div class="row">
+    <figure><img src="../../assets/knight-symbol.svg" style="--size:16px;--blur:.0625px"><figcaption>16 px</figcaption></figure>
+    <figure><img src="../../assets/knight-symbol.svg" style="--size:32px;--blur:.125px"><figcaption>32 px</figcaption></figure>
+    <figure><img src="../../assets/knight-symbol.svg" style="--size:64px;--blur:.25px"><figcaption>64 px</figcaption></figure>
+    <figure><img src="../../assets/knight-symbol.svg" style="--size:128px;--blur:.5px"><figcaption>128 px</figcaption></figure>
+    <figure><img src="../../assets/knight-symbol.svg" style="--size:256px;--blur:1px"><figcaption>256 px</figcaption></figure>
+  </div>
+</section>
+<section>
+  <h2>Small-icon fallback</h2>
+  <div class="row" style="min-height:96px">
+    <figure><img src="../../assets/knight-symbol-small.svg" style="--size:16px"><figcaption>16 px</figcaption></figure>
+    <figure><img src="../../assets/knight-symbol-small.svg" style="--size:32px"><figcaption>32 px</figcaption></figure>
+    <figure><img src="../../assets/knight-symbol-small.svg" style="--size:64px"><figcaption>64 px</figcaption></figure>
+  </div>
+</section>
+</html>
