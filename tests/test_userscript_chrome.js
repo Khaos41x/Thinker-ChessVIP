@@ -1244,15 +1244,23 @@ function createCdpClient(webSocketUrl) {
       await client.send('Runtime.evaluate',{expression:`if(!document.getElementById('rf-on').checked)document.getElementById('rf-on').closest('[role="switch"]').click();`});
       console.log(JSON.stringify({engineRecovery:engineRecovery.result.value,pointerFocus:focusStyle.result.value}));
       const pointerFields=[];
-      for(const selector of ['label[for="dm-rand"]','label[for="dm-max"]','#kb-session-duration','#kb-session-min-rate','#kb-session-max-rate']) {
+      for(const selector of ['label[for="dm-rand"]','label[for="dm-max"]','#kb-session-duration','#kb-session-min-rate','#kb-session-max-rate','#minDelayInput','#maxDelayInput']) {
         const point=await client.send('Runtime.evaluate',{expression:`(() => {const node=document.querySelector(${JSON.stringify(selector)});node.scrollIntoView({block:'center'});const r=node.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2};})()`,returnByValue:true});
         await client.send('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',clickCount:1,...point.result.value});
         await client.send('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',clickCount:1,...point.result.value});
         await sleep(170);
-        const field=await client.send('Runtime.evaluate',{expression:`(() => {const node=document.querySelector(${JSON.stringify(selector)}),style=getComputedStyle(node),mode=node.closest('.kb-timing-mode');return {selector:${JSON.stringify(selector)},outline:style.outlineStyle,border:mode?getComputedStyle(mode).borderTopColor:style.borderTopColor,background:style.backgroundColor,focusInput:document.getElementById('krypbot-container').dataset.focusInput};})()`,returnByValue:true});
+        const field=await client.send('Runtime.evaluate',{expression:`(() => {const node=document.querySelector(${JSON.stringify(selector)}),shell=node.closest('.kb-delay-input')||node,style=getComputedStyle(shell),mode=node.closest('.kb-timing-mode');return {selector:${JSON.stringify(selector)},outline:style.outlineStyle,border:mode?getComputedStyle(mode).borderTopColor:style.borderTopColor,background:style.backgroundColor,focusInput:document.getElementById('krypbot-container').dataset.focusInput};})()`,returnByValue:true});
         assert(field.result.value.outline==='none' && field.result.value.border==='rgb(58, 58, 54)' && field.result.value.focusInput==='pointer',`Pointer focus feedback persisted: ${JSON.stringify(field.result.value)}`);
         pointerFields.push(field.result.value);
       }
+      await client.send('Runtime.evaluate',{expression:`document.querySelector('label[for="dm-rand"]').click();document.getElementById('minDelayInput').focus();document.getElementById('minDelayInput').select();`});
+      await client.send('Input.insertText',{text:'0.75'});
+      const editingFocus=await client.send('Runtime.evaluate',{expression:`getComputedStyle(document.getElementById('minDelayInput').closest('.kb-delay-input')).outlineStyle`,returnByValue:true});
+      assert(editingFocus.result.value==='none','Editing Move Timing restored the unwanted pointer outline');
+      await client.send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+      await client.send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+      const editedDelay=await client.send('Runtime.evaluate',{expression:`document.getElementById('minDelayInput').value`,returnByValue:true});
+      assert(editedDelay.result.value==='0.75','Move Timing edit no longer commits with Enter');
       await client.send('Runtime.evaluate',{expression:`(() => {const outside=document.createElement('button');outside.id='fixture-focus-outside';outside.textContent='Outside';const menu=document.getElementById('krypbot-container');menu.parentElement.insertBefore(outside,menu);outside.focus();})()`});
       await client.send('Input.dispatchKeyEvent',{type:'keyDown',key:'Tab',code:'Tab',windowsVirtualKeyCode:9});
       await client.send('Input.dispatchKeyEvent',{type:'keyUp',key:'Tab',code:'Tab',windowsVirtualKeyCode:9});
@@ -1276,6 +1284,40 @@ function createCdpClient(webSocketUrl) {
       const artifactPath = path.join(root, "tests", "artifacts", "thinker-panels-phase-08-1-after.png");
       fs.writeFileSync(artifactPath, Buffer.from(screenshot.data, "base64"));
       console.log(`Visual evidence: ${artifactPath}`);
+    }
+    if (!liveChess) {
+      const scoutPalette = await client.send('Runtime.evaluate', {
+        expression: `(async () => {
+          scrollTo(0,0);
+          const originalFetch=window.fetch;
+          window.fetch=(url,options)=>String(url).includes('api.chess.com/pub/player/')
+            ? new Promise(resolve=>window.GM_xmlhttpRequest({url:String(url),onload:r=>resolve(new Response(r.responseText,{status:r.status}))}))
+            : originalFetch(url,options);
+          document.querySelector('.user-username-component').textContent='GMTestTC01';
+          const until=performance.now()+6000;
+          while(!document.querySelector('.tc-scout-donut[aria-label="26 wins, 2 draws, 22 losses"]')&&performance.now()<until)await new Promise(r=>setTimeout(r,50));
+          const donut=document.querySelector('.tc-scout-donut');
+          if(!donut)return {error:'Populated Scout chart did not render'};
+          const panel=donut.closest('#oi-zone2');
+          const r=panel.getBoundingClientRect();
+          window.fetch=originalFetch;
+          return {background:getComputedStyle(donut).backgroundImage,label:donut.getAttribute('aria-label'),
+            separators:donut.querySelectorAll('svg line').length,
+            colors:['w','e','l'].map(c=>getComputedStyle(document.querySelector('.tc-scout-record .'+c)).color),
+            white:getComputedStyle(document.querySelector('.tc-scout-color-chip.is-filled')).backgroundColor,
+            black:getComputedStyle(document.querySelector('.tc-scout-color-chip:not(.is-filled)')).backgroundColor,
+            clip:{x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height,scale:1}};
+        })()`, awaitPromise:true, returnByValue:true,
+      });
+      const palette=scoutPalette.result.value;
+      assert(palette && !palette.error,JSON.stringify(palette));
+      assert(palette.separators===3,`Scout chart lost its result separators: ${JSON.stringify(palette)}`);
+      assert(JSON.stringify(palette.colors)===JSON.stringify(['rgb(34, 211, 107)','rgb(242, 242, 238)','rgb(139, 140, 134)']),'Scout legend palette changed');
+      assert(palette.white==='rgb(242, 242, 238)' && palette.black==='rgb(18, 18, 17)','Scout side markers are not distinct');
+      const shot=await client.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:palette.clip});
+      const artifactPath=path.join(root,'tests','artifacts','thinker-scout-palette-after.png');
+      fs.writeFileSync(artifactPath,Buffer.from(shot.data,'base64'));
+      console.log(JSON.stringify({scoutPalette:palette,artifactPath}));
     }
     console.log(JSON.stringify({ state, productionStart, module14, consoleErrors }, null, 2));
     console.log(liveChess ? "Live Chess.com userscript bootstrap passed." : "Chrome userscript bootstrap passed.");

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-23.2
+// @version      2026-10-23.3
 // @description  Chess Bot com Servidor Local
 // @author       You
 // @match        https://www.chess.com/*
@@ -1054,7 +1054,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
   let recentFormEnabled = localStorage.getItem("recentForm") !== "false";
 
   const SCOUT_CACHE_TTL = 20 * 60 * 1000;
-  const SCOUT_RESULT_COLORS = Object.freeze({ win: "#22d36b", draw: "#e1e4ea", loss: "#64748b" });
+  const SCOUT_RESULT_COLORS = Object.freeze({ win: "#22D36B", draw: "#F2F2EE", loss: "#8B8C86" });
   const SCOUT_DRAW_RESULTS = new Set([
     "agreed",
     "repetition",
@@ -1920,6 +1920,11 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       const winEnd = (scoutStats.wins / scoutStats.sampleSize) * 100;
       const drawEnd = ((scoutStats.wins + scoutStats.draws) / scoutStats.sampleSize) * 100;
       const donutGradient = `conic-gradient(${SCOUT_RESULT_COLORS.win} 0% ${winEnd}%,${SCOUT_RESULT_COLORS.draw} ${winEnd}% ${drawEnd}%,${SCOUT_RESULT_COLORS.loss} ${drawEnd}% 100%)`;
+      const donutSeparators = [scoutStats.wins, scoutStats.draws, scoutStats.losses].filter(count => count > 0).length > 1
+        ? Array.from(new Set([0, winEnd % 100, drawEnd % 100])).map(percent => {
+          const angle = percent * Math.PI / 50 - Math.PI / 2;
+          return `<line x1="${32 + 25 * Math.cos(angle)}" y1="${32 + 25 * Math.sin(angle)}" x2="${32 + 32 * Math.cos(angle)}" y2="${32 + 32 * Math.sin(angle)}"/>`;
+        }).join("") : "";
       const timeRows = scoutStats.timeClasses
         .map(
           (item) => `
@@ -1936,16 +1941,17 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           #oi-zone2 .tc-scout-title{font-size:10px;line-height:13px;font-weight:700;color:#cfcfcb;letter-spacing:.04em;text-transform:uppercase}
           #oi-zone2 .tc-scout-subtitle{margin-top:2px;color:#777873;font-size:8px;line-height:1.3}
           #oi-zone2 .tc-scout-donut{position:relative;width:64px;height:64px;margin:10px auto 6px;border-radius:50%}
-          #oi-zone2 .tc-scout-donut::after{content:"";position:absolute;inset:7px;border-radius:50%;background:#20201e}
+          #oi-zone2 .tc-scout-donut::after{content:"";position:absolute;inset:7px;border-radius:50%;background:#252523}
+          #oi-zone2 .tc-scout-donut-separators{position:absolute;inset:0;width:100%;height:100%;stroke:#252523;stroke-width:1;pointer-events:none}
           #oi-zone2 .tc-scout-donut-copy{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
           #oi-zone2 .tc-scout-donut-copy b{font-size:15px;line-height:1;font-weight:800}
-          #oi-zone2 .tc-scout-donut-copy small{margin-top:2px;color:#777873;font-size:7px}
-          #oi-zone2 .tc-scout-record{text-align:center;color:#8c8c87;font-size:9px;margin:2px 0 7px}
+          #oi-zone2 .tc-scout-donut-copy small{margin-top:2px;color:#B9BAB3;font-size:11px}
+          #oi-zone2 .tc-scout-record{text-align:center;color:#B9BAB3;font-size:11px;margin:2px 0 7px;font-variant-numeric:tabular-nums}
           #oi-zone2 .tc-scout-section{border-top:1px solid #30302e;padding:5px 0}
           #oi-zone2 .tc-scout-section-title{padding:3px 0 5px;color:#8c8c87;font-size:8px;text-transform:uppercase;letter-spacing:.08em}
           #oi-zone2 .tc-scout-stat-row{display:grid;grid-template-columns:11px minmax(0,1fr) 44px;align-items:center;gap:5px;padding:4px 0}
-          #oi-zone2 .tc-scout-color-chip{width:9px;height:9px;border:1px solid #747b88;border-radius:2px;box-sizing:border-box}
-          #oi-zone2 .tc-scout-color-chip.is-filled{background:#f0f1f3;border-color:#f0f1f3}
+          #oi-zone2 .tc-scout-color-chip{width:9px;height:9px;border:1px solid #A0A19B;border-radius:2px;box-sizing:border-box;background:#121211}
+          #oi-zone2 .tc-scout-color-chip.is-filled{background:#F2F2EE;border-color:#F2F2EE}
           #oi-zone2 .tc-scout-stat-copy{min-width:0;display:flex;flex-direction:column;gap:2px}
           #oi-zone2 .tc-scout-stat-copy b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#d9d9d5;font-size:9px;font-weight:600}
           #oi-zone2 .tc-scout-stat-copy small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#777873;font-size:7px}
@@ -1961,7 +1967,8 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         <div class="tc-scout-head">
           <div><div class="tc-scout-title">Opponent Scout</div><div class="tc-scout-subtitle">${this.escapeHtml(this.lastOpponent || "Opponent")} · ${scoutStats.sampleSize} games · through ${lastPlayed}</div></div>
         </div>
-        <div class="tc-scout-donut" style="background:${donutGradient}">
+        <div class="tc-scout-donut" style="background:${donutGradient}" role="img" aria-label="${scoutStats.wins} wins, ${scoutStats.draws} draws, ${scoutStats.losses} losses">
+          <svg class="tc-scout-donut-separators" viewBox="0 0 64 64" aria-hidden="true">${donutSeparators}</svg>
           <div class="tc-scout-donut-copy"><b>${scoutStats.winRate}%</b><small>win rate</small></div>
         </div>
         <div class="tc-scout-record"><span class="w" style="color:${SCOUT_RESULT_COLORS.win}">${scoutStats.wins} W</span> · <span class="e" style="color:${SCOUT_RESULT_COLORS.draw}">${scoutStats.draws} D</span> · <span class="l" style="color:${SCOUT_RESULT_COLORS.loss}">${scoutStats.losses} L</span></div>
@@ -5358,7 +5365,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     let fenAvailable = false;
     try { fenAvailable = typeof game?.getFEN?.() === "string"; } catch (_) {}
     return {
-      version: "2026-10-23.2",
+      version: "2026-10-23.3",
       route: window.location.pathname,
       banner: { enabled: thinkerBannerEnabled, shown: Boolean(banner && banner.style.display !== "none"), reason, minimumWidth: THINKER_BANNER_MIN_WIDTH_PX, geometry: layout },
       bot: { enabled: isMasterEnabled(), autoMove: auto_move, effectiveAutoMove: sessionControlBridge.effectiveAutoMove(auto_move), sessionActive: sessionControlBridge.isActive(), stage: thinkerMoveDiagnostic.stage, status: thinkerMoveDiagnostic.status, authenticated: Boolean(engineCapability), boardFound: Boolean(board), gameApiFound: Boolean(game), fenAvailable, canReadLegalMoves: typeof game?.getLegalMoves === "function", canExecuteMove: typeof game?.move === "function", retryPending: Date.now() < moveRetryAfter },
@@ -6345,6 +6352,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container[data-focus-input="pointer"] .kb-timing-mode input:focus + label { outline:none; }
         #krypbot-container[data-focus-input="pointer"] .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]):focus-within { border-color:var(--tc-console-border); }
         #krypbot-container[data-focus-input="pointer"] .kb-session-field input:focus { border-color:var(--tc-console-border); outline:none; background:var(--tc-console-field); box-shadow:none; }
+        #krypbot-container[data-focus-input="pointer"] .kb-delay-input:focus-within { border-color:var(--tc-console-border); outline:none; background:var(--tc-console-field); box-shadow:none; }
         #krypbot-container .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) label {
           display:flex; align-items:center; justify-content:center; width:100%; height:100%; min-width:0; padding:0;
           box-sizing:border-box; border:0; border-radius:0; background:var(--tc-console-module); color:#c4c5bf;

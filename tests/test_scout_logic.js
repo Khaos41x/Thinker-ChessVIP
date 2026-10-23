@@ -186,7 +186,7 @@ for (const key of ["smartPacing", "evalBar", "kb-auto-adjust", "kb-auto-queue"])
     throw new Error(`${key} was not reset to off for this version`);
   }
 }
-if (!source.includes('kb_default_off_v5')) throw new Error("new off-by-default migration is missing");
+if (!source.includes('kb_default_off_v6')) throw new Error("new off-by-default migration is missing");
 const storageStart = source.indexOf("  const localStorage = (() => {");
 const storageEnd = source.indexOf("\n  function debug(", storageStart);
 if (storageStart < 0 || storageEnd < 0) throw new Error("storage fallback block not found");
@@ -353,6 +353,8 @@ const context = {
   },
   window: { location: { pathname: "/play/online" } },
   autoAdjust: { isEnabled: () => false },
+  findThinkerGameBoard: () => context.document.querySelector("wc-chess-board"),
+  recentFormEnabled: true,
 };
 
 vm.createContext(context);
@@ -393,11 +395,12 @@ let renderedScoutPanel = null;
 context.document.createElement = () => ({
   style: {},
   dataset: {},
+  classList: { add() {} },
   querySelector: () => ({ addEventListener() {} }),
   appendChild() {},
 });
 context.document.getElementById = () => null;
-context.scout.ensureScoutWrapper = () => ({ container: { classList: { contains: () => false } }, wrapper: { appendChild: (panel) => { renderedScoutPanel = panel; } } });
+context.scout.ensureScoutWrapper = () => ({ container: { querySelector: () => null, classList: { contains: () => false } }, wrapper: { appendChild: (panel) => { renderedScoutPanel = panel; } } });
 context.scout.renderStatus("waiting");
 assert(renderedScoutPanel?.dataset.state === "waiting", "waiting Scout card was not rendered");
 assert(renderedScoutPanel.style.cssText.includes("display:flex;flex-direction:column"),
@@ -440,10 +443,34 @@ for (const [result, marker] of [["win", "w"], ["draw", "e"], ["loss", "l"]]) {
   `Scout ${result} chart segment and legend do not share the same color`);
 }
 assert(scoutColors.draw !== scoutColors.loss, "Scout draw and loss colors are indistinguishable");
+const luminance = hex => {
+  const channels = hex.match(/[a-f\d]{2}/gi).map(channel => parseInt(channel, 16) / 255)
+    .map(channel => channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4);
+  return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+};
+const contrast = (a, b) => (Math.max(luminance(a), luminance(b)) + 0.05) /
+  (Math.min(luminance(a), luminance(b)) + 0.05);
+for (const color of Object.values(scoutColors)) {
+  assert(contrast(color, "#252523") >= 4.5, `Scout palette contrast is insufficient: ${color}`);
+}
+assert(contrast(scoutColors.draw, scoutColors.loss) >= 3, "Draw and loss colors lack separation");
+const separators = renderedScoutPanel.innerHTML.match(/<svg class="tc-scout-donut-separators"[^>]*>(.*?)<\/svg>/);
+assert(separators && (separators[1].match(/<line /g) || []).length === 3,
+  "Scout chart must separate the three non-empty segments");
+assert(renderedScoutPanel.innerHTML.includes('aria-label="19 wins, 1 draws, 30 losses"'),
+  "Scout chart lost its accessible result counts");
 assert(renderedChart[1].includes(`${scoutColors.win} 0% 38%`) &&
   renderedChart[1].includes(`${scoutColors.draw} 38% 40%`) &&
   renderedChart[1].includes(`${scoutColors.loss} 40% 100%`),
   "Scout chart segments do not reflect the 19W/1D/30L sample");
+context.scout.renderScout({
+  lastPlayed: Date.now() / 1000, sampleSize: 50, wins: 50, draws: 0, losses: 0, winRate: 100,
+  colors: { white: { games: 50, wins: 50, draws: 0, losses: 0, winRate: 100 },
+    black: { games: 0, wins: 0, draws: 0, losses: 0, winRate: 0 } },
+  timeClasses: [], openings: { white: [], black: [] },
+});
+assert(renderedScoutPanel.innerHTML.includes('aria-hidden="true"></svg>'),
+  "A single-result Scout chart has an unnecessary separator");
 context.document.createElement = savedCreateElement;
 context.document.getElementById = savedGetElementById;
 context.scout.ensureScoutWrapper = savedEnsureScoutWrapper;
