@@ -26,7 +26,8 @@ let sidebarRect = { left: 900, top: 137, right: 1248, bottom: 879, width: 348, h
 const sidebar = element(sidebarRect, "Moves");
 sidebar.getBoundingClientRect = () => sidebarRect;
 const gameOver = element({ left: 350, top: 180, right: 750, bottom: 580, width: 400, height: 400 });
-const banner = { style: {} };
+const artwork = { naturalWidth: 1122, style: {} };
+const banner = { style: {}, querySelector: () => artwork };
 let gameOverVisible = false;
 let semanticSidebarAvailable = true;
 
@@ -77,9 +78,14 @@ assert(context.shouldShow() === true, "active game did not qualify for the banne
 context.position();
 assert(banner.style.display === "flex", "active game did not display the banner");
 assert(banner.style.top === "637px", "banner top did not use sidebar top plus scrollY");
-assert(banner.style.left === "1257px", "banner left did not clamp its preferred width to viewportRight");
+assert(banner.style.left === "1263px", "banner did not preserve the gap without overlapping the sidebar");
 assert(banner.style.height === "742px", "banner height did not mirror the sidebar exactly");
-assert(banner.style.width === "170px", "banner did not preserve its preferred width");
+assert(banner.style.width === "164px", "banner did not fit the actual free column");
+assert(artwork.style.maxWidth === "1122px", "DPR 1 artwork cap is incorrect");
+window.devicePixelRatio = 2;
+context.position();
+assert(artwork.style.maxWidth === "561px", "DPR 2 artwork exceeded native physical resolution");
+window.devicePixelRatio = 1;
 
 const roomyLayout = context.calculate(sidebarRect, 1600, 0, 500, false);
 assert(roomyLayout.left === 1263, "roomy viewport did not preserve the 15px sidebar gap");
@@ -87,22 +93,23 @@ assert(roomyLayout.width === 170, "roomy viewport did not use the preferred bann
 assert(roomyLayout.left + roomyLayout.width <= 1594, "roomy banner exceeded viewportRight");
 
 const constrainedLayout = context.calculate(sidebarRect, 1390, 0, 500, false);
-assert(constrainedLayout.left === 1214, "constrained viewport did not shift the banner left");
-assert(constrainedLayout.width === 170, "constrained viewport changed the preferred banner width");
+assert(constrainedLayout.left === 1263, "constrained viewport did not preserve the sidebar gap");
+assert(constrainedLayout.width === 121, "constrained viewport did not shrink the banner to fit");
 assert(constrainedLayout.left + constrainedLayout.width === 1384,
   "constrained banner did not end at viewportRight");
 
 const fallbackLayout = context.calculate(sidebarRect, 1330, 0, 500, false);
-assert(fallbackLayout.width === 170, "extreme viewport did not preserve readable banner width");
-assert(fallbackLayout.left === 1154, "extreme viewport did not shift the banner left");
-assert(fallbackLayout.left + fallbackLayout.width === 1324,
-  "extreme fallback banner did not end at viewportRight");
+assert(fallbackLayout === null, "unreadable free column should hide the banner");
 
 const scrolledFallbackLayout = context.calculate(sidebarRect, 1330, 50, 500, false);
-assert(scrolledFallbackLayout.left === 1204,
-  "horizontal scroll offset was not included in the viewport clamp");
-assert(scrolledFallbackLayout.left + scrolledFallbackLayout.width === 1374,
-  "scrolled fallback banner exceeded document-space viewportRight");
+assert(scrolledFallbackLayout === null, "horizontal scroll should not expose an unreadable column");
+const scrolledLayout = context.calculate(sidebarRect, 1390, 50, 500, false);
+assert(scrolledLayout.left === 1313 && scrolledLayout.width === 121,
+  "horizontal scroll did not retain document anchoring and free-column width");
+assert(context.calculate(sidebarRect, 1364, 0, 0, false) === null,
+  "95px free column should hide the banner");
+assert(context.calculate(sidebarRect, 1365, 0, 0, false)?.width === 96,
+  "96px free column should show the banner");
 
 assert(context.calculate(sidebarRect, 100, 0, 500, false) === null,
   "unsafe viewport narrower than the minimum readable width was accepted");
@@ -172,7 +179,6 @@ for (const marker of [
   "if (!shouldShowThinkerBanner()) banner.style.display = \"none\";",
   "position:absolute!important",
   "transition:none!important",
-  "THINKER_BANNER_ARTWORK_SCALE = 3.4",
   "align-items:center",
 ]) {
   assert(source.includes(marker), `banner lifecycle gate missing: ${marker}`);
@@ -182,11 +188,14 @@ assert(!source.includes('addEventListener("scroll", scheduleThinkerBannerPositio
 const bannerMarkupStart = source.indexOf('const bannerHtml = `');
 const bannerMarkupEnd = source.indexOf("`;", bannerMarkupStart);
 const bannerMarkup = source.slice(bannerMarkupStart, bannerMarkupEnd);
-assert(bannerMarkup.includes("width:${THINKER_BANNER_ARTWORK_SCALE * 100}%"),
-  "banner artwork is not scaled independently from sidebar height");
-assert(bannerMarkup.includes("height:auto") && bannerMarkup.includes("max-width:none"),
-  "banner artwork does not preserve its intrinsic aspect ratio");
-assert(!bannerMarkup.includes("object-fit:"), "banner artwork still depends on object-fit cropping");
+assert(bannerMarkup.includes('data-artwork="banner-horse.webp"'), "banner does not use the prepared horse");
+assert(bannerMarkup.includes('data:image/webp;base64,') && bannerMarkup.includes('height:auto;') && bannerMarkup.includes('object-fit:contain;'),
+  "banner must embed the raster without distorting its proportions");
+assert(bannerMarkup.includes('>Thinker Chess</div>'), "banner title is not live Title Case HTML text");
+assert(!bannerMarkup.includes('<svg') && !bannerMarkup.includes('id="tc-banner-') && !bannerMarkup.includes('url('),
+  "banner contains obsolete vector markup or external image resources");
+assert(bannerMarkup.includes('box-shadow:none') && bannerMarkup.includes('padding:12px'),
+  "flat banner surface or text inset is missing");
 const observerStart = source.indexOf("thinkerBannerLayoutObserver.observe(document.body");
 const observerEnd = source.indexOf("});", observerStart) + 3;
 const observerOptions = source.slice(observerStart, observerEnd);

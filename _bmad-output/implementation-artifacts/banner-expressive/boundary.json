@@ -1,0 +1,19 @@
+{
+  "min": {
+    "shown": true,
+    "width": 96,
+    "top": 16,
+    "bottom": 884,
+    "scale": 0.24285714285714285,
+    "titleLeft": 28.40625,
+    "titleRight": 28.421875,
+    "titleHeight": 40,
+    "artwork": {
+      "x": 1369,
+      "y": 394,
+      "width": 34,
+      "height": 68
+    }
+  },
+  "belowShown": false
+}

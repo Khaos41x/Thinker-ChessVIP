@@ -1,0 +1,80 @@
+{
+  "source": "assets/BannerAtualizado.png",
+  "sourceSize": [
+    1254,
+    1254
+  ],
+  "roi": [
+    430,
+    208,
+    824,
+    952
+  ],
+  "horseBoxSource": [
+    448,
+    236,
+    806,
+    929
+  ],
+  "cropSource": [
+    437,
+    215,
+    817,
+    950
+  ],
+  "sourceCropSize": [
+    380,
+    735
+  ],
+  "resampledSize": [
+    140,
+    271
+  ],
+  "output": "assets/banner-horse.webp",
+  "format": "lossless WebP with alpha",
+  "nativeSize": [
+    140,
+    280
+  ],
+  "bytes": 21344,
+  "pngBytes": 35418,
+  "sha256": "ccd041e6101f6011c3838760fe2cafff59867cc484e6644ce1ff6ac0f1685174",
+  "alphaBox": [
+    2,
+    9,
+    138,
+    270
+  ],
+  "cornerAlpha": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "eyeMedian": "#029568",
+  "eyeLeftMedian": "#029769",
+  "eyeRightMedian": "#029468",
+  "bodyMedian": "#FEFEFE",
+  "bodyMode": "#FEFEFE",
+  "eyesBox": [
+    536,
+    438,
+    720,
+    488
+  ],
+  "leftEyeBox": [
+    536,
+    438,
+    576,
+    488
+  ],
+  "rightEyeBox": [
+    679,
+    438,
+    720,
+    488
+  ],
+  "faceMirrorMeanChannelDifference": 4.206850084222347,
+  "faceMirrorPixelsDifferent": 31140,
+  "symmetryCorrected": false
+}

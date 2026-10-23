@@ -278,16 +278,8 @@ const start = source.indexOf("  const SCOUT_CACHE_TTL");
 const end = source.indexOf("  // --- ESTADO DO AUTO RUN DELAY", start);
 if (start < 0 || end < 0) throw new Error("OpponentIntel block not found");
 
-const embeddedBanner = source.match(
-  /<img src="data:image\/jpeg;base64,([^"]+)" alt="Thinker Chess"/,
-);
-if (!embeddedBanner) throw new Error("embedded Thinker Chess banner not found");
-const embeddedBannerBytes = Buffer.from(embeddedBanner[1], "base64");
-if (embeddedBannerBytes.length > 100000 || embeddedBannerBytes.length < 30000) {
-  throw new Error("optimized embedded banner payload is outside the safe size range");
-}
-if (embeddedBannerBytes[0] !== 0xff || embeddedBannerBytes[1] !== 0xd8) {
-  throw new Error("optimized embedded banner is not a JPEG image");
+if (!source.includes('data-artwork="banner-horse.webp"') || source.includes('data:image/jpeg;base64,')) {
+  throw new Error("banner must embed the prepared WebP without the legacy JPEG");
 }
 if (
   source.includes("// @require      https://code.jquery.com/jquery-3.7.1.min.js") ||
@@ -332,9 +324,9 @@ if (
   source.includes('addEventListener("scroll", scheduleThinkerBannerPosition') ||
   reconcileSource.includes("\n    scheduleThinkerBannerPosition();") ||
   !source.includes("THINKER_BANNER_MIN_WIDTH_PX = 96") ||
-  !source.includes("viewportRight - width") ||
-  !source.includes("THINKER_BANNER_ARTWORK_SCALE = 3.4") ||
-  !source.includes("width:${THINKER_BANNER_ARTWORK_SCALE * 100}%;height:auto;max-width:none")
+  !source.includes("availableWidth < THINKER_BANNER_MIN_WIDTH_PX") ||
+  !source.includes('object-fit:contain;') ||
+  !source.includes('>Thinker Chess</div>')
 ) {
   throw new Error("viewport-safe banner, Ghost recovery, or workspace layout markers are missing");
 }
@@ -526,11 +518,8 @@ assert(
 );
 const narrowBannerLayout = context.calculateBannerLayout(sidebarRect, 1160, 0, 0, false);
 assert(
-  narrowBannerLayout &&
-    narrowBannerLayout.left === 984 &&
-    narrowBannerLayout.width === 170 &&
-    narrowBannerLayout.left + narrowBannerLayout.width === 1154,
-  "narrow banner fallback did not clamp to viewportRight",
+  narrowBannerLayout === null,
+  "narrow free column did not hide the banner",
 );
 assert(
   context.calculateBannerLayout(sidebarRect, 1280, 0, 0, true) === null,
@@ -545,9 +534,9 @@ const reportedLayout = context.calculateBannerLayout(
 );
 assert(
   reportedLayout &&
-    reportedLayout.left === 1257 &&
+    reportedLayout.left === 1263 &&
     reportedLayout.top === 637 &&
-    reportedLayout.width === 170 &&
+    reportedLayout.width === 164 &&
     reportedLayout.height === 742,
   "banner geometry does not match the reported Chess.com viewport",
 );
@@ -558,8 +547,8 @@ assert(
 );
 const narrowLayout = context.calculateBannerLayout(sidebarRect, 1160, 0, 0, false);
 assert(
-  narrowLayout && narrowLayout.left === 984 && narrowLayout.width === 170,
-  "unsafe narrow viewport was not resolved by the bounded fallback",
+  narrowLayout === null,
+  "unsafe narrow column should hide the banner instead of overlapping controls",
 );
 assert(
   context.calculateWorkspaceMargin(836, 895) === 201 &&

@@ -1,0 +1,105 @@
+{
+  "phase": "after",
+  "provenance": "Actual Chromium default browser zoom set in a temporary test profile, no CSS zoom/transform or page-scale emulation",
+  "cases": [
+    {
+      "width": 949,
+      "height": 537,
+      "dpr": 1.5,
+      "sidebarLeft": 458,
+      "sidebarWidth": 300,
+      "zoom": 1.5,
+      "baseDpr": 1,
+      "visualViewportScale": 1,
+      "shown": true,
+      "banner": {
+        "x": 773,
+        "y": 16,
+        "width": 170,
+        "height": 505,
+        "right": 943,
+        "bottom": 521
+      },
+      "sidebar": {
+        "x": 458,
+        "y": 16,
+        "width": 300,
+        "height": 505,
+        "right": 758,
+        "bottom": 521
+      },
+      "artwork": {
+        "x": 823,
+        "y": 186.5,
+        "width": 70,
+        "height": 140,
+        "right": 893,
+        "bottom": 326.5
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 0.75,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 785.6666870117188,
+        "y": 330.5,
+        "width": 144.6666717529297,
+        "height": 20,
+        "right": 930.3333587646484,
+        "bottom": 350.5
+      },
+      "symbol": {
+        "x": 824,
+        "y": 191,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "11.5725px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 820.5,
+          "y": 332.5,
+          "right": 895.5,
+          "bottom": 347.8333435058594
+        }
+      ],
+      "resizeDelta": 0,
+      "screenshot": "949x537-dpr1.5.png"
+    }
+  ]
+}
