@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thinker Chess · External Config</title>
+  <link rel="stylesheet" href="/config/assets/panel.css">
+  <script src="/config/assets/panel.js" defer></script>
+</head>
+<body>
+  <main>
+    <header class="page-header">
+      <div><p class="eyebrow">EXTERNAL CONFIG</p><h1>Thinker Chess</h1><p class="intro">Your controls. A separate workspace.</p></div>
+      <div class="connection"><span id="connection-dot" aria-hidden="true"></span><span id="connection" role="status">Connecting…</span></div>
+    </header>
+    <p class="notice">Keep Chess.com open with the userscript enabled. Changes sync automatically.</p>
+    <div id="panels" class="panels" aria-busy="true">
+      <section class="panel" id="core"><h2>Core</h2><div data-controls="core"></div></section>
+      <section class="panel" id="engine"><h2>Engine Control</h2>
+        <div data-controls="engine"></div>
+        <div class="strength"><div class="field-heading"><label for="elo">Strength Level</label><output id="elo-value" for="elo">1500</output></div>
+          <input type="range" id="elo" data-key="elo" min="800" max="3200" step="100" value="1500" disabled>
+          <div class="range-labels"><span>Min 800</span><span>Max 3200</span></div>
+        </div>
+        <div class="timing"><div class="field-heading"><span>Move Timing</span><output id="timing-value">0.50–1.00 s</output></div>
+          <fieldset id="timing-fields" disabled><legend class="sr-only">Move timing in seconds</legend>
+            <div class="delay-fields"><label><span class="sr-only">Minimum delay</span><input id="minDelay" type="text" inputmode="decimal" data-key="minDelay" value="0.50"><span>s</span></label><span>–</span><label><span class="sr-only">Maximum delay</span><input id="maxDelay" type="text" inputmode="decimal" data-key="maxDelay" value="1.00"><span>s</span></label></div>
+            <div class="segmented" role="group" aria-label="Move timing mode"><button type="button" data-mode="random" aria-pressed="true">Random</button><button type="button" data-mode="max" aria-pressed="false">Immediate</button></div>
+          </fieldset>
+          <p class="hint">Timing applies when Auto Moves is enabled.</p>
+        </div>
+        <div data-controls="pacing"></div>
+      </section>
+      <section class="panel" id="visuals"><h2>Visuals</h2><div data-controls="visuals"></div>
+        <div class="control-row"><label for="color">Theme</label><input id="color" data-key="color" type="color" value="#10b981" disabled></div>
+      </section>
+      <section class="panel" id="workspace"><h2>Workspace</h2><div data-controls="workspace"></div><p class="hint">Hide the on-page interface while keeping this workspace available.</p></section>
+    </div>
+    <footer><p id="save-state" role="status" aria-live="polite">Loading settings…</p><button id="retry" type="button">Refresh</button></footer>
+    <p class="footnote">Settings are shared by connected tabs and reset when the local server restarts.</p>
+  </main>
+</body>
+</html>

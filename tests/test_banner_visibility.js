@@ -54,6 +54,8 @@ const window = {
   removeEventListener() {},
 };
 const context = {
+  _externalAppliedRevision: -1,
+  _externalConfigError: null,
   document,
   window,
   console,

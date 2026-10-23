@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-23.3
+// @version      2026-10-23.4
 // @description  Chess Bot com Servidor Local
 // @author       You
 // @match        https://www.chess.com/*
@@ -5365,8 +5365,9 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     let fenAvailable = false;
     try { fenAvailable = typeof game?.getFEN?.() === "string"; } catch (_) {}
     return {
-      version: "2026-10-23.3",
+      version: "2026-10-23.4",
       route: window.location.pathname,
+      externalConfig: { appliedRevision: _externalAppliedRevision, error: _externalConfigError },
       banner: { enabled: thinkerBannerEnabled, shown: Boolean(banner && banner.style.display !== "none"), reason, minimumWidth: THINKER_BANNER_MIN_WIDTH_PX, geometry: layout },
       bot: { enabled: isMasterEnabled(), autoMove: auto_move, effectiveAutoMove: sessionControlBridge.effectiveAutoMove(auto_move), sessionActive: sessionControlBridge.isActive(), stage: thinkerMoveDiagnostic.stage, status: thinkerMoveDiagnostic.status, authenticated: Boolean(engineCapability), boardFound: Boolean(board), gameApiFound: Boolean(game), fenAvailable, canReadLegalMoves: typeof game?.getLegalMoves === "function", canExecuteMove: typeof game?.move === "function", retryPending: Date.now() < moveRetryAfter },
     };
@@ -6389,6 +6390,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-session-button[aria-disabled="true"] {
           border-color:#565752 !important; color:rgba(236,236,232,.55) !important; opacity:1;
         }
+        #krypbot-container #kb-session-export { line-height:12px; white-space:normal; }
         #krypbot-container .kb-session-status {
           display:grid; grid-template-columns:max-content minmax(0,1fr) max-content max-content;
           gap:var(--space-2) var(--field-gap); align-items:baseline;
@@ -6524,7 +6526,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             <button class="kb-session-button" id="kb-session-start" data-action="start" type="button">Start</button>
             <div class="kb-session-secondary-actions">
               <button class="kb-session-button" id="kb-session-stop" data-action="stop" type="button">Finish</button>
-              <button class="kb-session-button" id="kb-session-export" data-action="export" type="button" aria-label="Export session diagnostic">Export</button>
+              <button class="kb-session-button" id="kb-session-export" data-action="export" type="button" aria-label="Export session diagnostic">Export Diagnostics</button>
             </div>
           </div>
           <div class="kb-session-status" aria-live="polite">
@@ -6912,15 +6914,15 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           const ratio = maximum > minimum ? Math.min(1, Math.max(0, (Number(value) - minimum) / (maximum - minimum))) : 0;
           slider.style.setProperty("--kb-slider-fill", `calc(${ratio.toFixed(4)} * (100% - 16px) + 8px)`);
         };
-        const syncDelayPresentation = () => {
+        const syncDelayPresentation = (force = false) => {
           const immediate = autoDelayMode === "max";
-          $("#minDelayInput").val(immediate ? "0.00" : formatDelay(autoDelayMin));
-          $("#maxDelayInput").val(immediate ? "0.00" : formatDelay(autoDelayMax));
+          if (force || document.activeElement?.id !== "minDelayInput") $("#minDelayInput").val(immediate ? "0.00" : formatDelay(autoDelayMin));
+          if (force || document.activeElement?.id !== "maxDelayInput") $("#maxDelayInput").val(immediate ? "0.00" : formatDelay(autoDelayMax));
           $("#autoDelayDisplay").text(immediate ? "Immediate" : `${formatDelay(autoDelayMin)}–${formatDelay(autoDelayMax)} s`);
         };
         const commitDelayInputs = () => {
           if (autoDelayMode === "max") {
-            syncDelayPresentation();
+            syncDelayPresentation(true);
             return;
           }
           let minimum = clampDelay($("#minDelayInput").val(), autoDelayMin);
@@ -6929,7 +6931,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           const changed = minimum !== autoDelayMin || maximum !== autoDelayMax;
           autoDelayMin = minimum;
           autoDelayMax = maximum;
-          syncDelayPresentation();
+          syncDelayPresentation(true);
           if (changed) {
             localStorage.setItem("autoMinDelay", String(autoDelayMin));
             localStorage.setItem("autoMaxDelay", String(autoDelayMax));
@@ -7060,15 +7062,16 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         });
 
         // Push current menu state to server so config panel reads correct values
-        function pushToServer() {
-          _localConfigRevision++;
-          _localConfigPending = true;
-          _queuedConfigSnapshot = JSON.stringify({
+        let lastLocalConfig = null;
+        function readLocalConfig() {
+          return {
             hint: hint,
             autoMove: auto_move,
             autoQueue: auto_queue,
             autoAdjust: typeof autoAdjust !== "undefined" && autoAdjust.isEnabled(),
             evalBar: typeof evalBarEnabled !== "undefined" ? evalBarEnabled : false,
+            banner: thinkerBannerEnabled,
+            recentForm: recentFormEnabled,
             smartPacing: typeof smartPacingEnabled !== "undefined" ? smartPacingEnabled : false,
             elo: typeof chessBot !== "undefined" ? chessBot.elo : 1500,
             delayMode: typeof autoDelayMode !== "undefined" ? autoDelayMode : "random",
@@ -7076,7 +7079,16 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             maxDelay: typeof autoDelayMax !== "undefined" ? autoDelayMax : 2.0,
             color: current_color,
             ghostMode: _ghostModeActive
-          });
+          };
+        }
+        function pushToServer(force = false) {
+          const current = readLocalConfig();
+          const patch = Object.fromEntries(Object.entries(current).filter(([key, value]) => force || !lastLocalConfig || lastLocalConfig[key] !== value));
+          lastLocalConfig = current;
+          if (!Object.keys(patch).length) return;
+          _localConfigRevision++;
+          _localConfigPending = true;
+          _queuedConfigSnapshot = JSON.stringify({ ...JSON.parse(_queuedConfigSnapshot || "{}"), ...patch });
           flushConfigSave();
         }
 
@@ -7087,7 +7099,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           _configSaveInFlight = true;
           const onFailure = () => {
             _configSaveInFlight = false;
-            if (!_queuedConfigSnapshot) _queuedConfigSnapshot = snapshot;
+            _queuedConfigSnapshot = JSON.stringify({ ...JSON.parse(snapshot), ...JSON.parse(_queuedConfigSnapshot || "{}") });
             if (_configRetryTimer === null) {
               _configRetryTimer = window.setTimeout(() => {
                 _configRetryTimer = null;
@@ -7121,6 +7133,8 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           });
         }
 
+        lastLocalConfig = readLocalConfig();
+        window.krypbotConfigApplied = () => { lastLocalConfig = readLocalConfig(); };
         $(document).off("change.kbMasterStatus", 'input[name="kb-bot-status"]').on("change.kbMasterStatus", 'input[name="kb-bot-status"]', function () {
           setMasterEnabled($(this).val() == "1");
           pushToServer();
@@ -7208,6 +7222,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         $('input[name="kb-banner"]').on("change", function () {
           setThinkerBannerEnabled($(this).val() === "1");
           window.krypbotUpdateUI();
+          pushToServer();
         });
 
         $('input[name="kb-recent-form"]').on("change", function () {
@@ -7216,6 +7231,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           if (OpponentIntel.currentEntry) OpponentIntel.renderHUD(OpponentIntel.currentEntry.hudStats);
           else document.querySelectorAll(".tc-hud-stats").forEach((node) => node.remove());
           window.krypbotUpdateUI();
+          pushToServer();
         });
 
         // --- EVAL BAR TOGGLE ---
@@ -7330,7 +7346,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         window.krypbotUpdateUI();
         _menuReady = true;
         _lastExternalConfig = null;
-        if (resetDefaultsThisVersion) pushToServer();
+        if (resetDefaultsThisVersion) pushToServer(true);
         else pollExternalConfig();
         thinkerUiBound = true;
         clearThinkerMountFailure();
@@ -7386,20 +7402,40 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
   let _queuedConfigSnapshot = null;
   let _configRetryTimer = null;
   let _configPollId = 0;
+  let _externalAppliedRevision = -1;
+  let _externalServerId = "";
+  let _externalPollPending = false;
+  let _externalConfigError = null;
 
   function pollExternalConfig() {
-    if (!_menuReady || _localConfigPending) return;
+    if (!_menuReady || _localConfigPending || _externalPollPending) return;
     const requestRevision = _localConfigRevision;
     const pollId = ++_configPollId;
+    _externalPollPending = true;
     GM_xmlhttpRequest({
       method: "GET",
       url: SERVER_URL + "/config/load",
+      headers: { "X-Thinker-Client": "userscript", "X-Thinker-Applied-Revision": String(_externalAppliedRevision), "X-Thinker-Server": _externalServerId },
+      timeout: 5000,
+      onerror() { _externalPollPending = false; _externalConfigError = "network"; },
+      ontimeout() { _externalPollPending = false; _externalConfigError = "timeout"; },
+      onabort() { _externalPollPending = false; },
       onload(resp) {
+        _externalPollPending = false;
         try {
-          if (!_menuReady || _localConfigPending || requestRevision !== _localConfigRevision || pollId !== _configPollId || resp.status !== 200) return;
+          if (!_menuReady || _localConfigPending || requestRevision !== _localConfigRevision || pollId !== _configPollId) return;
+          if (resp.status !== 200) { _externalConfigError = "http-" + resp.status; return; }
           const s = JSON.parse(resp.responseText);
           const key = JSON.stringify(s);
+          _externalConfigError = null;
           if (key === _lastExternalConfig) return;
+          if (typeof s.banner === "boolean" && thinkerBannerEnabled !== s.banner) setThinkerBannerEnabled(s.banner);
+          if (typeof s.recentForm === "boolean" && recentFormEnabled !== s.recentForm) {
+            recentFormEnabled = s.recentForm;
+            localStorage.setItem("recentForm", String(recentFormEnabled));
+            if (OpponentIntel.currentEntry) OpponentIntel.renderHUD(OpponentIntel.currentEntry.hudStats);
+            else document.querySelectorAll(".tc-hud-stats").forEach(node => node.remove());
+          }
 
           // Ghost Mode — apply immediately, hide EVERYTHING
           if (typeof s.ghostMode === "boolean") {
@@ -7460,7 +7496,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           if (typeof s.elo === "number" && chessBot.elo !== s.elo) {
             chessBot.elo = s.elo;
             $("#kb-elo-slider").val(s.elo);
-            setStrengthProgress(s.elo);
             autoAdjust.updateBaseElo(s.elo);
           }
           // Delay Mode
@@ -7469,8 +7504,9 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             localStorage.setItem("autoDelayMode", autoDelayMode);
             $('input[name="delayMode"][value="' + autoDelayMode + '"]').prop("checked", true);
           }
-          const nextDelayMin = autoDelayMode === "max" ? 0 : clampDelay(s.minDelay, autoDelayMin || DEFAULT_MIN_DELAY);
-          const nextDelayMax = autoDelayMode === "max" ? 0 : clampDelay(s.maxDelay, autoDelayMax || DEFAULT_MAX_DELAY);
+          const normalizeDelay = (value, fallback) => typeof value === "number" && Number.isFinite(value) ? Math.min(10, Math.max(0.01, value)) : fallback;
+          const nextDelayMin = autoDelayMode === "max" ? 0 : normalizeDelay(s.minDelay, autoDelayMin || DEFAULT_MIN_DELAY);
+          const nextDelayMax = autoDelayMode === "max" ? 0 : normalizeDelay(s.maxDelay, autoDelayMax || DEFAULT_MAX_DELAY);
           let normalizedDelayMin = nextDelayMin;
           let normalizedDelayMax = nextDelayMax;
           if (autoDelayMode !== "max" && normalizedDelayMin > normalizedDelayMax) {
@@ -7482,7 +7518,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             localStorage.setItem("autoMinDelay", String(autoDelayMin));
             localStorage.setItem("autoMaxDelay", String(autoDelayMax));
           }
-          syncDelayPresentation();
           // Color
           if (s.color && current_color !== s.color) {
             current_color = s.color;
@@ -7495,8 +7530,12 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             $(".myhigh").css({"border-color": current_color, "background-color": current_color + "26", "box-shadow": `0 4px 12px ${current_color}33`});
           }
           if (typeof window.krypbotUpdateUI === "function") window.krypbotUpdateUI();
+          if (typeof window.krypbotConfigApplied === "function") window.krypbotConfigApplied();
           _lastExternalConfig = key;
-        } catch(e) {}
+          if (Number.isInteger(s._revision)) _externalAppliedRevision = s._revision;
+          if (typeof s._serverId === "string") _externalServerId = s._serverId;
+          _externalConfigError = null;
+        } catch(e) { _externalConfigError = "apply-failed"; }
       }
     });
   }

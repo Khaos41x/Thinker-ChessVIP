@@ -332,7 +332,7 @@ async function run() {
   assert(menu.includes("Win Rate") && menu.includes(">—</strong>"), "zero-sample win rate display regressed");
   assert(menu.includes('id="kb-more-settings-toggle"') && menu.includes('aria-controls="kb-more-settings-panel" aria-expanded="false"'), "More Settings disclosure is missing");
   assert(menu.includes('id="kb-more-settings-panel" data-open="false" aria-hidden="true" inert'), "More Settings is not collapsed and inert by default");
-  assert(menu.includes('id="kb-session-export"') && menu.includes('aria-label="Export session diagnostic">Export</button>'), "Export action remains icon-only or ambiguous");
+  assert(menu.includes('id="kb-session-export"') && menu.includes('aria-label="Export session diagnostic">Export Diagnostics</button>'), "Export action remains icon-only or ambiguous");
   assert(menu.includes('id="kb-strength-label">Strength Level') && menu.includes('Current <strong id="kb-elo-val">'), "Strength current value is not explicit");
   assert(menu.includes('type="range" min="800" max="3200"') && menu.includes('<span>Min 800</span><span>Max 3200</span>'), "Strength bounds are not explicit");
   for (const forbidden of ["Assistente de Xadrez", "Jogadas automáticas", "Ritmo de jogada", "Nível de força", "Mais ajustes", "Aguardando", "Concluído", "Iniciar", "Finalizar", "Configurar", "Taxa de vitória", "Tema", "Scout do Oponente"]) {

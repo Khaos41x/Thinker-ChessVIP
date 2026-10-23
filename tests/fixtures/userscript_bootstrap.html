@@ -27,6 +27,7 @@
         layoutMounts: 0,
         layoutReplacements: 0,
         mountErrorInjected: false,
+        serverConfig: { hint:false, autoMove:false, autoQueue:false, autoAdjust:false, evalBar:false, smartPacing:false },
       };
 
       window.GM_xmlhttpRequest = function (options) {
@@ -35,19 +36,12 @@
           setTimeout(function () {
             options.onload({
               status: 200,
-              responseText: JSON.stringify({
-                hint: false,
-                autoMove: false,
-                autoQueue: false,
-                autoAdjust: false,
-                evalBar: false,
-                smartPacing: false,
-                ghostMode: ghostMode,
-              }),
+              responseText: JSON.stringify({ ...window.fixtureState.serverConfig, ghostMode: ghostMode }),
             });
           }, 0);
         } else if (options.url.includes("/config/save")) {
           window.fixtureState.configSaves.push(JSON.parse(options.data || "{}"));
+          Object.assign(window.fixtureState.serverConfig, JSON.parse(options.data || "{}"));
           options.onload?.({ status: 200, responseText: "{}" });
         } else if (options.url.includes("api.chess.com/pub/player/")) {
           if (fixtureParams.get("network") === "error") {

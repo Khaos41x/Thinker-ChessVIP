@@ -1253,14 +1253,14 @@ function createCdpClient(webSocketUrl) {
         assert(field.result.value.outline==='none' && field.result.value.border==='rgb(58, 58, 54)' && field.result.value.focusInput==='pointer',`Pointer focus feedback persisted: ${JSON.stringify(field.result.value)}`);
         pointerFields.push(field.result.value);
       }
-      await client.send('Runtime.evaluate',{expression:`document.querySelector('label[for="dm-rand"]').click();document.getElementById('minDelayInput').focus();document.getElementById('minDelayInput').select();`});
+      await client.send('Runtime.evaluate',{expression:`document.querySelector('label[for="dm-rand"]').click();document.getElementById('maxDelayInput').value='2.00';document.getElementById('minDelayInput').focus();document.getElementById('minDelayInput').select();`});
       await client.send('Input.insertText',{text:'0.75'});
       const editingFocus=await client.send('Runtime.evaluate',{expression:`getComputedStyle(document.getElementById('minDelayInput').closest('.kb-delay-input')).outlineStyle`,returnByValue:true});
       assert(editingFocus.result.value==='none','Editing Move Timing restored the unwanted pointer outline');
       await client.send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
       await client.send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
       const editedDelay=await client.send('Runtime.evaluate',{expression:`document.getElementById('minDelayInput').value`,returnByValue:true});
-      assert(editedDelay.result.value==='0.75','Move Timing edit no longer commits with Enter');
+      assert(editedDelay.result.value==='0.75',`Move Timing edit no longer commits with Enter: ${JSON.stringify(editedDelay)}`);
       await client.send('Runtime.evaluate',{expression:`(() => {const outside=document.createElement('button');outside.id='fixture-focus-outside';outside.textContent='Outside';const menu=document.getElementById('krypbot-container');menu.parentElement.insertBefore(outside,menu);outside.focus();})()`});
       await client.send('Input.dispatchKeyEvent',{type:'keyDown',key:'Tab',code:'Tab',windowsVirtualKeyCode:9});
       await client.send('Input.dispatchKeyEvent',{type:'keyUp',key:'Tab',code:'Tab',windowsVirtualKeyCode:9});
