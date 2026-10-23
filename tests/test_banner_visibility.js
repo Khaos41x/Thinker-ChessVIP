@@ -244,8 +244,8 @@ assert(!observerOptions.includes("attributes") && !observerOptions.includes("att
   "sidebar replacement observer still watches global attributes");
 const reconcileStart = source.indexOf("function reconcileThinkerUiShells");
 const reconcileEnd = source.indexOf("function startThinkerUiReconciler", reconcileStart);
-assert(!source.slice(reconcileStart, reconcileEnd).includes("scheduleThinkerBannerPosition"),
-  "periodic reconciler still schedules banner geometry");
+assert(source.slice(reconcileStart, reconcileEnd).includes('else if (thinkerBannerNode.style.display === "none") scheduleThinkerBannerPosition()'),
+  "reconciler cannot recover an enabled Banner left hidden after a route transition");
 const watchdogStart = source.indexOf("thinkerShellWatchTimer = window.setInterval");
 const watchdogEnd = source.indexOf("}, 1000);", watchdogStart);
 assert(!source.slice(watchdogStart, watchdogEnd).includes("positionThinkerBannerShell"),

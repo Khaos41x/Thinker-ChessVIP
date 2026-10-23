@@ -4,7 +4,7 @@
     engine: [['autoAdjust', 'Auto Rating']],
     pacing: [['smartPacing', 'Smart Pacing']],
     visuals: [['evalBar', 'Evaluation Bar'], ['banner', 'Banner'], ['recentForm', 'Recent Form']],
-    workspace: [['ghostMode', 'Hide On-Page Interface']],
+    workspace: [['ghostMode', 'Clean View']],
   };
   const byId = id => document.getElementById(id);
   let config = null;
@@ -108,6 +108,13 @@
       const synced = status.userscriptConnected;
       document.querySelector('.connection').dataset.state = synced ? 'synced' : 'waiting';
       byId('connection').textContent = synced ? 'Chess.com tab connected' : 'Waiting for Chess.com';
+      const bannerLabels = {
+        visible: 'Visible on Chess.com', disabled: 'Disabled', 'ghost-mode': 'Hidden by Clean View',
+        'board-unavailable': 'Waiting for board', 'sidebar-unavailable': 'Waiting for side panel',
+        'route-not-supported': 'Not shown on this page', 'insufficient-space-or-height': 'Not enough room (96 px minimum)',
+        'awaiting-layout': 'Updating position…', disconnected: 'Waiting for Chess.com',
+      };
+      byId('banner-display-state').textContent = config?.ghostMode ? bannerLabels['ghost-mode'] : config?.banner === false ? bannerLabels.disabled : bannerLabels[status.bannerState] || 'Waiting for display status';
     } catch (_) {
       document.querySelector('.connection').dataset.state = 'offline';
       byId('connection').textContent = 'Local server offline';
@@ -136,7 +143,16 @@
       toggle.setAttribute('aria-labelledby', caption.id);
       toggle.disabled = true;
       toggle.addEventListener('click', () => queue({ [key]: toggle.getAttribute('aria-checked') !== 'true' }));
-      row.append(caption, toggle);
+      const copy = document.createElement('div');
+      copy.append(caption);
+      if (key === 'banner') {
+        const detail = document.createElement('small');
+        detail.id = 'banner-display-state';
+        detail.className = 'control-detail';
+        detail.textContent = 'Waiting for display status';
+        copy.append(detail);
+      }
+      row.append(copy, toggle);
       host.append(row);
     });
   });

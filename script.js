@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-23.5
+// @version      2026-10-23.6
 // @description  Chess Bot com Servidor Local
 // @author       You
 // @match        https://www.chess.com/*
@@ -5160,12 +5160,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
 
   function updateThinkerMountDiagnostics() {
     const message = thinkerUiLastFailure.slice(0, 240);
-    const controls = [document.getElementById("kb-ghost-recovery")].filter(Boolean);
-    controls.forEach((control) => {
-      control.dataset.mountError = message;
-      const baseTitle = "Restore Thinker Chess controls";
-      control.title = message ? `${baseTitle} (${message})` : baseTitle;
-    });
+    if (document.documentElement?.dataset) document.documentElement.dataset.thinkerMountError = message;
   }
 
   function clearThinkerMountFailure() {
@@ -5370,8 +5365,9 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     let fenAvailable = false;
     try { fenAvailable = typeof game?.getFEN?.() === "string"; } catch (_) {}
     return {
-      version: "2026-10-23.5",
+      version: "2026-10-23.6",
       route: window.location.pathname,
+      ui: { hidden: _ghostModeActive, mountError: thinkerUiLastFailure },
       externalConfig: { appliedRevision: _externalAppliedRevision, error: _externalConfigError },
       banner: { enabled: thinkerBannerEnabled, shown: Boolean(banner && banner.style.display !== "none"), reason, minimumWidth: THINKER_BANNER_MIN_WIDTH_PX, geometry: layout },
       bot: { enabled: isMasterEnabled(), autoMove: auto_move, effectiveAutoMove: sessionControlBridge.effectiveAutoMove(auto_move), sessionActive: sessionControlBridge.isActive(), stage: thinkerMoveDiagnostic.stage, status: thinkerMoveDiagnostic.status, authenticated: Boolean(engineCapability), boardFound: Boolean(board), gameApiFound: Boolean(game), fenAvailable, canReadLegalMoves: typeof game?.getLegalMoves === "function", canExecuteMove: typeof game?.move === "function", retryPending: Date.now() < moveRetryAfter },
@@ -5384,36 +5380,13 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
   } catch (_) {}
 
   function ensureGhostRecoveryControl() {
-    if (!document.body) return null;
-    let control = document.getElementById("kb-ghost-recovery");
-    if (!control) {
-      control = document.createElement("button");
-      control.id = "kb-ghost-recovery";
-      control.type = "button";
-      control.textContent = "TC";
-      control.title = "Restore Thinker Chess controls";
-      control.style.cssText =
-        "position:fixed;left:14px;bottom:14px;z-index:2147483646;width:42px;height:42px;border:1px solid rgba(0,255,136,.55);border-radius:50%;background:#11151a;color:#00ff88;font:800 13px/1 Inter,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.55),0 0 16px rgba(0,255,136,.22);cursor:pointer;display:none;align-items:center;justify-content:center;";
-      control.addEventListener("click", () => {
-        applyGhostModeVisibility(false);
-        if (typeof GM_xmlhttpRequest === "function") {
-          GM_xmlhttpRequest({
-            method: "POST",
-            url: SERVER_URL + "/config/save",
-            headers: { "Content-Type": "application/json" },
-            data: JSON.stringify({ ghostMode: false }),
-          });
-        }
-      });
-      document.body.appendChild(control);
-    }
-    control.style.display = _ghostModeActive ? "flex" : "none";
-    updateThinkerMountDiagnostics();
-    return control;
+    document.getElementById("kb-ghost-recovery")?.remove();
+    return null;
   }
 
   function applyGhostModeVisibility(active) {
     _ghostModeActive = active === true;
+    document.documentElement?.classList?.toggle("tc-clean-view", _ghostModeActive);
     const menu = document.getElementById("krypbot-container");
     const wrapper = document.getElementById("oi-wrapper");
     const scoutPrimary = document.getElementById("oi-zone1");
@@ -5428,6 +5401,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     if (scoutSecondary) scoutSecondary.style.display = _ghostModeActive || menu?.classList.contains("minimized") ? "none" : "flex";
     if (banner && !shouldShowThinkerBanner()) banner.style.display = "none";
     ensureGhostRecoveryControl();
+    if (!_ghostModeActive) scheduleThinkerWorkspaceLayout();
     if (shouldShowThinkerBanner()) {
       scheduleThinkerBannerPosition();
     }
@@ -5469,7 +5443,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     if (wrapper && document.body && (wrapper.parentNode !== document.body || wrapper.nextSibling)) {
       document.body.appendChild(wrapper);
     }
-    if (thinkerBannerNode && !shouldShowThinkerBanner()) thinkerBannerNode.style.display = "none";
+    if (thinkerBannerNode) {
+      if (!shouldShowThinkerBanner()) thinkerBannerNode.style.display = "none";
+      else if (thinkerBannerNode.style.display === "none") scheduleThinkerBannerPosition();
+    }
   }
 
   function startThinkerUiReconciler() {
@@ -5576,6 +5553,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
 
     const css = `
       <style id="tc-userscript-style">
+        html.tc-clean-view :is(#oi-wrapper, #krypbot-container, #oi-zone1, #oi-zone2, #oi-mysession, #thinker-chess-banner, #thinker-eval-bar, .thinker-eval-v2-overlay, #kb-ghost-recovery, #kb-workspace-launcher, #kb-session-toast, .tc-hud-stats, .myarrow, .myhigh) { display:none !important; }
         html.tc-page-scrollbar-hidden,
         html.tc-page-scrollbar-hidden body {
           scrollbar-width: none !important;
@@ -6711,6 +6689,12 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         if (!thinkerMenuNode || !thinkerBannerNode) return;
         startThinkerUiReconciler();
         scheduleThinkerBannerPosition = () => {
+          if (document.hidden) {
+            if (thinkerBannerFrame !== null) cancelAnimationFrame(thinkerBannerFrame);
+            thinkerBannerFrame = null;
+            positionThinkerBannerShell();
+            return;
+          }
           if (thinkerBannerFrame !== null) return;
           thinkerBannerFrame = requestAnimationFrame(() => {
             thinkerBannerFrame = null;
@@ -7312,6 +7296,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         thinkerUrlMonitorTimer = setInterval(() => {
           if (window.location.href !== lastUrl) {
             lastUrl = window.location.href;
+            scheduleThinkerBannerPosition();
             auto_queue_last_url = lastUrl;
             resetAutoQueueTrigger();
             OpponentIntel.reset();
@@ -7416,11 +7401,13 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     if (!_menuReady || _localConfigPending || _externalPollPending) return;
     const requestRevision = _localConfigRevision;
     const pollId = ++_configPollId;
+    let bannerState = "unknown";
+    try { bannerState = getThinkerRuntimeDiagnostics().banner.reason; } catch (_) {}
     _externalPollPending = true;
     GM_xmlhttpRequest({
       method: "GET",
       url: SERVER_URL + "/config/load",
-      headers: { "X-Thinker-Client": "userscript", "X-Thinker-Applied-Revision": String(_externalAppliedRevision), "X-Thinker-Server": _externalServerId },
+      headers: { "X-Thinker-Client": "userscript", "X-Thinker-Applied-Revision": String(_externalAppliedRevision), "X-Thinker-Server": _externalServerId, "X-Thinker-Banner-State": bannerState },
       timeout: 5000,
       onerror() { _externalPollPending = false; _externalConfigError = "network"; },
       ontimeout() { _externalPollPending = false; _externalConfigError = "timeout"; },

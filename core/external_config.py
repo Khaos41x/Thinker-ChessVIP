@@ -26,6 +26,7 @@ def create_external_config_blueprint():
     revision = 0
     last_seen = None
     applied_revision = -1
+    banner_state = "unknown"
     server_id = uuid.uuid4().hex
 
     @panel.after_request
@@ -46,12 +47,14 @@ def create_external_config_blueprint():
 
     @panel.get("/config/load")
     def load():
-        nonlocal last_seen, applied_revision
+        nonlocal last_seen, applied_revision, banner_state
         with lock:
             if request.headers.get("X-Thinker-Client") == "userscript":
                 last_seen = time.monotonic()
                 value = request.headers.get("X-Thinker-Applied-Revision", "-1")
                 applied_revision = int(value) if re.fullmatch(r"-?\d{1,12}", value) and request.headers.get("X-Thinker-Server") == server_id else -1
+                value = request.headers.get("X-Thinker-Banner-State", "unknown")
+                banner_state = value if value in {"visible", "disabled", "ghost-mode", "board-unavailable", "sidebar-unavailable", "route-not-supported", "insufficient-space-or-height", "awaiting-layout"} else "unknown"
             return jsonify({**config, "_revision": revision, "_serverId": server_id})
 
     @panel.get("/config/status")
@@ -59,7 +62,8 @@ def create_external_config_blueprint():
         with lock:
             connected = last_seen is not None and time.monotonic() - last_seen < 7
             return jsonify({"revision": revision, "userscriptConnected": connected,
-                            "applied": connected and applied_revision == revision})
+                            "applied": connected and applied_revision == revision,
+                            "bannerState": banner_state if connected else "disconnected"})
 
     @panel.post("/config/save")
     def save():

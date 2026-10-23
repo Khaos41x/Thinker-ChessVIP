@@ -404,3 +404,9 @@ body[data-focus-input=pointer] input:focus-visible {
       var(--accent) var(--range-fill,0%),
       var(--border) var(--range-fill,0%));
 }
+.control-detail {
+  display: block;
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--muted);
+}

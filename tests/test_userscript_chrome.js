@@ -521,7 +521,7 @@ function createCdpClient(webSocketUrl) {
         menuChildren: Array.from(document.getElementById("krypbot-container")?.children || []).map((node) => ({ id: node.id, className: node.className, height: node.getBoundingClientRect().height, display: getComputedStyle(node).display })),
         bannerLayout: describe(document.getElementById("thinker-chess-banner")),
         ancestors,
-        mountError: document.getElementById("kb-ghost-recovery")?.dataset.mountError || "",
+        mountError: document.documentElement.dataset.thinkerMountError || "",
         workspaceGap: wrapperTop - gameplayBottom,
         href: location.href,
       });

@@ -81,6 +81,14 @@ class ExternalConfigTests(unittest.TestCase):
         self.assertFalse(state['banner'] or state['recentForm'])
         self.assertEqual(state['_revision'], 2)
 
+    def test_banner_status_is_bounded_and_expires(self):
+        self.client.get('/config/load', headers={'X-Thinker-Client': 'userscript', 'X-Thinker-Banner-State': 'visible'})
+        self.assertEqual(self.client.get('/config/status').json['bannerState'], 'visible')
+        self.client.get('/config/load', headers={'X-Thinker-Client': 'userscript', 'X-Thinker-Banner-State': 'unexpected-private-data'})
+        self.assertEqual(self.client.get('/config/status').json['bannerState'], 'unknown')
+        with patch('core.external_config.time.monotonic', return_value=10**20):
+            self.assertEqual(self.client.get('/config/status').json['bannerState'], 'disconnected')
+
 
 if __name__ == '__main__':
     unittest.main()

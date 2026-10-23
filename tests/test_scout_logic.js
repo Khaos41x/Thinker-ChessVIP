@@ -242,6 +242,7 @@ if (pollStart < 0 || pollEnd < 0) throw new Error("config polling block not foun
 let capturedPoll = null;
 const pollContext = {
   SERVER_URL: "http://127.0.0.1:5050",
+  getThinkerRuntimeDiagnostics: () => ({ banner: { reason: "visible" } }),
   GM_xmlhttpRequest: (options) => { capturedPoll = options; },
   $: () => { throw new Error("stale response reached UI"); },
 };
@@ -271,6 +272,12 @@ const racedPoll = capturedPoll;
 pollContext.markLocalChange();
 pollContext.clearLocalPending();
 racedPoll.onload({ status: 200, responseText: '{"hint":false}' });
+pollContext.getThinkerRuntimeDiagnostics = () => { throw new Error('page getter failed'); };
+capturedPoll = null;
+pollContext.pollConfig();
+assert(capturedPoll && capturedPoll.headers['X-Thinker-Banner-State'] === 'unknown',
+  'a diagnostic failure stopped external configuration polling');
+capturedPoll.onerror();
 if (Buffer.byteLength(source, "utf8") > 640000) {
   throw new Error("userscript payload is too large for reliable Tampermonkey startup");
 }
@@ -314,7 +321,8 @@ const reconcileSource = source.slice(
 if (
   source.includes('position:absolute;left:-9999px;top:0;z-index:50') ||
   source.includes("thinker-chess-launcher") ||
-  !source.includes('control.id = "kb-ghost-recovery"') ||
+  source.includes('control.id = "kb-ghost-recovery"') ||
+  !source.includes('document.getElementById("kb-ghost-recovery")?.remove()') ||
   !source.includes("pointer-events:none") ||
   !/thinker-chess-banner[^`]+position:absolute!important[^`]+z-index:214748\d+[^`]+transition:none!important/s.test(source) ||
   !source.includes("function calculateThinkerBannerLayout") ||
@@ -583,7 +591,8 @@ assert(
   "workspace was not placed below normal and fullscreen viewport folds",
 );
 
-const recoveryControl = { style: {}, dataset: {}, title: "" };
+const recoveryControl = { style: {}, remove() { this.removed = true; } };
+context.document.documentElement.dataset = {};
 const shellMenu = { isConnected: false, style: {}, classList: { contains: () => false } };
 const shellBanner = { isConnected: false, style: {} };
 const shellWrapper = { style: { setProperty(name, value) { this[name] = value; } } };
@@ -624,14 +633,12 @@ context.scout.ensureScoutWrapper = () => null;
 
 context.recordMountFailure(new Error("x".repeat(400)));
 context.recordMountFailure(new Error("second failure"));
-assert(recoveryControl.dataset.mountError.startsWith("2: Error: second failure"),
+assert(context.document.documentElement.dataset.thinkerMountError.startsWith("2: Error: second failure"),
   "mount diagnostic did not retain the latest bounded failure count");
-assert(recoveryControl.dataset.mountError.length <= 240,
+assert(context.document.documentElement.dataset.thinkerMountError.length <= 240,
   "mount diagnostic metadata was not bounded");
-assert(recoveryControl.title.includes("second failure"),
-  "mount diagnostic was not exposed on discoverable controls");
 context.clearMountFailure();
-assert(recoveryControl.dataset.mountError === "",
+assert(context.document.documentElement.dataset.thinkerMountError === "",
   "successful recovery did not clear mount diagnostics");
 
 context.reconcileShells();
@@ -663,10 +670,10 @@ assert(menuMounts === 0 && bannerMounts === 2,
 context.applyGhost(true);
 assert(shellMenu.style.display === "none", "Ghost Mode did not hide the configuration panel");
 assert(shellBanner.style.display === "none", "Ghost Mode did not hide the banner");
-assert(recoveryControl.style.display === "flex", "Ghost Mode recovery control was not exposed");
+assert(recoveryControl.removed === true, "Clean View retained the floating recovery control");
 context.applyGhost(false);
 assert(shellMenu.style.display === "flex", "Ghost Mode recovery did not restore the panel");
-assert(recoveryControl.style.display === "none", "Ghost Mode recovery control stayed visible");
+assert(recoveryControl.removed === true, "Clean View recreated the floating recovery control");
 
 let reconcileIntervals = 0;
 context.window.setInterval = () => {

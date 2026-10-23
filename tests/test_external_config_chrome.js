@@ -102,6 +102,35 @@ async function evaluate(client, expression) {
     await waitFor(() => evaluate(board, `window.thinkerChessDiagnostics().banner.reason==='visible'&&getComputedStyle(document.getElementById('thinker-chess-banner')).display==='flex'`));
     const scrolledBanner=await evaluate(board, `(() => {const b=document.getElementById('thinker-chess-banner').getBoundingClientRect(),s=document.querySelector('.play-controller-component:not(.stale-controller)').getBoundingClientRect();return {scrollY,topDelta:b.top-s.top,bottomDelta:b.bottom-s.bottom};})()`);
     assert(scrolledBanner.scrollY>879&&scrolledBanner.topDelta===0&&scrolledBanner.bottomDelta===0,JSON.stringify(scrolledBanner));
+    await evaluate(board, `document.getElementById('thinker-chess-banner').style.display='none'`);
+    await waitFor(() => evaluate(board, `getComputedStyle(document.getElementById('thinker-chess-banner')).display==='flex'`));
+    await evaluate(board, `history.pushState({},'','/analysis/game/fixture/review')`);
+    await waitFor(() => evaluate(board, `getComputedStyle(document.getElementById('thinker-chess-banner')).display==='none'`));
+    await evaluate(board, `history.pushState({},'','/game/fixture-restored')`);
+    await waitFor(() => evaluate(board, `getComputedStyle(document.getElementById('thinker-chess-banner')).display==='flex'`));
+    await evaluate(panel, `document.querySelector('[data-key="ghostMode"]').click()`);
+    await waitFor(() => evaluate(board, `document.documentElement.classList.contains('tc-clean-view')`));
+    const cleanView = await evaluate(board, `(() => {
+      for(const name of ['myarrow','myhigh','thinker-eval-v2-overlay','tc-hud-stats']){const n=document.createElement('div');n.className=name;n.dataset.fixtureClean='true';document.body.appendChild(n);}
+      const session=document.createElement('span');session.id='oi-mysession';session.textContent='0 W | 0 D | 0 L';session.dataset.fixtureClean='true';document.body.appendChild(session);
+      const old=document.createElement('button');old.id='kb-ghost-recovery';old.textContent='TC';document.body.appendChild(old);
+      const selectors=['#oi-wrapper','#krypbot-container','#oi-zone2','#oi-mysession','#thinker-chess-banner','#kb-ghost-recovery','.myarrow','.myhigh','.thinker-eval-v2-overlay','.tc-hud-stats'];
+      return {hidden:selectors.every(s=>Array.from(document.querySelectorAll(s)).every(n=>getComputedStyle(n).display==='none')),boardVisible:getComputedStyle(document.querySelector('wc-chess-board')).display!=='none'};
+    })()`);
+    assert(cleanView.hidden&&cleanView.boardVisible,JSON.stringify(cleanView));
+    await waitFor(() => evaluate(board, `!document.getElementById('kb-ghost-recovery')`));
+    await evaluate(board, `scrollTo(0,0)`);
+    const cleanScreenshot=await board.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
+    fs.writeFileSync(path.join(root,'tests','artifacts','clean-view-hidden.png'),Buffer.from(cleanScreenshot.data,'base64'));
+    await waitFor(() => evaluate(panel, `document.getElementById('banner-display-state').textContent==='Hidden by Clean View'`));
+    assert.equal((await (await fetch(base+'/config/load')).json()).banner,true,'Clean View changed the Banner preference');
+    await evaluate(panel, `document.querySelector('[data-key="ghostMode"]').click()`);
+    await waitFor(() => evaluate(board, `!document.documentElement.classList.contains('tc-clean-view')&&getComputedStyle(document.getElementById('thinker-chess-banner')).display==='flex'`));
+    await evaluate(board, `document.querySelectorAll('[data-fixture-clean]').forEach(n=>n.remove())`);
+    await waitFor(() => evaluate(panel, `document.getElementById('banner-display-state').textContent==='Visible on Chess.com'`));
+    const restoredBox=await evaluate(board, `(() => {const r=document.getElementById('thinker-chess-banner').getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height,scale:1};})()`);
+    const restoredScreenshot=await board.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:restoredBox});
+    fs.writeFileSync(path.join(root,'tests','artifacts','banner-restored-from-clean-view.png'),Buffer.from(restoredScreenshot.data,'base64'));
     await evaluate(panel, `document.querySelector('[data-key="recentForm"]').click()`);
     await waitFor(() => evaluate(board, `document.getElementById('rf-on').checked===false`));
     await evaluate(panel, `(() => {const a=document.getElementById('minDelay'),b=document.getElementById('maxDelay');a.value='2.00';b.value='0.50';a.dispatchEvent(new Event('input'));b.dispatchEvent(new Event('input'));a.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));})()`);
@@ -173,7 +202,9 @@ async function evaluate(client, expression) {
     assert(exportFit.fits && exportFit.text==='Export Diagnostics',JSON.stringify(exportFit));
     const diagnostic = await evaluate(board, `window.thinkerChessDiagnostics().externalConfig`);
     assert.equal(diagnostic.error, null);
-    console.log(JSON.stringify({ bidirectionalSync: true, defaultStrength:3200, scrolledBanner, timingSwap: true, focusedDraftPreserved: true, invalidDraftPreserved:true, stalePollRejected:true, disjointEditsPreserved:true, saveRetry:true, offlineRecovery: true, exportFit, diagnostic, metrics }, null, 2));
+    const report={ bidirectionalSync: true, cleanView, noFloatingRecovery:true, hiddenBannerRecovered:true, routeBannerRecovered:true, defaultStrength:3200, scrolledBanner, timingSwap: true, focusedDraftPreserved: true, invalidDraftPreserved:true, stalePollRejected:true, disjointEditsPreserved:true, saveRetry:true, offlineRecovery: true, exportFit, diagnostic, metrics };
+    fs.writeFileSync(path.join(root,'tests','artifacts','clean-view-validation.json'),JSON.stringify(report,null,2));
+    console.log(JSON.stringify(report, null, 2));
   } finally {
     clients.forEach(client => client.close());
     chrome.kill();

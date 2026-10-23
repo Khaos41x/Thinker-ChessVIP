@@ -1,0 +1,58 @@
+{
+  "bidirectionalSync": true,
+  "cleanView": {
+    "hidden": true,
+    "boardVisible": true
+  },
+  "noFloatingRecovery": true,
+  "hiddenBannerRecovered": true,
+  "routeBannerRecovered": true,
+  "defaultStrength": 3200,
+  "scrolledBanner": {
+    "scrollY": 900,
+    "topDelta": 0,
+    "bottomDelta": 0
+  },
+  "timingSwap": true,
+  "focusedDraftPreserved": true,
+  "invalidDraftPreserved": true,
+  "stalePollRejected": true,
+  "disjointEditsPreserved": true,
+  "saveRetry": true,
+  "offlineRecovery": true,
+  "exportFit": {
+    "text": "Export Diagnostics",
+    "width": 106,
+    "height": 32,
+    "textWidth": 61.875,
+    "textHeight": 27,
+    "fits": true
+  },
+  "diagnostic": {
+    "appliedRevision": 13,
+    "error": null
+  },
+  "metrics": [
+    {
+      "viewport": 1280,
+      "width": 920,
+      "overflow": false,
+      "toggles": 9,
+      "language": "en-US"
+    },
+    {
+      "viewport": 800,
+      "width": 800,
+      "overflow": false,
+      "toggles": 9,
+      "language": "en-US"
+    },
+    {
+      "viewport": 390,
+      "width": 375,
+      "overflow": false,
+      "toggles": 9,
+      "language": "en-US"
+    }
+  ]
+}
