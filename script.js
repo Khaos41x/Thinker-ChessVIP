@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-23.1
+// @version      2026-10-23.2
 // @description  Chess Bot com Servidor Local
 // @author       You
 // @match        https://www.chess.com/*
@@ -5080,6 +5080,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
   let thinkerBannerResizeObserver = null;
   let thinkerBannerLayoutObserver = null;
   let thinkerResizeHandler = null;
+  let thinkerKeyboardFocusHandler = null;
   let thinkerUrlMonitorTimer = null;
   const THINKER_PAGE_SCROLLBAR_CLASS = "tc-page-scrollbar-hidden";
 
@@ -5186,6 +5187,8 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     thinkerObservedBannerSidebar = null;
     if (thinkerResizeHandler) window.removeEventListener("resize", thinkerResizeHandler);
     thinkerResizeHandler = null;
+    if (thinkerKeyboardFocusHandler) document.removeEventListener("keydown", thinkerKeyboardFocusHandler, true);
+    thinkerKeyboardFocusHandler = null;
     if (thinkerUrlMonitorTimer !== null) clearInterval(thinkerUrlMonitorTimer);
     thinkerUrlMonitorTimer = null;
     scheduleThinkerBannerPosition = () => {};
@@ -5318,38 +5321,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     ) ? thinkerObservedBannerSidebar : null;
   }
 
-  function normalizeThinkerBannerText(value) {
-    return String(value || "")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/\s+/g, " ")
-      .trim()
-      .toLowerCase();
-  }
-
-  function hasThinkerPostGameEvidence(sidebar) {
-    const postGameText = normalizeThinkerBannerText(
-      `${sidebar?.innerText || sidebar?.textContent || ""}`,
-    );
-    if (
-      postGameText.includes("game review") ||
-      postGameText.includes("analise da partida") ||
-      postGameText.includes("revisao da partida")
-    ) return true;
-
-    const gameOverSelectors = [
-      '[data-cy="game-over-modal"]',
-      '[data-test-element="game-over-modal"]',
-      '[data-cy="game-over-dialog"]',
-      ".game-over-modal",
-      '[class*="game-over-modal"]',
-      '[class*="modal-game-over"]',
-    ].join(",");
-    return Array.from(document.querySelectorAll(gameOverSelectors)).some((node) =>
-      isVisibleThinkerLayoutNode(node),
-    );
-  }
-
   function shouldShowThinkerBanner() {
     if (!thinkerBannerEnabled || _ghostModeActive) return false;
     const path = String(window.location.pathname || "").toLowerCase();
@@ -5361,7 +5332,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     const board = findThinkerGameBoard();
     if (!isRenderableThinkerLayoutNode(board, { minWidth: 240, minHeight: 240 })) return false;
     const sidebar = getThinkerBannerSidebar();
-    return Boolean(sidebar && !hasThinkerPostGameEvidence(sidebar));
+    return Boolean(sidebar);
   }
 
   function setThinkerBannerEnabled(enabled) {
@@ -5381,13 +5352,13 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     else if (_ghostModeActive) reason = "ghost-mode";
     else if (!board) reason = "board-unavailable";
     else if (!sidebar) reason = "sidebar-unavailable";
-    else if (!shouldShowThinkerBanner()) reason = "route-or-post-game";
+    else if (!shouldShowThinkerBanner()) reason = "route-not-supported";
     else if (!layout) reason = "insufficient-space-or-height";
     else if (!banner || banner.style.display === "none") reason = "awaiting-layout";
     let fenAvailable = false;
     try { fenAvailable = typeof game?.getFEN?.() === "string"; } catch (_) {}
     return {
-      version: "2026-10-23.1",
+      version: "2026-10-23.2",
       route: window.location.pathname,
       banner: { enabled: thinkerBannerEnabled, shown: Boolean(banner && banner.style.display !== "none"), reason, minimumWidth: THINKER_BANNER_MIN_WIDTH_PX, geometry: layout },
       bot: { enabled: isMasterEnabled(), autoMove: auto_move, effectiveAutoMove: sessionControlBridge.effectiveAutoMove(auto_move), sessionActive: sessionControlBridge.isActive(), stage: thinkerMoveDiagnostic.stage, status: thinkerMoveDiagnostic.status, authenticated: Boolean(engineCapability), boardFound: Boolean(board), gameApiFound: Boolean(game), fenAvailable, canReadLegalMoves: typeof game?.getLegalMoves === "function", canExecuteMove: typeof game?.move === "function", retryPending: Date.now() < moveRetryAfter },
@@ -6153,7 +6124,6 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         #krypbot-container .kb-run-delay-card .kb-timing-mode label { min-width:0; padding:5px 4px; border-radius:3px; color:#999a94; font-size:9px; line-height:16px; font-weight:500; transition:background-color .14s ease,color .14s ease; }
         #krypbot-container .kb-run-delay-card .kb-timing-mode label:hover { color:#cacac5; }
         #krypbot-container .kb-timing-mode input[type="radio"] { position:absolute; display:block; width:1px; height:1px; opacity:0; }
-        #krypbot-container .kb-timing-mode input[type="radio"]:focus + label,
         #krypbot-container .kb-timing-mode input[type="radio"]:focus-visible + label { outline:2px solid var(--tc-console-focus); outline-offset:-2px; }
         #krypbot-container .kb-run-delay-card[data-inactive="true"] .kb-timing-mode input:checked + label { background:#3a3a36; color:#deded9 !important; }
         #krypbot-container .kb-run-delay-card[data-inactive="false"] .kb-timing-mode input:checked + label { background:var(--tc-console-accent); color:#0d2113 !important; }
@@ -6372,6 +6342,9 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           border:1px solid var(--tc-console-border); border-radius:var(--radius-control); overflow:hidden; background:var(--tc-console-border);
         }
         #krypbot-container .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]):focus-within { border-color:var(--tc-console-focus); }
+        #krypbot-container[data-focus-input="pointer"] .kb-timing-mode input:focus + label { outline:none; }
+        #krypbot-container[data-focus-input="pointer"] .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]):focus-within { border-color:var(--tc-console-border); }
+        #krypbot-container[data-focus-input="pointer"] .kb-session-field input:focus { border-color:var(--tc-console-border); outline:none; background:var(--tc-console-field); box-shadow:none; }
         #krypbot-container .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) label {
           display:flex; align-items:center; justify-content:center; width:100%; height:100%; min-width:0; padding:0;
           box-sizing:border-box; border:0; border-radius:0; background:var(--tc-console-module); color:#c4c5bf;
@@ -6842,6 +6815,11 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           });
         });
         const sessionMenu = document.getElementById("krypbot-container");
+        sessionMenu.addEventListener("pointerdown", () => { sessionMenu.dataset.focusInput = "pointer"; }, true);
+        thinkerKeyboardFocusHandler = (event) => {
+          if (event.key === "Tab") sessionMenu.dataset.focusInput = "keyboard";
+        };
+        document.addEventListener("keydown", thinkerKeyboardFocusHandler, true);
         const setDisclosureOpen = (toggle, panel, open) => {
           if (!toggle || !panel) return;
           toggle.setAttribute("aria-expanded", open ? "true" : "false");

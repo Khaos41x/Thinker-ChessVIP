@@ -1187,8 +1187,19 @@ function createCdpClient(webSocketUrl) {
           parent.style.opacity='1';await new Promise(r=>setTimeout(r,200));
           const parentRestored=getComputedStyle(banner).display==='flex';
           generic.replaceWith(board);parent.style.opacity='';await new Promise(r=>setTimeout(r,150));
+          const originalRoute=location.pathname;
+          history.pushState({},'','/game/banner-postgame-regression');
+          const sidebar=document.querySelector('.play-controller-component:not(.stale-controller)');
+          const review=document.createElement('p');review.textContent='Game Review';sidebar.appendChild(review);
+          const modal=document.createElement('div');modal.dataset.cy='game-over-modal';modal.style.cssText='position:fixed;top:20px;left:20px;width:300px;height:200px';modal.textContent='Black Won';document.body.appendChild(modal);
+          await new Promise(r=>setTimeout(r,200));
+          const postGameVisible=getComputedStyle(banner).display==='flex';
+          const toggle=document.getElementById('bn-on').closest('[role="switch"]');toggle.click();
+          const postGameOff=getComputedStyle(banner).display==='none';toggle.click();
+          const postGameRestored=getComputedStyle(banner).display==='flex';
+          modal.remove();review.remove();history.pushState({},'',originalRoute);
           const diagnostic=window.thinkerChessDiagnostics();
-          return {ok:hidden&&restored&&ignoredClone&&genericHidden&&genericRestored&&parentHidden&&parentRestored&&diagnostic.banner.enabled,hidden,restored,ignoredClone,genericHidden,genericRestored,parentHidden,parentRestored,reason:diagnostic.banner.reason};
+          return {ok:hidden&&restored&&ignoredClone&&genericHidden&&genericRestored&&parentHidden&&parentRestored&&postGameVisible&&postGameOff&&postGameRestored&&diagnostic.banner.enabled,hidden,restored,ignoredClone,genericHidden,genericRestored,parentHidden,parentRestored,postGameVisible,postGameOff,postGameRestored,reason:diagnostic.banner.reason};
         })()`,awaitPromise:true,returnByValue:true,
       });
       assert(bannerVisibility.result.value.ok,`Banner visibility-only transition failed: ${JSON.stringify(bannerVisibility.result.value)}`);
@@ -1232,6 +1243,26 @@ function createCdpClient(webSocketUrl) {
       assert(focusStyle.result.value.outline==='0px' || focusStyle.result.value.style==='none',`Pointer click left toggle outline: ${JSON.stringify(focusStyle.result.value)}`);
       await client.send('Runtime.evaluate',{expression:`if(!document.getElementById('rf-on').checked)document.getElementById('rf-on').closest('[role="switch"]').click();`});
       console.log(JSON.stringify({engineRecovery:engineRecovery.result.value,pointerFocus:focusStyle.result.value}));
+      const pointerFields=[];
+      for(const selector of ['label[for="dm-rand"]','label[for="dm-max"]','#kb-session-duration','#kb-session-min-rate','#kb-session-max-rate']) {
+        const point=await client.send('Runtime.evaluate',{expression:`(() => {const node=document.querySelector(${JSON.stringify(selector)});node.scrollIntoView({block:'center'});const r=node.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2};})()`,returnByValue:true});
+        await client.send('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',clickCount:1,...point.result.value});
+        await client.send('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',clickCount:1,...point.result.value});
+        await sleep(170);
+        const field=await client.send('Runtime.evaluate',{expression:`(() => {const node=document.querySelector(${JSON.stringify(selector)}),style=getComputedStyle(node),mode=node.closest('.kb-timing-mode');return {selector:${JSON.stringify(selector)},outline:style.outlineStyle,border:mode?getComputedStyle(mode).borderTopColor:style.borderTopColor,background:style.backgroundColor,focusInput:document.getElementById('krypbot-container').dataset.focusInput};})()`,returnByValue:true});
+        assert(field.result.value.outline==='none' && field.result.value.border==='rgb(58, 58, 54)' && field.result.value.focusInput==='pointer',`Pointer focus feedback persisted: ${JSON.stringify(field.result.value)}`);
+        pointerFields.push(field.result.value);
+      }
+      await client.send('Runtime.evaluate',{expression:`(() => {const outside=document.createElement('button');outside.id='fixture-focus-outside';outside.textContent='Outside';const menu=document.getElementById('krypbot-container');menu.parentElement.insertBefore(outside,menu);outside.focus();})()`});
+      await client.send('Input.dispatchKeyEvent',{type:'keyDown',key:'Tab',code:'Tab',windowsVirtualKeyCode:9});
+      await client.send('Input.dispatchKeyEvent',{type:'keyUp',key:'Tab',code:'Tab',windowsVirtualKeyCode:9});
+      const keyboardMode=await client.send('Runtime.evaluate',{expression:`document.getElementById('krypbot-container').dataset.focusInput`,returnByValue:true});
+      assert(keyboardMode.result.value==='keyboard','Tab did not restore keyboard focus mode');
+      await client.send('Runtime.evaluate',{expression:`document.getElementById('kb-session-duration').focus()`});
+      await sleep(170);
+      const keyboardField=await client.send('Runtime.evaluate',{expression:`(() => {const node=document.getElementById('kb-session-duration'),style=getComputedStyle(node);document.getElementById('fixture-focus-outside').remove();return {outline:style.outlineStyle,width:style.outlineWidth};})()`,returnByValue:true});
+      assert(keyboardField.result.value.outline!=='none' && keyboardField.result.value.width!=='0px','Keyboard entry lost visible focus');
+      console.log(JSON.stringify({pointerFields}));
       console.log(JSON.stringify({bannerToggle:bannerToggle.result.value,bannerReload:bannerReload.result.value}));
     }
     if (captureVisual) {

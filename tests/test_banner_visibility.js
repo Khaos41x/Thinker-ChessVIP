@@ -181,10 +181,12 @@ assert(banner.style.display === "none", "SPA transition into review did not hide
 
 window.location.pathname = "/game/185503745104";
 sidebar.innerText = "Game Review";
-assert(context.shouldShow() === false, "post-game sidebar qualified for the banner");
+assert(context.shouldShow() === true, "Game Review text hid the enabled banner");
+context.position();assert(banner.style.display === "flex", "post-game sidebar hid banner");
 sidebar.innerText = "Moves";
 gameOverVisible = true;
-assert(context.shouldShow() === false, "visible game-over dialog qualified for the banner");
+assert(context.shouldShow() === true, "game-over dialog hid the enabled banner");
+context.position();assert(banner.style.display === "flex", "game-over dialog hid banner");
 gameOverVisible = false;
 
 for (const path of ["/puzzles/rated", "/analysis/game/live/185503745104"]) {
