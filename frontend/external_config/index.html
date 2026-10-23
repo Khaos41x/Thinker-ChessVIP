@@ -6,6 +6,7 @@
   <title>Thinker Chess · External Config</title>
   <link rel="stylesheet" href="/config/assets/panel.css">
   <script src="/config/assets/panel.js" defer></script>
+  <script src="/config/assets/rating-tracker.js" defer></script>
 </head>
 <body>
   <main>
@@ -36,8 +37,28 @@
       </section>
       <section class="panel" id="workspace"><h2>Workspace</h2><div data-controls="workspace"></div><p class="hint">Hide all Thinker Chess visuals on Chess.com. Controls remain here.</p></section>
     </div>
+    <section class="panel rating-tracker" id="rating-tracker" aria-labelledby="rating-tracker-title">
+      <h2 id="rating-tracker-title">Rating Goals</h2>
+      <p class="hint">Monitor public ratings without controlling games. Rating publication may be delayed.</p>
+      <div class="control-row"><label for="rt-page-visible">Show Rating Goal on Chess.com</label><input type="checkbox" id="rt-page-visible" aria-describedby="rt-visibility-hint"></div>
+      <p class="hint" id="rt-visibility-hint">Optional compact card. Clean View always hides it; monitoring continues here.</p>
+      <details id="rt-create"><summary>Add a Rating Goal</summary>
+        <form id="rt-form">
+          <label>Chess.com Username<input id="rt-username" name="username" autocomplete="off" required maxlength="50" pattern="[A-Za-z0-9_-]{2,50}" aria-describedby="rt-identity-hint"></label>
+          <label>Rating Category<select id="rt-mode" name="timeClass"><option value="bullet">Bullet</option><option value="blitz" selected>Blitz</option><option value="rapid">Rapid</option><option value="daily">Daily</option></select></label>
+          <label>Notify Me When<select id="rt-direction" name="direction"><option value="at-least">Rating is at or above</option><option value="at-most">Rating is at or below</option></select></label>
+          <label>Rating Threshold<input id="rt-threshold" name="threshold" type="text" inputmode="numeric" required pattern="[0-9]{1,6}" value="2200"></label>
+          <p class="hint" id="rt-identity-hint">This selects a public account to monitor. A lower threshold is an observation, never an instruction to lose.</p>
+          <button type="submit">Create Goal</button>
+        </form>
+      </details>
+      <p id="rt-status" class="hint" role="status" aria-live="polite">Connecting to rating history…</p>
+      <div id="rt-goals"></div>
+      <details id="rt-inbox"><summary>Notifications <span id="rt-notification-count" role="status" aria-live="polite" aria-label="Unread notifications">0</span></summary><div id="rt-notifications"></div></details>
+      <details><summary>Data and Privacy</summary><p class="hint">Only public Chess.com ratings are monitored. Hidden ratings remain hidden. Detailed evidence is retained for 30 days and compact history for one year; referenced goal evidence remains until removed. No engine, move, or matchmaking action is taken.</p><div id="rt-accounts"></div></details>
+    </section>
     <footer><p id="save-state" role="status" aria-live="polite">Loading settings…</p><button id="retry" type="button">Refresh</button></footer>
-    <p class="footnote">Settings are shared by connected tabs and reset when the local server restarts.</p>
+    <p class="footnote">Engine settings reset when the local server restarts. Rating goals and history are saved locally.</p>
   </main>
 </body>
 </html>

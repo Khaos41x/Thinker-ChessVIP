@@ -137,6 +137,7 @@ def main() -> int:
     args = parser.parse_args()
     current = TARGET.read_text(encoding="utf-8")
     expected = render(current)
+    print(f"Userscript size (informational): {len(expected.encode('utf-8'))} bytes")
     if args.check:
         if current != expected:
             print("script.js generated session-control region is stale", file=sys.stderr)

@@ -8,6 +8,8 @@ route: 'one-shot'
 
 # Move Timing focus and Scout palette polish
 
+Historical validation below describes the then-existing project guard, not a Tampermonkey platform requirement. Rating Goal Tracker implementation approval permanently removes that guard; size reporting is informational and no replacement ceiling applies.
+
 ## Intent
 
 **Problem:** Numeric Move Timing fields retained pointer focus decoration after the earlier segmented-control fix. The Scout chart used cool gray-blue losses and insufficiently distinct result and side markers.

@@ -116,7 +116,7 @@ node tests/test_userscript_chrome.js
 python scripts/report_banner_expressive.py
 ```
 
-Userscript size: 596,033 → 621,760 bytes, below existing 640,000-byte guard. Source PNG is never embedded; only the 21KB prepared asset is embedded once. [All before/after bounding boxes in JSON](measurements.json).
+Userscript size (informational): 596,033 → 621,760 bytes. Source PNG is never embedded; only the 21KB prepared asset is embedded once. [All before/after bounding boxes in JSON](measurements.json).
 
 ## Matrix
 

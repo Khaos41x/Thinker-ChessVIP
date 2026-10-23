@@ -278,9 +278,7 @@ pollContext.pollConfig();
 assert(capturedPoll && capturedPoll.headers['X-Thinker-Banner-State'] === 'unknown',
   'a diagnostic failure stopped external configuration polling');
 capturedPoll.onerror();
-if (Buffer.byteLength(source, "utf8") > 640000) {
-  throw new Error("userscript payload is too large for reliable Tampermonkey startup");
-}
+console.log(`Userscript size (informational): ${Buffer.byteLength(source, "utf8")} bytes`);
 const start = source.indexOf("  const SCOUT_CACHE_TTL");
 const end = source.indexOf("  // --- ESTADO DO AUTO RUN DELAY", start);
 if (start < 0 || end < 0) throw new Error("OpponentIntel block not found");

@@ -1,0 +1,17 @@
+CREATE TABLE IF NOT EXISTS metadata(key TEXT PRIMARY KEY,value TEXT NOT NULL);
+INSERT OR IGNORE INTO metadata VALUES('revision','0');
+CREATE TABLE IF NOT EXISTS players(account_key TEXT PRIMARY KEY,username TEXT NOT NULL UNIQUE,player_id INTEGER,identity_status TEXT NOT NULL DEFAULT 'unverified',generation INTEGER NOT NULL DEFAULT 0);
+CREATE TABLE IF NOT EXISTS player_aliases(username TEXT PRIMARY KEY,account_key TEXT NOT NULL REFERENCES players(account_key));
+CREATE TABLE IF NOT EXISTS goals(goal_id TEXT PRIMARY KEY,account_key TEXT NOT NULL REFERENCES players(account_key),time_class TEXT NOT NULL,state TEXT NOT NULL,revision INTEGER NOT NULL,data TEXT NOT NULL,idempotency_key TEXT NOT NULL UNIQUE);
+CREATE UNIQUE INDEX IF NOT EXISTS active_goal_category ON goals(account_key,time_class) WHERE state IN ('tracking','awaiting-baseline','paused','reached');
+CREATE TABLE IF NOT EXISTS observations(observation_id TEXT PRIMARY KEY,account_key TEXT NOT NULL REFERENCES players(account_key),time_class TEXT NOT NULL,effective_at INTEGER,source TEXT NOT NULL,rating INTEGER NOT NULL,game_key TEXT,data TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS observation_category ON observations(account_key,time_class,effective_at);
+CREATE TABLE IF NOT EXISTS current_ratings(account_key TEXT NOT NULL,time_class TEXT NOT NULL,data TEXT NOT NULL,PRIMARY KEY(account_key,time_class));
+CREATE TABLE IF NOT EXISTS completed_games(account_key TEXT NOT NULL,game_key TEXT NOT NULL,time_class TEXT,rated INTEGER,ended_at INTEGER,state TEXT NOT NULL,data TEXT NOT NULL,PRIMARY KEY(account_key,game_key));
+CREATE TABLE IF NOT EXISTS game_aliases(account_key TEXT NOT NULL,alias_key TEXT NOT NULL,game_key TEXT NOT NULL,PRIMARY KEY(account_key,alias_key));
+CREATE TABLE IF NOT EXISTS rating_changes(change_id TEXT PRIMARY KEY,account_key TEXT NOT NULL,time_class TEXT NOT NULL,data TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS refresh_jobs(resource TEXT PRIMARY KEY,account_key TEXT NOT NULL,due_at INTEGER NOT NULL,attempt INTEGER NOT NULL DEFAULT 0,data TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS http_cache(resource TEXT PRIMARY KEY,data TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS notifications(notification_id TEXT PRIMARY KEY,account_key TEXT NOT NULL,goal_id TEXT NOT NULL,data TEXT NOT NULL,claim_token TEXT,claim_until INTEGER NOT NULL DEFAULT 0,revision INTEGER NOT NULL DEFAULT 0,acknowledged INTEGER NOT NULL DEFAULT 0);
+CREATE TABLE IF NOT EXISTS monitoring_preferences(account_key TEXT PRIMARY KEY,enabled INTEGER NOT NULL DEFAULT 1);
+PRAGMA user_version=1;

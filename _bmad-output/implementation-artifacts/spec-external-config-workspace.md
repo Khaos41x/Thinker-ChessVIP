@@ -8,6 +8,8 @@ route: 'one-shot'
 
 # External Config workspace and reliable synchronization
 
+Historical validation below describes the then-existing project guard, not a Tampermonkey platform requirement. Rating Goal Tracker implementation approval permanently removes that guard; size reporting is informational and no replacement ceiling applies.
+
 ## Intent
 
 **Problem:** The external configuration page used the old glowing gradient design, lacked Banner and Recent Form, and reported server connectivity without confirming userscript application. Its polling could overwrite drafts, while userscript polling invoked menu-scoped helpers and silently failed. The Auto Play export label did not explain its diagnostic purpose.

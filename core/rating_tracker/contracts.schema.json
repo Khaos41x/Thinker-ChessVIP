@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "thinker-chess/rating-tracker/v1",
+  "title": "Rating Tracker V1",
+  "type": "object",
+  "required": ["schemaVersion", "accountKey", "timeClass", "rating", "source", "observedAtMs", "sourceEffectiveAtMs", "observationId"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "accountKey": {"type": "string"},
+    "timeClass": {"enum": ["bullet", "blitz", "rapid", "daily"]},
+    "rating": {"type": "integer", "minimum": 0, "maximum": 100000},
+    "source": {"enum": ["pubapi-stats", "pubapi-archive", "dom-player", "dom-result"]},
+    "observedAtMs": {"type": "integer", "minimum": 0},
+    "sourceEffectiveAtMs": {"type": ["integer", "null"], "minimum": 0},
+    "observationId": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "verification": {"enum": ["verified", "provisional", "conflict", "rejected"]},
+    "platform": {"const": "chesscom"},
+    "rules": {"const": "chess"}
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "fixture": "Real Flask + temporary SQLite + deterministic public provider + actual built userscript; not authenticated Chess.com",
+  "screenshots": [
+    {
+      "width": 390,
+      "path": "C:\\Users\\2ln0g0tt7bkehifl\\Documents\\Codex\\2026-10-05\\https-github-com-khaos41x-thinker-chessvip\\work\\Thinker-ChessVIP\\_bmad-output\\implementation-artifacts\\rating-goal-tracker\\browser\\rating-tracker-390.png",
+      "dimensions": {
+        "width": 390,
+        "scrollWidth": 375,
+        "tracker": {
+          "x": 12,
+          "y": 1103,
+          "width": 351,
+          "height": 718,
+          "top": 1103,
+          "right": 363,
+          "bottom": 1821,
+          "left": 12
+        },
+        "english": "en-US"
+      }
+    },
+    {
+      "width": 800,
+      "path": "C:\\Users\\2ln0g0tt7bkehifl\\Documents\\Codex\\2026-10-05\\https-github-com-khaos41x-thinker-chessvip\\work\\Thinker-ChessVIP\\_bmad-output\\implementation-artifacts\\rating-goal-tracker\\browser\\rating-tracker-800.png",
+      "dimensions": {
+        "width": 800,
+        "scrollWidth": 785,
+        "tracker": {
+          "x": 24,
+          "y": 685,
+          "width": 737,
+          "height": 684,
+          "top": 685,
+          "right": 761,
+          "bottom": 1369,
+          "left": 24
+        },
+        "english": "en-US"
+      }
+    },
+    {
+      "width": 1033,
+      "path": "C:\\Users\\2ln0g0tt7bkehifl\\Documents\\Codex\\2026-10-05\\https-github-com-khaos41x-thinker-chessvip\\work\\Thinker-ChessVIP\\_bmad-output\\implementation-artifacts\\rating-goal-tracker\\browser\\rating-tracker-1033.png",
+      "dimensions": {
+        "width": 1033,
+        "scrollWidth": 1018,
+        "tracker": {
+          "x": 73,
+          "y": 685,
+          "width": 872,
+          "height": 684,
+          "top": 685,
+          "right": 945,
+          "bottom": 1369,
+          "left": 73
+        },
+        "english": "en-US"
+      }
+    },
+    {
+      "width": 1034,
+      "path": "C:\\Users\\2ln0g0tt7bkehifl\\Documents\\Codex\\2026-10-05\\https-github-com-khaos41x-thinker-chessvip\\work\\Thinker-ChessVIP\\_bmad-output\\implementation-artifacts\\rating-goal-tracker\\browser\\rating-tracker-1034.png",
+      "dimensions": {
+        "width": 1034,
+        "scrollWidth": 1019,
+        "tracker": {
+          "x": 73.5,
+          "y": 685,
+          "width": 872,
+          "height": 684,
+          "top": 685,
+          "right": 945.5,
+          "bottom": 1369,
+          "left": 73.5
+        },
+        "english": "en-US"
+      }
+    },
+    {
+      "width": 1035,
+      "path": "C:\\Users\\2ln0g0tt7bkehifl\\Documents\\Codex\\2026-10-05\\https-github-com-khaos41x-thinker-chessvip\\work\\Thinker-ChessVIP\\_bmad-output\\implementation-artifacts\\rating-goal-tracker\\browser\\rating-tracker-1035.png",
+      "dimensions": {
+        "width": 1035,
+        "scrollWidth": 1020,
+        "tracker": {
+          "x": 74,
+          "y": 685,
+          "width": 872,
+          "height": 684,
+          "top": 685,
+          "right": 946,
+          "bottom": 1369,
+          "left": 74
+        },
+        "english": "en-US"
+      }
+    },
+    {
+      "width": 1280,
+      "path": "C:\\Users\\2ln0g0tt7bkehifl\\Documents\\Codex\\2026-10-05\\https-github-com-khaos41x-thinker-chessvip\\work\\Thinker-ChessVIP\\_bmad-output\\implementation-artifacts\\rating-goal-tracker\\browser\\rating-tracker-1280.png",
+      "dimensions": {
+        "width": 1280,
+        "scrollWidth": 1265,
+        "tracker": {
+          "x": 196.5,
+          "y": 685,
+          "width": 872,
+          "height": 684,
+          "top": 685,
+          "right": 1068.5,
+          "bottom": 1369,
+          "left": 196.5
+        },
+        "english": "en-US"
+      }
+    },
+    {
+      "width": 1440,
+      "path": "C:\\Users\\2ln0g0tt7bkehifl\\Documents\\Codex\\2026-10-05\\https-github-com-khaos41x-thinker-chessvip\\work\\Thinker-ChessVIP\\_bmad-output\\implementation-artifacts\\rating-goal-tracker\\browser\\rating-tracker-1440.png",
+      "dimensions": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "tracker": {
+          "x": 276.5,
+          "y": 685,
+          "width": 872,
+          "height": 684,
+          "top": 685,
+          "right": 1148.5,
+          "bottom": 1369,
+          "left": 276.5
+        },
+        "english": "en-US"
+      }
+    }
+  ],
+  "checks": [
+    "Create goal and confirmed public baseline rendered",
+    "Pause/resume synchronized across two browser tabs",
+    "Built userscript, GM JSON transport, optional card and Clean View",
+    "Real domain reached notification, durable claim/ack and measured history rendered",
+    "Keyboard navigation; 390/800/1033/1034/1035/1280/1440 no overflow; no gameplay effects",
+    "Downward Rapid threshold crosses passively, independently of Blitz history",
+    "Archive, confirmed deletion of goal and account data through the UI"
+  ],
+  "startupMs": 647.9000000059605,
+  "initialDiagnostics": {
+    "state": "connected",
+    "identity": "tracker_user",
+    "reason": null,
+    "lastSnapshotAtMs": 1792797435615,
+    "snapshotLatencyMs": 12.800000011920929,
+    "observationCount": 1,
+    "outboxError": null,
+    "pendingEvidence": 0,
+    "cardMounted": false,
+    "onPageVisible": false,
+    "goalCount": 1,
+    "hostFound": true
+  },
+  "ownMutationObservationDelta": 0,
+  "longTasksMs": [
+    58
+  ],
+  "finalDiagnostics": {
+    "state": "connected",
+    "identity": "tracker_user",
+    "reason": null,
+    "lastSnapshotAtMs": 1792797451226,
+    "snapshotLatencyMs": 6.699999988079071,
+    "observationCount": 1,
+    "outboxError": null,
+    "pendingEvidence": 0,
+    "cardMounted": true,
+    "onPageVisible": true,
+    "goalCount": 1,
+    "hostFound": true
+  }
+}

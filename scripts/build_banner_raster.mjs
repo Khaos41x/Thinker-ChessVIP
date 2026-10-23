@@ -19,7 +19,6 @@ const start = source.indexOf('const bannerHtml = `');
 const end = source.indexOf('`;', start) + 2;
 if (start < 0 || end < start) throw new Error('Banner template not found');
 const next = source.slice(0, start) + markup + source.slice(end);
-if (Buffer.byteLength(next) > 640000) throw new Error('Userscript exceeds existing 640000-byte payload guard');
 if (process.argv.includes('--check')) {
   if (source !== next) throw new Error('Embedded banner WebP is stale');
   console.log(`Embedded WebP matches prepared asset (${artwork.length} bytes); userscript ${Buffer.byteLength(next)} bytes`);

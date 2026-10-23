@@ -43,6 +43,8 @@ if (start >= 0 || end >= 0) {
   next = current.slice(0, insertion) + `\n${generated}\n` + current.slice(insertion);
 }
 
+process.stdout.write(`Userscript size (informational): ${Buffer.byteLength(next, 'utf8')} bytes\n`);
+
 if (checkOnly) {
   if (next !== current) {
     process.stderr.write('script.js contains a stale Eval Bar V2 bundle\n');

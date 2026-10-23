@@ -16,6 +16,7 @@ import subprocess
 import itertools
 import hashlib
 import json
+import sqlite3
 from decimal import Decimal, InvalidOperation
 from math import ceil, floor
 from pathlib import Path
@@ -29,6 +30,8 @@ from flask import Flask, Response, request, jsonify
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from core.external_config import create_external_config_blueprint
+from core.rating_tracker import RatingTrackerService, create_rating_tracker_blueprint
+from core.rating_tracker.service import UnavailableRatingTrackerService
 
 from core.smart_pacing.adapter import KomodoEngineAdapter
 from core.smart_pacing.calibration import CalibrationMode, CalibrationRuntime, RolloutPolicy
@@ -48,9 +51,15 @@ from core.eval_bar import (
 
 app = Flask(__name__)
 app.register_blueprint(create_external_config_blueprint())
-CORS(app)
-
-CORS(app, resources={r"/*": {"origins": "*"}})
+try:
+    rating_tracker = RatingTrackerService(
+        os.environ.get("THINKER_RATING_TRACKER_DB", str(Path(__file__).resolve().parent / "rating-tracker.db"))
+    )
+except (sqlite3.Error, OSError, RuntimeError):
+    rating_tracker = UnavailableRatingTrackerService()
+app.register_blueprint(create_rating_tracker_blueprint(rating_tracker))
+atexit.register(rating_tracker.stop)
+CORS(app, resources={r"^/(?!rating-(?:goals|observations|games|notifications)(?:/|$)).*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading', ping_timeout=30, ping_interval=10)
 
 log = logging.getLogger("werkzeug")
@@ -1453,6 +1462,7 @@ def print_pairing_instructions():
 
 
 if __name__ == "__main__":
+    rating_tracker.start()
     print_pairing_instructions()
     initialize_engine()
     Log.banner()
