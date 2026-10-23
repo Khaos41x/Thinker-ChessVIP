@@ -5014,6 +5014,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
   }
 
   let scheduleThinkerBannerPosition = () => {};
+  let thinkerBannerEnabled = localStorage.getItem("thinkerBanner") !== "false";
   let scheduleThinkerWorkspaceLayout = () => {};
   let thinkerMenuNode = null;
   let thinkerBannerNode = null;
@@ -5302,7 +5303,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
   }
 
   function shouldShowThinkerBanner() {
-    if (_ghostModeActive) return false;
+    if (!thinkerBannerEnabled || _ghostModeActive) return false;
     const path = String(window.location.pathname || "").toLowerCase();
     if (/^\/analysis(\/|$)/.test(path) || /(^|\/)review(\/|$)/.test(path)) return false;
     const isGameRoute = /^\/game\/(?:live\/)?[^/]+\/?$/.test(path);
@@ -5315,6 +5316,12 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     if (!isRenderableThinkerLayoutNode(board, { minWidth: 240, minHeight: 240 })) return false;
     const sidebar = getThinkerBannerSidebar();
     return Boolean(sidebar && !hasThinkerPostGameEvidence(sidebar));
+  }
+
+  function setThinkerBannerEnabled(enabled) {
+    thinkerBannerEnabled = enabled === true;
+    localStorage.setItem("thinkerBanner", String(thinkerBannerEnabled));
+    positionThinkerBannerShell();
   }
 
   function ensureGhostRecoveryControl() {
@@ -6498,6 +6505,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
                 <p class="kb-section-label">Evaluation Bar</p>
                 <div class="kb-radio-group"><input type="radio" id="eb-on" name="kb-eval-bar" value="1"><label for="eb-on">ON</label><input type="radio" id="eb-off" name="kb-eval-bar" value="0" checked><label for="eb-off">OFF</label><span class="kb-toggle-thumb" aria-hidden="true"></span></div>
               </div>
+              <div class="kb-section">
+                <p class="kb-section-label">Banner</p>
+                <div class="kb-radio-group" aria-label="Banner"><input type="radio" id="bn-on" name="kb-banner" value="1" checked><label for="bn-on">ON</label><input type="radio" id="bn-off" name="kb-banner" value="0"><label for="bn-off">OFF</label><span class="kb-toggle-thumb" aria-hidden="true"></span></div>
+              </div>
               <div class="kb-section-col" id="puzzle-section" style="display:none">
                 <p class="kb-section-label">Puzzle Mode <span class="kb-inline-note">(Elo 3200)</span></p>
                 <div class="kb-section"><p class="kb-subsetting-label">Hint Lines</p><div class="kb-radio-group"><input type="radio" id="ph-on" name="kb-puzzle-hint" value="1"><label for="ph-on">ON</label><input type="radio" id="ph-off" name="kb-puzzle-hint" value="0" checked><label for="ph-off">OFF</label></div></div>
@@ -6557,6 +6568,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       const autoRating = sectionByLabel(morePanel, "Auto Rating");
       const smartPacing = sectionByLabel(morePanel, "Smart Pacing");
       const evaluationBar = sectionByLabel(morePanel, "Evaluation Bar");
+      const bannerControl = sectionByLabel(morePanel, "Banner");
       const queueNote = menu.querySelector("#kb-auto-queue-session-note");
       const timing = menu.querySelector("#auto-delay-section");
       const strength = menu.querySelector(".kb-strength-card");
@@ -6564,7 +6576,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       const footer = menu.querySelector(".kb-footer");
 
       [bot, autoMoves, autoQueue, queueNote].forEach((node) => { if (node) core.appendChild(node); });
-      [evaluationBar, footer].forEach((node) => { if (node) visuals.appendChild(node); });
+      [evaluationBar, bannerControl, footer].forEach((node) => { if (node) visuals.appendChild(node); });
       if (timing) {
         const timingToggle = timing.querySelector("#kb-move-timing-toggle");
         const timingLabel = timingToggle?.querySelector("#kb-run-delay-label");
@@ -6868,6 +6880,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           }
           if (delayHint) delayHint.hidden = auto_move;
           syncAutoQueueSessionUI();
+          $(`input[name="kb-banner"][value="${thinkerBannerEnabled ? 1 : 0}"]`).prop("checked", true);
           $(`input[name="kb-puzzle-hint"][value="${puzzleHint ? 1 : 0}"]`).prop(
             "checked",
             true,
@@ -7111,6 +7124,11 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           $(`input[name="kb-smart-pacing"][value="1"]`).prop("checked", true);
           $("#auto-delay-section").hide();
         }
+
+        $('input[name="kb-banner"]').on("change", function () {
+          setThinkerBannerEnabled($(this).val() === "1");
+          window.krypbotUpdateUI();
+        });
 
         // --- EVAL BAR TOGGLE ---
         $('input[name="kb-eval-bar"]').on("change", function () {

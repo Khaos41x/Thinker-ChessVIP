@@ -1112,6 +1112,57 @@ function createCdpClient(webSocketUrl) {
       returnByValue: true,
     });
     assert(timingKeyboardResult.result.value.ok, `Move Timing radios are not keyboard reachable: ${JSON.stringify(timingKeyboardResult.result.value)}`);
+    if (!liveChess) {
+      await client.send("Emulation.setDeviceMetricsOverride", { width:1433, height:900, deviceScaleFactor:1, mobile:false });
+      await sleep(150);
+      const bannerToggle = await client.send("Runtime.evaluate", {
+        expression: `(async () => {
+          let group=document.getElementById("bn-on")?.closest('[role="switch"]');
+          const banner=document.getElementById("thinker-chess-banner");
+          const evaluation=document.getElementById("eb-on");
+          if(!group || !banner) return {ok:false,reason:"missing-control"};
+          const original=banner, evaluationBefore=evaluation.checked;
+          const before=banner.getBoundingClientRect().toJSON();
+          const inVisuals=Boolean(group.closest('.kb-visuals-module'));
+          group.click();
+          const immediateHidden=getComputedStyle(banner).display==='none';
+          dispatchEvent(new Event('resize'));
+          const originalPath=location.pathname;
+          history.pushState({},'','/game/live/banner-preference-test');
+          await new Promise(resolve=>setTimeout(resolve,650));
+          banner.remove();
+          await new Promise(resolve=>setTimeout(resolve,650));
+          const reconciled=document.getElementById('thinker-chess-banner')===original && original.isConnected;
+          history.pushState({},'',originalPath+'?banner-toggle=1');
+          await new Promise(resolve=>setTimeout(resolve,650));
+          group=document.getElementById('bn-on')?.closest('[role="switch"]');
+          if(!group) return {ok:false,reason:'route-control-missing'};
+          const stayedHidden=getComputedStyle(banner).display==='none' && localStorage.getItem('thinkerBanner')==='false' && group.getAttribute('aria-checked')==='false';
+          group.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));
+          const after=banner.getBoundingClientRect().toJSON();
+          const restored=getComputedStyle(banner).display==='flex' && group.getAttribute('aria-checked')==='true';
+          const sameGeometry=['x','y','width','height'].every(key=>before[key]===after[key]);
+          const noRemount=original===document.getElementById('thinker-chess-banner') && document.querySelectorAll('#thinker-chess-banner').length===1;
+          group.dispatchEvent(new KeyboardEvent('keydown',{key:' ',bubbles:true}));
+          return {ok:inVisuals && immediateHidden && stayedHidden && reconciled && restored && sameGeometry && noRemount && evaluationBefore===evaluation.checked && localStorage.getItem('thinkerBanner')==='false',inVisuals,immediateHidden,stayedHidden,reconciled,restored,sameGeometry,noRemount,before,after};
+        })()`, awaitPromise:true, returnByValue:true,
+      });
+      assert(bannerToggle.result.value.ok, `Banner toggle interaction failed: ${JSON.stringify(bannerToggle.result.value)}`);
+      await client.send("Page.navigate", {url:`http://127.0.0.1:${fixturePort}/tests/fixtures/userscript_bootstrap.html?delay=100`});
+      await sleep(3500);
+      const bannerReload = await client.send("Runtime.evaluate", {
+        expression:`(() => {
+          const group=document.getElementById('bn-on')?.closest('[role="switch"]');
+          const banner=document.getElementById('thinker-chess-banner');
+          if(!group || !banner) return {ok:false,reason:'reload-missing-control'};
+          const persisted=document.getElementById('bn-off').checked && group.getAttribute('aria-checked')==='false' && getComputedStyle(banner).display==='none';
+          group.click();
+          return {ok:persisted && getComputedStyle(banner).display==='flex' && localStorage.getItem('thinkerBanner')==='true',persisted};
+        })()`,returnByValue:true,
+      });
+      assert(bannerReload.result.value.ok, `Banner preference reload failed: ${JSON.stringify(bannerReload.result.value)}`);
+      console.log(JSON.stringify({bannerToggle:bannerToggle.result.value,bannerReload:bannerReload.result.value}));
+    }
     if (captureVisual) {
       await client.send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 778, deviceScaleFactor: 1, mobile: false });
       await client.send("Runtime.evaluate", { expression: `(() => { const toast = document.getElementById("kb-session-toast"); if (toast) { toast.dataset.visible = "false"; toast.textContent = ""; } window.krypbotSessionControlUI?.update?.(); })()` });

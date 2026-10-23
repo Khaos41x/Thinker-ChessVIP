@@ -57,7 +57,12 @@ const context = {
   console,
   cancelAnimationFrame() {},
   clearInterval() {},
+  localStorage: {
+    getItem: (key) => preferences.get(key) ?? null,
+    setItem: (key, value) => preferences.set(key, String(value)),
+  },
 };
+const preferences = new Map();
 vm.createContext(context);
 vm.runInContext(
   "let _ghostModeActive = false; const SERVER_URL = 'http://127.0.0.1:5050';\n" +
@@ -65,6 +70,7 @@ vm.runInContext(
     "\nglobalThis.calculate = calculateThinkerBannerLayout;" +
     "\nglobalThis.shouldShow = shouldShowThinkerBanner;" +
     "\nglobalThis.position = positionThinkerBannerShell;" +
+    "\nglobalThis.setBannerEnabled = setThinkerBannerEnabled;" +
     "\nglobalThis.setObservedSidebar = (value) => { thinkerObservedBannerSidebar = value; };" +
     "\nglobalThis.setGhost = (value) => { _ghostModeActive = value; };",
   context,
@@ -86,6 +92,19 @@ window.devicePixelRatio = 2;
 context.position();
 assert(artwork.style.maxWidth === "561px", "DPR 2 artwork exceeded native physical resolution");
 window.devicePixelRatio = 1;
+
+context.setBannerEnabled(false);
+assert(context.shouldShow() === false && banner.style.display === "none", "disabled banner remained visible");
+assert(preferences.get("thinkerBanner") === "false", "banner off preference was not persisted");
+context.position();
+assert(banner.style.display === "none", "layout update restored disabled banner");
+context.setBannerEnabled(true);
+assert(banner.style.display === "flex" && preferences.get("thinkerBanner") === "true", "banner did not restore immediately");
+preferences.set("thinkerBanner", "false");
+const savedContext = { ...context };
+vm.createContext(savedContext);
+vm.runInContext("let _ghostModeActive = false; const SERVER_URL = '';\n" + source.slice(start, end) + "\nglobalThis.savedShouldShow = shouldShowThinkerBanner;", savedContext);
+assert(savedContext.savedShouldShow() === false, "fresh startup ignored saved banner preference");
 
 const roomyLayout = context.calculate(sidebarRect, 1600, 0, 500, false);
 assert(roomyLayout.left === 1263, "roomy viewport did not preserve the 15px sidebar gap");
