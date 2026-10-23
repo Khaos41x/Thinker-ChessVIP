@@ -765,16 +765,18 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
   // Garante que todas as features comecem DESATIVADAS por padrão no primeiro uso desta versão,
   // limpando qualquer estado anterior que possa ter ficado ativo (Smart Pacing, Eval Bar, Auto Adjust).
   // Também força o modo do Auto Run Delay para Random (RND) por padrão.
-  const resetDefaultsThisVersion = localStorage.getItem("kb_default_off_v5") !== "true";
+  const resetDefaultsThisVersion = localStorage.getItem("kb_default_off_v6") !== "true";
   if (resetDefaultsThisVersion) {
     localStorage.setItem("smartPacing", "false");
+    localStorage.setItem("smartPacingV2", "false");
+    localStorage.setItem("smartPacingV2Shadow", "false");
     localStorage.setItem("evalBar", "false");
     localStorage.setItem("kb-auto-adjust", "false");
     localStorage.setItem("kb-auto-queue", "false");
     localStorage.setItem("autoDelayMode", "random");
     localStorage.setItem("autoMinDelay", "0.5");
     localStorage.setItem("autoMaxDelay", "2.0");
-    localStorage.setItem("kb_default_off_v5", "true");
+    localStorage.setItem("kb_default_off_v6", "true");
   }
 
   // --- CONFIGURAÃ‡Ã•ES PADRÃƒO (AUTO RUN DELAY) ---
@@ -1028,6 +1030,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
   function setMasterEnabled(enabled, notifyFailure = true) {
     masterStatusKnown = true;
     hint = enabled === true;
+    checkfen = "";
     if (!hint) $(".myhigh, .myarrow").remove();
     sessionControlBridge.masterStatusChanged(hint).catch((error) => {
       const code = error && error.code ? error.code : "MASTER_STOP_FAILED";
@@ -1043,6 +1046,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
   Object.defineProperty(window, "krypbotSetMasterEnabled", { configurable: false, enumerable: false, writable: false, value: setMasterEnabled });
 
   let mySession = { wins: 0, losses: 0, draws: 0, streak: 0, streakType: null };
+  let recentFormEnabled = localStorage.getItem("recentForm") !== "false";
 
   const SCOUT_CACHE_TTL = 20 * 60 * 1000;
   const SCOUT_RESULT_COLORS = Object.freeze({ win: "#22d36b", draw: "#e1e4ea", loss: "#64748b" });
@@ -1812,6 +1816,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
 
     renderHUD(hudStats) {
       document.querySelectorAll(".tc-hud-stats").forEach((element) => element.remove());
+      if (!recentFormEnabled) return;
       const target = this.getOpponentElement();
       if (!target) return;
 
@@ -4743,6 +4748,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
 
   let cached_board = null;
   let cached_game = null;
+  let moveRetryAfter = 0;
   function get_cached_game() {
     if (
       cached_game &&
@@ -4794,7 +4800,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
   }
 
   function request_move() {
-    if (!can_interval) return;
+    if (!can_interval || Date.now() < moveRetryAfter) return;
 
     const isPuzzleMode = gameMode === "puzzle";
     const shouldRun = isMasterEnabled() && (isPuzzleMode ? puzzleHint || puzzleAutoMove : true);
@@ -4808,6 +4814,14 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       }
 
       fen = game.getFEN();
+      const requestFen = fen;
+      const requestAutoMove = auto_move;
+      const requestPuzzleAutoMove = isPuzzleMode && puzzleAutoMove;
+      const retryMove = () => {
+        if (checkfen === requestFen) checkfen = "";
+        moveRetryAfter = Date.now() + 1000;
+        can_interval = true;
+      };
       const positionObservedAt = observeSmartPacingPosition(fen);
 
       if (!isPuzzleMode) {
@@ -4906,11 +4920,14 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           .then(({ plan, budget }) => {
             if (
               v2Observation.positionRevision !== smartPacingV2Runtime.positionRevision ||
-              fen !== smartPacingV2Runtime.fen
+              requestFen !== smartPacingV2Runtime.fen ||
+              !isMasterEnabled() || game.getFEN() !== requestFen || auto_move !== requestAutoMove
             ) {
+              retryMove();
               return;
             }
-            if (!plan.move || plan.status === "terminal" || plan.status === "error") return;
+            if (plan.status === "terminal") return;
+            if (!plan.move || plan.status === "error") { retryMove(); return; }
             const pacingDecision = decideSmartPacingV2(plan, budget, v2Observation.observedAtMonoMs);
             log(
               `Smart Pacing V2 | classe=${pacingDecision.class} | alvo=${pacingDecision.targetTotalMs}ms | ` +
@@ -4929,7 +4946,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           })
           .catch((error) => {
             if (error?.name !== "AbortError") log("Smart Pacing V2: " + error);
-            checkfen = "";
+            retryMove();
           })
           .finally(() => {
             can_interval = true;
@@ -4975,11 +4992,13 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         onload: function (resp) {
           try {
             if (handleEngineUnauthorized(resp)) {
-              can_interval = true;
+              retryMove();
               return;
             }
+            if (resp.status < 200 || resp.status >= 300) { retryMove(); return; }
+            if (!isMasterEnabled() || board.isConnected === false || game.getFEN() !== requestFen || auto_move !== requestAutoMove || (isPuzzleMode && (puzzleAutoMove !== requestPuzzleAutoMove || (!puzzleHint && !puzzleAutoMove)))) { retryMove(); return; }
             const data = JSON.parse(resp.responseText);
-            if (data && data.length > 0) {
+            if (Array.isArray(data) && /^[a-h][1-8][a-h][1-8][qrbn]?$/.test(data[0])) {
               const move = data[0];
               log("Lance: " + move);
               if (!isPuzzleMode) cleanCache();
@@ -4991,24 +5010,28 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
               } else {
                 create_div(move);
               }
-            }
+            } else retryMove();
           } catch (e) {
+            retryMove();
             log("Erro parse: " + e);
           }
           can_interval = true;
         },
         onerror: function (resp) {
           log("Erro request: " + (resp ? resp.status : "unknown"));
-          can_interval = true;
+          retryMove();
         },
         ontimeout: function () {
           log("Timeout: servidor nao respondeu em 5s");
-          can_interval = true;
+          retryMove();
         },
+        onabort: retryMove,
         timeout: 5000,
       });
     } catch (e) {
       log("Erro: " + e);
+      checkfen = "";
+      moveRetryAfter = Date.now() + 1000;
       can_interval = true;
     }
   }
@@ -5361,7 +5384,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     const scoutSecondary = document.getElementById("oi-zone2");
     const banner = document.getElementById("thinker-chess-banner");
     document.querySelectorAll(".tc-hud-stats").forEach((hud) => {
-      hud.style.display = _ghostModeActive ? "none" : "inline-flex";
+      hud.style.display = _ghostModeActive || !recentFormEnabled ? "none" : "inline-flex";
     });
     if (menu) menu.style.display = _ghostModeActive ? "none" : "flex";
     if (wrapper) wrapper.style.setProperty("display", _ghostModeActive ? "none" : "flex", "important");
@@ -6026,9 +6049,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           background:#f1f1ee; box-shadow:none; pointer-events:none; transition:transform .14s ease;
         }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):not([aria-disabled="true"]):hover { border-color:#555650; }
-        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):not([aria-disabled="true"]):focus-within { outline:2px solid var(--tc-console-focus); outline-offset:2px; }
+        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):focus:not(:focus-visible) { outline:none; }
+        #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):not([aria-disabled="true"]):focus-visible { outline:2px solid var(--tc-console-focus); outline-offset:2px; }
         #krypbot-container .kb-radio-group[aria-disabled="true"] { border-color:#343431; background:#30302e; }
-        #krypbot-container .kb-radio-group[aria-disabled="true"]:focus-within { outline:2px solid #666760; outline-offset:2px; }
+        #krypbot-container .kb-radio-group[aria-disabled="true"]:focus-visible { outline:2px solid #666760; outline-offset:2px; }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):has(input[value="1"]:checked) { border-color:var(--tc-console-accent); background:var(--tc-console-accent); box-shadow:none; }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])):has(input[value="1"]:checked) .kb-toggle-thumb { transform:translateX(18px); }
         #krypbot-container .kb-radio-group:not(:has(input[name="delayMode"])) label { position:absolute; top:0; bottom:0; z-index:2; width:50%; height:auto; }
@@ -6509,6 +6533,10 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
                 <p class="kb-section-label">Banner</p>
                 <div class="kb-radio-group" aria-label="Banner"><input type="radio" id="bn-on" name="kb-banner" value="1" checked><label for="bn-on">ON</label><input type="radio" id="bn-off" name="kb-banner" value="0"><label for="bn-off">OFF</label><span class="kb-toggle-thumb" aria-hidden="true"></span></div>
               </div>
+              <div class="kb-section">
+                <p class="kb-section-label">Recent Form</p>
+                <div class="kb-radio-group" aria-label="Recent Form"><input type="radio" id="rf-on" name="kb-recent-form" value="1" checked><label for="rf-on">ON</label><input type="radio" id="rf-off" name="kb-recent-form" value="0"><label for="rf-off">OFF</label><span class="kb-toggle-thumb" aria-hidden="true"></span></div>
+              </div>
               <div class="kb-section-col" id="puzzle-section" style="display:none">
                 <p class="kb-section-label">Puzzle Mode <span class="kb-inline-note">(Elo 3200)</span></p>
                 <div class="kb-section"><p class="kb-subsetting-label">Hint Lines</p><div class="kb-radio-group"><input type="radio" id="ph-on" name="kb-puzzle-hint" value="1"><label for="ph-on">ON</label><input type="radio" id="ph-off" name="kb-puzzle-hint" value="0" checked><label for="ph-off">OFF</label></div></div>
@@ -6569,6 +6597,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       const smartPacing = sectionByLabel(morePanel, "Smart Pacing");
       const evaluationBar = sectionByLabel(morePanel, "Evaluation Bar");
       const bannerControl = sectionByLabel(morePanel, "Banner");
+      const recentFormControl = sectionByLabel(morePanel, "Recent Form");
       const queueNote = menu.querySelector("#kb-auto-queue-session-note");
       const timing = menu.querySelector("#auto-delay-section");
       const strength = menu.querySelector(".kb-strength-card");
@@ -6576,7 +6605,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       const footer = menu.querySelector(".kb-footer");
 
       [bot, autoMoves, autoQueue, queueNote].forEach((node) => { if (node) core.appendChild(node); });
-      [evaluationBar, bannerControl, footer].forEach((node) => { if (node) visuals.appendChild(node); });
+      [evaluationBar, bannerControl, recentFormControl, footer].forEach((node) => { if (node) visuals.appendChild(node); });
       if (timing) {
         const timingToggle = timing.querySelector("#kb-move-timing-toggle");
         const timingLabel = timingToggle?.querySelector("#kb-run-delay-label");
@@ -6881,6 +6910,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           if (delayHint) delayHint.hidden = auto_move;
           syncAutoQueueSessionUI();
           $(`input[name="kb-banner"][value="${thinkerBannerEnabled ? 1 : 0}"]`).prop("checked", true);
+          $(`input[name="kb-recent-form"][value="${recentFormEnabled ? 1 : 0}"]`).prop("checked", true);
           $(`input[name="kb-puzzle-hint"][value="${puzzleHint ? 1 : 0}"]`).prop(
             "checked",
             true,
@@ -7051,6 +7081,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
 
         $('input[name="kb-auto-move"]').on("change", function () {
           auto_move = $(this).val() == "1";
+          checkfen = "";
           if (!auto_move) {
             smartPacer.cancel();
             sessionControlBridge.autoMoveChanged(false).catch((error) => debug("error", "[Session Control] Auto Move pause failed", error));
@@ -7074,12 +7105,14 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
 
         $('input[name="kb-puzzle-hint"]').on("change", function () {
           puzzleHint = $(this).val() == "1";
+          checkfen = "";
           if (!puzzleHint) $(".myhigh, .myarrow").remove();
           window.krypbotUpdateUI();
         });
 
         $('input[name="kb-puzzle-auto"]').on("change", function () {
           puzzleAutoMove = $(this).val() == "1";
+          checkfen = "";
           window.krypbotUpdateUI();
         });
 
@@ -7127,6 +7160,14 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
 
         $('input[name="kb-banner"]').on("change", function () {
           setThinkerBannerEnabled($(this).val() === "1");
+          window.krypbotUpdateUI();
+        });
+
+        $('input[name="kb-recent-form"]').on("change", function () {
+          recentFormEnabled = $(this).val() === "1";
+          localStorage.setItem("recentForm", String(recentFormEnabled));
+          if (OpponentIntel.currentEntry) OpponentIntel.renderHUD(OpponentIntel.currentEntry.hudStats);
+          else document.querySelectorAll(".tc-hud-stats").forEach((node) => node.remove());
           window.krypbotUpdateUI();
         });
 
@@ -7329,6 +7370,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           // Auto Moves
           if (typeof s.autoMove === "boolean" && auto_move !== s.autoMove) {
             auto_move = s.autoMove;
+            checkfen = "";
             $('input[name="kb-auto-move"][value="' + (auto_move ? "1" : "0") + '"]').prop("checked", true);
             if (!auto_move) {
               smartPacer.cancel();

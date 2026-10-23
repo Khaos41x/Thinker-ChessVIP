@@ -529,6 +529,10 @@ function createCdpClient(webSocketUrl) {
       returnByValue: true,
     });
     const state = result.result.value;
+    if (!liveChess) {
+      const defaults = await client.send('Runtime.evaluate', {expression:`(() => ({random:document.getElementById('dm-rand').checked,off:['st-on','am-on','aq-on','aa-on','eb-on','sp-on'].filter(id=>document.getElementById(id)?.checked),banner:document.getElementById('bn-on').checked,recentForm:document.getElementById('rf-on').checked}))()`,returnByValue:true});
+      assert(defaults.result.value.random && defaults.result.value.off.length===0 && defaults.result.value.banner && defaults.result.value.recentForm, `Unsafe defaults: ${JSON.stringify(defaults.result.value)}`);
+    }
 
     if (captureBaseline) {
       await client.send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 778, deviceScaleFactor: 1, mobile: false });
@@ -961,7 +965,7 @@ function createCdpClient(webSocketUrl) {
     assert(polish.swatch.rect.width === 24 && polish.swatch.rect.height === 24 && polish.swatch.borderWidth === "1px" && polish.swatch.padding === "0px" && polish.swatch.borderColor === polish.swatch.inputBorderColor, `Theme swatch frame regressed: ${JSON.stringify(polish.swatch)}`);
     assert(Number.parseFloat(polish.scout.dotWidth) >= 6 && Number.parseFloat(polish.scout.dotWidth) <= 8 && polish.scout.dotWidth === polish.scout.dotHeight && polish.scout.text === "Waiting for opponent", `Scout waiting indicator regressed: ${JSON.stringify(polish.scout)}`);
     assert(polish.scout.detail === "Public data appears after an opponent is identified.", `Pre-existing Scout explanation was lost: ${JSON.stringify(polish.scout)}`);
-    assert(((polish.divider.borderTopWidth === "1px" && polish.divider.borderTopColor === polish.divider.tokenColor) || (polish.divider.borderTopWidth === "0px" && polish.divider.backgroundImage.includes(polish.divider.tokenColor))) && polish.divider.engineHeight === 360, `Move Timing / Smart Pacing divider is inconsistent or changed panel height: ${JSON.stringify(polish.divider)}`);
+    assert(((polish.divider.borderTopWidth === "1px" && polish.divider.borderTopColor === polish.divider.tokenColor) || (polish.divider.borderTopWidth === "0px" && polish.divider.backgroundImage.includes(polish.divider.tokenColor))) && polish.divider.engineHeight >= 360, `Move Timing / Smart Pacing divider is inconsistent or clips its content: ${JSON.stringify(polish.divider)}`);
     assert(typeMetrics.every((metric) => Number.parseFloat(metric.fontSize) >= 11 && metric.contrast >= 4.5), `Polish typography is undersized or low contrast: ${JSON.stringify(polish.typography)}`);
     assert(buttonStateMetrics.every((metric) => Number.parseFloat(metric.fontSize) >= 11 && metric.contrast >= 4.5), `Button state typography is undersized or low contrast: ${JSON.stringify(polish.buttonStates)}`);
     assert(polish.typography.start.fontSize === polish.typography.finish.fontSize && polish.typography.finish.fontSize === polish.typography.export.fontSize, `Action button type sizes diverge: ${JSON.stringify(polish.typography)}`);
@@ -1161,6 +1165,45 @@ function createCdpClient(webSocketUrl) {
         })()`,returnByValue:true,
       });
       assert(bannerReload.result.value.ok, `Banner preference reload failed: ${JSON.stringify(bannerReload.result.value)}`);
+      const engineRecovery = await client.send('Runtime.evaluate', {
+        expression:`(async () => {
+          const waitFor=async test=>{const until=performance.now()+4000;while(!test()&&performance.now()<until)await new Promise(r=>setTimeout(r,25));return test();};
+          const originalGM=window.GM_xmlhttpRequest, originalPrompt=window.prompt;
+          let requests=0,moves=0,currentFen='8/8/8/8/8/5k2/8/6K1 w - - 0 1';
+          const board=document.querySelector('wc-chess-board');
+          const originalGame=board.game;
+          board.game={getFEN:()=>currentFen,getTurn:()=>currentFen.split(' ')[1],getPlayingAs:()=>'w',getLegalMoves:()=>[{from:'g1',to:'h1'}],move:()=>{moves++;currentFen='8/8/8/8/8/5k2/8/7K b - - 1 1';}};
+          window.prompt=()=> 'fixture-capability';
+          window.GM_xmlhttpRequest=options=>{
+            if(options.url.endsWith('/getmove')){requests++;setTimeout(()=>requests===1?options.onerror({status:0}):options.onload({status:200,responseText:'["g1h1"]'}),20);return {abort(){}};}
+            if(options.url.endsWith('/config/load')){options.onload({status:200,responseText:'{}'});return {abort(){}};}
+            return originalGM(options);
+          };
+          const click=id=>document.getElementById(id).closest('[role="switch"]').click();
+          try {
+            click('st-on');
+            const arrows=await waitFor(()=>document.querySelectorAll('.myarrow').length===1);
+            const afterRecovery=requests;
+            click('am-on');
+            const moved=await waitFor(()=>moves===1);
+            click('am-on');click('st-on');
+            const recent=document.getElementById('rf-on').closest('[role="switch"]');
+            const hud=document.createElement('span');hud.className='tc-hud-stats';document.body.appendChild(hud);
+            recent.click();const formOff=!document.querySelector('.tc-hud-stats') && localStorage.getItem('recentForm')==='false';
+            recent.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));
+            const formOn=document.getElementById('rf-on').checked && localStorage.getItem('recentForm')==='true';
+            return {ok:arrows&&afterRecovery===2&&moved&&requests===2&&formOff&&formOn,arrows,afterRecovery,moved,moves,requests,formOff,formOn};
+          } finally {window.GM_xmlhttpRequest=originalGM;window.prompt=originalPrompt;board.game=originalGame;}
+        })()`,awaitPromise:true,returnByValue:true,
+      });
+      assert(engineRecovery.result.value.ok, `Bot/Auto Move recovery failed: ${JSON.stringify(engineRecovery.result.value)}`);
+      const focusPoint=await client.send('Runtime.evaluate',{expression:`(() => {const group=document.getElementById('rf-on').closest('[role="switch"]');group.scrollIntoView({block:'center'});const r=group.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2};})()`,returnByValue:true});
+      await client.send('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',clickCount:1,...focusPoint.result.value});
+      await client.send('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',clickCount:1,...focusPoint.result.value});
+      const focusStyle=await client.send('Runtime.evaluate',{expression:`(() => {const group=document.getElementById('rf-on').closest('[role="switch"]');return {outline:getComputedStyle(group).outlineWidth,style:getComputedStyle(group).outlineStyle,focusVisible:group.matches(':focus-visible')};})()`,returnByValue:true});
+      assert(focusStyle.result.value.outline==='0px' || focusStyle.result.value.style==='none',`Pointer click left toggle outline: ${JSON.stringify(focusStyle.result.value)}`);
+      await client.send('Runtime.evaluate',{expression:`if(!document.getElementById('rf-on').checked)document.getElementById('rf-on').closest('[role="switch"]').click();`});
+      console.log(JSON.stringify({engineRecovery:engineRecovery.result.value,pointerFocus:focusStyle.result.value}));
       console.log(JSON.stringify({bannerToggle:bannerToggle.result.value,bannerReload:bannerReload.result.value}));
     }
     if (captureVisual) {

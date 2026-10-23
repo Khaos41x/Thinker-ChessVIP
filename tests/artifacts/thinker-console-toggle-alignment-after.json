@@ -574,16 +574,16 @@
       "state": "off",
       "source": "element:getBoundingClientRect",
       "track": {
-        "top": 439,
-        "bottom": 463,
+        "top": 441,
+        "bottom": 465,
         "left": 864,
         "right": 904,
         "width": 40,
         "height": 24
       },
       "thumb": {
-        "top": 442,
-        "bottom": 460,
+        "top": 444,
+        "bottom": 462,
         "left": 866,
         "right": 884,
         "width": 18,
@@ -604,8 +604,8 @@
       "verticalDifference": 0,
       "rowHeight": 36,
       "row": {
-        "top": 433,
-        "bottom": 469,
+        "top": 435,
+        "bottom": 471,
         "left": 585,
         "right": 904,
         "width": 319,
@@ -630,16 +630,16 @@
       "state": "on",
       "source": "element:getBoundingClientRect",
       "track": {
-        "top": 439,
-        "bottom": 463,
+        "top": 441,
+        "bottom": 465,
         "left": 864,
         "right": 904,
         "width": 40,
         "height": 24
       },
       "thumb": {
-        "top": 442,
-        "bottom": 460,
+        "top": 444,
+        "bottom": 462,
         "left": 884,
         "right": 902,
         "width": 18,
@@ -660,8 +660,8 @@
       "verticalDifference": 0,
       "rowHeight": 36,
       "row": {
-        "top": 433,
-        "bottom": 469,
+        "top": 435,
+        "bottom": 471,
         "left": 585,
         "right": 904,
         "width": 319,

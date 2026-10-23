@@ -12,11 +12,23 @@
     ],
     "horizontalOverflow": false,
     "allReachable": true,
+    "segmented": {
+      "container": {
+        "left": 25,
+        "right": 436,
+        "width": 411
+      },
+      "widths": [
+        204,
+        204
+      ],
+      "integer": true
+    },
     "capture": {
       "x": 0,
       "y": 1012,
       "width": 800,
-      "height": 1048
+      "height": 1122
     }
   },
   "1033": {
@@ -32,11 +44,23 @@
     ],
     "horizontalOverflow": false,
     "allReachable": true,
+    "segmented": {
+      "container": {
+        "left": 25,
+        "right": 436,
+        "width": 411
+      },
+      "widths": [
+        204,
+        204
+      ],
+      "integer": true
+    },
     "capture": {
       "x": 0,
       "y": 1012,
       "width": 1033,
-      "height": 1048
+      "height": 1122
     }
   }
 }

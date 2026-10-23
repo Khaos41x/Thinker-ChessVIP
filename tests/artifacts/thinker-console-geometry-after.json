@@ -3,17 +3,17 @@
     "x": 203,
     "y": 112,
     "width": 1034,
-    "height": 614,
+    "height": 623,
     "right": 1237,
-    "bottom": 726
+    "bottom": 735
   },
   "assistant": {
     "x": 215,
     "y": 124,
     "width": 1010,
-    "height": 590,
+    "height": 599,
     "right": 1225,
-    "bottom": 714
+    "bottom": 723
   },
   "core": {
     "x": 215,
@@ -27,33 +27,33 @@
     "x": 215,
     "y": 295,
     "width": 345,
-    "height": 187,
+    "height": 196,
     "right": 560,
-    "bottom": 482
+    "bottom": 491
   },
   "engine": {
     "x": 572,
     "y": 124,
     "width": 345,
-    "height": 358,
+    "height": 367,
     "right": 917,
-    "bottom": 482
+    "bottom": 491
   },
   "autoPlay": {
     "x": 215,
-    "y": 494,
+    "y": 503,
     "width": 702,
     "height": 220,
     "right": 917,
-    "bottom": 714
+    "bottom": 723
   },
   "scout": {
     "x": 929,
     "y": 124,
     "width": 296,
-    "height": 590,
+    "height": 599,
     "right": 1225,
-    "bottom": 714
+    "bottom": 723
   },
   "coreTitle": {
     "x": 228,
@@ -81,67 +81,67 @@
   },
   "duration": {
     "x": 228,
-    "y": 562,
+    "y": 571,
     "width": 220,
     "height": 32,
     "right": 448,
-    "bottom": 594
+    "bottom": 603
   },
   "minWins": {
     "x": 456,
-    "y": 562,
+    "y": 571,
     "width": 220,
     "height": 32,
     "right": 676,
-    "bottom": 594
+    "bottom": 603
   },
   "maxWins": {
     "x": 684,
-    "y": 562,
+    "y": 571,
     "width": 220,
     "height": 32,
     "right": 904,
-    "bottom": 594
+    "bottom": 603
   },
   "start": {
     "x": 228,
-    "y": 606,
+    "y": 615,
     "width": 448,
     "height": 32,
     "right": 676,
-    "bottom": 638
+    "bottom": 647
   },
   "finish": {
     "x": 684,
-    "y": 606,
+    "y": 615,
     "width": 106,
     "height": 32,
     "right": 790,
-    "bottom": 638
+    "bottom": 647
   },
   "export": {
     "x": 798,
-    "y": 606,
+    "y": 615,
     "width": 106,
     "height": 32,
     "right": 904,
-    "bottom": 638
+    "bottom": 647
   },
   "status": {
     "x": 228,
-    "y": 663,
+    "y": 672,
     "width": 573.27,
     "height": 15,
     "right": 801.27,
-    "bottom": 678
+    "bottom": 687
   },
   "stats": {
     "x": 228,
-    "y": 686,
+    "y": 695,
     "width": 573.27,
     "height": 15,
     "right": 801.27,
-    "bottom": 701
+    "bottom": 710
   },
   "minDelay": {
     "x": 586,
@@ -169,11 +169,11 @@
   },
   "theme": {
     "x": 523,
-    "y": 376,
+    "y": 448,
     "width": 24,
     "height": 24,
     "right": 547,
-    "bottom": 400
+    "bottom": 472
   },
   "viewport": {
     "width": 1440,

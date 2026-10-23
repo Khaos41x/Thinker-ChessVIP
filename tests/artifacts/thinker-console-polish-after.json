@@ -10,80 +10,80 @@
       "label": "Status",
       "labelRect": {
         "x": 228,
-        "y": 663,
+        "y": 672,
         "width": 29.44,
         "height": 15,
         "right": 257.44,
-        "bottom": 678
+        "bottom": 687
       },
       "value": "Idle",
       "valueRect": {
         "x": 265.44,
-        "y": 663,
+        "y": 672,
         "width": 535.83,
         "height": 15,
         "right": 801.27,
-        "bottom": 678
+        "bottom": 687
       }
     },
     {
       "label": "Time Left",
       "labelRect": {
         "x": 809.27,
-        "y": 663,
+        "y": 672,
         "width": 44.78,
         "height": 15,
         "right": 854.05,
-        "bottom": 678
+        "bottom": 687
       },
       "value": "00:00:00",
       "valueRect": {
         "x": 862.05,
-        "y": 663,
+        "y": 672,
         "width": 41.95,
         "height": 15,
         "right": 904,
-        "bottom": 678
+        "bottom": 687
       }
     },
     {
       "label": "Score",
       "labelRect": {
         "x": 228,
-        "y": 686,
+        "y": 695,
         "width": 29.44,
         "height": 15,
         "right": 257.44,
-        "bottom": 701
+        "bottom": 710
       },
       "value": "0 W | 0 D | 0 L",
       "valueRect": {
         "x": 265.44,
-        "y": 686,
+        "y": 695,
         "width": 535.83,
         "height": 15,
         "right": 801.27,
-        "bottom": 701
+        "bottom": 710
       }
     },
     {
       "label": "Win Rate",
       "labelRect": {
         "x": 809.27,
-        "y": 686,
+        "y": 695,
         "width": 44.78,
         "height": 15,
         "right": 854.05,
-        "bottom": 701
+        "bottom": 710
       },
       "value": "—",
       "valueRect": {
         "x": 862.05,
-        "y": 686,
+        "y": 695,
         "width": 41.95,
         "height": 15,
         "right": 904,
-        "bottom": 701
+        "bottom": 710
       }
     }
   ],
@@ -119,11 +119,11 @@
   "swatch": {
     "rect": {
       "x": 523,
-      "y": 376,
+      "y": 448,
       "width": 24,
       "height": 24,
       "right": 547,
-      "bottom": 400
+      "bottom": 472
     },
     "borderWidth": "1px",
     "borderColor": "rgb(58, 58, 54)",
@@ -138,13 +138,13 @@
     "detail": "Public data appears after an opponent is identified."
   },
   "divider": {
-    "hintBottom": 421,
-    "smartTop": 433,
+    "hintBottom": 423,
+    "smartTop": 435,
     "borderTopWidth": "0px",
     "borderTopColor": "rgb(236, 236, 232)",
     "backgroundImage": "linear-gradient(rgb(50, 50, 47), rgb(50, 50, 47))",
     "tokenColor": "rgb(50, 50, 47)",
-    "engineHeight": 358
+    "engineHeight": 367
   },
   "typography": {
     "start": {
@@ -178,9 +178,9 @@
     "immediate": {
       "fontSize": "11px",
       "lineHeight": "16px",
-      "color": "rgb(133, 139, 150)",
-      "backgroundColor": "rgba(0, 0, 0, 0)",
-      "contrast": 5.07
+      "color": "rgb(196, 197, 191)",
+      "backgroundColor": "rgb(37, 37, 35)",
+      "contrast": 8.84
     },
     "current": {
       "fontSize": "11px",

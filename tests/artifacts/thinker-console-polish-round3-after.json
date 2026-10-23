@@ -88,40 +88,40 @@
       "label": "Time Left",
       "labelRect": {
         "x": 809.27,
-        "y": 663,
+        "y": 672,
         "width": 44.78,
         "height": 15,
         "right": 854.05,
-        "bottom": 678
+        "bottom": 687
       },
       "value": "00:00:00",
       "valueRect": {
         "x": 862.05,
-        "y": 663,
+        "y": 672,
         "width": 41.95,
         "height": 15,
         "right": 904,
-        "bottom": 678
+        "bottom": 687
       }
     },
     {
       "label": "Win Rate",
       "labelRect": {
         "x": 809.27,
-        "y": 686,
+        "y": 695,
         "width": 44.78,
         "height": 15,
         "right": 854.05,
-        "bottom": 701
+        "bottom": 710
       },
       "value": "—",
       "valueRect": {
         "x": 862.05,
-        "y": 686,
+        "y": 695,
         "width": 41.95,
         "height": 15,
         "right": 904,
-        "bottom": 701
+        "bottom": 710
       }
     }
   ]
