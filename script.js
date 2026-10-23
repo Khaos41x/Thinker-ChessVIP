@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-20.4
+// @version      2026-10-23.1
 // @description  Chess Bot com Servidor Local
 // @author       You
 // @match        https://www.chess.com/*
@@ -777,6 +777,11 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     localStorage.setItem("autoMinDelay", "0.5");
     localStorage.setItem("autoMaxDelay", "2.0");
     localStorage.setItem("kb_default_off_v6", "true");
+  }
+  if (localStorage.getItem("thinker_visual_defaults_v1") !== "true") {
+    localStorage.setItem("thinkerBanner", "true");
+    localStorage.setItem("recentForm", "true");
+    localStorage.setItem("thinker_visual_defaults_v1", "true");
   }
 
   // --- CONFIGURAÃ‡Ã•ES PADRÃƒO (AUTO RUN DELAY) ---
@@ -4575,8 +4580,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     smartPacer.cancel();
     if (!board) return null;
 
-    const getGame = () =>
-      board.game || (board.gameManager && board.gameManager.game);
+    const getGame = () => resolveThinkerBoardGame(board);
     const scheduledGame = getGame();
     const normalizedPromotion = typeof promotion === "string" && /^[qrbn]$/i.test(promotion)
       ? promotion.toLowerCase()
@@ -4634,8 +4638,23 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     }
 
     const delaySeconds = Number(baseDelaySeconds);
+    const reportOutcome = outcome => {
+      if (outcome === false || outcome?.allowed === false) {
+        thinkerMoveDiagnostic = { stage: "move-execution-rejected", status: null };
+        if (expectedFen !== null && checkfen === expectedFen) checkfen = "";
+        moveRetryAfter = Date.now() + 1000;
+      } else if (outcome === true) thinkerMoveDiagnostic = { stage: "move-executed", status: null };
+      return outcome;
+    };
+    const reportFailure = error => {
+      reportOutcome(false);
+      if (error?.name !== "AbortError") log("SmartPacer erro: " + error);
+    };
     if (forceImmediate || (!useSmartPacing && (!Number.isFinite(delaySeconds) || delaySeconds <= 0))) {
-      return executeMove();
+      const outcome = executeMove();
+      if (outcome?.then) outcome.then(reportOutcome).catch(reportFailure);
+      else reportOutcome(outcome);
+      return outcome;
     }
 
     const scheduledFen = (() => {
@@ -4664,9 +4683,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         `alvo=${scheduled.targetDelayMs}ms | motor=${Math.round(scheduled.elapsedMs)}ms | espera=${scheduled.delayMs}ms`,
       );
     }
-    scheduled.promise.catch((error) => {
-      if (error?.name !== "AbortError") log("SmartPacer erro: " + error);
-    });
+    scheduled.promise.then(reportOutcome).catch(reportFailure);
     return scheduled;
   };
 
@@ -4749,53 +4766,47 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
   let cached_board = null;
   let cached_game = null;
   let moveRetryAfter = 0;
+  let thinkerMoveDiagnostic = { stage: "idle", status: null };
+
+  function resolveThinkerBoardGame(board) {
+    if (!board) return null;
+    const read = (get) => { try { const game = get(); return typeof game?.getFEN === "function" ? game : null; } catch (_) { return null; } };
+    const direct = read(() => board.game) || read(() => board.gameManager?.game);
+    if (direct) return direct;
+    let keys;
+    try { keys = []; for (const key in board) keys.push(key); } catch (_) { return null; }
+    for (const key of keys) {
+      const game = read(() => board[key]);
+      if (game) return game;
+    }
+    return null;
+  }
+
+  function findThinkerGameBoard() {
+    const selector = "wc-chess-board, chess-board, wc-board, #board-single, .board, .chess-board, [class*='board-component']";
+    const pageDocument = typeof unsafeWindow === "object" && unsafeWindow?.document ? unsafeWindow.document : document;
+    const candidates = Array.from(pageDocument.querySelectorAll(selector));
+    let selected = null, best = -1;
+    for (const board of candidates) {
+      if (!isRenderableThinkerLayoutNode(board, { minWidth: 200, minHeight: 200 })) continue;
+      const rect = board.getBoundingClientRect();
+      const inViewport = rect.bottom > 0 && rect.right > 0 && rect.top < window.innerHeight && rect.left < window.innerWidth;
+      const score = (inViewport ? 10000000 : 0) + (resolveThinkerBoardGame(board) ? 2000000 : 0) + (/^(WC-CHESS-BOARD|CHESS-BOARD|WC-BOARD)$/.test(board.tagName || "") ? 1000000 : 0) + Math.min(rect.width * rect.height, 999999);
+      if (score > best) { selected = board; best = score; }
+    }
+    return selected;
+  }
+
   function get_cached_game() {
-    if (
-      cached_game &&
-      typeof cached_game.getFEN === "function" &&
-      document.body.contains(cached_board)
-    ) {
+    const cachedRect = cached_board?.getBoundingClientRect?.();
+    if (cached_game && cached_board && document.body.contains(cached_board) &&
+        cachedRect?.bottom > 0 && cachedRect.right > 0 && cachedRect.top < window.innerHeight && cachedRect.left < window.innerWidth &&
+        isRenderableThinkerLayoutNode(cached_board, { minWidth: 200, minHeight: 200 }) &&
+        resolveThinkerBoardGame(cached_board) === cached_game) {
       return { board: cached_board, game: cached_game };
     }
-    cached_board =
-      $("chess-board")[0] ||
-      $("wc-chess-board")[0] ||
-      $(".board")[0] ||
-      $(".chess-board")[0] ||
-      $("[class*='board-component']")[0] ||
-      $("wc-board")[0];
-    cached_game = null;
-    if (cached_board) {
-      if (cached_board.game) cached_game = cached_board.game;
-      else if (cached_board.gameManager && cached_board.gameManager.game)
-        cached_game = cached_board.gameManager.game;
-      else {
-        const keys = Object.keys(cached_board).filter(
-          (k) =>
-            k.toLowerCase().includes("game") ||
-            k.toLowerCase().includes("chess"),
-        );
-        for (const k of keys) {
-          if (cached_board[k] && cached_board[k].getFEN) {
-            cached_game = cached_board[k];
-            break;
-          }
-        }
-        if (!cached_game) {
-          for (const k in cached_board) {
-            try {
-              if (
-                cached_board[k] &&
-                typeof cached_board[k].getFEN === "function"
-              ) {
-                cached_game = cached_board[k];
-                break;
-              }
-            } catch (e) {}
-          }
-        }
-      }
-    }
+    cached_board = findThinkerGameBoard();
+    cached_game = resolveThinkerBoardGame(cached_board);
     return { board: cached_board, game: cached_game };
   }
 
@@ -4810,6 +4821,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       const { board, game } = get_cached_game();
 
       if (!board || !game) {
+        thinkerMoveDiagnostic = { stage: board ? "game-api-unavailable" : "board-unavailable", status: null };
         return;
       }
 
@@ -4825,8 +4837,9 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       const positionObservedAt = observeSmartPacingPosition(fen);
 
       if (!isPuzzleMode) {
-        const turn = game ? game.getTurn() : null;
-        let side = game ? game.getPlayingAs() : null;
+        const normalizeSide = value => ({ white: "w", black: "b", w: "w", b: "b" })[String(value || "").toLowerCase()] || null;
+        const turn = normalizeSide(typeof game.getTurn === "function" ? game.getTurn() : null) || fen.split(" ")[1];
+        let side = normalizeSide(typeof game.getPlayingAs === "function" ? game.getPlayingAs() : null);
 
         // Detectar cor do jogador se getPlayingAs() retornar algo invÃ¡lido
         if (!side || side === null || side === undefined) {
@@ -4840,6 +4853,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         }
 
         if (turn !== side) {
+          thinkerMoveDiagnostic = { stage: "waiting-turn", status: null };
           $(".myhigh, .myarrow").remove();
           return;
         }
@@ -4903,7 +4917,12 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             v2Options ? 0 : chessBot.time,
             { ...autoMoveOptions, analysis, ...(v2Options || {}) },
           );
-          if (scheduledMove === null && typeof onInvalid === "function") onInvalid();
+          if (scheduledMove === null || scheduledMove === false) {
+            thinkerMoveDiagnostic = { stage: "move-api-rejected", status: null };
+            currentCache.delete(cacheKey);
+            retryMove();
+            if (typeof onInvalid === "function") onInvalid();
+          } else if (scheduledMove?.promise) thinkerMoveDiagnostic = { stage: "move-scheduled", status: null };
           return scheduledMove;
         };
         if (!analysisPromise) return perform(null);
@@ -4965,7 +4984,9 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
             checkfen = "";
           });
         } else {
+          checkfen = fen;
           create_div(cached);
+          thinkerMoveDiagnostic = { stage: "recommendation", status: null };
         }
         return;
       }
@@ -4979,6 +5000,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       chessBot.time = computeDelayValue(game);
       log(`Modo: ${gameMode} | Delay: ${chessBot.time}s | Elo: ${currentElo}`);
       log("Enviando request para " + SERVER_URL + "/getmove");
+      thinkerMoveDiagnostic = { stage: "requesting", status: null };
 
       GM_xmlhttpRequest({
         method: "POST",
@@ -4990,6 +5012,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           time: chessBot.time,
         }),
         onload: function (resp) {
+          thinkerMoveDiagnostic = { stage: "response", status: Number(resp.status) || null };
           try {
             if (handleEngineUnauthorized(resp)) {
               retryMove();
@@ -5009,6 +5032,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
                 scheduleAutoMove(move);
               } else {
                 create_div(move);
+                thinkerMoveDiagnostic = { stage: "recommendation", status: Number(resp.status) || null };
               }
             } else retryMove();
           } catch (e) {
@@ -5018,10 +5042,12 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           can_interval = true;
         },
         onerror: function (resp) {
+          thinkerMoveDiagnostic = { stage: "connection-error", status: Number(resp?.status) || null };
           log("Erro request: " + (resp ? resp.status : "unknown"));
           retryMove();
         },
         ontimeout: function () {
+          thinkerMoveDiagnostic = { stage: "timeout", status: null };
           log("Timeout: servidor nao respondeu em 5s");
           retryMove();
         },
@@ -5029,6 +5055,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
         timeout: 5000,
       });
     } catch (e) {
+      thinkerMoveDiagnostic = { stage: e?.code === "SERVER_AUTH_REQUIRED" ? "authentication-required" : "request-error", status: null };
       log("Erro: " + e);
       checkfen = "";
       moveRetryAfter = Date.now() + 1000;
@@ -5214,9 +5241,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
       "[class*='play-controller']",
       "[class*='game-panel']",
     ];
-    const board = document.querySelector(
-      "wc-chess-board, chess-board, .board, .chess-board, [class*='board-component']",
-    );
+    const board = findThinkerGameBoard();
     const boardRect = getThinkerRect(board);
     const seen = new Set();
     const knownCandidates = [];
@@ -5333,9 +5358,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     const isPlayOnlineRoute = /^\/play\/online\/?$/.test(path);
     if (!isGameRoute && !isPlayOnlineRoute) return false;
 
-    const board = document.querySelector(
-      "wc-chess-board, chess-board, #board-single, .chess-board-wrapper, .board-wrapper, .board, .chess-board, [class*='board-component']",
-    );
+    const board = findThinkerGameBoard();
     if (!isRenderableThinkerLayoutNode(board, { minWidth: 240, minHeight: 240 })) return false;
     const sidebar = getThinkerBannerSidebar();
     return Boolean(sidebar && !hasThinkerPostGameEvidence(sidebar));
@@ -5346,6 +5369,35 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
     localStorage.setItem("thinkerBanner", String(thinkerBannerEnabled));
     positionThinkerBannerShell();
   }
+
+  function getThinkerRuntimeDiagnostics() {
+    const board = findThinkerGameBoard();
+    const game = resolveThinkerBoardGame(board);
+    const sidebar = getThinkerBannerSidebar();
+    const banner = document.getElementById("thinker-chess-banner");
+    const layout = sidebar ? calculateThinkerBannerLayout(sidebar.getBoundingClientRect(), document.documentElement.clientWidth, window.scrollX, window.scrollY, _ghostModeActive) : null;
+    let reason = "visible";
+    if (!thinkerBannerEnabled) reason = "disabled";
+    else if (_ghostModeActive) reason = "ghost-mode";
+    else if (!board) reason = "board-unavailable";
+    else if (!sidebar) reason = "sidebar-unavailable";
+    else if (!shouldShowThinkerBanner()) reason = "route-or-post-game";
+    else if (!layout) reason = "insufficient-space-or-height";
+    else if (!banner || banner.style.display === "none") reason = "awaiting-layout";
+    let fenAvailable = false;
+    try { fenAvailable = typeof game?.getFEN?.() === "string"; } catch (_) {}
+    return {
+      version: "2026-10-23.1",
+      route: window.location.pathname,
+      banner: { enabled: thinkerBannerEnabled, shown: Boolean(banner && banner.style.display !== "none"), reason, minimumWidth: THINKER_BANNER_MIN_WIDTH_PX, geometry: layout },
+      bot: { enabled: isMasterEnabled(), autoMove: auto_move, effectiveAutoMove: sessionControlBridge.effectiveAutoMove(auto_move), sessionActive: sessionControlBridge.isActive(), stage: thinkerMoveDiagnostic.stage, status: thinkerMoveDiagnostic.status, authenticated: Boolean(engineCapability), boardFound: Boolean(board), gameApiFound: Boolean(game), fenAvailable, canReadLegalMoves: typeof game?.getLegalMoves === "function", canExecuteMove: typeof game?.move === "function", retryPending: Date.now() < moveRetryAfter },
+    };
+  }
+
+  try {
+    const diagnosticsWindow = typeof unsafeWindow === "object" && unsafeWindow ? unsafeWindow : window;
+    diagnosticsWindow.thinkerChessDiagnostics = () => JSON.parse(JSON.stringify(getThinkerRuntimeDiagnostics()));
+  } catch (_) {}
 
   function ensureGhostRecoveryControl() {
     if (!document.body) return null;
@@ -6719,7 +6771,15 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           scheduleThinkerWorkspaceLayout();
         };
         window.addEventListener("resize", thinkerResizeHandler, { passive: true });
+        const observeBannerVisibility = () => {
+          document.querySelectorAll("wc-chess-board, chess-board, wc-board, #board-single, .board, .chess-board, [class*='board-component'], #board-layout-main, .board-layout-main, .play-controller-component, .board-layout-sidebar, .layout-board-sidebar, #board-layout-sidebar, [data-cy*='sidebar'], [data-test-element*='sidebar'], [class*='game-panel'], aside, [role='complementary']").forEach((node) => {
+            for (let current = node; current && current !== document.body && current !== document.documentElement; current = current.parentElement) {
+              thinkerBannerLayoutObserver.observe(current, { attributes: true, attributeFilter: ["class", "style", "hidden", "aria-hidden"] });
+            }
+          });
+        };
         thinkerBannerLayoutObserver = new MutationObserver(() => {
+          observeBannerVisibility();
           scheduleThinkerWorkspaceLayout();
           const currentSidebar = getThinkerBannerSidebar();
           const sidebarChanged = currentSidebar !== thinkerObservedBannerSidebar;
@@ -6738,6 +6798,7 @@ globalThis.ThinkerEvalBarV2 = ThinkerEvalBarV2Bundle;
           childList: true,
           subtree: true,
         });
+        observeBannerVisibility();
         if (typeof ResizeObserver === "function") {
           thinkerBannerResizeObserver = new ResizeObserver(() => {
             scheduleThinkerBannerPosition();

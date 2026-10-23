@@ -25,6 +25,7 @@ const markupEnd = source.indexOf('`;', markupStart) + 1;
 const markup = source.slice(markupStart, markupEnd);
 const vectorArtwork = markup.includes('data-artwork="knight-symbol.svg"');
 const controller = source.slice(start, end);
+const boardResolvers = source.slice(source.indexOf('  function resolveThinkerBoardGame'), source.indexOf('  function get_cached_game'));
 const liveSidebarLeft = { 1024: [708, 708, 708], 1280: [788, 788, 788], 1440: [808, 948, 948], 1920: [965, 1055, 1215], 2560: [1285, 1375, 1465] };
 const cases = zoomPass ? [{width:1440,height:900,dpr:baseDpr,sidebarLeft:948,sidebarWidth:300}] : Object.entries(liveSidebarLeft).flatMap(([width, lefts]) => [720, 900, 1080].flatMap((height, index) => [1, 2].map(dpr => ({ width: Number(width), height, dpr, sidebarLeft: lefts[index], sidebarWidth: Number(width) >= 1920 ? 500 : 300 }))));
 const server = createServer((request, response) => { response.setHeader('Content-Type', 'text/html'); response.end('<!doctype html><html><head><meta charset="utf-8"></head><body></body></html>'); });
@@ -60,6 +61,7 @@ try {
       document.querySelector('.board').style.left = (scenario.sidebarLeft - 432)+'px';
       sidebar.style.cssText = 'box-sizing:border-box;position:absolute;top:16px;padding:24px;border-radius:8px;background:#262421;left:'+scenario.sidebarLeft+'px;width:'+scenario.sidebarWidth+'px;height:'+(scenario.height-32)+'px';
       const _ghostModeActive = false; const SERVER_URL = 'http://127.0.0.1:5050';
+      ${boardResolvers}
       ${controller}
       document.body.insertAdjacentHTML('beforeend', ${markup});
       const banner = document.getElementById('thinker-chess-banner');

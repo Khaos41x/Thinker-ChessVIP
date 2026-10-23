@@ -3,6 +3,7 @@ const vm = require("vm");
 
 const source = fs.readFileSync("script.js", "utf8");
 const start = source.indexOf("  let scheduleThinkerBannerPosition");
+const resolvers = source.slice(source.indexOf("  function resolveThinkerBoardGame"), source.indexOf("  function get_cached_game"));
 const end = source.indexOf("\n  function createMenu", start);
 if (start < 0 || end < 0) throw new Error("banner lifecycle block not found");
 
@@ -37,6 +38,7 @@ const document = {
   getElementById: (id) => id === "thinker-chess-banner" ? banner : null,
   querySelector: (selector) => selector.includes("wc-chess-board") ? board : null,
   querySelectorAll(selector) {
+    if (selector.includes("wc-chess-board")) return [board];
     if (selector.includes("game-over-modal")) return gameOverVisible ? [gameOver] : [];
     if (selector === ".play-controller-component") return semanticSidebarAvailable ? [sidebar] : [];
     return [];
@@ -57,6 +59,12 @@ const context = {
   console,
   cancelAnimationFrame() {},
   clearInterval() {},
+  isMasterEnabled: () => false,
+  auto_move: false,
+  thinkerMoveDiagnostic: { stage: "idle", status: null },
+  engineCapability: "fixture-private-token-never-export",
+  moveRetryAfter: 0,
+  sessionControlBridge: { effectiveAutoMove: value => value, isActive: () => false },
   localStorage: {
     getItem: (key) => preferences.get(key) ?? null,
     setItem: (key, value) => preferences.set(key, String(value)),
@@ -66,7 +74,7 @@ const preferences = new Map();
 vm.createContext(context);
 vm.runInContext(
   "let _ghostModeActive = false; const SERVER_URL = 'http://127.0.0.1:5050';\n" +
-    source.slice(start, end) +
+    resolvers + source.slice(start, end) +
     "\nglobalThis.calculate = calculateThinkerBannerLayout;" +
     "\nglobalThis.shouldShow = shouldShowThinkerBanner;" +
     "\nglobalThis.position = positionThinkerBannerShell;" +
@@ -94,6 +102,8 @@ assert(artwork.style.maxWidth === "561px", "DPR 2 artwork exceeded native physic
 window.devicePixelRatio = 1;
 
 context.setBannerEnabled(false);
+assert(window.thinkerChessDiagnostics().banner.reason === "disabled", "diagnostics lost banner disabled cause");
+assert(!JSON.stringify(window.thinkerChessDiagnostics()).includes("fixture-private-token"), "diagnostic leaked capability");
 assert(context.shouldShow() === false && banner.style.display === "none", "disabled banner remained visible");
 assert(preferences.get("thinkerBanner") === "false", "banner off preference was not persisted");
 context.position();
@@ -103,7 +113,7 @@ assert(banner.style.display === "flex" && preferences.get("thinkerBanner") === "
 preferences.set("thinkerBanner", "false");
 const savedContext = { ...context };
 vm.createContext(savedContext);
-vm.runInContext("let _ghostModeActive = false; const SERVER_URL = '';\n" + source.slice(start, end) + "\nglobalThis.savedShouldShow = shouldShowThinkerBanner;", savedContext);
+vm.runInContext("let _ghostModeActive = false; const SERVER_URL = '';\n" + resolvers + source.slice(start, end) + "\nglobalThis.savedShouldShow = shouldShowThinkerBanner;", savedContext);
 assert(savedContext.savedShouldShow() === false, "fresh startup ignored saved banner preference");
 
 const roomyLayout = context.calculate(sidebarRect, 1600, 0, 500, false);

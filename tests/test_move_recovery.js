@@ -8,7 +8,7 @@ const initialFen = '8/8/8/8/8/5k2/8/6K1 w - - 0 1';
 function fixture() {
   const state = { now:10000, master:true, fen:initialFen, requests:[], arrows:0, moves:0, throwAuth:false };
   const game = { getFEN:()=>state.fen, getTurn:()=>'w', getPlayingAs:()=>'w' };
-  const context = { console, Date:{now:()=>state.now}, can_interval:true, moveRetryAfter:0, gameMode:'play', fen:null, checkfen:'', auto_move:false,
+  const context = { console, window:{location:{href:'https://www.chess.com/play/online'}}, Date:{now:()=>state.now}, can_interval:true, moveRetryAfter:0, gameMode:'play', fen:null, checkfen:'', auto_move:false,
     get_cached_game:()=>({board:{},game}), isMasterEnabled:()=>state.master, observeSmartPacingPosition:()=>0,
     isLegacyAutoAdjustEffective:()=>false, chessBot:{elo:1500,time:.5}, moveCache:new Map(), puzzleMoveCache:new Map(),
     sessionControlBridge:{moveSelectionElo:e=>e,isActive:()=>false,effectiveAutoMove:a=>a},
@@ -20,7 +20,13 @@ function fixture() {
   };
   vm.createContext(context);
   vm.runInContext(source.slice(start,end), context);
-  return {state,context,request:()=>context.request_move()};
+  return {state,context,game,request:()=>context.request_move()};
+}
+for (const turnApi of ['long-color','fen-fallback']) {
+  const {state,game,request}=fixture();
+  if(turnApi==='long-color'){game.getTurn=()=> 'white';game.getPlayingAs=()=> 'w';}
+  else {delete game.getTurn;delete game.getPlayingAs;}
+  request();assert.equal(state.requests.length,1,`${turnApi} prevented a move request`);
 }
 for(const failure of ['401','503','invalid-json','empty','network','timeout','abort','missing-token']) {
   const {state,context,request}=fixture();
@@ -42,6 +48,8 @@ for(const failure of ['401','503','invalid-json','empty','network','timeout','ab
   const {state,context,request}=fixture();request();
   state.requests[0].onload({status:200,responseText:'["g1h1"]'});
   assert.equal(state.arrows,1);
+  context.checkfen='';request();request();
+  assert.equal(state.arrows,2,'cached recommendation was repeatedly remounted');
   context.auto_move=true;context.checkfen='';request();
   assert.equal(state.moves,1,'cached recommendation could not become Auto Move');
   assert.equal(state.requests.length,1,'unnecessary second engine request');

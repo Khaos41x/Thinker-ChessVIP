@@ -1165,6 +1165,34 @@ function createCdpClient(webSocketUrl) {
         })()`,returnByValue:true,
       });
       assert(bannerReload.result.value.ok, `Banner preference reload failed: ${JSON.stringify(bannerReload.result.value)}`);
+      const bannerVisibility = await client.send('Runtime.evaluate', {
+        expression:`(async () => {
+          const board=document.querySelector('wc-chess-board'),banner=document.getElementById('thinker-chess-banner');
+          const previous=board.style.opacity;
+          board.style.opacity='0';await new Promise(r=>setTimeout(r,200));
+          const hidden=getComputedStyle(banner).display==='none';
+          board.style.opacity='1';await new Promise(r=>setTimeout(r,250));
+          const restored=getComputedStyle(banner).display==='flex';
+          const clone=document.createElement('chess-board');clone.hidden=true;
+          board.parentElement.prepend(clone);await new Promise(r=>setTimeout(r,150));
+          const ignoredClone=getComputedStyle(banner).display==='flex';clone.remove();board.style.opacity=previous;
+          const generic=document.createElement('div');generic.className='board';generic.style.cssText='display:block;position:absolute;left:0;top:50px;width:640px;height:640px';
+          board.replaceWith(generic);await new Promise(r=>setTimeout(r,150));
+          generic.style.visibility='hidden';await new Promise(r=>setTimeout(r,200));
+          const genericHidden=getComputedStyle(banner).display==='none';
+          generic.style.visibility='visible';await new Promise(r=>setTimeout(r,200));
+          const genericRestored=getComputedStyle(banner).display==='flex';
+          const parent=generic.parentElement;parent.style.opacity='0';await new Promise(r=>setTimeout(r,200));
+          const parentHidden=getComputedStyle(banner).display==='none';
+          parent.style.opacity='1';await new Promise(r=>setTimeout(r,200));
+          const parentRestored=getComputedStyle(banner).display==='flex';
+          generic.replaceWith(board);parent.style.opacity='';await new Promise(r=>setTimeout(r,150));
+          const diagnostic=window.thinkerChessDiagnostics();
+          return {ok:hidden&&restored&&ignoredClone&&genericHidden&&genericRestored&&parentHidden&&parentRestored&&diagnostic.banner.enabled,hidden,restored,ignoredClone,genericHidden,genericRestored,parentHidden,parentRestored,reason:diagnostic.banner.reason};
+        })()`,awaitPromise:true,returnByValue:true,
+      });
+      assert(bannerVisibility.result.value.ok,`Banner visibility-only transition failed: ${JSON.stringify(bannerVisibility.result.value)}`);
+      console.log(JSON.stringify({bannerVisibility:bannerVisibility.result.value}));
       const engineRecovery = await client.send('Runtime.evaluate', {
         expression:`(async () => {
           const waitFor=async test=>{const until=performance.now()+4000;while(!test()&&performance.now()<until)await new Promise(r=>setTimeout(r,25));return test();};
