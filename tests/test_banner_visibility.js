@@ -188,6 +188,10 @@ context.position();
 assert(banner.style.display === "none", "SPA transition into review did not hide the banner");
 
 window.location.pathname = "/game/185503745104";
+window.location.pathname = "/live/game/18582739876";
+context.position();
+assert(banner.style.display === "flex", "legacy /live/game replay route hid the enabled Banner");
+window.location.pathname = "/game/185503745104";
 sidebar.innerText = "Game Review";
 assert(context.shouldShow() === true, "Game Review text hid the enabled banner");
 context.position();assert(banner.style.display === "flex", "post-game sidebar hid banner");

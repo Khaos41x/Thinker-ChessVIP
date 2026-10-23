@@ -1,5 +1,10 @@
 {
   "bidirectionalSync": true,
+  "legacyRoute": {
+    "route": "/live/game/18582739876",
+    "evalPresentation": true,
+    "activeAuthorization": null
+  },
   "cleanView": {
     "hidden": true,
     "boardVisible": true

@@ -55,6 +55,17 @@ describe('userscript Eval Bar authorization', () => {
     }
   });
 
+  it('presents the legacy live/game replay without authorizing an active game', () => {
+    const location = { pathname: '/live/game/18582739876', search: '?move=0' } as Location;
+    expect(resolveChessComEvalPresentation(location)).toBe(true);
+    expect(resolveChessComEvalAuthorization(location, documentWith([visibleNode('Game Review')]))).toBeNull();
+    expect(resolveChessComEvalAuthorization(location, documentWith([visibleNode('Game Review', true)]))).toBe('post-game');
+    for (const pathname of ['/live/game/', '/live/game/abc/unknown', '/live/other/abc']) {
+      expect(resolveChessComEvalPresentation({ pathname } as Location)).toBe(false);
+      expect(resolveChessComEvalAuthorization({ pathname } as Location, documentWith([visibleNode('Game Review', true)]))).toBeNull();
+    }
+  });
+
   it('mounts UI on board routes but only authorizes online play after visible terminal evidence', () => {
     expect(resolveChessComEvalPresentation({ pathname: '/play/online' } as Location)).toBe(true);
     expect(resolveChessComEvalAuthorization(

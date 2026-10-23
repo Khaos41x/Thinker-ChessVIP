@@ -132,7 +132,7 @@ const historyHooks = new WeakMap<Window, { references: number; pushState: Histor
 
 const ANALYSIS_ROUTE = /^\/analysis(?:\/|$)/;
 const GAME_REVIEW_ROUTE = /^\/game\/(?:live\/|daily\/)?[^/]+\/review(?:\/|$)/;
-const BOARD_ROUTE = /^\/(?:analysis|game|play|puzzles?|practice|lessons?)(?:\/|$)/;
+const BOARD_ROUTE = /^(?:\/(?:analysis|game|play|puzzles?|practice|lessons?)(?:\/|$)|\/live\/game\/[^/]+\/?$)/;
 const POST_GAME_TEXT = /(game review|an[aá]lise da partida|revis[aã]o da partida)/i;
 const TERMINAL_SELECTORS = [
   '[data-cy="game-over-modal"]',
@@ -144,6 +144,7 @@ const TERMINAL_SELECTORS = [
 ].join(',');
 
 function isGameRoute(path: string): boolean {
+  if (/^\/live\/game\/[^/]+\/?$/.test(path)) return true;
   const segments = path.split('/').filter(Boolean);
   if (segments[0] === 'play') return segments.length >= 2;
   if (segments[0] !== 'game') return false;

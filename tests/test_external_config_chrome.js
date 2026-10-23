@@ -108,6 +108,10 @@ async function evaluate(client, expression) {
     await waitFor(() => evaluate(board, `getComputedStyle(document.getElementById('thinker-chess-banner')).display==='none'`));
     await evaluate(board, `history.pushState({},'','/game/fixture-restored')`);
     await waitFor(() => evaluate(board, `getComputedStyle(document.getElementById('thinker-chess-banner')).display==='flex'`));
+    await evaluate(board, `history.pushState({},'','/live/game/18582739876?move=0');scrollTo(0,0)`);
+    await waitFor(() => evaluate(board, `window.thinkerChessDiagnostics().banner.reason==='visible'&&getComputedStyle(document.getElementById('thinker-chess-banner')).display==='flex'`));
+    const legacyRoute=await evaluate(board, `({route:location.pathname,evalPresentation:window.ThinkerEvalBarV2.resolveChessComEvalPresentation(location),activeAuthorization:window.ThinkerEvalBarV2.resolveChessComEvalAuthorization(location,document)})`);
+    assert(legacyRoute.evalPresentation && legacyRoute.activeAuthorization===null,JSON.stringify(legacyRoute));
     await evaluate(panel, `document.querySelector('[data-key="ghostMode"]').click()`);
     await waitFor(() => evaluate(board, `document.documentElement.classList.contains('tc-clean-view')`));
     const cleanView = await evaluate(board, `(() => {
@@ -202,7 +206,7 @@ async function evaluate(client, expression) {
     assert(exportFit.fits && exportFit.text==='Export Diagnostics',JSON.stringify(exportFit));
     const diagnostic = await evaluate(board, `window.thinkerChessDiagnostics().externalConfig`);
     assert.equal(diagnostic.error, null);
-    const report={ bidirectionalSync: true, cleanView, noFloatingRecovery:true, hiddenBannerRecovered:true, routeBannerRecovered:true, defaultStrength:3200, scrolledBanner, timingSwap: true, focusedDraftPreserved: true, invalidDraftPreserved:true, stalePollRejected:true, disjointEditsPreserved:true, saveRetry:true, offlineRecovery: true, exportFit, diagnostic, metrics };
+    const report={ bidirectionalSync: true, legacyRoute, cleanView, noFloatingRecovery:true, hiddenBannerRecovered:true, routeBannerRecovered:true, defaultStrength:3200, scrolledBanner, timingSwap: true, focusedDraftPreserved: true, invalidDraftPreserved:true, stalePollRejected:true, disjointEditsPreserved:true, saveRetry:true, offlineRecovery: true, exportFit, diagnostic, metrics };
     fs.writeFileSync(path.join(root,'tests','artifacts','clean-view-validation.json'),JSON.stringify(report,null,2));
     console.log(JSON.stringify(report, null, 2));
   } finally {

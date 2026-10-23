@@ -3,13 +3,14 @@ import {
   createUserscriptEvalBar,
   readChessComFen,
   resolveChessComEvalAuthorization,
+  resolveChessComEvalPresentation,
   type EvalRequest,
 } from '../../frontend/eval_bar/userscript-adapter';
 
 const nextFrame = (): Promise<number> => new Promise(resolve => requestAnimationFrame(resolve));
 
-async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
-  history.replaceState({}, '', '/analysis/backend-integration');
+async function runEvalBarBackendIntegration(serverUrl: string, token: string, legacyReplay = false) {
+  history.replaceState({}, '', legacyReplay ? '/live/game/18582739876?move=0' : '/analysis/backend-integration');
   const nativeMatchMedia = window.matchMedia;
   Object.defineProperty(window, 'matchMedia', {
     configurable: true,
@@ -21,6 +22,13 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
   board.setAttribute('orientation', 'white');
   Object.assign(board.style, { display: 'block', width: '600px', height: '600px' });
   document.body.append(board);
+  const review = document.createElement('button');
+  if (legacyReplay) {
+    board.setAttribute('data-game-over', 'true');
+    review.setAttribute('data-cy', 'game-review');
+    review.textContent = 'Game Review';
+    document.body.prepend(review);
+  }
   let requestCount = 0;
   let completedCount = 0;
   const streamEvents: Array<{ request: number; type: string; depth?: number; elapsedMs: number }> = [];
@@ -37,7 +45,7 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
         requestId: `eval-v2:${request.requestId}`,
         generation: request.generation,
         cacheContext: request.cacheContext,
-        context: 'analysis',
+        context: resolveChessComEvalAuthorization(window.location, document),
       }),
       signal: abort.signal,
     }).then(async response => {
@@ -82,7 +90,7 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
     getOrientation: () => board.getAttribute('orientation') === 'black' ? 'black' : 'white',
     getCacheContext: () => 'stockfish-19|sf_19_smallnet|nn-61e7af4bb97d.nnue|backend-integration',
     authorize: () => resolveChessComEvalAuthorization(window.location, document),
-    shouldDisplay: () => true,
+    shouldDisplay: () => resolveChessComEvalPresentation(window.location),
     getRoute: () => window.location.pathname,
     requestEvaluation: transport,
     pollIntervalMs: 60000,
@@ -133,6 +141,8 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
   const mateBackend = adapter.snapshot().lastEvaluation;
   const mateLabel = document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent || '';
   const result = {
+    route: window.location.pathname,
+    authorization: resolveChessComEvalAuthorization(window.location, document),
     fenRead: cpBackend !== null && readChessComFen(board) === mateFen,
     requestCount,
     streamEvents,
@@ -159,6 +169,7 @@ async function runEvalBarBackendIntegration(serverUrl: string, token: string) {
   };
   adapter.destroy();
   board.remove();
+  review.remove();
   Object.defineProperty(window, 'matchMedia', { configurable: true, value: nativeMatchMedia });
   return result;
 }

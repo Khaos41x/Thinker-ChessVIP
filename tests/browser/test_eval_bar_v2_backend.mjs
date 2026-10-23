@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { access, mkdtemp, rm } from 'node:fs/promises';
+import { access, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -145,7 +145,7 @@ try {
   }
   const evaluated = await cdp.send('Runtime.evaluate', {
     expression: `Promise.race([
-      runEvalBarBackendIntegration(${JSON.stringify(backendUrl)}, ${JSON.stringify(token)}),
+      runEvalBarBackendIntegration(${JSON.stringify(backendUrl)}, ${JSON.stringify(token)}, ${process.argv.includes('--legacy-replay')}),
       new Promise((_, reject) => setTimeout(() => reject(new Error('backend fixture timeout')), 35000)),
     ])`,
     awaitPromise: true,
@@ -153,6 +153,9 @@ try {
   });
   if (evaluated.exceptionDetails) throw new Error(evaluated.exceptionDetails.exception?.description || evaluated.exceptionDetails.text);
   const result = evaluated.result.value;
+  if (process.argv.includes('--legacy-replay')) {
+    await writeFile(join(repositoryRoot, 'tests', 'artifacts', 'legacy-replay-stockfish.json'), JSON.stringify(result, null, 2));
+  }
   console.log(JSON.stringify(result, null, 2));
   const realCp = result.cpBackend && Number.isFinite(result.cpBackend.cp) && result.cpBackend.mate === null;
   const realMate = result.mateBackend && Number.isInteger(result.mateBackend.mate) && result.mateBackend.cp === null;
