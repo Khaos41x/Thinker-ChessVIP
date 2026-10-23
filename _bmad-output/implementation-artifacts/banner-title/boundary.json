@@ -1,0 +1,622 @@
+{
+  "min": {
+    "shown": true,
+    "width": 96,
+    "top": 16,
+    "bottom": 884,
+    "scale": 0.24285714285714285,
+    "titleLeft": 26.625,
+    "titleRight": 26.640625,
+    "titleHeight": 28,
+    "artwork": {
+      "x": 1369,
+      "y": 398,
+      "width": 34,
+      "height": 68
+    }
+  },
+  "belowShown": false,
+  "widthSweep": [
+    {
+      "width": 96,
+      "lines": 2,
+      "fontSize": "12px",
+      "insetLeft": 26.625,
+      "insetRight": 26.640625,
+      "height": 28
+    },
+    {
+      "width": 97,
+      "lines": 2,
+      "fontSize": "12px",
+      "insetLeft": 27.125,
+      "insetRight": 27.140625,
+      "height": 28
+    },
+    {
+      "width": 98,
+      "lines": 2,
+      "fontSize": "12px",
+      "insetLeft": 27.625,
+      "insetRight": 27.640625,
+      "height": 28
+    },
+    {
+      "width": 99,
+      "lines": 2,
+      "fontSize": "12px",
+      "insetLeft": 28.125,
+      "insetRight": 28.140625,
+      "height": 28
+    },
+    {
+      "width": 100,
+      "lines": 2,
+      "fontSize": "12px",
+      "insetLeft": 28.625,
+      "insetRight": 28.640625,
+      "height": 28
+    },
+    {
+      "width": 101,
+      "lines": 2,
+      "fontSize": "12px",
+      "insetLeft": 29.125,
+      "insetRight": 29.140625,
+      "height": 28
+    },
+    {
+      "width": 102,
+      "lines": 2,
+      "fontSize": "12px",
+      "insetLeft": 29.625,
+      "insetRight": 29.640625,
+      "height": 28
+    },
+    {
+      "width": 103,
+      "lines": 2,
+      "fontSize": "12px",
+      "insetLeft": 30.125,
+      "insetRight": 30.140625,
+      "height": 28
+    },
+    {
+      "width": 104,
+      "lines": 1,
+      "fontSize": "12px",
+      "insetLeft": 13.09375,
+      "insetRight": 13.09375,
+      "height": 14
+    },
+    {
+      "width": 105,
+      "lines": 1,
+      "fontSize": "12px",
+      "insetLeft": 13.59375,
+      "insetRight": 13.59375,
+      "height": 14
+    },
+    {
+      "width": 106,
+      "lines": 1,
+      "fontSize": "12px",
+      "insetLeft": 14.09375,
+      "insetRight": 14.09375,
+      "height": 14
+    },
+    {
+      "width": 107,
+      "lines": 1,
+      "fontSize": "12px",
+      "insetLeft": 14.59375,
+      "insetRight": 14.59375,
+      "height": 14
+    },
+    {
+      "width": 108,
+      "lines": 1,
+      "fontSize": "12px",
+      "insetLeft": 15.09375,
+      "insetRight": 15.09375,
+      "height": 14
+    },
+    {
+      "width": 109,
+      "lines": 1,
+      "fontSize": "12px",
+      "insetLeft": 15.59375,
+      "insetRight": 15.59375,
+      "height": 14
+    },
+    {
+      "width": 110,
+      "lines": 1,
+      "fontSize": "12px",
+      "insetLeft": 16.09375,
+      "insetRight": 16.09375,
+      "height": 14
+    },
+    {
+      "width": 111,
+      "lines": 1,
+      "fontSize": "12px",
+      "insetLeft": 16.59375,
+      "insetRight": 16.59375,
+      "height": 14
+    },
+    {
+      "width": 112,
+      "lines": 1,
+      "fontSize": "12px",
+      "insetLeft": 17.09375,
+      "insetRight": 17.09375,
+      "height": 14
+    },
+    {
+      "width": 113,
+      "lines": 1,
+      "fontSize": "12px",
+      "insetLeft": 17.59375,
+      "insetRight": 17.59375,
+      "height": 14
+    },
+    {
+      "width": 114,
+      "lines": 1,
+      "fontSize": "12px",
+      "insetLeft": 18.09375,
+      "insetRight": 18.09375,
+      "height": 14
+    },
+    {
+      "width": 115,
+      "lines": 1,
+      "fontSize": "12px",
+      "insetLeft": 18.59375,
+      "insetRight": 18.59375,
+      "height": 14
+    },
+    {
+      "width": 116,
+      "lines": 1,
+      "fontSize": "12px",
+      "insetLeft": 19.09375,
+      "insetRight": 19.09375,
+      "height": 14
+    },
+    {
+      "width": 117,
+      "lines": 1,
+      "fontSize": "12px",
+      "insetLeft": 19.59375,
+      "insetRight": 19.59375,
+      "height": 14
+    },
+    {
+      "width": 118,
+      "lines": 1,
+      "fontSize": "12px",
+      "insetLeft": 20.09375,
+      "insetRight": 20.09375,
+      "height": 14
+    },
+    {
+      "width": 119,
+      "lines": 1,
+      "fontSize": "12.09px",
+      "insetLeft": 20.296875,
+      "insetRight": 20.3125,
+      "height": 14
+    },
+    {
+      "width": 120,
+      "lines": 1,
+      "fontSize": "12.22px",
+      "insetLeft": 20.375,
+      "insetRight": 20.390625,
+      "height": 14
+    },
+    {
+      "width": 121,
+      "lines": 1,
+      "fontSize": "12.35px",
+      "insetLeft": 20.453125,
+      "insetRight": 20.46875,
+      "height": 14
+    },
+    {
+      "width": 122,
+      "lines": 1,
+      "fontSize": "12.48px",
+      "insetLeft": 20.53125,
+      "insetRight": 20.546875,
+      "height": 14
+    },
+    {
+      "width": 123,
+      "lines": 1,
+      "fontSize": "12.61px",
+      "insetLeft": 20.609375,
+      "insetRight": 20.625,
+      "height": 14
+    },
+    {
+      "width": 124,
+      "lines": 1,
+      "fontSize": "12.74px",
+      "insetLeft": 20.6875,
+      "insetRight": 20.703125,
+      "height": 14
+    },
+    {
+      "width": 125,
+      "lines": 1,
+      "fontSize": "12.87px",
+      "insetLeft": 20.765625,
+      "insetRight": 20.78125,
+      "height": 14
+    },
+    {
+      "width": 126,
+      "lines": 1,
+      "fontSize": "13px",
+      "insetLeft": 20.84375,
+      "insetRight": 20.859375,
+      "height": 14
+    },
+    {
+      "width": 127,
+      "lines": 1,
+      "fontSize": "13.13px",
+      "insetLeft": 20.921875,
+      "insetRight": 20.9375,
+      "height": 14
+    },
+    {
+      "width": 128,
+      "lines": 1,
+      "fontSize": "13.26px",
+      "insetLeft": 21,
+      "insetRight": 21.015625,
+      "height": 14
+    },
+    {
+      "width": 129,
+      "lines": 1,
+      "fontSize": "13.39px",
+      "insetLeft": 21.078125,
+      "insetRight": 21.09375,
+      "height": 14
+    },
+    {
+      "width": 130,
+      "lines": 1,
+      "fontSize": "13.52px",
+      "insetLeft": 21.15625,
+      "insetRight": 21.171875,
+      "height": 14
+    },
+    {
+      "width": 131,
+      "lines": 1,
+      "fontSize": "13.65px",
+      "insetLeft": 21.234375,
+      "insetRight": 21.25,
+      "height": 16
+    },
+    {
+      "width": 132,
+      "lines": 1,
+      "fontSize": "13.78px",
+      "insetLeft": 21.3125,
+      "insetRight": 21.328125,
+      "height": 16
+    },
+    {
+      "width": 133,
+      "lines": 1,
+      "fontSize": "13.91px",
+      "insetLeft": 21.390625,
+      "insetRight": 21.40625,
+      "height": 16
+    },
+    {
+      "width": 134,
+      "lines": 1,
+      "fontSize": "14.04px",
+      "insetLeft": 21.46875,
+      "insetRight": 21.484375,
+      "height": 16
+    },
+    {
+      "width": 135,
+      "lines": 1,
+      "fontSize": "14.17px",
+      "insetLeft": 21.546875,
+      "insetRight": 21.5625,
+      "height": 16
+    },
+    {
+      "width": 136,
+      "lines": 1,
+      "fontSize": "14.3px",
+      "insetLeft": 21.625,
+      "insetRight": 21.640625,
+      "height": 16
+    },
+    {
+      "width": 137,
+      "lines": 1,
+      "fontSize": "14.43px",
+      "insetLeft": 21.71875,
+      "insetRight": 21.71875,
+      "height": 16
+    },
+    {
+      "width": 138,
+      "lines": 1,
+      "fontSize": "14.56px",
+      "insetLeft": 21.796875,
+      "insetRight": 21.796875,
+      "height": 16
+    },
+    {
+      "width": 139,
+      "lines": 1,
+      "fontSize": "14.69px",
+      "insetLeft": 21.875,
+      "insetRight": 21.875,
+      "height": 16
+    },
+    {
+      "width": 140,
+      "lines": 1,
+      "fontSize": "14.82px",
+      "insetLeft": 21.953125,
+      "insetRight": 21.953125,
+      "height": 16
+    },
+    {
+      "width": 141,
+      "lines": 1,
+      "fontSize": "14.95px",
+      "insetLeft": 22.03125,
+      "insetRight": 22.03125,
+      "height": 16
+    },
+    {
+      "width": 142,
+      "lines": 1,
+      "fontSize": "15.08px",
+      "insetLeft": 22.109375,
+      "insetRight": 22.109375,
+      "height": 16
+    },
+    {
+      "width": 143,
+      "lines": 1,
+      "fontSize": "15.21px",
+      "insetLeft": 22.1875,
+      "insetRight": 22.1875,
+      "height": 16
+    },
+    {
+      "width": 144,
+      "lines": 1,
+      "fontSize": "15.34px",
+      "insetLeft": 22.265625,
+      "insetRight": 22.265625,
+      "height": 16
+    },
+    {
+      "width": 145,
+      "lines": 1,
+      "fontSize": "15.47px",
+      "insetLeft": 22.34375,
+      "insetRight": 22.34375,
+      "height": 18
+    },
+    {
+      "width": 146,
+      "lines": 1,
+      "fontSize": "15.6px",
+      "insetLeft": 22.421875,
+      "insetRight": 22.421875,
+      "height": 18
+    },
+    {
+      "width": 147,
+      "lines": 1,
+      "fontSize": "15.73px",
+      "insetLeft": 22.5,
+      "insetRight": 22.5,
+      "height": 18
+    },
+    {
+      "width": 148,
+      "lines": 1,
+      "fontSize": "15.86px",
+      "insetLeft": 22.578125,
+      "insetRight": 22.578125,
+      "height": 18
+    },
+    {
+      "width": 149,
+      "lines": 1,
+      "fontSize": "15.99px",
+      "insetLeft": 22.65625,
+      "insetRight": 22.65625,
+      "height": 18
+    },
+    {
+      "width": 150,
+      "lines": 1,
+      "fontSize": "16.12px",
+      "insetLeft": 22.734375,
+      "insetRight": 22.734375,
+      "height": 18
+    },
+    {
+      "width": 151,
+      "lines": 1,
+      "fontSize": "16.25px",
+      "insetLeft": 22.8125,
+      "insetRight": 22.8125,
+      "height": 18
+    },
+    {
+      "width": 152,
+      "lines": 1,
+      "fontSize": "16.38px",
+      "insetLeft": 22.921875,
+      "insetRight": 22.921875,
+      "height": 18
+    },
+    {
+      "width": 153,
+      "lines": 1,
+      "fontSize": "16.51px",
+      "insetLeft": 22.96875,
+      "insetRight": 22.96875,
+      "height": 18
+    },
+    {
+      "width": 154,
+      "lines": 1,
+      "fontSize": "16.64px",
+      "insetLeft": 23.046875,
+      "insetRight": 23.046875,
+      "height": 18
+    },
+    {
+      "width": 155,
+      "lines": 1,
+      "fontSize": "16.77px",
+      "insetLeft": 23.125,
+      "insetRight": 23.125,
+      "height": 18
+    },
+    {
+      "width": 156,
+      "lines": 1,
+      "fontSize": "16.9px",
+      "insetLeft": 23.203125,
+      "insetRight": 23.21875,
+      "height": 18
+    },
+    {
+      "width": 157,
+      "lines": 1,
+      "fontSize": "17.03px",
+      "insetLeft": 23.28125,
+      "insetRight": 23.296875,
+      "height": 18
+    },
+    {
+      "width": 158,
+      "lines": 1,
+      "fontSize": "17.16px",
+      "insetLeft": 23.359375,
+      "insetRight": 23.375,
+      "height": 18
+    },
+    {
+      "width": 159,
+      "lines": 1,
+      "fontSize": "17.29px",
+      "insetLeft": 23.4375,
+      "insetRight": 23.453125,
+      "height": 20
+    },
+    {
+      "width": 160,
+      "lines": 1,
+      "fontSize": "17.42px",
+      "insetLeft": 23.515625,
+      "insetRight": 23.53125,
+      "height": 20
+    },
+    {
+      "width": 161,
+      "lines": 1,
+      "fontSize": "17.55px",
+      "insetLeft": 23.625,
+      "insetRight": 23.640625,
+      "height": 20
+    },
+    {
+      "width": 162,
+      "lines": 1,
+      "fontSize": "17.68px",
+      "insetLeft": 23.671875,
+      "insetRight": 23.6875,
+      "height": 20
+    },
+    {
+      "width": 163,
+      "lines": 1,
+      "fontSize": "17.81px",
+      "insetLeft": 23.75,
+      "insetRight": 23.765625,
+      "height": 20
+    },
+    {
+      "width": 164,
+      "lines": 1,
+      "fontSize": "17.94px",
+      "insetLeft": 23.828125,
+      "insetRight": 23.84375,
+      "height": 20
+    },
+    {
+      "width": 165,
+      "lines": 1,
+      "fontSize": "18.07px",
+      "insetLeft": 23.90625,
+      "insetRight": 23.921875,
+      "height": 20
+    },
+    {
+      "width": 166,
+      "lines": 1,
+      "fontSize": "18.2px",
+      "insetLeft": 23.984375,
+      "insetRight": 24,
+      "height": 20
+    },
+    {
+      "width": 167,
+      "lines": 1,
+      "fontSize": "18.33px",
+      "insetLeft": 24.0625,
+      "insetRight": 24.078125,
+      "height": 20
+    },
+    {
+      "width": 168,
+      "lines": 1,
+      "fontSize": "18.46px",
+      "insetLeft": 24.171875,
+      "insetRight": 24.1875,
+      "height": 20
+    },
+    {
+      "width": 169,
+      "lines": 1,
+      "fontSize": "18.59px",
+      "insetLeft": 24.21875,
+      "insetRight": 24.234375,
+      "height": 20
+    },
+    {
+      "width": 170,
+      "lines": 1,
+      "fontSize": "18.72px",
+      "insetLeft": 24.328125,
+      "insetRight": 24.34375,
+      "height": 20
+    }
+  ],
+  "firstSingleLineWidth": 104
+}

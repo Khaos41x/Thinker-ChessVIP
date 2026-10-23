@@ -9,14 +9,15 @@ const root = resolve(import.meta.dirname, '../..');
 const phase = process.argv.includes('--before') ? 'before' : 'after';
 const vectorPass = process.argv.includes('--vector');
 const expressivePass = process.argv.includes('--expressive');
+const titlePass = process.argv.includes('--title');
 const zoom = Number(process.argv.find(arg => arg.startsWith('--zoom='))?.split('=')[1] || 1);
 const baseDpr = Number(process.argv.find(arg => arg.startsWith('--dpr='))?.split('=')[1] || 1);
 const zoomPass = zoom !== 1;
-const output = join(root, '_bmad-output/implementation-artifacts', expressivePass ? 'banner-expressive' : vectorPass ? 'banner-vector' : 'banner-responsive');
+const output = join(root, '_bmad-output/implementation-artifacts', titlePass ? 'banner-title' : expressivePass ? 'banner-expressive' : vectorPass ? 'banner-vector' : 'banner-responsive');
 const captureFolder = zoomPass ? `zoom-${Math.round(zoom*100)}-dpr${baseDpr}` : phase;
 await mkdir(join(output, captureFolder), { recursive: true });
 const baselineRef = 'f4dbb37';
-const source = phase === 'before' ? (vectorPass || expressivePass ? await readFile(join(output, 'before-script.js'), 'utf8') : execFileSync('git', ['show', `${baselineRef}:script.js`], { cwd: root, encoding: 'utf8' })) : await readFile(join(root, 'script.js'), 'utf8');
+const source = phase === 'before' ? (titlePass ? execFileSync('git', ['show', '809ddd9:script.js'], { cwd: root, encoding: 'utf8' }) : vectorPass || expressivePass ? await readFile(join(output, 'before-script.js'), 'utf8') : execFileSync('git', ['show', `${baselineRef}:script.js`], { cwd: root, encoding: 'utf8' })) : await readFile(join(root, 'script.js'), 'utf8');
 const start = source.indexOf('  let scheduleThinkerBannerPosition');
 const end = source.indexOf('\n  function createMenu', start);
 const markupStart = source.indexOf('const bannerHtml = `') + 'const bannerHtml = '.length;
@@ -95,6 +96,15 @@ try {
       if (title && shown) {
         const range = document.createRange();range.selectNodeContents(title);
         result.titleLines = Array.from(range.getClientRects()).map(r=>({x:r.x,y:r.y,right:r.right,bottom:r.bottom}));
+        const group=title.parentElement.getBoundingClientRect();
+        result.group={x:group.x,y:group.y,width:group.width,height:group.height};
+        result.groupCenterOffset={x:group.x+group.width/2-(b.x+b.width/2),y:group.y+group.height/2-(b.y+b.height/2)};
+        const visualTop=Math.min(symbol.y,...result.titleLines.map(r=>r.y));
+        const visualBottom=Math.max(symbol.y+symbol.height,...result.titleLines.map(r=>r.bottom));
+        result.visibleCenterOffsetY=(visualTop+visualBottom)/2-(b.y+b.height/2);
+        result.textWidth=Math.max(...result.titleLines.map(r=>r.right-r.x));
+        result.textUsefulRatio=result.textWidth/titleBox.width;
+        result.gap=parseFloat(getComputedStyle(title.parentElement).rowGap);
       }
       sidebar.style.height = (scenario.height-80)+'px';
       await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(resolve))));
@@ -134,6 +144,22 @@ try {
     assert.equal(boundary.min.width, 96);
     assert.ok(boundary.min.titleLeft >= 1 && boundary.min.titleRight >= 1);
     assert.equal(boundary.belowShown, false);
+    if (titlePass) {
+      boundary.widthSweep=await evaluate(`(() => {
+        const rows=[];const sidebar=document.querySelector('aside');const board=document.querySelector('.board');
+        const banner=document.getElementById('thinker-chess-banner');const title=banner.querySelector('.tc-banner-title');
+        for(let width=96;width<=170;width++){
+          sidebar.style.left=(1119-width)+'px';board.style.left=(687-width)+'px';window.fixturePositionBanner();
+          const rect=banner.getBoundingClientRect(),r=document.createRange();r.selectNodeContents(title);
+          const lines=Array.from(r.getClientRects());
+          rows.push({width:rect.width,lines:lines.length,fontSize:getComputedStyle(title).fontSize,insetLeft:Math.min(...lines.map(r=>r.left))-rect.left,insetRight:rect.right-Math.max(...lines.map(r=>r.right)),height:title.getBoundingClientRect().height});
+        }
+        sidebar.style.left='1023px';board.style.left='591px';window.fixturePositionBanner();
+        return rows;
+      })()`);
+      for(const row of boundary.widthSweep) assert.ok(row.insetLeft>=12 && row.insetRight>=12,'Width sweep text clipping');
+      boundary.firstSingleLineWidth=boundary.widthSweep.find(row=>row.lines===1)?.width;
+    }
     await writeFile(join(output, 'boundary.json'), JSON.stringify(boundary, null, 2)+'\n');
     const screenshot = await call('Page.captureScreenshot', { format:'png', clip:{x:1015,y:0,width:425,height:900,scale:1}, captureBeyondViewport:false });
     await writeFile(join(output, 'minimum-96px.png'), Buffer.from(screenshot.data,'base64'));
@@ -157,6 +183,14 @@ try {
       assert.equal(row.deltaBottom, 0);
       assert.equal(row.resizeDelta, 0);
       if (row.vector || row.expressive) {
+        if (titlePass) {
+          assert.ok(Math.abs(row.groupCenterOffset.x)<8 && Math.abs(row.groupCenterOffset.y)<8);
+          assert.ok(Math.abs(row.visibleCenterOffsetY)<8);
+          assert.ok(Object.values(row.group).every(Number.isInteger));
+          assert.equal(row.titleLines.length,1);
+          assert.ok(row.textUsefulRatio>=.75 && row.textUsefulRatio<=.85);
+          assert.ok(row.gap/parseFloat(row.font.size)>=.5 && row.gap/parseFloat(row.font.size)<=.7);
+        }
         assert.ok(row.contrast >= 4.5);
         assert.ok(row.artwork.width <= row.banner.width*.6);
         assert.ok(row.artwork.height <= row.banner.height*.34);

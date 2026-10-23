@@ -1,0 +1,8 @@
+--- before/script.js
++++ after/script.js
+@@ -6606 +6606 @@
+-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:round(nearest,0.4em,2px);font-size:clamp(11px,8cqw,13px);width:100%;min-width:0;">
++        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:round(nearest,0.6em,2px);font-size:clamp(12px,13cqw,28px);width:100%;min-width:0;">
+@@ -6608 +6608 @@
+-          <div class="tc-banner-title" style="width:100%;min-width:0;color:#FFFFFF;text-align:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:clamp(11px,8cqw,13px);font-weight:700;letter-spacing:0;line-height:20px;white-space:normal;">Thinker Chess</div>
++          <div class="tc-banner-title" style="width:100%;min-width:0;color:#FFFFFF;text-align:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:inherit;font-weight:700;letter-spacing:0;line-height:round(nearest,1.1em,2px);white-space:normal;">Thinker Chess</div>

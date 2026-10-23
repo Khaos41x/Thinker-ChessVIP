@@ -1,0 +1,3114 @@
+{
+  "phase": "after",
+  "provenance": "Chromium replay of production banner code using 15 sidebar geometries measured on real, logged-out Chess.com; no installed Tampermonkey session",
+  "cases": [
+    {
+      "width": 1024,
+      "height": 720,
+      "dpr": 1,
+      "sidebarLeft": 708,
+      "sidebarWidth": 300,
+      "shown": false,
+      "banner": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "sidebar": {
+        "x": 708,
+        "y": 16,
+        "width": 300,
+        "height": 688,
+        "right": 1008,
+        "bottom": 704
+      },
+      "artwork": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": null,
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": null,
+      "deltaBottom": null,
+      "physicalScale": null,
+      "aspectError": null,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "\n        \n          \n          Thinker Chess\n        \n      ",
+      "title": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "symbol": null,
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "28px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "30px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "resizeDelta": null,
+      "screenshot": "1024x720-dpr1.png"
+    },
+    {
+      "width": 1024,
+      "height": 720,
+      "dpr": 2,
+      "sidebarLeft": 708,
+      "sidebarWidth": 300,
+      "shown": false,
+      "banner": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "sidebar": {
+        "x": 708,
+        "y": 16,
+        "width": 300,
+        "height": 688,
+        "right": 1008,
+        "bottom": 704
+      },
+      "artwork": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": null,
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": null,
+      "deltaBottom": null,
+      "physicalScale": null,
+      "aspectError": null,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "\n        \n          \n          Thinker Chess\n        \n      ",
+      "title": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "symbol": null,
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "28px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "30px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "resizeDelta": null,
+      "screenshot": "1024x720-dpr2.png"
+    },
+    {
+      "width": 1024,
+      "height": 900,
+      "dpr": 1,
+      "sidebarLeft": 708,
+      "sidebarWidth": 300,
+      "shown": false,
+      "banner": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "sidebar": {
+        "x": 708,
+        "y": 16,
+        "width": 300,
+        "height": 868,
+        "right": 1008,
+        "bottom": 884
+      },
+      "artwork": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": null,
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": null,
+      "deltaBottom": null,
+      "physicalScale": null,
+      "aspectError": null,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "\n        \n          \n          Thinker Chess\n        \n      ",
+      "title": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "symbol": null,
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "28px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "30px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "resizeDelta": null,
+      "screenshot": "1024x900-dpr1.png"
+    },
+    {
+      "width": 1024,
+      "height": 900,
+      "dpr": 2,
+      "sidebarLeft": 708,
+      "sidebarWidth": 300,
+      "shown": false,
+      "banner": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "sidebar": {
+        "x": 708,
+        "y": 16,
+        "width": 300,
+        "height": 868,
+        "right": 1008,
+        "bottom": 884
+      },
+      "artwork": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": null,
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": null,
+      "deltaBottom": null,
+      "physicalScale": null,
+      "aspectError": null,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "\n        \n          \n          Thinker Chess\n        \n      ",
+      "title": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "symbol": null,
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "28px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "30px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "resizeDelta": null,
+      "screenshot": "1024x900-dpr2.png"
+    },
+    {
+      "width": 1024,
+      "height": 1080,
+      "dpr": 1,
+      "sidebarLeft": 708,
+      "sidebarWidth": 300,
+      "shown": false,
+      "banner": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "sidebar": {
+        "x": 708,
+        "y": 16,
+        "width": 300,
+        "height": 1048,
+        "right": 1008,
+        "bottom": 1064
+      },
+      "artwork": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": null,
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": null,
+      "deltaBottom": null,
+      "physicalScale": null,
+      "aspectError": null,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "\n        \n          \n          Thinker Chess\n        \n      ",
+      "title": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "symbol": null,
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "28px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "30px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "resizeDelta": null,
+      "screenshot": "1024x1080-dpr1.png"
+    },
+    {
+      "width": 1024,
+      "height": 1080,
+      "dpr": 2,
+      "sidebarLeft": 708,
+      "sidebarWidth": 300,
+      "shown": false,
+      "banner": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "sidebar": {
+        "x": 708,
+        "y": 16,
+        "width": 300,
+        "height": 1048,
+        "right": 1008,
+        "bottom": 1064
+      },
+      "artwork": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": null,
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": null,
+      "deltaBottom": null,
+      "physicalScale": null,
+      "aspectError": null,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "\n        \n          \n          Thinker Chess\n        \n      ",
+      "title": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "symbol": null,
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "28px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "30px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "resizeDelta": null,
+      "screenshot": "1024x1080-dpr2.png"
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "dpr": 1,
+      "sidebarLeft": 788,
+      "sidebarWidth": 300,
+      "shown": true,
+      "banner": {
+        "x": 1103,
+        "y": 16,
+        "width": 170,
+        "height": 688,
+        "right": 1273,
+        "bottom": 704
+      },
+      "sidebar": {
+        "x": 788,
+        "y": 16,
+        "width": 300,
+        "height": 688,
+        "right": 1088,
+        "bottom": 704
+      },
+      "artwork": {
+        "x": 1153,
+        "y": 274,
+        "width": 70,
+        "height": 140,
+        "right": 1223,
+        "bottom": 414
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 0.5,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1116,
+        "y": 426,
+        "width": 144,
+        "height": 20,
+        "right": 1260,
+        "bottom": 446
+      },
+      "symbol": {
+        "x": 1154,
+        "y": 278.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1127.328125,
+          "y": 423,
+          "right": 1248.65625,
+          "bottom": 448
+        }
+      ],
+      "group": {
+        "x": 1116,
+        "y": 274,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1280x720-dpr1.png"
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "dpr": 2,
+      "sidebarLeft": 788,
+      "sidebarWidth": 300,
+      "shown": true,
+      "banner": {
+        "x": 1103,
+        "y": 16,
+        "width": 170,
+        "height": 688,
+        "right": 1273,
+        "bottom": 704
+      },
+      "sidebar": {
+        "x": 788,
+        "y": 16,
+        "width": 300,
+        "height": 688,
+        "right": 1088,
+        "bottom": 704
+      },
+      "artwork": {
+        "x": 1153,
+        "y": 274,
+        "width": 70,
+        "height": 140,
+        "right": 1223,
+        "bottom": 414
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 1,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1116,
+        "y": 426,
+        "width": 144,
+        "height": 20,
+        "right": 1260,
+        "bottom": 446
+      },
+      "symbol": {
+        "x": 1154,
+        "y": 278.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1127.328125,
+          "y": 423,
+          "right": 1248.65625,
+          "bottom": 448
+        }
+      ],
+      "group": {
+        "x": 1116,
+        "y": 274,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1280x720-dpr2.png"
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "dpr": 1,
+      "sidebarLeft": 788,
+      "sidebarWidth": 300,
+      "shown": true,
+      "banner": {
+        "x": 1103,
+        "y": 16,
+        "width": 170,
+        "height": 868,
+        "right": 1273,
+        "bottom": 884
+      },
+      "sidebar": {
+        "x": 788,
+        "y": 16,
+        "width": 300,
+        "height": 868,
+        "right": 1088,
+        "bottom": 884
+      },
+      "artwork": {
+        "x": 1153,
+        "y": 364,
+        "width": 70,
+        "height": 140,
+        "right": 1223,
+        "bottom": 504
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 0.5,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1116,
+        "y": 516,
+        "width": 144,
+        "height": 20,
+        "right": 1260,
+        "bottom": 536
+      },
+      "symbol": {
+        "x": 1154,
+        "y": 368.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1127.328125,
+          "y": 513,
+          "right": 1248.65625,
+          "bottom": 538
+        }
+      ],
+      "group": {
+        "x": 1116,
+        "y": 364,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1280x900-dpr1.png"
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "dpr": 2,
+      "sidebarLeft": 788,
+      "sidebarWidth": 300,
+      "shown": true,
+      "banner": {
+        "x": 1103,
+        "y": 16,
+        "width": 170,
+        "height": 868,
+        "right": 1273,
+        "bottom": 884
+      },
+      "sidebar": {
+        "x": 788,
+        "y": 16,
+        "width": 300,
+        "height": 868,
+        "right": 1088,
+        "bottom": 884
+      },
+      "artwork": {
+        "x": 1153,
+        "y": 364,
+        "width": 70,
+        "height": 140,
+        "right": 1223,
+        "bottom": 504
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 1,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1116,
+        "y": 516,
+        "width": 144,
+        "height": 20,
+        "right": 1260,
+        "bottom": 536
+      },
+      "symbol": {
+        "x": 1154,
+        "y": 368.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1127.328125,
+          "y": 513,
+          "right": 1248.65625,
+          "bottom": 538
+        }
+      ],
+      "group": {
+        "x": 1116,
+        "y": 364,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1280x900-dpr2.png"
+    },
+    {
+      "width": 1280,
+      "height": 1080,
+      "dpr": 1,
+      "sidebarLeft": 788,
+      "sidebarWidth": 300,
+      "shown": true,
+      "banner": {
+        "x": 1103,
+        "y": 16,
+        "width": 170,
+        "height": 1048,
+        "right": 1273,
+        "bottom": 1064
+      },
+      "sidebar": {
+        "x": 788,
+        "y": 16,
+        "width": 300,
+        "height": 1048,
+        "right": 1088,
+        "bottom": 1064
+      },
+      "artwork": {
+        "x": 1153,
+        "y": 454,
+        "width": 70,
+        "height": 140,
+        "right": 1223,
+        "bottom": 594
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 0.5,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1116,
+        "y": 606,
+        "width": 144,
+        "height": 20,
+        "right": 1260,
+        "bottom": 626
+      },
+      "symbol": {
+        "x": 1154,
+        "y": 458.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1127.328125,
+          "y": 603,
+          "right": 1248.65625,
+          "bottom": 628
+        }
+      ],
+      "group": {
+        "x": 1116,
+        "y": 454,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1280x1080-dpr1.png"
+    },
+    {
+      "width": 1280,
+      "height": 1080,
+      "dpr": 2,
+      "sidebarLeft": 788,
+      "sidebarWidth": 300,
+      "shown": true,
+      "banner": {
+        "x": 1103,
+        "y": 16,
+        "width": 170,
+        "height": 1048,
+        "right": 1273,
+        "bottom": 1064
+      },
+      "sidebar": {
+        "x": 788,
+        "y": 16,
+        "width": 300,
+        "height": 1048,
+        "right": 1088,
+        "bottom": 1064
+      },
+      "artwork": {
+        "x": 1153,
+        "y": 454,
+        "width": 70,
+        "height": 140,
+        "right": 1223,
+        "bottom": 594
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 1,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1116,
+        "y": 606,
+        "width": 144,
+        "height": 20,
+        "right": 1260,
+        "bottom": 626
+      },
+      "symbol": {
+        "x": 1154,
+        "y": 458.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1127.328125,
+          "y": 603,
+          "right": 1248.65625,
+          "bottom": 628
+        }
+      ],
+      "group": {
+        "x": 1116,
+        "y": 454,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1280x1080-dpr2.png"
+    },
+    {
+      "width": 1440,
+      "height": 720,
+      "dpr": 1,
+      "sidebarLeft": 808,
+      "sidebarWidth": 300,
+      "shown": true,
+      "banner": {
+        "x": 1123,
+        "y": 16,
+        "width": 170,
+        "height": 688,
+        "right": 1293,
+        "bottom": 704
+      },
+      "sidebar": {
+        "x": 808,
+        "y": 16,
+        "width": 300,
+        "height": 688,
+        "right": 1108,
+        "bottom": 704
+      },
+      "artwork": {
+        "x": 1173,
+        "y": 274,
+        "width": 70,
+        "height": 140,
+        "right": 1243,
+        "bottom": 414
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 0.5,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1136,
+        "y": 426,
+        "width": 144,
+        "height": 20,
+        "right": 1280,
+        "bottom": 446
+      },
+      "symbol": {
+        "x": 1174,
+        "y": 278.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1147.328125,
+          "y": 423,
+          "right": 1268.65625,
+          "bottom": 448
+        }
+      ],
+      "group": {
+        "x": 1136,
+        "y": 274,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1440x720-dpr1.png"
+    },
+    {
+      "width": 1440,
+      "height": 720,
+      "dpr": 2,
+      "sidebarLeft": 808,
+      "sidebarWidth": 300,
+      "shown": true,
+      "banner": {
+        "x": 1123,
+        "y": 16,
+        "width": 170,
+        "height": 688,
+        "right": 1293,
+        "bottom": 704
+      },
+      "sidebar": {
+        "x": 808,
+        "y": 16,
+        "width": 300,
+        "height": 688,
+        "right": 1108,
+        "bottom": 704
+      },
+      "artwork": {
+        "x": 1173,
+        "y": 274,
+        "width": 70,
+        "height": 140,
+        "right": 1243,
+        "bottom": 414
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 1,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1136,
+        "y": 426,
+        "width": 144,
+        "height": 20,
+        "right": 1280,
+        "bottom": 446
+      },
+      "symbol": {
+        "x": 1174,
+        "y": 278.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1147.328125,
+          "y": 423,
+          "right": 1268.65625,
+          "bottom": 448
+        }
+      ],
+      "group": {
+        "x": 1136,
+        "y": 274,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1440x720-dpr2.png"
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "dpr": 1,
+      "sidebarLeft": 948,
+      "sidebarWidth": 300,
+      "shown": true,
+      "banner": {
+        "x": 1263,
+        "y": 16,
+        "width": 170,
+        "height": 868,
+        "right": 1433,
+        "bottom": 884
+      },
+      "sidebar": {
+        "x": 948,
+        "y": 16,
+        "width": 300,
+        "height": 868,
+        "right": 1248,
+        "bottom": 884
+      },
+      "artwork": {
+        "x": 1313,
+        "y": 364,
+        "width": 70,
+        "height": 140,
+        "right": 1383,
+        "bottom": 504
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 0.5,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1276,
+        "y": 516,
+        "width": 144,
+        "height": 20,
+        "right": 1420,
+        "bottom": 536
+      },
+      "symbol": {
+        "x": 1314,
+        "y": 368.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1287.328125,
+          "y": 513,
+          "right": 1408.65625,
+          "bottom": 538
+        }
+      ],
+      "group": {
+        "x": 1276,
+        "y": 364,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1440x900-dpr1.png"
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "dpr": 2,
+      "sidebarLeft": 948,
+      "sidebarWidth": 300,
+      "shown": true,
+      "banner": {
+        "x": 1263,
+        "y": 16,
+        "width": 170,
+        "height": 868,
+        "right": 1433,
+        "bottom": 884
+      },
+      "sidebar": {
+        "x": 948,
+        "y": 16,
+        "width": 300,
+        "height": 868,
+        "right": 1248,
+        "bottom": 884
+      },
+      "artwork": {
+        "x": 1313,
+        "y": 364,
+        "width": 70,
+        "height": 140,
+        "right": 1383,
+        "bottom": 504
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 1,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1276,
+        "y": 516,
+        "width": 144,
+        "height": 20,
+        "right": 1420,
+        "bottom": 536
+      },
+      "symbol": {
+        "x": 1314,
+        "y": 368.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1287.328125,
+          "y": 513,
+          "right": 1408.65625,
+          "bottom": 538
+        }
+      ],
+      "group": {
+        "x": 1276,
+        "y": 364,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1440x900-dpr2.png"
+    },
+    {
+      "width": 1440,
+      "height": 1080,
+      "dpr": 1,
+      "sidebarLeft": 948,
+      "sidebarWidth": 300,
+      "shown": true,
+      "banner": {
+        "x": 1263,
+        "y": 16,
+        "width": 170,
+        "height": 1048,
+        "right": 1433,
+        "bottom": 1064
+      },
+      "sidebar": {
+        "x": 948,
+        "y": 16,
+        "width": 300,
+        "height": 1048,
+        "right": 1248,
+        "bottom": 1064
+      },
+      "artwork": {
+        "x": 1313,
+        "y": 454,
+        "width": 70,
+        "height": 140,
+        "right": 1383,
+        "bottom": 594
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 0.5,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1276,
+        "y": 606,
+        "width": 144,
+        "height": 20,
+        "right": 1420,
+        "bottom": 626
+      },
+      "symbol": {
+        "x": 1314,
+        "y": 458.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1287.328125,
+          "y": 603,
+          "right": 1408.65625,
+          "bottom": 628
+        }
+      ],
+      "group": {
+        "x": 1276,
+        "y": 454,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1440x1080-dpr1.png"
+    },
+    {
+      "width": 1440,
+      "height": 1080,
+      "dpr": 2,
+      "sidebarLeft": 948,
+      "sidebarWidth": 300,
+      "shown": true,
+      "banner": {
+        "x": 1263,
+        "y": 16,
+        "width": 170,
+        "height": 1048,
+        "right": 1433,
+        "bottom": 1064
+      },
+      "sidebar": {
+        "x": 948,
+        "y": 16,
+        "width": 300,
+        "height": 1048,
+        "right": 1248,
+        "bottom": 1064
+      },
+      "artwork": {
+        "x": 1313,
+        "y": 454,
+        "width": 70,
+        "height": 140,
+        "right": 1383,
+        "bottom": 594
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 1,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1276,
+        "y": 606,
+        "width": 144,
+        "height": 20,
+        "right": 1420,
+        "bottom": 626
+      },
+      "symbol": {
+        "x": 1314,
+        "y": 458.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1287.328125,
+          "y": 603,
+          "right": 1408.65625,
+          "bottom": 628
+        }
+      ],
+      "group": {
+        "x": 1276,
+        "y": 454,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1440x1080-dpr2.png"
+    },
+    {
+      "width": 1920,
+      "height": 720,
+      "dpr": 1,
+      "sidebarLeft": 965,
+      "sidebarWidth": 500,
+      "shown": true,
+      "banner": {
+        "x": 1480,
+        "y": 16,
+        "width": 170,
+        "height": 688,
+        "right": 1650,
+        "bottom": 704
+      },
+      "sidebar": {
+        "x": 965,
+        "y": 16,
+        "width": 500,
+        "height": 688,
+        "right": 1465,
+        "bottom": 704
+      },
+      "artwork": {
+        "x": 1530,
+        "y": 274,
+        "width": 70,
+        "height": 140,
+        "right": 1600,
+        "bottom": 414
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 0.5,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1493,
+        "y": 426,
+        "width": 144,
+        "height": 20,
+        "right": 1637,
+        "bottom": 446
+      },
+      "symbol": {
+        "x": 1531,
+        "y": 278.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1504.328125,
+          "y": 423,
+          "right": 1625.65625,
+          "bottom": 448
+        }
+      ],
+      "group": {
+        "x": 1493,
+        "y": 274,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1920x720-dpr1.png"
+    },
+    {
+      "width": 1920,
+      "height": 720,
+      "dpr": 2,
+      "sidebarLeft": 965,
+      "sidebarWidth": 500,
+      "shown": true,
+      "banner": {
+        "x": 1480,
+        "y": 16,
+        "width": 170,
+        "height": 688,
+        "right": 1650,
+        "bottom": 704
+      },
+      "sidebar": {
+        "x": 965,
+        "y": 16,
+        "width": 500,
+        "height": 688,
+        "right": 1465,
+        "bottom": 704
+      },
+      "artwork": {
+        "x": 1530,
+        "y": 274,
+        "width": 70,
+        "height": 140,
+        "right": 1600,
+        "bottom": 414
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 1,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1493,
+        "y": 426,
+        "width": 144,
+        "height": 20,
+        "right": 1637,
+        "bottom": 446
+      },
+      "symbol": {
+        "x": 1531,
+        "y": 278.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1504.328125,
+          "y": 423,
+          "right": 1625.65625,
+          "bottom": 448
+        }
+      ],
+      "group": {
+        "x": 1493,
+        "y": 274,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1920x720-dpr2.png"
+    },
+    {
+      "width": 1920,
+      "height": 900,
+      "dpr": 1,
+      "sidebarLeft": 1055,
+      "sidebarWidth": 500,
+      "shown": true,
+      "banner": {
+        "x": 1570,
+        "y": 16,
+        "width": 170,
+        "height": 868,
+        "right": 1740,
+        "bottom": 884
+      },
+      "sidebar": {
+        "x": 1055,
+        "y": 16,
+        "width": 500,
+        "height": 868,
+        "right": 1555,
+        "bottom": 884
+      },
+      "artwork": {
+        "x": 1620,
+        "y": 364,
+        "width": 70,
+        "height": 140,
+        "right": 1690,
+        "bottom": 504
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 0.5,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1583,
+        "y": 516,
+        "width": 144,
+        "height": 20,
+        "right": 1727,
+        "bottom": 536
+      },
+      "symbol": {
+        "x": 1621,
+        "y": 368.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1594.328125,
+          "y": 513,
+          "right": 1715.65625,
+          "bottom": 538
+        }
+      ],
+      "group": {
+        "x": 1583,
+        "y": 364,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1920x900-dpr1.png"
+    },
+    {
+      "width": 1920,
+      "height": 900,
+      "dpr": 2,
+      "sidebarLeft": 1055,
+      "sidebarWidth": 500,
+      "shown": true,
+      "banner": {
+        "x": 1570,
+        "y": 16,
+        "width": 170,
+        "height": 868,
+        "right": 1740,
+        "bottom": 884
+      },
+      "sidebar": {
+        "x": 1055,
+        "y": 16,
+        "width": 500,
+        "height": 868,
+        "right": 1555,
+        "bottom": 884
+      },
+      "artwork": {
+        "x": 1620,
+        "y": 364,
+        "width": 70,
+        "height": 140,
+        "right": 1690,
+        "bottom": 504
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 1,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1583,
+        "y": 516,
+        "width": 144,
+        "height": 20,
+        "right": 1727,
+        "bottom": 536
+      },
+      "symbol": {
+        "x": 1621,
+        "y": 368.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1594.328125,
+          "y": 513,
+          "right": 1715.65625,
+          "bottom": 538
+        }
+      ],
+      "group": {
+        "x": 1583,
+        "y": 364,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1920x900-dpr2.png"
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "dpr": 1,
+      "sidebarLeft": 1215,
+      "sidebarWidth": 500,
+      "shown": true,
+      "banner": {
+        "x": 1730,
+        "y": 16,
+        "width": 170,
+        "height": 1048,
+        "right": 1900,
+        "bottom": 1064
+      },
+      "sidebar": {
+        "x": 1215,
+        "y": 16,
+        "width": 500,
+        "height": 1048,
+        "right": 1715,
+        "bottom": 1064
+      },
+      "artwork": {
+        "x": 1780,
+        "y": 454,
+        "width": 70,
+        "height": 140,
+        "right": 1850,
+        "bottom": 594
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 0.5,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1743,
+        "y": 606,
+        "width": 144,
+        "height": 20,
+        "right": 1887,
+        "bottom": 626
+      },
+      "symbol": {
+        "x": 1781,
+        "y": 458.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1754.328125,
+          "y": 603,
+          "right": 1875.65625,
+          "bottom": 628
+        }
+      ],
+      "group": {
+        "x": 1743,
+        "y": 454,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1920x1080-dpr1.png"
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "dpr": 2,
+      "sidebarLeft": 1215,
+      "sidebarWidth": 500,
+      "shown": true,
+      "banner": {
+        "x": 1730,
+        "y": 16,
+        "width": 170,
+        "height": 1048,
+        "right": 1900,
+        "bottom": 1064
+      },
+      "sidebar": {
+        "x": 1215,
+        "y": 16,
+        "width": 500,
+        "height": 1048,
+        "right": 1715,
+        "bottom": 1064
+      },
+      "artwork": {
+        "x": 1780,
+        "y": 454,
+        "width": 70,
+        "height": 140,
+        "right": 1850,
+        "bottom": 594
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 1,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1743,
+        "y": 606,
+        "width": 144,
+        "height": 20,
+        "right": 1887,
+        "bottom": 626
+      },
+      "symbol": {
+        "x": 1781,
+        "y": 458.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1754.328125,
+          "y": 603,
+          "right": 1875.65625,
+          "bottom": 628
+        }
+      ],
+      "group": {
+        "x": 1743,
+        "y": 454,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "1920x1080-dpr2.png"
+    },
+    {
+      "width": 2560,
+      "height": 720,
+      "dpr": 1,
+      "sidebarLeft": 1285,
+      "sidebarWidth": 500,
+      "shown": true,
+      "banner": {
+        "x": 1800,
+        "y": 16,
+        "width": 170,
+        "height": 688,
+        "right": 1970,
+        "bottom": 704
+      },
+      "sidebar": {
+        "x": 1285,
+        "y": 16,
+        "width": 500,
+        "height": 688,
+        "right": 1785,
+        "bottom": 704
+      },
+      "artwork": {
+        "x": 1850,
+        "y": 274,
+        "width": 70,
+        "height": 140,
+        "right": 1920,
+        "bottom": 414
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 0.5,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1813,
+        "y": 426,
+        "width": 144,
+        "height": 20,
+        "right": 1957,
+        "bottom": 446
+      },
+      "symbol": {
+        "x": 1851,
+        "y": 278.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1824.328125,
+          "y": 423,
+          "right": 1945.65625,
+          "bottom": 448
+        }
+      ],
+      "group": {
+        "x": 1813,
+        "y": 274,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "2560x720-dpr1.png"
+    },
+    {
+      "width": 2560,
+      "height": 720,
+      "dpr": 2,
+      "sidebarLeft": 1285,
+      "sidebarWidth": 500,
+      "shown": true,
+      "banner": {
+        "x": 1800,
+        "y": 16,
+        "width": 170,
+        "height": 688,
+        "right": 1970,
+        "bottom": 704
+      },
+      "sidebar": {
+        "x": 1285,
+        "y": 16,
+        "width": 500,
+        "height": 688,
+        "right": 1785,
+        "bottom": 704
+      },
+      "artwork": {
+        "x": 1850,
+        "y": 274,
+        "width": 70,
+        "height": 140,
+        "right": 1920,
+        "bottom": 414
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 1,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1813,
+        "y": 426,
+        "width": 144,
+        "height": 20,
+        "right": 1957,
+        "bottom": 446
+      },
+      "symbol": {
+        "x": 1851,
+        "y": 278.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1824.328125,
+          "y": 423,
+          "right": 1945.65625,
+          "bottom": 448
+        }
+      ],
+      "group": {
+        "x": 1813,
+        "y": 274,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "2560x720-dpr2.png"
+    },
+    {
+      "width": 2560,
+      "height": 900,
+      "dpr": 1,
+      "sidebarLeft": 1375,
+      "sidebarWidth": 500,
+      "shown": true,
+      "banner": {
+        "x": 1890,
+        "y": 16,
+        "width": 170,
+        "height": 868,
+        "right": 2060,
+        "bottom": 884
+      },
+      "sidebar": {
+        "x": 1375,
+        "y": 16,
+        "width": 500,
+        "height": 868,
+        "right": 1875,
+        "bottom": 884
+      },
+      "artwork": {
+        "x": 1940,
+        "y": 364,
+        "width": 70,
+        "height": 140,
+        "right": 2010,
+        "bottom": 504
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 0.5,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1903,
+        "y": 516,
+        "width": 144,
+        "height": 20,
+        "right": 2047,
+        "bottom": 536
+      },
+      "symbol": {
+        "x": 1941,
+        "y": 368.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1914.328125,
+          "y": 513,
+          "right": 2035.65625,
+          "bottom": 538
+        }
+      ],
+      "group": {
+        "x": 1903,
+        "y": 364,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "2560x900-dpr1.png"
+    },
+    {
+      "width": 2560,
+      "height": 900,
+      "dpr": 2,
+      "sidebarLeft": 1375,
+      "sidebarWidth": 500,
+      "shown": true,
+      "banner": {
+        "x": 1890,
+        "y": 16,
+        "width": 170,
+        "height": 868,
+        "right": 2060,
+        "bottom": 884
+      },
+      "sidebar": {
+        "x": 1375,
+        "y": 16,
+        "width": 500,
+        "height": 868,
+        "right": 1875,
+        "bottom": 884
+      },
+      "artwork": {
+        "x": 1940,
+        "y": 364,
+        "width": 70,
+        "height": 140,
+        "right": 2010,
+        "bottom": 504
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 1,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1903,
+        "y": 516,
+        "width": 144,
+        "height": 20,
+        "right": 2047,
+        "bottom": 536
+      },
+      "symbol": {
+        "x": 1941,
+        "y": 368.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 1914.328125,
+          "y": 513,
+          "right": 2035.65625,
+          "bottom": 538
+        }
+      ],
+      "group": {
+        "x": 1903,
+        "y": 364,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "2560x900-dpr2.png"
+    },
+    {
+      "width": 2560,
+      "height": 1080,
+      "dpr": 1,
+      "sidebarLeft": 1465,
+      "sidebarWidth": 500,
+      "shown": true,
+      "banner": {
+        "x": 1980,
+        "y": 16,
+        "width": 170,
+        "height": 1048,
+        "right": 2150,
+        "bottom": 1064
+      },
+      "sidebar": {
+        "x": 1465,
+        "y": 16,
+        "width": 500,
+        "height": 1048,
+        "right": 1965,
+        "bottom": 1064
+      },
+      "artwork": {
+        "x": 2030,
+        "y": 454,
+        "width": 70,
+        "height": 140,
+        "right": 2100,
+        "bottom": 594
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 0.5,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1993,
+        "y": 606,
+        "width": 144,
+        "height": 20,
+        "right": 2137,
+        "bottom": 626
+      },
+      "symbol": {
+        "x": 2031,
+        "y": 458.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 2004.328125,
+          "y": 603,
+          "right": 2125.65625,
+          "bottom": 628
+        }
+      ],
+      "group": {
+        "x": 1993,
+        "y": 454,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "2560x1080-dpr1.png"
+    },
+    {
+      "width": 2560,
+      "height": 1080,
+      "dpr": 2,
+      "sidebarLeft": 1465,
+      "sidebarWidth": 500,
+      "shown": true,
+      "banner": {
+        "x": 1980,
+        "y": 16,
+        "width": 170,
+        "height": 1048,
+        "right": 2150,
+        "bottom": 1064
+      },
+      "sidebar": {
+        "x": 1465,
+        "y": 16,
+        "width": 500,
+        "height": 1048,
+        "right": 1965,
+        "bottom": 1064
+      },
+      "artwork": {
+        "x": 2030,
+        "y": 454,
+        "width": 70,
+        "height": 140,
+        "right": 2100,
+        "bottom": 594
+      },
+      "vector": false,
+      "expressive": true,
+      "alphaCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native": {
+        "width": 140,
+        "height": 280
+      },
+      "deltaTop": 0,
+      "deltaBottom": 0,
+      "physicalScale": 1,
+      "aspectError": 0,
+      "overlap": 0,
+      "horizontalOverflow": false,
+      "integerCard": true,
+      "pointerEvents": "none",
+      "textNodes": "Thinker Chess",
+      "title": {
+        "x": 1993,
+        "y": 606,
+        "width": 144,
+        "height": 20,
+        "right": 2137,
+        "bottom": 626
+      },
+      "symbol": {
+        "x": 2031,
+        "y": 458.5,
+        "width": 68,
+        "height": 130.5
+      },
+      "contrast": 15.355816924803584,
+      "font": {
+        "family": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "size": "18.72px",
+        "weight": "700",
+        "spacing": "normal",
+        "lineHeight": "20px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "appearance": {
+        "background": "rgb(37, 37, 35)",
+        "border": "rgb(58, 58, 54)",
+        "radius": "8px",
+        "shadow": "none",
+        "filter": "none"
+      },
+      "imageRendering": "auto",
+      "objectFit": "contain",
+      "transform": "none",
+      "titleLines": [
+        {
+          "x": 2004.328125,
+          "y": 603,
+          "right": 2125.65625,
+          "bottom": 628
+        }
+      ],
+      "group": {
+        "x": 1993,
+        "y": 454,
+        "width": 144,
+        "height": 172
+      },
+      "groupCenterOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "visibleCenterOffsetY": 3.25,
+      "textWidth": 121.328125,
+      "textUsefulRatio": 0.8425564236111112,
+      "gap": 12,
+      "resizeDelta": 0,
+      "screenshot": "2560x1080-dpr2.png"
+    }
+  ]
+}
