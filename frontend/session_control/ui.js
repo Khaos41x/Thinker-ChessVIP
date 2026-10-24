@@ -32,6 +32,7 @@ function phaseLabel(phase) {
 
 function warningLabel(code) {
   if (!code) return "";
+  if (code === "SESSION_TARGETS_UNSET") return "Configure both win-rate targets before starting a session.";
   if (code === "DDA_MAPPING_UNAVAILABLE" || code.includes("ARTIFACT")) return "⚠️ Check calibration artifact";
   if (code.startsWith("CALIBRATION_")) return "⚠️ Calibration unavailable";
   return "⚠️ Unable to update session";
@@ -267,7 +268,7 @@ function createSessionControlPresenter(options) {
       if (value[field] === undefined) continue;
       const incoming = String(value[field]);
       if (dirtyFields.has(field)) {
-        const equivalent = incoming === draft[field] || draft[field]?.trim() !== "" && Number.isFinite(Number(draft[field])) && Number(incoming) === Number(draft[field]);
+        const equivalent = incoming === draft[field] || incoming.trim() !== "" && draft[field]?.trim() !== "" && Number.isFinite(Number(draft[field])) && Number(incoming) === Number(draft[field]);
         if (!equivalent) continue;
         dirtyFields.delete(field);
       }

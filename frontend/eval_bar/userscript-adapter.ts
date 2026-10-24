@@ -124,7 +124,7 @@ const DEFAULT_POLL_INTERVAL_MS = 500;
 const DEFAULT_REFRESH_INTERVAL_MS = 5000;
 const DEFAULT_BOARD_MISSING_GRACE_MS = 1500;
 const ROUTE_RECONCILE_FRAMES = 4;
-export const EVAL_BAR_PRESENTATION_INTERVAL_MS = 250;
+export const EVAL_BAR_PRESENTATION_INTERVAL_MS = 100;
 export const EVAL_BAR_MATERIAL_CHANGE_CP = 100;
 export const EVAL_BAR_NEUTRAL_BAND_CP = 20;
 const ROUTE_CHANGE_EVENT = 'thinker-eval-bar-route-change';
@@ -1107,7 +1107,9 @@ export class UserscriptEvalBar {
     if (this.observer || !this.options.document.body) return;
     const Observer = this.options.document.defaultView?.MutationObserver ?? globalThis.MutationObserver;
     if (!Observer) return;
-    const observer = new Observer(() => this.queueReconcile());
+    const observer = new Observer(records => {
+      if (records.some(record => !this.root?.contains(record.target))) this.queueReconcile();
+    });
     observer.observe(this.options.document.body, {
       childList: true,
       subtree: true,

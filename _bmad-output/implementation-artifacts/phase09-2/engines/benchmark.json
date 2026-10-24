@@ -1,0 +1,6942 @@
+{
+  "conditions": {
+    "threads": 3,
+    "hashMiB": 16,
+    "multiPv": 1,
+    "repetitions": 2,
+    "budgetsMs": [
+      200,
+      1000,
+      3000
+    ],
+    "engineRunsSequential": true,
+    "cache": "Warm runtime and engine transposition table; identical position/budget order. Cold verified startup recorded separately.",
+    "memory": "Process RSS including WASM worker threads; NNUE file size is not runtime memory.",
+    "timing": "Python receipt of actual streamed score, includes transport; requested search budget is not a hard wall-clock deadline."
+  },
+  "engines": [
+    {
+      "id": "stockfish-19-1mb",
+      "name": "Stockfish 19 \u00b7 1MB",
+      "verifiedStatus": {
+        "ready": true,
+        "pid": 22524,
+        "generation": 1,
+        "engine": "Stockfish 19",
+        "build": "sf_19_smallnet",
+        "network": "nn-61e7af4bb97d.nnue",
+        "networkSha256": "61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b",
+        "profile": "threads-3_hash-16_multipv-1_analysemode_movetime-8000",
+        "identity": {
+          "type": "ready",
+          "engine": "Stockfish 19",
+          "engineName": "Stockfish 19",
+          "package": "@lichess-org/stockfish-web@0.5.0",
+          "build": "sf_19_smallnet",
+          "network": "nn-61e7af4bb97d.nnue",
+          "networkSha256": "61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b",
+          "networkBytes": 1166381,
+          "networkEvidence": {
+            "filename": "nn-61e7af4bb97d.nnue",
+            "sha256": "61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b",
+            "bufferLoaded": true,
+            "replica": "info string Network replica 1: Local memory. Shared memory not supported by the OS. Local allocation fallback."
+          },
+          "proof": {
+            "cp": 25,
+            "mate": null,
+            "depth": 13,
+            "seldepth": 19,
+            "nodes": 50833,
+            "nps": 635412,
+            "time": 80,
+            "bound": null
+          },
+          "profile": {
+            "threads": 3,
+            "hash": 16,
+            "multiPv": 1,
+            "analyseMode": true,
+            "movetime": 8000
+          },
+          "resources": {
+            "rss": 236490752,
+            "heapTotal": 8228864,
+            "heapUsed": 6351280,
+            "external": 4511632,
+            "arrayBuffers": 2351481,
+            "cpu": {
+              "user": 671000,
+              "system": 203000
+            },
+            "configuredSearchThreads": 3
+          },
+          "startup": {
+            "factoryMs": 109.57079999999999,
+            "nnueMs": 10.853700000000003,
+            "uciMs": 367.8096,
+            "readyMs": 541.8029,
+            "verifiedMs": 625.1906
+          },
+          "pid": 22524
+        },
+        "stderr": []
+      },
+      "coldVerifiedInitializationMs": 744.4155000448227,
+      "warmInitializationMs": 0.009999990463256836,
+      "positions": [
+        {
+          "budgetMs": 200,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 0,
+          "firstEvaluationMs": 3.413800001144409,
+          "within200Ms": true,
+          "finalLatencyMs": 202.73149996995926,
+          "depth": 17,
+          "cp": 35,
+          "mate": null,
+          "nodes": 290721,
+          "progression": [
+            {
+              "elapsedMs": 3.413800001144409,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 109.07760000228882,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 202.70009994506836,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 202.72239995002747,
+              "depth": 17,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 236630016,
+          "cpuSeconds": 0.546875,
+          "cpuPercentOfOneCore": 269.7533437482759
+        },
+        {
+          "budgetMs": 200,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 1,
+          "firstEvaluationMs": 4.004499971866608,
+          "within200Ms": true,
+          "finalLatencyMs": 201.1768000125885,
+          "depth": 17,
+          "cp": 22,
+          "mate": null,
+          "nodes": 309668,
+          "progression": [
+            {
+              "elapsedMs": 4.004499971866608,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 124.8497000336647,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 200.89769995212555,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 201.16820001602173,
+              "depth": 17,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 235020288,
+          "cpuSeconds": 0.578125,
+          "cpuPercentOfOneCore": 287.37160545541246
+        },
+        {
+          "budgetMs": 200,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 0,
+          "firstEvaluationMs": 2.3866999745368958,
+          "within200Ms": true,
+          "finalLatencyMs": 201.62120002508163,
+          "depth": 16,
+          "cp": -64,
+          "mate": null,
+          "nodes": 305563,
+          "progression": [
+            {
+              "elapsedMs": 2.3866999745368958,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 131.26460003852844,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 201.5933000445366,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 201.61540001630783,
+              "depth": 16,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 234369024,
+          "cpuSeconds": 0.609375,
+          "cpuPercentOfOneCore": 302.23756228223715
+        },
+        {
+          "budgetMs": 200,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 1,
+          "firstEvaluationMs": 1.5772000551223755,
+          "within200Ms": true,
+          "finalLatencyMs": 202.51760005950928,
+          "depth": 17,
+          "cp": -69,
+          "mate": null,
+          "nodes": 311495,
+          "progression": [
+            {
+              "elapsedMs": 1.5772000551223755,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 124.1564000248909,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 202.49090003967285,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 202.51210004091263,
+              "depth": 17,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 234369024,
+          "cpuSeconds": 0.609375,
+          "cpuPercentOfOneCore": 300.89977356088394
+        },
+        {
+          "budgetMs": 200,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 0,
+          "firstEvaluationMs": 1.6242000460624695,
+          "within200Ms": true,
+          "finalLatencyMs": 201.49779999256134,
+          "depth": 17,
+          "cp": 599,
+          "mate": null,
+          "nodes": 671330,
+          "progression": [
+            {
+              "elapsedMs": 1.6242000460624695,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 188.57459998130798,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 201.4704999923706,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 201.4926000237465,
+              "depth": 17,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 234713088,
+          "cpuSeconds": 0.546875,
+          "cpuPercentOfOneCore": 271.4049483518872
+        },
+        {
+          "budgetMs": 200,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 1,
+          "firstEvaluationMs": 2.009399950504303,
+          "within200Ms": true,
+          "finalLatencyMs": 202.46350002288818,
+          "depth": 15,
+          "cp": 600,
+          "mate": null,
+          "nodes": 686465,
+          "progression": [
+            {
+              "elapsedMs": 2.009399950504303,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 202.00799995660782,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 202.45640003681183,
+              "depth": 15,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 234864640,
+          "cpuSeconds": 0.546875,
+          "cpuPercentOfOneCore": 270.11041493314923
+        },
+        {
+          "budgetMs": 1000,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 0,
+          "firstEvaluationMs": 1.6736000180244446,
+          "within200Ms": true,
+          "finalLatencyMs": 1007.6186000108719,
+          "depth": 22,
+          "cp": 32,
+          "mate": null,
+          "nodes": 1285711,
+          "progression": [
+            {
+              "elapsedMs": 1.6736000180244446,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 151.05070000886917,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 274.5135999917984,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 974.9676000475883,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1007.494500041008,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1007.6130999922752,
+              "depth": 22,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 235036672,
+          "cpuSeconds": 2.390625,
+          "cpuPercentOfOneCore": 237.25494943961993
+        },
+        {
+          "budgetMs": 1000,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 1,
+          "firstEvaluationMs": 9.928399980068207,
+          "within200Ms": true,
+          "finalLatencyMs": 1011.443599998951,
+          "depth": 20,
+          "cp": 19,
+          "mate": null,
+          "nodes": 1167128,
+          "progression": [
+            {
+              "elapsedMs": 9.928399980068207,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 258.6554999947548,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 443.80699998140335,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 628.4032000303268,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1011.4164999723434,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1011.4377999901772,
+              "depth": 20,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 235286528,
+          "cpuSeconds": 2.203125,
+          "cpuPercentOfOneCore": 217.81985668823106
+        },
+        {
+          "budgetMs": 1000,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 0,
+          "firstEvaluationMs": 4.0959999561309814,
+          "within200Ms": true,
+          "finalLatencyMs": 1008.2164999842644,
+          "depth": 19,
+          "cp": -74,
+          "mate": null,
+          "nodes": 883714,
+          "progression": [
+            {
+              "elapsedMs": 4.0959999561309814,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 109.17469996213913,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 420.4052999615669,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 681.2548999786377,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 847.399599969387,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1008.0925999283791,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1008.2105999588966,
+              "depth": 19,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 235515904,
+          "cpuSeconds": 1.734375,
+          "cpuPercentOfOneCore": 172.0240642785621
+        },
+        {
+          "budgetMs": 1000,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 1,
+          "firstEvaluationMs": 3.7544000148773193,
+          "within200Ms": true,
+          "finalLatencyMs": 1001.7718999385834,
+          "depth": 21,
+          "cp": -71,
+          "mate": null,
+          "nodes": 1019046,
+          "progression": [
+            {
+              "elapsedMs": 3.7544000148773193,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 107.88629996776581,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 494.34329998493195,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 669.7957999706268,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 912.5820000171661,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1001.7470000386238,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1001.7667999863625,
+              "depth": 21,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 235732992,
+          "cpuSeconds": 2.078125,
+          "cpuPercentOfOneCore": 207.44492834420748
+        },
+        {
+          "budgetMs": 1000,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 0,
+          "firstEvaluationMs": 1.9088000059127808,
+          "within200Ms": true,
+          "finalLatencyMs": 1000.9470999836922,
+          "depth": 28,
+          "cp": 696,
+          "mate": null,
+          "nodes": 2636840,
+          "progression": [
+            {
+              "elapsedMs": 1.9088000059127808,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 173.49930000305176,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 532.0852000117302,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1000.8148999810219,
+              "depth": 28,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1000.9409000277519,
+              "depth": 28,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 236220416,
+          "cpuSeconds": 2.21875,
+          "cpuPercentOfOneCore": 221.6650610243187
+        },
+        {
+          "budgetMs": 1000,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 1,
+          "firstEvaluationMs": 6.176500022411346,
+          "within200Ms": true,
+          "finalLatencyMs": 1002.4817000031471,
+          "depth": 28,
+          "cp": 771,
+          "mate": null,
+          "nodes": 2888415,
+          "progression": [
+            {
+              "elapsedMs": 6.176500022411346,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 226.0064999461174,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 336.18950003385544,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 462.94139993190765,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 584.215399980545,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 717.777899980545,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 836.0978000164032,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 974.1201999783516,
+              "depth": 27,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1002.4548999667168,
+              "depth": 28,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1002.4760000109673,
+              "depth": 28,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 236691456,
+          "cpuSeconds": 2.1875,
+          "cpuPercentOfOneCore": 218.2084720342658
+        },
+        {
+          "budgetMs": 3000,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 0,
+          "firstEvaluationMs": 1.5841999650001526,
+          "within200Ms": true,
+          "finalLatencyMs": 3002.0048999786377,
+          "depth": 25,
+          "cp": 30,
+          "mate": null,
+          "nodes": 3490502,
+          "progression": [
+            {
+              "elapsedMs": 1.5841999650001526,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 182.98139995336533,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 382.8562999367714,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 487.3765999674797,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 594.5142999887466,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 939.083899974823,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1136.6041999459267,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1537.8693999648094,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2919.459299981594,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3001.9822999835014,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3002.0005999803543,
+              "depth": 25,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 236691456,
+          "cpuSeconds": 7.453125,
+          "cpuPercentOfOneCore": 248.27158010478385
+        },
+        {
+          "budgetMs": 3000,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 1,
+          "firstEvaluationMs": 1.6359000205993652,
+          "within200Ms": true,
+          "finalLatencyMs": 3003.649800002575,
+          "depth": 26,
+          "cp": 20,
+          "mate": null,
+          "nodes": 4271613,
+          "progression": [
+            {
+              "elapsedMs": 1.6359000205993652,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 195.88539999723434,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 482.0529999732971,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 698.2005999684334,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 804.9211999773979,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1227.4880999922752,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1720.2356999516487,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3003.389899969101,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3003.6389999985695,
+              "depth": 26,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 233287680,
+          "cpuSeconds": 8.53125,
+          "cpuPercentOfOneCore": 284.02944977116465
+        },
+        {
+          "budgetMs": 3000,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 0,
+          "firstEvaluationMs": 2.1229999661445618,
+          "within200Ms": true,
+          "finalLatencyMs": 3001.732100009918,
+          "depth": 24,
+          "cp": -70,
+          "mate": null,
+          "nodes": 3968062,
+          "progression": [
+            {
+              "elapsedMs": 2.1229999661445618,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 107.02410000562668,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 448.543299973011,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 695.734099984169,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 974.2453999519348,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1404.0323999524117,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2335.074099957943,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2560.5564999580383,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3001.5355999469757,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3001.7243000268936,
+              "depth": 24,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 233594880,
+          "cpuSeconds": 8.203125,
+          "cpuPercentOfOneCore": 273.2797173995939
+        },
+        {
+          "budgetMs": 3000,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 1,
+          "firstEvaluationMs": 1.895900011062622,
+          "within200Ms": true,
+          "finalLatencyMs": 3001.332999944687,
+          "depth": 25,
+          "cp": -71,
+          "mate": null,
+          "nodes": 4356655,
+          "progression": [
+            {
+              "elapsedMs": 1.895900011062622,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 115.51420003175735,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 216.98470002412796,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 905.0764999389648,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1423.6108000278473,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1759.50879997015,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2142.4791999459267,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3001.1480000019073,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3001.3250999450684,
+              "depth": 25,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 234217472,
+          "cpuSeconds": 8.828125,
+          "cpuPercentOfOneCore": 294.14013707118465
+        },
+        {
+          "budgetMs": 3000,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 0,
+          "firstEvaluationMs": 1.3700000047683716,
+          "within200Ms": true,
+          "finalLatencyMs": 3000.617099940777,
+          "depth": 31,
+          "cp": 907,
+          "mate": null,
+          "nodes": 10032424,
+          "progression": [
+            {
+              "elapsedMs": 1.3700000047683716,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 166.28740000724792,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 289.378800034523,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 461.2360000014305,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 709.8521999716759,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1164.002699971199,
+              "depth": 28,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1615.5516999959946,
+              "depth": 29,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2147.5624000430107,
+              "depth": 30,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3000.4505999684334,
+              "depth": 31,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3000.611499965191,
+              "depth": 31,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 234602496,
+          "cpuSeconds": 7.875,
+          "cpuPercentOfOneCore": 262.4460148599243
+        },
+        {
+          "budgetMs": 3000,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 1,
+          "firstEvaluationMs": 1.4521999955177307,
+          "within200Ms": true,
+          "finalLatencyMs": 3001.280599951744,
+          "depth": 34,
+          "cp": 1041,
+          "mate": null,
+          "nodes": 12209126,
+          "progression": [
+            {
+              "elapsedMs": 1.4521999955177307,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 130.39800000190735,
+              "depth": 29,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 429.58020001649857,
+              "depth": 30,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 783.9372999668121,
+              "depth": 31,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1047.514899969101,
+              "depth": 32,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1824.4519999623299,
+              "depth": 33,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3001.0864000320435,
+              "depth": 34,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3001.2735999822617,
+              "depth": 34,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 234881024,
+          "cpuSeconds": 8.84375,
+          "cpuPercentOfOneCore": 294.66588362788184
+        }
+      ],
+      "cleanupMs": 49.73650002479553,
+      "processExited": true,
+      "summary": [
+        {
+          "budgetMs": 200,
+          "medianFirstEvaluationMs": 2.1980499625205994,
+          "medianFinalLatencyMs": 202.0423500239849,
+          "medianDepth": 17.0,
+          "peakRssMiB": 225.66796875,
+          "meanCpuPercentOfOneCore": 283.62960805530764,
+          "evaluationsWithin200Ms": 6,
+          "evaluations": 6
+        },
+        {
+          "budgetMs": 1000,
+          "medianFirstEvaluationMs": 3.9251999855041504,
+          "medianFinalLatencyMs": 1005.0501500070095,
+          "medianDepth": 21.5,
+          "peakRssMiB": 225.7265625,
+          "meanCpuPercentOfOneCore": 212.4028886348675,
+          "evaluationsWithin200Ms": 6,
+          "evaluations": 6
+        },
+        {
+          "budgetMs": 3000,
+          "medianFirstEvaluationMs": 1.610049992799759,
+          "medianFinalLatencyMs": 3001.5325499773026,
+          "medianDepth": 25.5,
+          "peakRssMiB": 225.7265625,
+          "meanCpuPercentOfOneCore": 276.13879713908887,
+          "evaluationsWithin200Ms": 6,
+          "evaluations": 6
+        }
+      ]
+    },
+    {
+      "id": "stockfish-19-94mb",
+      "name": "Stockfish 19 \u00b7 94MB",
+      "verifiedStatus": {
+        "ready": true,
+        "pid": 22368,
+        "generation": 1,
+        "engine": "Stockfish 19",
+        "build": "sf_19",
+        "network": "nn-1a298aa575a0.nnue",
+        "networkSha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2",
+        "profile": "threads-3_hash-16_multipv-1_analysemode_movetime-8000",
+        "identity": {
+          "type": "ready",
+          "engine": "Stockfish 19",
+          "engineName": "Stockfish 19",
+          "package": "@lichess-org/stockfish-web@0.5.0",
+          "build": "sf_19",
+          "network": "nn-1a298aa575a0.nnue",
+          "networkSha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2",
+          "networkBytes": 98511183,
+          "networkEvidence": {
+            "filename": "nn-1a298aa575a0.nnue",
+            "sha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2",
+            "bufferLoaded": true,
+            "replica": "info string Network replica 1: Local memory. Shared memory not supported by the OS. Local allocation fallback."
+          },
+          "proof": {
+            "cp": 35,
+            "mate": null,
+            "depth": 12,
+            "seldepth": 18,
+            "nodes": 22282,
+            "nps": 253204,
+            "time": 88,
+            "bound": null
+          },
+          "profile": {
+            "threads": 3,
+            "hash": 16,
+            "multiPv": 1,
+            "analyseMode": true,
+            "movetime": 8000
+          },
+          "resources": {
+            "rss": 761683968,
+            "heapTotal": 10850304,
+            "heapUsed": 5898376,
+            "external": 100689017,
+            "arrayBuffers": 98528866,
+            "cpu": {
+              "user": 1546000,
+              "system": 359000
+            },
+            "configuredSearchThreads": 3
+          },
+          "startup": {
+            "factoryMs": 65.72309999999999,
+            "nnueMs": 292.4722,
+            "uciMs": 1144.6241,
+            "readyMs": 1309.9263999999998,
+            "verifiedMs": 1401.4488999999999
+          },
+          "pid": 22368
+        },
+        "stderr": []
+      },
+      "coldVerifiedInitializationMs": 1516.0948999524117,
+      "warmInitializationMs": 0.009700000286102295,
+      "positions": [
+        {
+          "budgetMs": 200,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 0,
+          "firstEvaluationMs": 4.620400011539459,
+          "within200Ms": true,
+          "finalLatencyMs": 203.849799990654,
+          "depth": 14,
+          "cp": 31,
+          "mate": null,
+          "nodes": 156176,
+          "progression": [
+            {
+              "elapsedMs": 4.620400011539459,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 203.72159999608994,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 203.84329998493195,
+              "depth": 14,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 760848384,
+          "cpuSeconds": 0.53125,
+          "cpuPercentOfOneCore": 260.6085461081426
+        },
+        {
+          "budgetMs": 200,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 1,
+          "firstEvaluationMs": 2.6046000719070435,
+          "within200Ms": true,
+          "finalLatencyMs": 202.65530008077621,
+          "depth": 15,
+          "cp": 27,
+          "mate": null,
+          "nodes": 171559,
+          "progression": [
+            {
+              "elapsedMs": 2.6046000719070435,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 202.07600009441376,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 202.64910006523132,
+              "depth": 15,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 759590912,
+          "cpuSeconds": 0.546875,
+          "cpuPercentOfOneCore": 269.85477299731195
+        },
+        {
+          "budgetMs": 200,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 0,
+          "firstEvaluationMs": 2.2078999876976013,
+          "within200Ms": true,
+          "finalLatencyMs": 202.9041999578476,
+          "depth": 14,
+          "cp": -69,
+          "mate": null,
+          "nodes": 159221,
+          "progression": [
+            {
+              "elapsedMs": 2.2078999876976013,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 135.89250004291534,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 202.7344000339508,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 202.8986999988556,
+              "depth": 14,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 759463936,
+          "cpuSeconds": 0.5,
+          "cpuPercentOfOneCore": 246.42171039528637
+        },
+        {
+          "budgetMs": 200,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 1,
+          "firstEvaluationMs": 4.704199969768524,
+          "within200Ms": true,
+          "finalLatencyMs": 206.5388000011444,
+          "depth": 14,
+          "cp": -74,
+          "mate": null,
+          "nodes": 172408,
+          "progression": [
+            {
+              "elapsedMs": 4.704199969768524,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 206.1748000383377,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 206.5324000120163,
+              "depth": 14,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 759832576,
+          "cpuSeconds": 0.578125,
+          "cpuPercentOfOneCore": 279.91108692255244
+        },
+        {
+          "budgetMs": 200,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 0,
+          "firstEvaluationMs": 3.052900016307831,
+          "within200Ms": true,
+          "finalLatencyMs": 201.12790006399155,
+          "depth": 17,
+          "cp": 572,
+          "mate": null,
+          "nodes": 500486,
+          "progression": [
+            {
+              "elapsedMs": 3.052900016307831,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 111.02400004863739,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 201.10150003433228,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 201.1224000453949,
+              "depth": 17,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 759918592,
+          "cpuSeconds": 0.5625,
+          "cpuPercentOfOneCore": 279.6727852381659
+        },
+        {
+          "budgetMs": 200,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 1,
+          "firstEvaluationMs": 1.5848000049591064,
+          "within200Ms": true,
+          "finalLatencyMs": 201.80630004405975,
+          "depth": 23,
+          "cp": 578,
+          "mate": null,
+          "nodes": 559819,
+          "progression": [
+            {
+              "elapsedMs": 1.5848000049591064,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 177.0615000128746,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 201.51199996471405,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 201.80009996891022,
+              "depth": 23,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 760266752,
+          "cpuSeconds": 0.5625,
+          "cpuPercentOfOneCore": 278.7326262248459
+        },
+        {
+          "budgetMs": 1000,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 0,
+          "firstEvaluationMs": 2.1542000770568848,
+          "within200Ms": true,
+          "finalLatencyMs": 1002.3082000017166,
+          "depth": 20,
+          "cp": 23,
+          "mate": null,
+          "nodes": 883599,
+          "progression": [
+            {
+              "elapsedMs": 2.1542000770568848,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 196.78260004520416,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 304.2107000350952,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 571.0573000311852,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 853.6748000383377,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1002.1291000247002,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1002.3003000020981,
+              "depth": 20,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 760655872,
+          "cpuSeconds": 2.90625,
+          "cpuPercentOfOneCore": 289.9557241969109
+        },
+        {
+          "budgetMs": 1000,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 1,
+          "firstEvaluationMs": 1.7645000219345093,
+          "within200Ms": true,
+          "finalLatencyMs": 1002.7082999944687,
+          "depth": 22,
+          "cp": 20,
+          "mate": null,
+          "nodes": 1001409,
+          "progression": [
+            {
+              "elapsedMs": 1.7645000219345093,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 134.33950001001358,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 242.36060005426407,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 433.76929998397827,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 572.8228999972343,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1002.5694000124931,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1002.7021999955177,
+              "depth": 22,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 760672256,
+          "cpuSeconds": 2.953125,
+          "cpuPercentOfOneCore": 294.5148653916887
+        },
+        {
+          "budgetMs": 1000,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 0,
+          "firstEvaluationMs": 1.792400062084198,
+          "within200Ms": true,
+          "finalLatencyMs": 1001.7703000307083,
+          "depth": 17,
+          "cp": -86,
+          "mate": null,
+          "nodes": 863250,
+          "progression": [
+            {
+              "elapsedMs": 1.792400062084198,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 108.15649998188019,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 651.5566000342369,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 781.5167000293732,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1001.5886000394821,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1001.7624000310898,
+              "depth": 17,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 760492032,
+          "cpuSeconds": 2.921875,
+          "cpuPercentOfOneCore": 291.6711545461502
+        },
+        {
+          "budgetMs": 1000,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 1,
+          "firstEvaluationMs": 1.4460000395774841,
+          "within200Ms": true,
+          "finalLatencyMs": 1003.5012000203133,
+          "depth": 19,
+          "cp": -77,
+          "mate": null,
+          "nodes": 798712,
+          "progression": [
+            {
+              "elapsedMs": 1.4460000395774841,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 147.63730001449585,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 399.13150000572205,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 784.2674000263214,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1003.1551000475883,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1003.4945999979973,
+              "depth": 19,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 760717312,
+          "cpuSeconds": 2.65625,
+          "cpuPercentOfOneCore": 264.69823852191024
+        },
+        {
+          "budgetMs": 1000,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 0,
+          "firstEvaluationMs": 3.4763999581336975,
+          "within200Ms": true,
+          "finalLatencyMs": 1001.0665000081062,
+          "depth": 27,
+          "cp": 640,
+          "mate": null,
+          "nodes": 1905364,
+          "progression": [
+            {
+              "elapsedMs": 3.4763999581336975,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 217.48579996824265,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 329.6377999782562,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 635.750600039959,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 774.1044999957085,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1000.8734000325203,
+              "depth": 27,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1001.0592999458313,
+              "depth": 27,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 761376768,
+          "cpuSeconds": 2.1875,
+          "cpuPercentOfOneCore": 218.51695166927337
+        },
+        {
+          "budgetMs": 1000,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 1,
+          "firstEvaluationMs": 1.4228000044822693,
+          "within200Ms": true,
+          "finalLatencyMs": 1001.9989000558853,
+          "depth": 28,
+          "cp": 759,
+          "mate": null,
+          "nodes": 2795650,
+          "progression": [
+            {
+              "elapsedMs": 1.4228000044822693,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 387.0566000342369,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 520.969200015068,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 640.6262000203133,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 751.2490000128746,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 894.7303000092506,
+              "depth": 27,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1001.8100000023842,
+              "depth": 28,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1001.9932999610901,
+              "depth": 28,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 761815040,
+          "cpuSeconds": 2.609375,
+          "cpuPercentOfOneCore": 260.4169525390163
+        },
+        {
+          "budgetMs": 3000,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 0,
+          "firstEvaluationMs": 2.3016000390052795,
+          "within200Ms": true,
+          "finalLatencyMs": 3003.1984999775887,
+          "depth": 25,
+          "cp": 27,
+          "mate": null,
+          "nodes": 2242442,
+          "progression": [
+            {
+              "elapsedMs": 2.3016000390052795,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 193.70670002698898,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 908.8407000303268,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1192.559300005436,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1616.166000008583,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1816.5052000284195,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2406.0651000142097,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3003.015299975872,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3003.1896000504494,
+              "depth": 25,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 661188608,
+          "cpuSeconds": 7.140625,
+          "cpuPercentOfOneCore": 237.767333729465
+        },
+        {
+          "budgetMs": 3000,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 1,
+          "firstEvaluationMs": 1.5076000094413757,
+          "within200Ms": true,
+          "finalLatencyMs": 3002.0083000063896,
+          "depth": 26,
+          "cp": 20,
+          "mate": null,
+          "nodes": 2653821,
+          "progression": [
+            {
+              "elapsedMs": 1.5076000094413757,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 111.58359998464584,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 360.9775000214577,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 475.98960000276566,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 960.513100028038,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1536.338200032711,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2379.0169000029564,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3001.7958999872208,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3002.00100004673,
+              "depth": 26,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 660611072,
+          "cpuSeconds": 8.171875,
+          "cpuPercentOfOneCore": 272.2136044721331
+        },
+        {
+          "budgetMs": 3000,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 0,
+          "firstEvaluationMs": 1.8906000256538391,
+          "within200Ms": true,
+          "finalLatencyMs": 3001.947900056839,
+          "depth": 21,
+          "cp": -72,
+          "mate": null,
+          "nodes": 2085227,
+          "progression": [
+            {
+              "elapsedMs": 1.8906000256538391,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 104.0174999833107,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 441.5149000287056,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 929.0965000391006,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1261.3607000112534,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1544.725400030613,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1851.063100039959,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3001.9210000038147,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3001.9417999982834,
+              "depth": 21,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 660869120,
+          "cpuSeconds": 7.3125,
+          "cpuPercentOfOneCore": 243.59183581638922
+        },
+        {
+          "budgetMs": 3000,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 1,
+          "firstEvaluationMs": 2.0397000312805176,
+          "within200Ms": true,
+          "finalLatencyMs": 3002.5917000174522,
+          "depth": 20,
+          "cp": -65,
+          "mate": null,
+          "nodes": 1178589,
+          "progression": [
+            {
+              "elapsedMs": 2.0397000312805176,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 116.12750005722046,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 452.7131000161171,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1003.4085000157356,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1551.065800011158,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3002.5644000172615,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3002.5860000252724,
+              "depth": 20,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 661209088,
+          "cpuSeconds": 4.390625,
+          "cpuPercentOfOneCore": 146.22784043446467
+        },
+        {
+          "budgetMs": 3000,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 0,
+          "firstEvaluationMs": 3.6502000093460083,
+          "within200Ms": true,
+          "finalLatencyMs": 3001.4725999236107,
+          "depth": 29,
+          "cp": 813,
+          "mate": null,
+          "nodes": 6540845,
+          "progression": [
+            {
+              "elapsedMs": 3.6502000093460083,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 166.4264000058174,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1738.618799984455,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1863.645999968052,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1978.1635000109673,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2271.7792999744415,
+              "depth": 28,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2535.064799964428,
+              "depth": 29,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3001.3288999795914,
+              "depth": 29,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3001.4571999311447,
+              "depth": 29,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 661651456,
+          "cpuSeconds": 6.78125,
+          "cpuPercentOfOneCore": 225.93076479100915
+        },
+        {
+          "budgetMs": 3000,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 1,
+          "firstEvaluationMs": 1.3967999815940857,
+          "within200Ms": true,
+          "finalLatencyMs": 3001.2281999588013,
+          "depth": 34,
+          "cp": 874,
+          "mate": null,
+          "nodes": 8550574,
+          "progression": [
+            {
+              "elapsedMs": 1.3967999815940857,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 281.6262999176979,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 472.3648999929428,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 617.9199999570847,
+              "depth": 27,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 760.8819999694824,
+              "depth": 28,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1104.8736999630928,
+              "depth": 29,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1393.133699953556,
+              "depth": 30,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1619.786699950695,
+              "depth": 31,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1977.864499926567,
+              "depth": 32,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2341.847400009632,
+              "depth": 33,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3000.9683999419212,
+              "depth": 34,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3001.221399962902,
+              "depth": 34,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 662228992,
+          "cpuSeconds": 6.953125,
+          "cpuPercentOfOneCore": 231.67598518817888
+        }
+      ],
+      "cleanupMs": 121.0077999830246,
+      "processExited": true,
+      "summary": [
+        {
+          "budgetMs": 200,
+          "medianFirstEvaluationMs": 2.828750044107437,
+          "medianFinalLatencyMs": 202.7797500193119,
+          "medianDepth": 14.5,
+          "peakRssMiB": 725.6015625,
+          "meanCpuPercentOfOneCore": 269.20025464771754,
+          "evaluationsWithin200Ms": 6,
+          "evaluations": 6
+        },
+        {
+          "budgetMs": 1000,
+          "medianFirstEvaluationMs": 1.7784500420093536,
+          "medianFinalLatencyMs": 1002.153550028801,
+          "medianDepth": 21.0,
+          "peakRssMiB": 726.5234375,
+          "meanCpuPercentOfOneCore": 269.96231447749165,
+          "evaluationsWithin200Ms": 6,
+          "evaluations": 6
+        },
+        {
+          "budgetMs": 3000,
+          "medianFirstEvaluationMs": 1.9651500284671783,
+          "medianFinalLatencyMs": 3001.9781000316143,
+          "medianDepth": 25.5,
+          "peakRssMiB": 631.55078125,
+          "meanCpuPercentOfOneCore": 226.23456073860666,
+          "evaluationsWithin200Ms": 6,
+          "evaluations": 6
+        }
+      ]
+    },
+    {
+      "id": "komodo-14.1",
+      "name": "Komodo 14.1",
+      "verifiedStatus": {
+        "ready": true,
+        "pid": 8316,
+        "identity": {
+          "engineName": "Komodo 14.1 64-bit",
+          "proof": {
+            "cp": 81,
+            "mate": null,
+            "depth": 13,
+            "nodes": 276429,
+            "nps": 3444001,
+            "time": 80,
+            "engine": "Komodo 14.1",
+            "engineName": "Komodo 14.1 64-bit",
+            "profile": {
+              "Threads": 3,
+              "Hash": 16,
+              "Skill": 25
+            }
+          },
+          "profile": {
+            "Threads": 3,
+            "Hash": 16,
+            "Skill": 25
+          }
+        },
+        "profile": {
+          "Threads": 3,
+          "Hash": 16,
+          "Skill": 25
+        }
+      },
+      "coldVerifiedInitializationMs": 762.8173999786377,
+      "warmInitializationMs": 0.014799952507019043,
+      "positions": [
+        {
+          "budgetMs": 200,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 0,
+          "firstEvaluationMs": 2.1658000349998474,
+          "within200Ms": true,
+          "finalLatencyMs": 202.83009999990463,
+          "depth": 15,
+          "cp": 58,
+          "mate": null,
+          "nodes": 615677,
+          "progression": [
+            {
+              "elapsedMs": 2.1658000349998474,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3.1182000637054443,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3.3766000270843506,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 4.20250004529953,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 4.605900049209595,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 4.8486000299453735,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 5.1407999992370605,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 13.552400052547455,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 14.704600036144257,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 15.103600025177002,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 15.376300036907196,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 15.64869999885559,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 15.908699989318848,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.046800017356873,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.126800000667572,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.35920000076294,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 23.228600025177002,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 34.36340004205704,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 34.5906999707222,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 46.11180001497269,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 75.73950004577637,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 76.24050003290176,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 86.76309996843338,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 89.28570002317429,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 94.70480006933212,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 97.51530003547668,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 102.16410005092621,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 119.00069999694824,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 124.74530005455017,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 132.14759999513626,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 133.9757000207901,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 148.90110003948212,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 181.43580001592636,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 202.70480000972748,
+              "depth": 15,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46219264,
+          "cpuSeconds": 0.5625,
+          "cpuPercentOfOneCore": 277.32570264485616
+        },
+        {
+          "budgetMs": 200,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 1,
+          "firstEvaluationMs": 4.084699988365173,
+          "within200Ms": true,
+          "finalLatencyMs": 201.8361000418663,
+          "depth": 16,
+          "cp": 61,
+          "mate": null,
+          "nodes": 331054,
+          "progression": [
+            {
+              "elapsedMs": 4.084699988365173,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 4.747200012207031,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 5.065399944782257,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 5.805999994277954,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.125900030136108,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.386000037193298,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.636300027370453,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 9.745899975299835,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 9.954200029373169,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 10.132200002670288,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 10.310699999332428,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 10.482600033283234,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 10.651700019836426,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 10.82370001077652,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 13.964999973773956,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 26.604900002479553,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 32.816299974918365,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 40.02829998731613,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 51.58600002527237,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 86.59790003299713,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 113.45160001516342,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 115.99439996480942,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 201.77609997987747,
+              "depth": 16,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46243840,
+          "cpuSeconds": 0.40625,
+          "cpuPercentOfOneCore": 201.2771748541181
+        },
+        {
+          "budgetMs": 200,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 0,
+          "firstEvaluationMs": 7.454599916934967,
+          "within200Ms": true,
+          "finalLatencyMs": 202.15389996767044,
+          "depth": 16,
+          "cp": -74,
+          "mate": null,
+          "nodes": 569535,
+          "progression": [
+            {
+              "elapsedMs": 7.454599916934967,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 42.63299995660782,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 42.92709994316101,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 43.256599962711334,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 53.27279996871948,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 53.81369996070862,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 54.21769994497299,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 54.45969992876053,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 54.69729995727539,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 55.0650999546051,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 55.24519997835159,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 55.54619997739792,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 55.68870002031326,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 55.84509998559952,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 55.97869998216629,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 56.107800006866455,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 56.34999996423721,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 56.96089994907379,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 61.599599957466125,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 62.00979995727539,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 62.20249992609024,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 62.40339994430542,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 62.64410001039505,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 63.07409995794296,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 63.4138999581337,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 63.59769994020462,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 69.04889994859695,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 74.51959997415543,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 107.0825999379158,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 172.80199992656708,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 175.66849994659424,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 194.8561999797821,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 202.03079998493195,
+              "depth": 16,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46247936,
+          "cpuSeconds": 0.421875,
+          "cpuPercentOfOneCore": 208.69001293938362
+        },
+        {
+          "budgetMs": 200,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 1,
+          "firstEvaluationMs": 14.743500053882599,
+          "within200Ms": true,
+          "finalLatencyMs": 202.22119998931885,
+          "depth": 17,
+          "cp": -74,
+          "mate": null,
+          "nodes": 484739,
+          "progression": [
+            {
+              "elapsedMs": 14.743500053882599,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 25.087999999523163,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 25.68890005350113,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 25.81529998779297,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 26.002499997615814,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 26.17830002307892,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 26.504299998283386,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 26.786400020122528,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 27.057000041007996,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 27.511699974536896,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 27.870700001716614,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 28.154600024223328,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 28.42009997367859,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 40.28830003738403,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 40.507099986076355,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 40.611100018024445,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 41.37279999256134,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 49.05100005865097,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 104.10210001468658,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 153.30549997091293,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 202.14970004558563,
+              "depth": 17,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46264320,
+          "cpuSeconds": 0.484375,
+          "cpuPercentOfOneCore": 239.52730971114025
+        },
+        {
+          "budgetMs": 200,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 0,
+          "firstEvaluationMs": 1.419600009918213,
+          "within200Ms": true,
+          "finalLatencyMs": 201.7742000222206,
+          "depth": 20,
+          "cp": 473,
+          "mate": null,
+          "nodes": 1472925,
+          "progression": [
+            {
+              "elapsedMs": 1.419600009918213,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1.5320000052452087,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 12.415800034999847,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 13.355000019073486,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 13.82779997587204,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 14.089700043201447,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.193499982357025,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.425300002098083,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.596700072288513,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.736500024795532,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.950800001621246,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.130900025367737,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.231400072574615,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.329100012779236,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.425400018692017,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.555800020694733,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.733300030231476,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.83250004053116,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.92960000038147,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.026500046253204,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.122700035572052,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.297600030899048,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.394999980926514,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.607999980449677,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.71940004825592,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.823599994182587,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 23.99990004301071,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 24.1764999628067,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 24.294600009918213,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 24.40290004014969,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 26.016800045967102,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 27.75880002975464,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 29.274700045585632,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 30.33560001850128,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 32.26620000600815,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 33.989400029182434,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 39.34890002012253,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 41.20640003681183,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 43.725400030612946,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 53.18510001897812,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 53.39000004529953,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 53.89200001955032,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 59.730000019073486,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 65.77300000190735,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 68.7422000169754,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 73.58830004930496,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 79.63520002365112,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 83.63330006599426,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 87.08540004491806,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 90.00780004262924,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 93.16580003499985,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 100.15700000524521,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 116.47820001840591,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 120.5184999704361,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 126.30420005321503,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 137.75990003347397,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 147.2166000008583,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 155.5756999850273,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 161.35380005836487,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 173.0716000199318,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 181.1806000471115,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 201.58120000362396,
+              "depth": 20,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46297088,
+          "cpuSeconds": 0.546875,
+          "cpuPercentOfOneCore": 271.0331647652548
+        },
+        {
+          "budgetMs": 200,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 1,
+          "firstEvaluationMs": 4.393299996852875,
+          "within200Ms": true,
+          "finalLatencyMs": 201.80909997224808,
+          "depth": 21,
+          "cp": 558,
+          "mate": null,
+          "nodes": 1577986,
+          "progression": [
+            {
+              "elapsedMs": 4.393299996852875,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 4.70250004529953,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 5.040600001811981,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.797899961471558,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 22.414899945259094,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 22.908500015735626,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 23.151899993419647,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 23.592799961566925,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 24.0242999792099,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 24.326799988746643,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 24.504399955272675,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 24.77520000934601,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 24.972500026226044,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 25.135700047016144,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 25.398099958896637,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 33.27889996767044,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 33.58090001344681,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 34.09289997816086,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 34.3167000412941,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 34.471499979496,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 34.610199987888336,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 34.837599992752075,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 35.18079996109009,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 35.31970000267029,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 35.646600008010864,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 36.41439998149872,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 36.60190004110336,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 36.75789999961853,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 36.93080002069473,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 41.27990001440048,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 41.76690000295639,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 42.058700025081635,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 42.43819999694824,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 42.589499950408936,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 42.73079997301102,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 42.83990001678467,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 43.20899999141693,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 43.46399998664856,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 43.70859998464584,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 43.98289996385574,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 44.11930000782013,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 44.24849998950958,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 44.37459999322891,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 44.61599999666214,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 44.745399951934814,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 62.271000027656555,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 62.50349998474121,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 62.66940003633499,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 62.94800001382828,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 63.0900000333786,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 63.228399991989136,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 64.78099995851517,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 72.73829996585846,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 80.03600001335144,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 96.21950000524521,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 101.9738000035286,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 127.58300000429153,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 148.6739000082016,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 177.08409994840622,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 201.6879000067711,
+              "depth": 21,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46333952,
+          "cpuSeconds": 0.546875,
+          "cpuPercentOfOneCore": 270.98629351957067
+        },
+        {
+          "budgetMs": 1000,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 0,
+          "firstEvaluationMs": 15.772499978542328,
+          "within200Ms": true,
+          "finalLatencyMs": 1001.8352000117302,
+          "depth": 19,
+          "cp": 43,
+          "mate": null,
+          "nodes": 2797442,
+          "progression": [
+            {
+              "elapsedMs": 15.772499978542328,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.0906999707222,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.375299990177155,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.599599957466125,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 23.351099967956543,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 23.77669996023178,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 24.15030002593994,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 24.491699993610382,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 24.813300013542175,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 25.083599984645844,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 25.359099984169006,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 25.631500005722046,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 25.814499974250793,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 25.964800000190735,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 26.117499947547913,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 26.414999961853027,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 30.02539998292923,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 30.224200010299683,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 30.348100006580353,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 30.455900013446808,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 30.557799994945526,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 30.992899954319,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 31.202300012111664,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 31.352799952030182,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 31.505099952220917,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 37.595300018787384,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 40.093100011348724,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 43.06050002574921,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 46.17509996891022,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 56.74500000476837,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 71.4656999707222,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 92.52249997854233,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 131.2869999408722,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 146.5648000240326,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 157.06299996376038,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 231.10479998588562,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 239.13810002803802,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 344.6351999640465,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 373.7424999475479,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 383.5263999700546,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 433.11710000038147,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 441.5326999425888,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 475.01299995183945,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 497.3348999619484,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 565.3575000166893,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 746.912900030613,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1001.7173999547958,
+              "depth": 19,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46338048,
+          "cpuSeconds": 2.828125,
+          "cpuPercentOfOneCore": 282.29443325278316
+        },
+        {
+          "budgetMs": 1000,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 1,
+          "firstEvaluationMs": 3.4247000217437744,
+          "within200Ms": true,
+          "finalLatencyMs": 1002.0861999988556,
+          "depth": 19,
+          "cp": 42,
+          "mate": null,
+          "nodes": 2965166,
+          "progression": [
+            {
+              "elapsedMs": 3.4247000217437744,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3.653600037097931,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3.8348000049591064,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 4.591499984264374,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 5.085500001907349,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 5.399500012397766,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 5.6717000007629395,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.50220000743866,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.697799980640411,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.874099969863892,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 7.049100041389465,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 7.239000022411346,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 7.413300037384033,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 7.585999965667725,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 12.053000032901764,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 22.18230003118515,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 44.38960003852844,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 62.09500002861023,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 112.10829997062683,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 117.74239999055862,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 187.66310000419617,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 253.04579997062683,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 425.9089000225067,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 658.5676999688148,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 695.6085000038147,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 858.7350999712944,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 872.1247000098228,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1001.9049999713898,
+              "depth": 19,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46342144,
+          "cpuSeconds": 2.546875,
+          "cpuPercentOfOneCore": 254.15727708882815
+        },
+        {
+          "budgetMs": 1000,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 0,
+          "firstEvaluationMs": 2.729800045490265,
+          "within200Ms": true,
+          "finalLatencyMs": 1003.531800031662,
+          "depth": 19,
+          "cp": -60,
+          "mate": null,
+          "nodes": 3360289,
+          "progression": [
+            {
+              "elapsedMs": 2.729800045490265,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 4.221400022506714,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 5.297699987888336,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 5.6171000599861145,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 5.922200083732605,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.201100051403046,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.341100037097931,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.447100043296814,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.6338000893592834,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.731800079345703,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.906800031661987,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 7.085099995136261,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 7.259500026702881,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 10.060400009155273,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 14.342300057411194,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 15.298100054264069,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 17.66420006752014,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.419099986553192,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 37.800999999046326,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 39.16790008544922,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 40.44480001926422,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 44.253000020980835,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 48.81870001554489,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 72.60800004005432,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 73.58620005846024,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 77.7943000793457,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 120.46940004825592,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 144.05390006303787,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 184.58470004796982,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 191.28560000658035,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 254.4877000451088,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 261.431500017643,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 273.435800075531,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 318.0623000264168,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 493.8167999982834,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 751.8917000293732,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 770.7304999828339,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 856.1274999976158,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 879.9009000062943,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 933.1036999821663,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1003.4395999908447,
+              "depth": 19,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46342144,
+          "cpuSeconds": 2.765625,
+          "cpuPercentOfOneCore": 275.58917414602536
+        },
+        {
+          "budgetMs": 1000,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 1,
+          "firstEvaluationMs": 5.29720002412796,
+          "within200Ms": true,
+          "finalLatencyMs": 1001.922100007534,
+          "depth": 20,
+          "cp": -55,
+          "mate": null,
+          "nodes": 2073737,
+          "progression": [
+            {
+              "elapsedMs": 5.29720002412796,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 5.636399984359741,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 5.9057000279426575,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.167500019073486,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.479700028896332,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 9.311699986457825,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 9.525999963283539,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 9.852299988269806,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 10.092299997806549,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 10.659500002861023,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 11.066100001335144,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 11.500999987125397,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 11.679500043392181,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 13.919900000095367,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.39319998025894,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 18.939300000667572,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.329500019550323,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 24.324100017547607,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 56.477299988269806,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 70.75490003824234,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 112.45160001516342,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 186.86790001392365,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 240.27069997787476,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 329.2946000099182,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 352.39410001039505,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 418.2728999853134,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 489.3105999827385,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 678.1417000293732,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1001.8597999811172,
+              "depth": 20,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46342144,
+          "cpuSeconds": 2.25,
+          "cpuPercentOfOneCore": 224.56835715901278
+        },
+        {
+          "budgetMs": 1000,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 0,
+          "firstEvaluationMs": 1.8776999711990356,
+          "within200Ms": true,
+          "finalLatencyMs": 1001.6640999913216,
+          "depth": 26,
+          "cp": 646,
+          "mate": null,
+          "nodes": 5981786,
+          "progression": [
+            {
+              "elapsedMs": 1.8776999711990356,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2.1312999725341797,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3.18639999628067,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 4.679800033569336,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 5.0876999497413635,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 5.898799955844879,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.205099999904633,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.7027000188827515,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 7.280000030994415,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 7.42440003156662,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 7.58789998292923,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 8.826200008392334,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 9.599399983882904,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 10.696300029754639,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 12.494799971580505,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 13.460500001907349,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 15.411700010299683,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 15.854499995708466,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.192800045013428,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.348299980163574,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.71529996395111,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 17.051699995994568,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 17.238900005817413,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 17.475600004196167,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 17.755400002002716,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 17.8953999876976,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 18.06769996881485,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 18.36089998483658,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.373799979686737,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.83930003643036,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.678000032901764,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.84909999370575,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.000299990177155,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.28880000114441,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 31.058899998664856,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 31.43649995326996,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 35.16990000009537,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 37.80239999294281,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 40.36779999732971,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 42.16060000658035,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 46.60240000486374,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 47.904699981212616,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 60.216000020504,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 66.10799998044968,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 73.20359998941422,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 78.12779998779297,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 81.14620000123978,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 89.0906999707222,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 112.29610002040863,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 119.61129999160767,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 123.92049998044968,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 130.4095999598503,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 143.14459997415543,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 154.95120000839233,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 163.59919995069504,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 183.3115000128746,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 206.54979997873306,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 208.3555000424385,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 213.94980001449585,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 224.23769998550415,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 254.91999995708466,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 307.5083000063896,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 337.5480999946594,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 367.7990999817848,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 412.5974000096321,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 421.6013000011444,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 471.6046999692917,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 528.5687000155449,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 536.7263999581337,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 551.446900010109,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 578.6542000174522,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 648.2441999912262,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 811.7143999934196,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 885.4179999828339,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 951.777499973774,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1001.5401999950409,
+              "depth": 26,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46399488,
+          "cpuSeconds": 2.078125,
+          "cpuPercentOfOneCore": 207.4672537448437
+        },
+        {
+          "budgetMs": 1000,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 1,
+          "firstEvaluationMs": 3.7494999170303345,
+          "within200Ms": true,
+          "finalLatencyMs": 1002.0736999511719,
+          "depth": 26,
+          "cp": 741,
+          "mate": null,
+          "nodes": 4656017,
+          "progression": [
+            {
+              "elapsedMs": 3.7494999170303345,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 9.858199954032898,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 11.543699979782104,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.641499996185303,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.824199974536896,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 17.1139999628067,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.755099952220917,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.050899982452393,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.244499921798706,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.42819994688034,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.60209995508194,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.826999962329865,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.926699936389923,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 22.023299992084503,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 22.15209996700287,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 22.263099908828735,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 22.66129994392395,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 22.962299942970276,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 23.10269993543625,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 23.23669993877411,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 23.36890000104904,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 23.503099977970123,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 23.641699969768524,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 25.83519995212555,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 26.117499947547913,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 26.765799939632416,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 27.005999982357025,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 27.174499988555908,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 27.32009994983673,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 27.591199934482574,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 27.83429992198944,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 27.967399954795837,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 28.21809995174408,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 28.621699929237366,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 28.845799922943115,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 29.053399980068207,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 29.235299944877625,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 32.52579998970032,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 32.704399943351746,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 32.862999975681305,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 33.07029992341995,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 33.17289996147156,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 33.27469998598099,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 33.45159995555878,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 33.54869997501373,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 38.38389992713928,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 54.380499958992004,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 57.0210999250412,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 60.716199934482574,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 77.01009994745255,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 88.91889995336533,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 103.11049991846085,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 114.2687999010086,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 116.78059995174408,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 134.30219995975494,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 158.11559998989105,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 189.38659995794296,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 229.80959993600845,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 269.45439994335175,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 275.89859998226166,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 287.0804999470711,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 295.47279995679855,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 408.3208999633789,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 433.9223999977112,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 500.72469997406006,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 511.99619990587234,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 573.5175999403,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 576.1802999377251,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 576.5908999443054,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 580.3490999937057,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 644.261999964714,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 680.7018999457359,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 687.674399971962,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 698.3407999277115,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 745.88379997015,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 765.7415999174118,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1001.8948999643326,
+              "depth": 26,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46460928,
+          "cpuSeconds": 2.015625,
+          "cpuPercentOfOneCore": 201.1453848253093
+        },
+        {
+          "budgetMs": 3000,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 0,
+          "firstEvaluationMs": 2.7658000588417053,
+          "within200Ms": true,
+          "finalLatencyMs": 3003.5053000450134,
+          "depth": 21,
+          "cp": 44,
+          "mate": null,
+          "nodes": 6086296,
+          "progression": [
+            {
+              "elapsedMs": 2.7658000588417053,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 4.901600003242493,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 5.839699983596802,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.218500018119812,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.487600028514862,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 7.389900028705597,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 8.026300013065338,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 8.627200067043304,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 8.976900041103363,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 9.265900015830994,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 9.404000043869019,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 9.619900047779083,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 9.83430004119873,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 9.989300072193146,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 10.13370007276535,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 10.268700003623962,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 10.481600046157837,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 10.779900014400482,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 11.035800039768219,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 11.187500059604645,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 11.447200059890747,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 14.275300025939941,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 14.978300034999847,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 15.154800057411194,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.12750005722046,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 17.99920004606247,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.496600031852722,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 22.043500065803528,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 23.905200004577637,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 28.978800058364868,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 36.56750005483627,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 51.46119999885559,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 82.7645999789238,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 101.2668000459671,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 119.36770004034042,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 130.72330003976822,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 134.231900036335,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 140.51030004024506,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 154.775200009346,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 187.38220006227493,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 218.4854000210762,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 257.9661999940872,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 263.7917000055313,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 304.6622000336647,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 367.1187000274658,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 435.0871000289917,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 483.81940001249313,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 606.8899000883102,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 718.4333000183105,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 817.7546000480652,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 904.2326999902725,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1063.825100004673,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1139.4066000580788,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1166.9524999856949,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1248.2894999980927,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1599.8564000725746,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2028.6710000634193,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3003.4161000847816,
+              "depth": 21,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46460928,
+          "cpuSeconds": 6.78125,
+          "cpuPercentOfOneCore": 225.77786028539288
+        },
+        {
+          "budgetMs": 3000,
+          "position": "initial",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "repetition": 1,
+          "firstEvaluationMs": 5.632800042629242,
+          "within200Ms": true,
+          "finalLatencyMs": 3002.997500002384,
+          "depth": 21,
+          "cp": 42,
+          "mate": null,
+          "nodes": 6466436,
+          "progression": [
+            {
+              "elapsedMs": 5.632800042629242,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 5.88780003786087,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.254000008106232,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.434100031852722,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.616600036621094,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.825000047683716,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 7.009599983692169,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 7.186100006103516,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 10.840499997138977,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 11.206399977207184,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 11.39440006017685,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 12.214600086212158,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 12.7885000705719,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.066200077533722,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 17.888800024986267,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.065100073814392,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 26.888800024986267,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 29.425400018692017,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 37.761200070381165,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 46.29980003833771,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 65.96020007133484,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 89.89250004291534,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 96.53259998559952,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 129.85280007123947,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 147.43580001592636,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 149.8763000369072,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 172.2406000494957,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 186.37560003995895,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 244.8367000222206,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 262.806500017643,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 265.2184000611305,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 268.8152000308037,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 274.7893000841141,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 298.78840005397797,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 305.6806000471115,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 351.9383000135422,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 361.9897000193596,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 397.58490002155304,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 439.73510003089905,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 498.69400000572205,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 614.9404000043869,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 643.0966000556946,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 785.3777000308037,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 820.3637000322342,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 843.4458000063896,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 912.5357000231743,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1021.3840000033379,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1211.585900068283,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1387.6017000079155,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1507.347000002861,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1559.7528000473976,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1643.1753000617027,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1681.262600004673,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2959.0563000440598,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3002.929500043392,
+              "depth": 21,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46460928,
+          "cpuSeconds": 5.078125,
+          "cpuPercentOfOneCore": 169.10187237904688
+        },
+        {
+          "budgetMs": 3000,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 0,
+          "firstEvaluationMs": 2.030600070953369,
+          "within200Ms": true,
+          "finalLatencyMs": 3003.6238000392914,
+          "depth": 22,
+          "cp": -60,
+          "mate": null,
+          "nodes": 5294517,
+          "progression": [
+            {
+              "elapsedMs": 2.030600070953369,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3.257300019264221,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 4.16540002822876,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 4.482000052928925,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 7.828000009059906,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 8.109100043773651,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 8.290000021457672,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 8.494700014591217,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 8.673700034618378,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 8.772000074386597,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 8.871600031852722,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 8.973600029945374,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 12.420100092887878,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.736200034618378,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.008100032806396,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 23.213900089263916,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 23.928900063037872,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 25.31680005788803,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 33.564100086688995,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 41.85890007019043,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 58.30010002851486,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 65.93130004405975,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 68.55570006370544,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 78.93610000610352,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 88.11790001392365,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 123.6975000500679,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 145.17370003461838,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 177.11020004749298,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 193.34210002422333,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 250.52330005168915,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 301.63960003852844,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 305.34010004997253,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 336.3384000658989,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 404.0003000497818,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 441.9132000207901,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 464.34710001945496,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 474.10860002040863,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 521.9068000912666,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 534.7465000748634,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 544.338200032711,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 552.6169000267982,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 603.5489000082016,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 821.4280000329018,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 885.4417999982834,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 948.6450000405312,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1165.44830006361,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1227.7213000655174,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1334.7923000454903,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1402.235300064087,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1481.9844000339508,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1575.810300052166,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1641.6834000349045,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1770.079500079155,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2037.2299000620842,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2505.400800049305,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2590.1103000044823,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3003.419000029564,
+              "depth": 22,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46460928,
+          "cpuSeconds": 4.53125,
+          "cpuPercentOfOneCore": 150.8594385202543
+        },
+        {
+          "budgetMs": 3000,
+          "position": "middlegame",
+          "fen": "r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9",
+          "repetition": 1,
+          "firstEvaluationMs": 3.783399999141693,
+          "within200Ms": true,
+          "finalLatencyMs": 3002.090700030327,
+          "depth": 23,
+          "cp": -58,
+          "mate": null,
+          "nodes": 6435959,
+          "progression": [
+            {
+              "elapsedMs": 3.783399999141693,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 12.130499958992004,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 13.136500000953674,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 13.441600024700165,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 13.623700022697449,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 15.860199987888336,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.089299976825714,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.283599972724915,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.386599957942963,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.486799955368042,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.58589994907379,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.924899995326996,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 17.34790003299713,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 17.661400020122528,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 18.06199997663498,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 18.419100046157837,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 18.82619994878769,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 22.080799996852875,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 22.576000034809113,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 22.87550002336502,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 26.905000030994415,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 31.98369997739792,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 44.6182000041008,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 73.73220002651215,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 455.1686000227928,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 526.2894999980927,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 533.7454000115395,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 657.305999994278,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 696.5466000437737,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 770.3109999895096,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 938.3666000366211,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 992.1205000281334,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1057.1552000045776,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2079.158800005913,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2378.8882999420166,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3002.033800005913,
+              "depth": 23,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46460928,
+          "cpuSeconds": 6.515625,
+          "cpuPercentOfOneCore": 217.03624743696713
+        },
+        {
+          "budgetMs": 3000,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 0,
+          "firstEvaluationMs": 3.122600018978119,
+          "within200Ms": true,
+          "finalLatencyMs": 3001.6644000411034,
+          "depth": 27,
+          "cp": 794,
+          "mate": null,
+          "nodes": 25590195,
+          "progression": [
+            {
+              "elapsedMs": 3.122600018978119,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 7.874300003051758,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 9.68529999256134,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 10.709199965000153,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 12.33619999885559,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 12.677600026130676,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 12.82940000295639,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 13.079699993133545,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 13.510800004005432,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 13.699999988079071,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 13.972000002861023,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 14.111199975013733,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 14.232700049877167,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 14.37720000743866,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 14.692799985408783,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 15.012500047683716,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 15.157400012016296,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 15.449699997901917,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 15.702699959278107,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 15.838200032711029,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 15.9757000207901,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.11190003156662,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.25409996509552,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.38840001821518,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.52259999513626,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.786100029945374,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 17.01029998064041,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 17.34599995613098,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 17.495500028133392,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 17.637699961662292,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 17.896799981594086,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 18.283399999141693,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 18.559400022029877,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 18.69779998064041,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 18.836099982261658,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 18.99839997291565,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.26120001077652,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.399300038814545,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.535799980163574,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.67059999704361,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.805999994277954,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.940900027751923,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.21840000152588,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.362600028514862,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.50110000371933,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.783700048923492,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.919900000095367,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.056599974632263,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.223100006580353,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.35829997062683,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.611799955368042,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.746700048446655,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.88069999217987,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 22.01579999923706,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 22.27539998292923,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 22.40920001268387,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 22.75079995393753,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 22.90070003271103,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 24.657999992370605,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 31.320699989795685,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 32.5271999835968,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 33.44559997320175,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 35.090900003910065,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 35.61190003156662,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 36.98210000991821,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 37.911499977111816,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 38.1100999712944,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 39.430099964141846,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 39.94339996576309,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 48.0731999874115,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 50.161499977111816,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 67.24759995937347,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 70.3066999912262,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 101.32400000095367,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 122.91040003299713,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 139.0469999909401,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 148.50490003824234,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 149.22780001163483,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 149.86500000953674,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 203.16629999876022,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 249.07489997148514,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 276.46140003204346,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 313.61119997501373,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 314.9747000336647,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 422.92070001363754,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 489.2222999930382,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 842.5755999684334,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 938.3582000136375,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1180.2907999753952,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1355.940900027752,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1735.9506999850273,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2188.3507999777794,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2831.6254999637604,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2925.756200015545,
+              "depth": 27,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3001.607100009918,
+              "depth": 27,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46469120,
+          "cpuSeconds": 8.28125,
+          "cpuPercentOfOneCore": 275.88860366557304
+        },
+        {
+          "budgetMs": 3000,
+          "position": "endgame",
+          "fen": "8/5pk1/6p1/3p4/3P4/5P2/5KPP/8 w - - 0 35",
+          "repetition": 1,
+          "firstEvaluationMs": 2.5766000151634216,
+          "within200Ms": true,
+          "finalLatencyMs": 3002.310200035572,
+          "depth": 29,
+          "cp": 814,
+          "mate": null,
+          "nodes": 19037547,
+          "progression": [
+            {
+              "elapsedMs": 2.5766000151634216,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3.150800049304962,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3.6151999831199646,
+              "depth": 1,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 4.701200008392334,
+              "depth": 2,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 6.5329999923706055,
+              "depth": 3,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 9.223899960517883,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 10.085700035095215,
+              "depth": 4,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 10.810400009155273,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 11.109100043773651,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 11.608399987220764,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 11.967000007629395,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 12.697800040245056,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 15.08109998703003,
+              "depth": 5,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.056699991226196,
+              "depth": 6,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.44190001487732,
+              "depth": 7,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.723699986934662,
+              "depth": 8,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 16.979099988937378,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 17.111499965190887,
+              "depth": 9,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.014200031757355,
+              "depth": 10,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.51690000295639,
+              "depth": 11,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 19.903999984264374,
+              "depth": 12,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.297500014305115,
+              "depth": 13,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 20.715300023555756,
+              "depth": 14,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.178599953651428,
+              "depth": 15,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.686299979686737,
+              "depth": 16,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 21.975499987602234,
+              "depth": 17,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 23.081900000572205,
+              "depth": 18,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 23.57039999961853,
+              "depth": 19,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 23.987900018692017,
+              "depth": 20,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 28.359499990940094,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 58.84380000829697,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 60.935000002384186,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 61.34369999170303,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 63.22999995946884,
+              "depth": 21,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 65.68770003318787,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 66.45149999856949,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 70.08490002155304,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 76.2241000533104,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 88.68569999933243,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 95.36940002441406,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 105.35079997777939,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 127.06260001659393,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 141.05059999227524,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 151.27849996089935,
+              "depth": 22,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 167.6583999991417,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 287.36320000886917,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 290.037299990654,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 292.66069996356964,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 341.08300000429153,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 343.1110999584198,
+              "depth": 23,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 344.0020999908447,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 494.7806000113487,
+              "depth": 24,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 516.0914999842644,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 624.6383000016212,
+              "depth": 25,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 658.9595999717712,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 994.0055999755859,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1065.362800002098,
+              "depth": 26,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1164.513500034809,
+              "depth": 27,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1684.3372000455856,
+              "depth": 27,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1781.693700015545,
+              "depth": 28,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 1923.2848999500275,
+              "depth": 28,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 2082.6916000247,
+              "depth": 29,
+              "type": "info"
+            },
+            {
+              "elapsedMs": 3002.175700008869,
+              "depth": 29,
+              "type": "result"
+            }
+          ],
+          "peakRssBytes": 46505984,
+          "cpuSeconds": 8.09375,
+          "cpuPercentOfOneCore": 269.5840689581011
+        }
+      ],
+      "cleanupMs": 6.815599977970123,
+      "processExited": true,
+      "summary": [
+        {
+          "budgetMs": 200,
+          "medianFirstEvaluationMs": 4.238999992609024,
+          "medianFinalLatencyMs": 201.99500000476837,
+          "medianDepth": 16.5,
+          "peakRssMiB": 44.1875,
+          "meanCpuPercentOfOneCore": 244.80660973905393,
+          "evaluationsWithin200Ms": 6,
+          "evaluations": 6
+        },
+        {
+          "budgetMs": 1000,
+          "medianFirstEvaluationMs": 3.5870999693870544,
+          "medianFinalLatencyMs": 1001.997899979353,
+          "medianDepth": 19.5,
+          "peakRssMiB": 44.30859375,
+          "meanCpuPercentOfOneCore": 240.87031336946708,
+          "evaluationsWithin200Ms": 6,
+          "evaluations": 6
+        },
+        {
+          "budgetMs": 3000,
+          "medianFirstEvaluationMs": 2.944200038909912,
+          "medianFinalLatencyMs": 3002.653850018978,
+          "medianDepth": 22.5,
+          "peakRssMiB": 44.3515625,
+          "meanCpuPercentOfOneCore": 218.04134854088923,
+          "evaluationsWithin200Ms": 6,
+          "evaluations": 6
+        }
+      ]
+    }
+  ]
+}

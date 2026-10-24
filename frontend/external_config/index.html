@@ -52,11 +52,12 @@
         <div id="kb-session-panel">
           <div class="autoplay-fields">
             <label class="session-field" for="kb-session-duration">Duration (Min)<input id="kb-session-duration" data-key="sessionDurationMinutes" type="number" min="1" max="1440" step="1" disabled></label>
-            <label class="session-field" for="kb-session-min-rate">Min Wins %<input id="kb-session-min-rate" data-key="sessionMinimumPercent" type="number" min="1" max="98" step="1" disabled></label>
-            <label class="session-field" for="kb-session-max-rate">Max Wins %<input id="kb-session-max-rate" data-key="sessionMaximumPercent" type="number" min="2" max="99" step="1" disabled></label>
+            <label class="session-field" for="kb-session-min-rate">Min Wins %<input id="kb-session-min-rate" data-key="sessionMinimumPercent" type="number" min="0" max="100" step="any" placeholder="Not set" aria-describedby="session-target-help" disabled></label>
+            <label class="session-field" for="kb-session-max-rate">Max Wins %<input id="kb-session-max-rate" data-key="sessionMaximumPercent" type="number" min="0" max="100" step="any" placeholder="Not set" aria-describedby="session-target-help" disabled></label>
             <div id="rating-target-field"></div>
           </div>
-          <div class="session-actions">
+          <p id="session-target-help" class="hint">Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from recorded results.</p>
+        <div class="session-actions">
             <button id="kb-session-start" type="button" data-action="start" disabled>Start</button>
             <button id="kb-session-stop" type="button" data-action="stop" disabled>Finish</button>
             <button id="kb-session-export" type="button" data-action="export" disabled>Export Diagnostics</button>
@@ -72,7 +73,7 @@
       </section>
     </div>
     <footer><p id="save-state" role="status" aria-live="polite">Loading settings…</p><button id="retry" type="button">Refresh</button></footer>
-    <p class="footnote">Analysis engine selection, rating goals and history are saved locally. Other controls reset when the server restarts.</p>
+    <p class="footnote">Preferences are saved on this local server. Session execution requires the connected Chess.com workspace.</p>
   </main>
 </body>
 </html>

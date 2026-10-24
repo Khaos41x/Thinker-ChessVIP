@@ -25,3 +25,7 @@ Thumbs.db
 
 analysis-engine-preference.json
 analysis-engine-preference.tmp
+
+external-config-preference.json
+external-config-preference.json.*.tmp
+external-config-preference.json.*.invalid

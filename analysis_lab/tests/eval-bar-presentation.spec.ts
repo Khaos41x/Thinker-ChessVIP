@@ -40,7 +40,7 @@ describe('EvalBarPresentationSelector', () => {
     const selector = new EvalBarPresentationSelector();
     expect(selector.consider(cp(380, 10), 0).selected?.label).toBe('3.8');
     expect(selector.consider(cp(340, 11), 80).coalesced).toBe(true);
-    expect(selector.consider(cp(370, 12), 160).coalesced).toBe(true);
+    expect(selector.consider(cp(370, 12), 90).coalesced).toBe(true);
     expect(selector.consider(cp(360, 13), 260).selected?.label).toBe('3.6');
     expect(selector.snapshot()).toMatchObject({ coalescedCount: 2, selectedCount: 2, pending: null });
   });
@@ -68,8 +68,8 @@ describe('EvalBarPresentationSelector', () => {
     selector.consider(cp(300, 12), 0);
     expect(selector.consider(cp(310, 11), 50).rejectedDepth).toBe(true);
     selector.consider(cp(280, 13), 80);
-    selector.consider(cp(270, 14), 120);
-    expect(selector.flush(250)).toMatchObject({ label: '2.7', depth: 14 });
+    selector.consider(cp(270, 14), 90);
+    expect(selector.flush(100)).toMatchObject({ label: '2.7', depth: 14 });
   });
 
   it('preserves selected depth and cadence across same-generation refreshes', () => {
@@ -78,5 +78,14 @@ describe('EvalBarPresentationSelector', () => {
     selector.beginRefresh();
     expect(selector.consider(cp(420, 3), 5000).rejectedDepth).toBe(true);
     expect(selector.snapshot()).toMatchObject({ highestDepth: 24, selectedCount: 1, pending: null });
+  });
+
+  it('retargets ordinary progressive scores within 100ms while preserving depth and latest wins', () => {
+    const selector = new EvalBarPresentationSelector();
+    selector.consider(cp(-51, 1), 11);
+    expect(selector.consider(cp(-59, 11), 142).selected?.score).toEqual({ kind: 'cp', cp: -59 });
+    expect(selector.consider(cp(-58, 12), 180).coalesced).toBe(true);
+    expect(selector.consider(cp(-57, 13), 200).coalesced).toBe(true);
+    expect(selector.flush(242)?.score).toEqual({ kind: 'cp', cp: -57 });
   });
 });

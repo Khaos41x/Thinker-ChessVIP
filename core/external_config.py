@@ -1,4 +1,5 @@
 import math
+import os
 import re
 import threading
 import time
@@ -16,7 +17,7 @@ DEFAULT_CONFIG = {
     "banner": True, "recentForm": True, "elo": 3200,
     "delayMode": "random", "minDelay": 0.5, "maxDelay": 1.0,
     "color": "#10B981", "ghostMode": False,
-    "sessionDurationMinutes": 120, "sessionMinimumPercent": 75, "sessionMaximumPercent": 82,
+    "sessionDurationMinutes": 120, "sessionMinimumPercent": None, "sessionMaximumPercent": None,
 }
 
 
@@ -47,11 +48,54 @@ def valid_session_projection(projection):
     return len(json.dumps(projection)) <= 16000
 
 
-def create_external_config_blueprint():
+def configuration_error(data):
+    if not isinstance(data, dict) or not data or set(data) - set(DEFAULT_CONFIG):
+        return "Unknown or empty configuration fields"
+    for key, value in data.items():
+        default = DEFAULT_CONFIG[key]
+        valid = True
+        if isinstance(default, bool):
+            valid = type(value) is bool
+        elif key == "elo":
+            valid = type(value) is int and 800 <= value <= 3200
+        elif key == 'sessionDurationMinutes':
+            valid = type(value) is int and 1 <= value <= 1440
+        elif key in ('sessionMinimumPercent', 'sessionMaximumPercent'):
+            valid = value is None or type(value) in (int, float) and 0 < value < 100 and math.isfinite(value)
+        elif key in ("minDelay", "maxDelay"):
+            valid = type(value) in (int, float) and 0 <= value <= 10 and math.isfinite(value)
+        elif key == "delayMode":
+            valid = value in ("random", "max")
+        elif key == "color":
+            valid = isinstance(value, str) and re.fullmatch(r"#[0-9a-fA-F]{6}", value)
+        if not valid:
+            return f"Invalid {key}"
+    merged = {**DEFAULT_CONFIG, **data}
+    minimum, maximum = merged['sessionMinimumPercent'], merged['sessionMaximumPercent']
+    if minimum is not None and maximum is not None and minimum >= maximum:
+        return 'Minimum win rate must be below maximum win rate'
+    return None
+
+
+def create_external_config_blueprint(preference_path=None):
     assets = Path(__file__).resolve().parents[1] / "frontend" / "external_config"
     panel = Blueprint("external_config", __name__)
     lock = threading.Lock()
     config = dict(DEFAULT_CONFIG)
+    preference_path = Path(preference_path) if preference_path is not None else None
+    persistence_error = None
+    invalid_saved_configuration = False
+    has_saved_preferences = False
+    if preference_path is not None and preference_path.exists():
+        try:
+            stored = json.loads(preference_path.read_text(encoding='utf-8'))
+            if not isinstance(stored, dict) or stored.get('version') != 1 or configuration_error(stored.get('config')):
+                raise ValueError('Invalid saved configuration')
+            config.update(stored['config'])
+            has_saved_preferences = True
+        except (OSError, ValueError, TypeError):
+            persistence_error = 'Saved settings could not be loaded. Check the local configuration file.'
+            invalid_saved_configuration = True
     revision = 0
     last_seen = None
     applied_revision = -1
@@ -106,7 +150,7 @@ def create_external_config_blueprint():
                 applied_revision = int(value) if re.fullmatch(r"-?\d{1,12}", value) and request.headers.get("X-Thinker-Server") == server_id else -1
                 value = request.headers.get("X-Thinker-Banner-State", "unknown")
                 banner_state = value if value in {"visible", "disabled", "ghost-mode", "board-unavailable", "sidebar-unavailable", "route-not-supported", "insufficient-space-or-height", "awaiting-layout"} else "unknown"
-            return jsonify({**config, "_revision": revision, "_serverId": server_id})
+            return jsonify({**config, "_revision": revision, "_serverId": server_id, "_persistenceError": persistence_error, "_hasSavedPreferences": has_saved_preferences or revision > 0})
 
     @panel.get("/config/status")
     def status():
@@ -117,7 +161,7 @@ def create_external_config_blueprint():
                             "applied": connected and applied_revision == revision,
                             "bannerState": banner_state if connected else "disconnected",
                             "sessionConnected": session_connected(), "sessionProjection": session['projection'] if session_connected() else None,
-                            "sessionSequence": session['sequence']})
+                            "sessionSequence": session['sequence'], "configPersistenceError": persistence_error})
 
     @panel.post('/config/session/bridge')
     def session_bridge():
@@ -193,7 +237,7 @@ def create_external_config_blueprint():
 
     @panel.post("/config/save")
     def save():
-        nonlocal revision
+        nonlocal revision, persistence_error, invalid_saved_configuration
         origin = request.headers.get("Origin")
         local = urlsplit(request.host_url)
         allowed = {f"http://{host}:{local.port or 80}" for host in ("localhost", "127.0.0.1")}
@@ -208,36 +252,43 @@ def create_external_config_blueprint():
         expected_server = data.pop('_serverId', None) if isinstance(data, dict) else None
         if not isinstance(data, dict) or not data or set(data) - set(DEFAULT_CONFIG):
             return jsonify({"ok": False, "error": "Unknown or empty configuration fields"}), 400
-        for key, value in data.items():
-            default = DEFAULT_CONFIG[key]
-            valid = True
-            if isinstance(default, bool):
-                valid = type(value) is bool
-            elif key == "elo":
-                valid = type(value) is int and 800 <= value <= 3200
-            elif key == 'sessionDurationMinutes':
-                valid = type(value) is int and 1 <= value <= 1440
-            elif key in ('sessionMinimumPercent', 'sessionMaximumPercent'):
-                valid = type(value) in (int, float) and math.isfinite(value) and 0 < value < 100
-            elif key in ("minDelay", "maxDelay"):
-                valid = type(value) in (int, float) and 0 <= value <= 10 and math.isfinite(value)
-            elif key == "delayMode":
-                valid = value in ("random", "max")
-            elif key == "color":
-                valid = isinstance(value, str) and re.fullmatch(r"#[0-9a-fA-F]{6}", value)
-            if not valid:
-                return jsonify({"ok": False, "error": f"Invalid {key}"}), 400
+        error = configuration_error(data)
+        if error:
+            return jsonify({'ok': False, 'error': error}), 400
         with lock:
             if expected_revision is not None and (expected_revision != revision or expected_server != server_id):
                 return jsonify({'ok': False, 'error': 'Configuration revision changed', 'config': {**config, '_revision': revision, '_serverId': server_id}}), 409
             updated = {**config, **data}
-            if updated['sessionMinimumPercent'] >= updated['sessionMaximumPercent']:
+            if updated['sessionMinimumPercent'] is not None and updated['sessionMaximumPercent'] is not None and updated['sessionMinimumPercent'] >= updated['sessionMaximumPercent']:
                 return jsonify({'ok': False, 'error': 'Minimum win rate must be below maximum win rate'}), 400
             if updated["delayMode"] == "random":
+                if config["delayMode"] == "max" and updated["minDelay"] == 0 and updated["maxDelay"] == 0:
+                    updated["minDelay"], updated["maxDelay"] = DEFAULT_CONFIG["minDelay"], DEFAULT_CONFIG["maxDelay"]
                 updated["minDelay"] = max(0.01, updated["minDelay"])
                 updated["maxDelay"] = max(0.01, updated["maxDelay"])
                 updated["minDelay"], updated["maxDelay"] = sorted((updated["minDelay"], updated["maxDelay"]))
-            if updated != config:
+            if updated != config or persistence_error:
+                if preference_path is not None:
+                    temporary = preference_path.with_name(preference_path.name + '.' + uuid.uuid4().hex + '.tmp')
+                    try:
+                        preference_path.parent.mkdir(parents=True, exist_ok=True)
+                        with temporary.open('w', encoding='utf-8', newline='\n') as stream:
+                            json.dump({'version': 1, 'config': updated}, stream, ensure_ascii=False)
+                            stream.flush()
+                            os.fsync(stream.fileno())
+                        if invalid_saved_configuration and preference_path.exists():
+                            backup = preference_path.with_name(preference_path.name + '.' + uuid.uuid4().hex + '.invalid')
+                            backup.write_bytes(preference_path.read_bytes())
+                        os.replace(temporary, preference_path)
+                        invalid_saved_configuration = False
+                    except OSError:
+                        try:
+                            temporary.unlink(missing_ok=True)
+                        except OSError:
+                            pass
+                        persistence_error = 'Settings could not be saved to disk. Check local file permissions and retry.'
+                        return jsonify({'ok': False, 'error': persistence_error}), 503
+                    persistence_error = None
                 config.clear()
                 config.update(updated)
                 revision += 1

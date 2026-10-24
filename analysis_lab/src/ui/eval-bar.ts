@@ -85,7 +85,7 @@ export class EvalBarController {
   }
 
   setOrientation(orientation: 'white' | 'black'): void {
-    this.elements.root.dataset.orientation = orientation;
+    if (this.elements.root.dataset.orientation !== orientation) this.elements.root.dataset.orientation = orientation;
   }
 
   reset(fraction = 0.5, label = '—'): void {
@@ -170,8 +170,10 @@ export class EvalBarController {
   }
 
   private commitPresentation(presentation: Pick<EvalBarSample, 'label' | 'favoredColor'>): void {
-    this.elements.label.textContent = presentation.label;
-    this.elements.root.dataset.favoredColor = presentation.favoredColor;
+    if (this.elements.label.textContent !== presentation.label) this.elements.label.textContent = presentation.label;
+    if (this.elements.root.dataset.favoredColor !== presentation.favoredColor) {
+      this.elements.root.dataset.favoredColor = presentation.favoredColor;
+    }
     this.pendingPresentation = null;
   }
 

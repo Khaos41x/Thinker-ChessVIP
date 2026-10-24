@@ -58,7 +58,8 @@ function createExternalSessionBridge(options) {
         }
       }
       const status = options.bridge.status();
-      const blockers = availability(status, options.startBlocker());
+      const targetsUnset = config.sessionMinimumPercent == null || config.sessionMaximumPercent == null;
+      const blockers = availability(status, options.startBlocker() || (targetsUnset ? 'SESSION_TARGETS_UNSET' : null));
       const projection = { status, availability: { ...blockers, export: null }, sessionIdentity: identity() };
       const result = await options.request('/config/session/bridge', { clientId, projection, ...(ack ? { ack } : {}) });
       ack = null;

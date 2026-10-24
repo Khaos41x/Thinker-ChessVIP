@@ -197,4 +197,26 @@ describe('EvalBarController', () => {
       expect(scheduler.maximumPending).toBe(1);
     },
   );
+
+  it('does not rewrite an unchanged label when only the evaluation fraction changes', () => {
+    const scheduler = new FakeScheduler();
+    let writes = 0;
+    let text = '0.4';
+    const label = Object.defineProperty({}, 'textContent', {
+      get: () => text,
+      set: (value: string) => { text = value; writes += 1; },
+    }) as HTMLElement;
+    const controller = new EvalBarController({
+      root: { dataset: { favoredColor: 'white' } } as unknown as HTMLElement,
+      fill: { style: { transform: '' } } as unknown as HTMLElement,
+      label,
+    }, { scheduler, reducedMotion: false });
+    controller.beginSearch(1);
+    controller.publish({ searchId: 1, fraction: .54, label: '0.4', favoredColor: 'white' });
+    scheduler.step(16);
+    controller.publish({ searchId: 1, fraction: .55, label: '0.4', favoredColor: 'white' });
+    scheduler.step(16);
+    expect(writes).toBe(0);
+    expect(scheduler.maximumPending).toBe(1);
+  });
 });

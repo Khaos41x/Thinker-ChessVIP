@@ -50,7 +50,7 @@ from core.eval_bar import (
 )
 
 app = Flask(__name__)
-app.register_blueprint(create_external_config_blueprint())
+app.register_blueprint(create_external_config_blueprint(Path(__file__).resolve().parent / "external-config-preference.json"))
 try:
     rating_tracker = RatingTrackerService(
         os.environ.get("THINKER_RATING_TRACKER_DB", str(Path(__file__).resolve().parent / "rating-tracker.db"))

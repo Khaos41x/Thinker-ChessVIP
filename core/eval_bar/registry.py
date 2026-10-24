@@ -15,6 +15,11 @@ from .stockfish_service import StockfishEvalBarService, StockfishEvalBarError, S
 
 ENGINE_IDS = ('stockfish-19-1mb', 'stockfish-19-94mb', 'komodo-14.1')
 NAMES = ('Stockfish 19 · 1MB', 'Stockfish 19 · 94MB', 'Komodo 14.1')
+DESCRIPTIONS = (
+    'Fast Analysis · Lichess Stockfish with a 1.11 MiB NNUE network.',
+    'Deep Analysis · Lichess Stockfish with a 93.95 MiB NNUE network.',
+    'Classic UCI · Native Komodo 14.1 with streaming position analysis.',
+)
 
 
 class NativeAnalysisService:
@@ -266,6 +271,8 @@ class EngineRegistry:
                 status = 'Loading' if self._loading == engine_id else 'Active' if active else 'Error' if engine_id in self._errors or runtime_failed else 'Ready' if installed else 'Not Installed'
                 entries.append({'id': engine_id, 'name': name, 'version': '14.1' if engine_id == ENGINE_IDS[2] else '19',
                                 'installed': installed, 'status': status, 'runtimeReady': active,
+                                'description': DESCRIPTIONS[ENGINE_IDS.index(engine_id)],
+                                'networkBytes': (1166381, 98511183, None)[ENGINE_IDS.index(engine_id)],
                                 'capabilities': ['analysis', 'streaming', 'cancellation', 'centipawns', 'mate', 'white-pov'],
                                 'configuration': runtime.get('profile') if active else None,
                                 'initializationError': self._errors.get(engine_id) or ('Analysis runtime is unavailable' if runtime_failed else None),

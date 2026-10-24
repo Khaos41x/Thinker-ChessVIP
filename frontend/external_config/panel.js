@@ -27,6 +27,7 @@
   const invalid = new Set();
 
   function message(text, error = false) {
+    if (config?._persistenceError && !error) { text = config._persistenceError; error = true; }
     byId('save-state').textContent = text;
     byId('save-state').dataset.error = String(error);
   }
@@ -57,7 +58,7 @@
     const active = selected?.runtimeReady && engineRegistry?.analysisContextAuthorized;
     const state = engineSwitching ? 'Switching' : engineError ? (!engineOnline && engineRegistry ? 'Connection Lost' : 'Error') : !selected ? 'Initializing' : !selected.installed ? 'Unavailable' : selected.initializationError ? 'Error' : active ? 'Active' : 'Ready';
     byId('analysis-engine-state').textContent = state;
-    byId('analysis-engine-message').textContent = engineError || (engineSwitching ? 'Saving engine preference…' : selected?.initializationError || (active ? 'Running in an authorized analysis context.' : selected ? 'Preference saved. Analysis starts only in an authorized context.' : 'Checking installed engines…'));
+    byId('analysis-engine-message').textContent = engineError || (engineSwitching ? 'Saving engine preference…' : selected?.initializationError || (active ? 'Running in an authorized analysis context.' : selected ? `${selected.description || 'Preference saved.'} Analysis starts only in an authorized context.` : 'Checking installed engines…'));
     byId('analysis-engine-message').dataset.error = String(Boolean(engineError || selected?.initializationError));
     byId('engine-retry').hidden = !engineError && !selected?.initializationError;
     byId('analysis-engine-details').textContent = selected ? JSON.stringify(selected, null, 2) : '';
@@ -105,6 +106,7 @@
     BOT_DISABLED: 'Enable Bot in Core to start a session.', ROLLOUT_DISABLED: 'Session Control is disabled in this userscript.',
     ACTIVE_SESSION_EXISTS: 'A session is already running.', SESSION_NOT_ACTIVE: 'No session is running.',
     STATUS_UNAVAILABLE: 'Session status is unavailable. Reconnect the Chess.com userscript.',
+    SESSION_TARGETS_UNSET: 'Configure both win-rate targets before starting a session.',
   };
   function renderSession(projection) {
     sessionProjection = projection;
@@ -165,6 +167,7 @@
   function render() {
     if (!config) return;
     byId('panels').setAttribute('aria-busy', 'false');
+    if (config._persistenceError) message(config._persistenceError, true);
     document.querySelectorAll('[data-key]').forEach(node => {
       node.disabled = false;
       if (drafts.has(node.id) || node === document.activeElement && node.matches('input')) return;

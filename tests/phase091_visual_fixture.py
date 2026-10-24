@@ -29,7 +29,8 @@ else:
     from core.external_config import create_external_config_blueprint
 
 app = Flask(__name__)
-app.register_blueprint(create_external_config_blueprint())
+preference = Path(sys.argv[sys.argv.index('--preferences') + 1]) if '--preferences' in sys.argv else None
+app.register_blueprint(create_external_config_blueprint(preference) if preference is not None else create_external_config_blueprint())
 temporary = tempfile.TemporaryDirectory(prefix='thinker-phase091-visual-')
 from core.rating_tracker import RatingTrackerService, create_rating_tracker_blueprint
 rating_service = RatingTrackerService(str(Path(temporary.name) / 'ratings.db'))
@@ -38,17 +39,17 @@ if not BEFORE:
     from core.eval_bar.registry import EngineRegistry
     from core.eval_bar.routes import create_engine_registry_blueprint
     from core.smart_pacing.security import CapabilityStore, SlidingWindowRateLimiter, require_engine_capability
-    registry = EngineRegistry(ROOT, ROOT / 'engine/komodo-14.1-64bit.exe', Path(temporary.name) / 'engine.json')
+    registry = EngineRegistry(ROOT, ROOT / 'engine/komodo-14.1-64bit.exe', preference.with_name('engine.json') if preference is not None else Path(temporary.name) / 'engine.json')
     auth = require_engine_capability(CapabilityStore(environ={'THINKER_CAPABILITY_TOKEN': 'phase091-visual-isolated-capability'}),
         allowed_origins={'https://www.chess.com'}, rate_limiter=SlidingWindowRateLimiter(limit=1000))
     app.register_blueprint(create_engine_registry_blueprint(registry, auth))
 
 @app.get('/tests/fixtures/userscript_bootstrap.html')
+@app.get('/play/online')
 def fixture():
     source = (ROOT / 'tests/fixtures/userscript_bootstrap.html').read_text(encoding='utf8')
     bridge = '''<script>
       window.GM_getValue=(key,fallback)=>key==='thinkerEngineCapability'?'phase091-visual-isolated-capability':fallback;
-      localStorage.setItem('evalBar','false');localStorage.setItem('kb_eval_unlock_v7','true');
       const originalFixtureRequest = window.GM_xmlhttpRequest;
       window.GM_xmlhttpRequest = options => {
         const endpoint = new URL(options.url);

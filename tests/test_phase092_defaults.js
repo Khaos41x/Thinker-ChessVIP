@@ -1,0 +1,45 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const api = require('../frontend/session_control');
+const empty = {durationMinutes:'120',minimumPercent:'',maximumPercent:''};
+assert.deepEqual(api.draftPatch(empty),{sessionDurationMinutes:120,sessionMinimumPercent:null,sessionMaximumPercent:null});
+assert.deepEqual(api.draftFromConfig({sessionDurationMinutes:120,sessionMinimumPercent:null,sessionMaximumPercent:null}),empty);
+assert.throws(()=>api.sessionConfigFromDraft(empty),error=>error.code==='SESSION_TARGETS_UNSET');
+assert.equal(api.warningLabel('SESSION_TARGETS_UNSET'),'Configure both win-rate targets before starting a session.');
+for (const minimumPercent of ['0','-1','100','Infinity','invalid']) assert.throws(()=>api.validateSessionDraft({...empty,minimumPercent}));
+assert.deepEqual(api.draftPatch({...empty,minimumPercent:'75.25',maximumPercent:'82.5'}),{sessionDurationMinutes:120,sessionMinimumPercent:75.25,sessionMaximumPercent:82.5});
+assert.equal(api.sessionConfigFromDraft({...empty,minimumPercent:'75.25',maximumPercent:'82.5'}).minWinRate,.7525);
+assert.equal(api.draftPatch({...empty,minimumPercent:'25'}).sessionMinimumPercent,25);
+const source=fs.readFileSync('script.js','utf8');
+const marker=`$("input[name='delayMode']").on("change", function () {`;
+const handler=source.slice(source.indexOf(marker)+marker.length,source.indexOf('        $("#kb-elo-slider").on',source.indexOf(marker)));
+for (const mode of ['max','random']) {
+ const saved=new Map([['autoMinDelay','1.25'],['autoMaxDelay','2.75']]);
+ const context={autoDelayMode:'random',autoDelayMin:1.25,autoDelayMax:2.75,localStorage:{setItem:(key,value)=>saved.set(key,String(value))},$ : ()=>({val:()=>mode}),syncDelayPresentation(){},window:{krypbotUpdateUI(){}},pushToServer(){}};
+ vm.runInNewContext('(function(){'+handler.slice(0,handler.lastIndexOf('});'))+'})()',context);
+ assert.equal(context.autoDelayMin,1.25);assert.equal(context.autoDelayMax,2.75);
+ assert.equal(saved.get('autoMinDelay'),'1.25');assert.equal(saved.get('autoMaxDelay'),'2.75');
+}
+console.log('Phase09.2 unset versus zero, numeric validation, operational start guard and retained Random range passed');
+
+const preferences=new Map([['thinkerBanner','false'],['recentForm','false'],['evalBar','false'],['autoMinDelay','1.25'],['autoMaxDelay','2.75']]);
+const capture=source.slice(source.indexOf('  const originalSavedPreferences'),source.indexOf('  const DEFAULT_MIN_DELAY'));
+const upgradeContext={localStorage:{getItem:key=>preferences.get(key)??null,setItem:(key,value)=>preferences.set(key,String(value))},window:{setTimeout(){}},_localConfigPending:false,_localConfigRevision:0,pollCount:0,pollExternalConfig(){this.pollCount++;}};
+let bootstrapRequest;
+upgradeContext.GM_xmlhttpRequest=request=>{bootstrapRequest=request;};
+upgradeContext.SERVER_URL='http://127.0.0.1:5050';
+vm.createContext(upgradeContext);
+vm.runInContext(capture,upgradeContext);
+const bootstrap=source.slice(source.indexOf('        let bootstrapAttempted = false;'),source.indexOf('        $(document).off("change.kbMasterStatus"'));
+vm.runInContext(bootstrap,upgradeContext);
+assert.equal(upgradeContext.window.krypbotRestoreSavedPreferences({_revision:0,_serverId:'new-server'}),true);
+const restore=JSON.parse(bootstrapRequest.data);
+assert.equal(restore.minDelay,1.25);assert.equal(restore.maxDelay,2.75);assert.equal(restore.banner,false);assert.equal(restore.evalBar,false);
+assert.equal(restore._expectedRevision,0);assert.equal(restore._serverId,'new-server');
+assert.equal(Object.hasOwn(restore,'sessionMinimumPercent'),false,'Bootstrap may restore only original saved keys');
+bootstrapRequest.onload({status:409});
+assert.equal(upgradeContext._localConfigPending,false);
+assert.equal(upgradeContext.window.krypbotRestoreSavedPreferences({_revision:1,_serverId:'new-server'}),false,'Conflict must adopt accepted server preferences');
+assert(!source.includes('resetDefaultsThisVersion'),'Obsolete initialization migration must have no references');
+console.log('Phase09.2 upgrade bootstrap restores original keys with revision guard and adopts concurrent accepted server state');

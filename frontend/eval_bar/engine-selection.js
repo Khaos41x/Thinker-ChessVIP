@@ -87,7 +87,7 @@
       if (!selecting && state) select.value = state.selectedEngineId;
       select.disabled = selecting || !state;
       mounted.querySelector('.tc-analysis-status').textContent = selecting ? 'Switching' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing';
-      mounted.querySelector('p').textContent = error || selected?.initializationError || (state ? 'Preference saved. Analysis follows the existing authorization.' : 'Checking installed engines…');
+      mounted.querySelector('p').textContent = error || selected?.initializationError || (state ? [selected?.description, 'Preference saved. Analysis follows the existing authorization.'].filter(Boolean).join(' ') : 'Checking installed engines…');
       mounted.querySelector('button').hidden = !error;
     }
     return Object.freeze({
