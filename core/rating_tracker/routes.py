@@ -100,6 +100,10 @@ def create_rating_tracker_blueprint(service):
             raise TrackerError("INVALID_JSON")
         return value
 
+    @panel.route("/rating-goals/target", methods=["GET", "POST"])
+    def target():
+        return jsonify(service.rating_target(body() if request.method == "POST" else None))
+
     @panel.get("/rating-goals/snapshot")
     def snapshot():
         data = service.snapshot(request.args.get("accountKey"), request.args.get("username"))

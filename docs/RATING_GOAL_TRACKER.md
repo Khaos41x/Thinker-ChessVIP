@@ -5,13 +5,13 @@ The tracker observes public Chess.com ratings. It never plays moves, changes dif
 ## Run and use
 
 1. Start the existing local server with `python app.py` and open `http://127.0.0.1:5050/config`.
-2. In Rating Goal, enter the public account to monitor, choose Bullet, Blitz, Rapid or Daily, and set an upward target or downward observation threshold.
-3. Save the goal. The backend retrieves the public profile/stats and confirms an as-of baseline when eligible. Private or missing DOM ratings do not need to be enabled.
-4. Keep the server running. Public-data monitoring continues without a Chess.com tab. Pause or archive a goal to stop its monitoring work when no other goal needs that account.
+2. Find the single **Rating Goal** text field below Strength Level in Engine Control. It appears in both External Config and the Chess.com console, without a separate dashboard or visibility opt-in.
+3. Enter a whole-number rating and press Enter or leave the field. The value is saved locally in SQLite and synchronized across both surfaces. Clear the field to unset it. A failed save preserves your draft for retry.
+4. This simplified field stores the desired rating only. It does not create an account/category monitoring subscription, modify existing per-category goals, change engine strength, or control games. Previously created monitoring goals and history remain preserved in the backend.
 
 Targets are not engine Strength Level. Downward thresholds are neutral observations, never instructions to lose games. Historical changes are descriptive, not predictions of how many games remain.
 
-## Understand the states
+## Existing backend monitoring states
 
 - **Verified:** validated public evidence, with its actual effective date and last check time.
 - **Unconfirmed:** a visible, matching player rating observed in the browser, displayed separately from the last verified value.

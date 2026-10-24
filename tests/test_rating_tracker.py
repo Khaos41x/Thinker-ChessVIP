@@ -315,6 +315,25 @@ class RouteTests(ServiceTests):
         response = self.client.post("/rating-observations/dom", json={"username": "alice", "timeClass": "blitz", "rating": 1910})
         self.assertEqual(response.status_code, 202)
 
+    def test_single_target_persistence_and_isolation(self):
+        self.assertEqual(self.client.get('/rating-goals/target').json, {'target': None})
+        self.assertEqual(self.client.post('/rating-goals/target', json={'target': 2200}).json, {'target': 2200})
+        self.assertEqual(self.client.get('/rating-goals/target').json, {'target': 2200})
+        reopened = RatingTrackerService(self.path, self.public, self.clock)
+        try:
+            self.assertEqual(reopened.rating_target(), {'target': 2200})
+        finally:
+            reopened.close()
+        self.assertEqual(self.service.snapshot()['goals'][0]['threshold'], 2200)
+        self.assertEqual(self.client.post('/rating-goals/target', json={'target': None}).json, {'target': None})
+
+    def test_single_target_rejects_invalid_and_untrusted_requests(self):
+        for target in (-1, True, 1.5, '2200', 100001):
+            self.assertEqual(self.client.post('/rating-goals/target', json={'target': target}).status_code, 400)
+        self.assertEqual(self.client.post('/rating-goals/target', json={'target': 2200, 'elo': 1000}).status_code, 400)
+        self.assertEqual(self.client.post('/rating-goals/target', json={'target': 2200}, headers={'Origin': 'https://evil.test'}).status_code, 403)
+        self.assertEqual(self.client.get('/rating-goals/target').json, {'target': None})
+
     def test_history_validation_and_nullable_terminal(self):
         self.assertEqual(self.client.get("/rating-goals/history?username=alice&cursor=bad").status_code, 400)
         self.assertEqual(self.client.post("/rating-games/terminal", json={"username": "alice", "timeClass": None, "gameUrl": "https://www.chess.com/game/123", "proofDigest": "proof"}).status_code, 202)

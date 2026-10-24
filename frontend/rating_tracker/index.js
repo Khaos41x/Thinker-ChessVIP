@@ -1,9 +1,7 @@
 const { observePage } = require('./dom-adapter');
 const { createTransport, createOutbox } = require('./bridge');
-const { renderGoal } = require('./presenter');
+const { mountTarget } = require('./target-field');
 const { staleSnapshot, snapshotCache } = require('./cache');
-
-const CARD_CSS = '.tc-rating-goal{box-sizing:border-box;max-width:680px;padding:12px;margin-top:12px;border:1px solid #3a3a36;border-radius:8px;color:#f2f2ee;background:#252523;font:13px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.tc-rating-goal h3{font-size:13px;margin:0}.tc-rating-goal .rt-heading{display:flex;justify-content:space-between;gap:12px}.tc-rating-goal .rt-state,.tc-rating-goal .rt-detail,.tc-rating-goal dt{color:#b9bab3;font-size:11px}.tc-rating-goal .rt-numbers{display:flex;gap:16px}.tc-rating-goal dd{margin:0;font-variant-numeric:tabular-nums}.tc-rating-goal progress{width:100%;accent-color:#22d36b}.tc-clean-view .tc-rating-goal{display:none!important}';
 
 function start({ window = globalThis.window, baseUrl, gmRequest, storage = window.localStorage, transport: injected } = {}) {
   if (!window || !/(^|\.)chess\.com$/i.test(window.location.hostname)) return null;
@@ -18,22 +16,17 @@ function start({ window = globalThis.window, baseUrl, gmRequest, storage = windo
   let destroyed = false;
   let snapshotTimer;
   let active;
-  let card;
+  let field;
+  let fieldHost;
   let snapshot;
-  let renderedKey;
   const sent = new Set();
   const draw = () => {
-    const enabled = snapshot?.preferences?.onPageVisible === true;
-    const clean = window.document.documentElement.classList.contains('tc-clean-view');
-    if (!enabled || clean || !snapshot?.goals?.length) { card?.remove(); card = null; renderedKey = null; return; }
-    const host = window.document.getElementById('krypbot-container');
-    if (!host) return;
-    const goal = snapshot.goals.find(item => item.state !== 'archived') || snapshot.goals[0];
-    const key = JSON.stringify(goal);
-    if (card?.isConnected && renderedKey === key) return;
-    if (!card || !card.isConnected) { card = window.document.createElement('section'); card.className = 'tc-rating-goal'; card.setAttribute('aria-label', 'Rating Goal'); host.append(card); }
-    card.replaceChildren(renderGoal(window.document, goal));
-    renderedKey = key;
+    if (destroyed) return;
+    const host = window.document.querySelector('#krypbot-container .kb-strength-card');
+    if (!host) { field?.destroy(); field = null; fieldHost = null; return; }
+    if (fieldHost === host && host.querySelector('.tc-rating-target')) return;
+    field?.destroy(); fieldHost = host;
+    field = mountTarget({ window, host, request: transport.request });
   };
   async function poll() {
     clearTimeout(snapshotTimer);
@@ -71,7 +64,6 @@ function start({ window = globalThis.window, baseUrl, gmRequest, storage = windo
       sent.clear();
       active?.abort();
       clearTimeout(snapshotTimer);
-      card?.remove(); card = null;
       draw();
       if (username) void poll();
     }
@@ -86,15 +78,12 @@ function start({ window = globalThis.window, baseUrl, gmRequest, storage = windo
       if (!sent.has(id)) { sent.add(id); outbox.enqueue('/rating-games/terminal', { ...base, result: page.result, rated: null, endedAtMs: null, proofDigest: id }, id); void poll(); }
     }
   });
-  const style = window.document.createElement('style');
-  style.dataset.thinkerRatingTracker = 'true';
-  style.textContent = CARD_CSS;
-  window.document.head.append(style);
   const cleanObserver = new window.MutationObserver(draw);
-  cleanObserver.observe(window.document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  cleanObserver.observe(window.document.documentElement, { childList: true, subtree: true });
   window.addEventListener('storage', draw);
-  const instance = { refresh() { observer.refresh(); draw(); return poll(); }, diagnostics() { return { ...diagnostics, pendingEvidence: outbox.size, cardMounted: Boolean(card?.isConnected), onPageVisible: snapshot?.preferences?.onPageVisible === true, goalCount: snapshot?.goals?.length || 0, hostFound: Boolean(window.document.getElementById('krypbot-container')) }; }, destroy() { destroyed = true; generation++; clearTimeout(snapshotTimer); active?.abort(); observer.destroy(); outbox.destroy(); transport.destroy?.(); cleanObserver.disconnect(); window.removeEventListener('storage', draw); card?.remove(); style.remove(); delete window.__thinkerRatingTracker; } };
+  const instance = { refresh() { observer.refresh(); draw(); void field?.refresh(); return poll(); }, diagnostics() { return { ...diagnostics, pendingEvidence: outbox.size, fieldMounted: Boolean(fieldHost?.isConnected), goalCount: snapshot?.goals?.length || 0, hostFound: Boolean(window.document.getElementById('krypbot-container')) }; }, destroy() { destroyed = true; generation++; clearTimeout(snapshotTimer); active?.abort(); observer.destroy(); outbox.destroy(); cleanObserver.disconnect(); field?.destroy(); transport.destroy?.(); window.removeEventListener('storage', draw); delete window.__thinkerRatingTracker; } };
   window.__thinkerRatingTracker = instance;
+  draw();
   void outbox.flush();
   return instance;
 }

@@ -1,0 +1,133 @@
+{
+  "fixture": "Real Flask + temporary SQLite + deterministic public provider + actual built userscript; not authenticated Chess.com",
+  "screenshots": [
+    {
+      "width": 390,
+      "path": "C:\\Users\\2ln0g0tt7bkehifl\\Documents\\Codex\\2026-10-05\\https-github-com-khaos41x-thinker-chessvip\\work\\Thinker-ChessVIP\\_bmad-output\\implementation-artifacts\\rating-goal-tracker\\browser\\rating-field-390.png",
+      "dimensions": {
+        "width": 390,
+        "scrollWidth": 375,
+        "field": {
+          "x": 254,
+          "y": 550.5,
+          "width": 96,
+          "height": 32,
+          "top": 550.5,
+          "right": 350,
+          "bottom": 582.5,
+          "left": 254
+        }
+      }
+    },
+    {
+      "width": 800,
+      "path": "C:\\Users\\2ln0g0tt7bkehifl\\Documents\\Codex\\2026-10-05\\https-github-com-khaos41x-thinker-chessvip\\work\\Thinker-ChessVIP\\_bmad-output\\implementation-artifacts\\rating-goal-tracker\\browser\\rating-field-800.png",
+      "dimensions": {
+        "width": 800,
+        "scrollWidth": 800,
+        "field": {
+          "x": 667,
+          "y": 353.5,
+          "width": 96,
+          "height": 32,
+          "top": 353.5,
+          "right": 763,
+          "bottom": 385.5,
+          "left": 667
+        }
+      }
+    },
+    {
+      "width": 1033,
+      "path": "C:\\Users\\2ln0g0tt7bkehifl\\Documents\\Codex\\2026-10-05\\https-github-com-khaos41x-thinker-chessvip\\work\\Thinker-ChessVIP\\_bmad-output\\implementation-artifacts\\rating-goal-tracker\\browser\\rating-field-1033.png",
+      "dimensions": {
+        "width": 1033,
+        "scrollWidth": 1033,
+        "field": {
+          "x": 843.5,
+          "y": 353.5,
+          "width": 96,
+          "height": 32,
+          "top": 353.5,
+          "right": 939.5,
+          "bottom": 385.5,
+          "left": 843.5
+        }
+      }
+    },
+    {
+      "width": 1034,
+      "path": "C:\\Users\\2ln0g0tt7bkehifl\\Documents\\Codex\\2026-10-05\\https-github-com-khaos41x-thinker-chessvip\\work\\Thinker-ChessVIP\\_bmad-output\\implementation-artifacts\\rating-goal-tracker\\browser\\rating-field-1034.png",
+      "dimensions": {
+        "width": 1034,
+        "scrollWidth": 1034,
+        "field": {
+          "x": 844,
+          "y": 353.5,
+          "width": 96,
+          "height": 32,
+          "top": 353.5,
+          "right": 940,
+          "bottom": 385.5,
+          "left": 844
+        }
+      }
+    },
+    {
+      "width": 1280,
+      "path": "C:\\Users\\2ln0g0tt7bkehifl\\Documents\\Codex\\2026-10-05\\https-github-com-khaos41x-thinker-chessvip\\work\\Thinker-ChessVIP\\_bmad-output\\implementation-artifacts\\rating-goal-tracker\\browser\\rating-field-1280.png",
+      "dimensions": {
+        "width": 1280,
+        "scrollWidth": 1280,
+        "field": {
+          "x": 967,
+          "y": 353.5,
+          "width": 96,
+          "height": 32,
+          "top": 353.5,
+          "right": 1063,
+          "bottom": 385.5,
+          "left": 967
+        }
+      }
+    },
+    {
+      "width": 1440,
+      "path": "C:\\Users\\2ln0g0tt7bkehifl\\Documents\\Codex\\2026-10-05\\https-github-com-khaos41x-thinker-chessvip\\work\\Thinker-ChessVIP\\_bmad-output\\implementation-artifacts\\rating-goal-tracker\\browser\\rating-field-1440.png",
+      "dimensions": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "field": {
+          "x": 1047,
+          "y": 353.5,
+          "width": 96,
+          "height": 32,
+          "top": 353.5,
+          "right": 1143,
+          "bottom": 385.5,
+          "left": 1047
+        }
+      }
+    }
+  ],
+  "checks": [
+    "One field in both External Config tabs; Enter persists and synchronizes",
+    "Actual built userscript field visible by default and synchronized both ways through GM transport",
+    "Invalid values rejected, blur commits, refresh restores, blank clears",
+    "Offline draft preserved; explicit retry saves after recovery; no dashboard or extra controls"
+  ],
+  "startupMs": 704,
+  "initialDiagnostics": {
+    "state": "connected",
+    "identity": "tracker_user",
+    "reason": null,
+    "lastSnapshotAtMs": 1792800068514,
+    "snapshotLatencyMs": 41.099999994039536,
+    "observationCount": 1,
+    "outboxError": "evidence-rejected",
+    "pendingEvidence": 0,
+    "fieldMounted": true,
+    "goalCount": 0,
+    "hostFound": true
+  }
+}

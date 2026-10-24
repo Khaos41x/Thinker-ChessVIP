@@ -60,6 +60,18 @@ class RatingTrackerService:
             raise TrackerError("GOAL_NOT_FOUND", 404)
         return json.loads(row[0])
 
+    def rating_target(self, body=None):
+        if body is not None:
+            if set(body) != {"target"}:
+                raise TrackerError("INVALID_TARGET")
+            target = body["target"]
+            if target is not None:
+                target = integer(target, "target")
+            with self.repository.transaction() as db:
+                db.execute("INSERT INTO metadata(key,value) VALUES('ratingTarget',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", (json.dumps(target),))
+        saved = self.repository.rows("SELECT value FROM metadata WHERE key='ratingTarget'")
+        return {"target": json.loads(saved[0]["value"]) if saved else None}
+
     def create_goal(self, body):
         RatingGoal(body.get("username"), body.get("timeClass"), body.get("direction"), body.get("threshold"), body.get("idempotencyKey"))
         name, mode = username(body.get("username")), category(body.get("timeClass"))
