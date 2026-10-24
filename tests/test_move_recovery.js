@@ -9,7 +9,7 @@ function fixture() {
   const state = { now:10000, master:true, fen:initialFen, requests:[], arrows:0, moves:0, throwAuth:false };
   const game = { getFEN:()=>state.fen, getTurn:()=>'w', getPlayingAs:()=>'w' };
   const context = { console, window:{location:{href:'https://www.chess.com/play/online'}}, Date:{now:()=>state.now}, can_interval:true, moveRetryAfter:0, gameMode:'play', fen:null, checkfen:'', auto_move:false,
-    get_cached_game:()=>({board:{},game}), isMasterEnabled:()=>state.master, observeSmartPacingPosition:()=>0,
+    get_cached_game:()=>({board:{},game}), resolveThinkerBoardGame:()=>game, isMasterEnabled:()=>state.master, observeSmartPacingPosition:()=>0,smartPacer:{cancel(){}},
     isLegacyAutoAdjustEffective:()=>false, chessBot:{elo:1500,time:.5}, moveCache:new Map(), puzzleMoveCache:new Map(),
     sessionControlBridge:{moveSelectionElo:e=>e,isActive:()=>false,effectiveAutoMove:a=>a},
     smartPacingEnabled:false,smartPacingV2Enabled:false,smartPacingV2ShadowEnabled:false,autoDelayMode:'random',
@@ -19,13 +19,14 @@ function fixture() {
     handleEngineUnauthorized:r=>r.status===401, GM_xmlhttpRequest:r=>state.requests.push(r),
   };
   vm.createContext(context);
+  vm.runInContext(source.slice(source.indexOf('  const normalizeThinkerMoveSide ='),source.indexOf('  const getSmartPacerClockValues =')),context);
   vm.runInContext(source.slice(start,end), context);
   return {state,context,game,request:()=>context.request_move()};
 }
 for (const turnApi of ['long-color','fen-fallback']) {
   const {state,game,request}=fixture();
   if(turnApi==='long-color'){game.getTurn=()=> 'white';game.getPlayingAs=()=> 'w';}
-  else {delete game.getTurn;delete game.getPlayingAs;}
+  else {delete game.getTurn;game.getPlayingAs=()=>1;}
   request();assert.equal(state.requests.length,1,`${turnApi} prevented a move request`);
 }
 for(const failure of ['401','503','invalid-json','empty','network','timeout','abort','missing-token']) {

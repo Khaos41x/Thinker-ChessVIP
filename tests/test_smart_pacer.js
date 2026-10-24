@@ -27,7 +27,7 @@ const boardElement = {
   getBoundingClientRect: () => ({ top: 140, bottom: 740, left: 220, right: 820, width: 600, height: 600 }),
   closest: () => clockRoot,
 };
-const integrationStart = source.indexOf("  const getSmartPacerClockValues =");
+const integrationStart = source.indexOf("  const normalizeThinkerMoveSide =");
 const integrationEnd = source.indexOf("  const get_number =", integrationStart);
 const integration = vm.runInNewContext(`${source.slice(classStart, classEnd)}
 const smartPacer = new SmartPacer({ random: () => 0.5 });
@@ -37,7 +37,8 @@ ${source.slice(integrationStart, integrationEnd)}
   clearTimeout,
   DOMException,
   log: () => {},
-  window: { getComputedStyle: () => ({ display: "block", visibility: "visible", opacity: "1" }) },
+  window: { location:{href:'https://www.chess.com/play/online'},getComputedStyle: () => ({ display: "block", visibility: "visible", opacity: "1" }) },
+  gameMode:'play',checkfen:'',moveRetryAfter:0,isMasterEnabled:()=>true,resolveThinkerBoardGame:board=>board.game,
   document: { querySelector: () => boardElement, querySelectorAll: () => clocks },
 });
 
@@ -113,14 +114,14 @@ const assert = (condition, message) => {
   assert(integration.isSmartPacerTimeTrouble("9.9") && !integration.isSmartPacerTimeTrouble("10.0"), "time-trouble boundary failed");
 
   const move = { from: "e2", to: "e4" };
-  let fen = "r3k2r/pp1n1ppp/2pbpn2/q7/2BPP3/2N2N2/PPQ2PPP/R3K2R w KQkq - 2 14";
+  let fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
   const played = [];
-  const board = { game: { getLegalMoves: () => [move, { from: "d2", to: "d4" }], getFEN: () => fen, move: (value) => played.push(value) } };
+  const board = { game: { getPlayingAs:()=>1,getLegalMoves: () => [move, { from: "d2", to: "d4" }], getFEN: () => fen, move: (value) => played.push(value) } };
   assert(integration.auto_move_piece("e2", "e4", board, 5, { forceImmediate: true }) === true, "MAX was not synchronous");
   const promotionBoard = {
     game: {
       getLegalMoves: () => [{ from: "a7", to: "a8", promotion: "n" }, { from: "a7", to: "a8", promotion: "q" }],
-      getFEN: () => "promotion-fen",
+      getPlayingAs:()=>1,getFEN: () => "7k/P7/8/8/8/8/8/7K w - - 0 1",
       move: (value) => played.push(value),
     },
   };

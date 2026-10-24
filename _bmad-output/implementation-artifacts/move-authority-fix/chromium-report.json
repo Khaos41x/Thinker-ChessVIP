@@ -1,0 +1,97 @@
+{
+  "fixture": "Actual complete userscript, existing Flask fixture, mocked privileged engine transport and local board API; no real game",
+  "unknown": {
+    "enabled": true,
+    "autoMove": true,
+    "effectiveAutoMove": true,
+    "sessionActive": false,
+    "stage": "player-identity-unavailable",
+    "status": null,
+    "moveAuthority": {
+      "allowed": false,
+      "reason": "player-identity-unavailable",
+      "side": null,
+      "turn": "w",
+      "fen": "8/8/8/8/8/5k2/8/6K1 w - - 0 1"
+    },
+    "authenticated": false,
+    "boardFound": true,
+    "gameApiFound": true,
+    "fenAvailable": true,
+    "canReadLegalMoves": true,
+    "canExecuteMove": true,
+    "retryPending": false
+  },
+  "waiting": {
+    "enabled": true,
+    "autoMove": true,
+    "effectiveAutoMove": true,
+    "sessionActive": false,
+    "stage": "waiting-turn",
+    "status": null,
+    "moveAuthority": {
+      "allowed": false,
+      "reason": "waiting-turn",
+      "side": "w",
+      "turn": "b",
+      "fen": "8/8/8/8/8/5k2/8/6K1 b - - 0 1"
+    },
+    "authenticated": true,
+    "boardFound": true,
+    "gameApiFound": true,
+    "fenAvailable": true,
+    "canReadLegalMoves": true,
+    "canExecuteMove": true,
+    "retryPending": false
+  },
+  "moves": [
+    {
+      "side": "w",
+      "turn": "w",
+      "move": {
+        "from": "g1",
+        "to": "h1",
+        "promotion": "q",
+        "animate": false,
+        "userGenerated": true
+      },
+      "fen": "8/8/8/8/8/5k2/8/6K1 w - - 0 1"
+    },
+    {
+      "side": "w",
+      "turn": "w",
+      "move": {
+        "from": "g1",
+        "to": "h1",
+        "promotion": "q",
+        "animate": false,
+        "userGenerated": true
+      },
+      "fen": "8/8/8/8/8/5k2/8/6K1 w - - 0 3"
+    }
+  ],
+  "requestCount": 4,
+  "illegal": [],
+  "bot": {
+    "enabled": true,
+    "autoMove": true,
+    "effectiveAutoMove": true,
+    "sessionActive": false,
+    "stage": "waiting-turn",
+    "status": null,
+    "moveAuthority": {
+      "allowed": false,
+      "reason": "waiting-turn",
+      "side": "w",
+      "turn": "b",
+      "fen": "8/8/8/8/8/5k2/8/6K1 b - - 0 3"
+    },
+    "authenticated": true,
+    "boardFound": true,
+    "gameApiFound": true,
+    "fenAvailable": true,
+    "canReadLegalMoves": true,
+    "canExecuteMove": true,
+    "retryPending": false
+  }
+}

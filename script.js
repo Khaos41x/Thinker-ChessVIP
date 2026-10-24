@@ -4471,6 +4471,48 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     }
   }
 
+  const normalizeThinkerMoveSide = (value) => {
+    if (value === 1 || value === "1") return "w";
+    if (value === 2 || value === "2") return "b";
+    if (typeof value !== "string") return null;
+    const side = value.trim().toLowerCase();
+    if (side === "w" || side === "white") return "w";
+    if (side === "b" || side === "black") return "b";
+    return null;
+  };
+
+  const readThinkerMoveAuthority = (game, expectedSide = null) => {
+    try {
+      const currentFen = game?.getFEN?.();
+      const fields = typeof currentFen === "string" ? currentFen.trim().split(/\s+/) : [];
+      const turn = fields.length === 6 && /^[wb]$/.test(fields[1]) ? fields[1] : null;
+      const side = normalizeThinkerMoveSide(game?.getPlayingAs?.());
+      const apiTurn = normalizeThinkerMoveSide(game?.getTurn?.());
+      const reason = !side ? "player-identity-unavailable"
+        : !turn ? "turn-unavailable"
+        : apiTurn && apiTurn !== turn ? "turn-state-inconsistent"
+        : expectedSide && side !== expectedSide ? "player-identity-changed"
+        : side !== turn ? "waiting-turn" : null;
+      return { allowed: reason === null, reason, side, turn, fen: currentFen };
+    } catch (_) {
+      return { allowed: false, reason: "game-state-unavailable", side: null, turn: null, fen: null };
+    }
+  };
+
+  const thinkerFenPieceSide = (position, square) => {
+    if (typeof position !== "string" || !/^[a-h][1-8]$/.test(square)) return null;
+    const rank = position.split(" ")[0].split("/")[8 - Number(square[1])];
+    let file = 0;
+    for (const piece of rank || "") {
+      if (/^[1-8]$/.test(piece)) file += Number(piece);
+      else {
+        if (file === square.charCodeAt(0) - 97 && /^[prnbqk]$/i.test(piece)) return piece === piece.toUpperCase() ? "w" : "b";
+        file++;
+      }
+    }
+    return null;
+  };
+
   const getSmartPacerClockValues = () => {
     const fallback = {
       userTime: null,
@@ -4605,6 +4647,8 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       dispatchEffect = (effect) => effect(),
       positionObservedAt = null,
       clockValues = null,
+      expectedPlayingSide = null,
+      expectedMode = gameMode,
     } = {},
   ) {
     smartPacer.cancel();
@@ -4612,6 +4656,14 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
 
     const getGame = () => resolveThinkerBoardGame(board);
     const scheduledGame = getGame();
+    const scheduledRoute = window.location?.href?.split(/[?#]/)[0];
+    const scheduledAuthority = expectedMode === "puzzle" ? null : readThinkerMoveAuthority(scheduledGame, expectedPlayingSide);
+    if (!isMasterEnabled() || expectedMode !== gameMode || (scheduledAuthority && !scheduledAuthority.allowed)) {
+      thinkerMoveDiagnostic = { stage: scheduledAuthority?.reason || "mode-changed", status: null };
+      return null;
+    }
+    const scheduledFen = (() => { try { return scheduledGame?.getFEN?.(); } catch (_) { return null; } })();
+    if (!scheduledFen || (expectedFen !== null && scheduledFen !== expectedFen)) return null;
     const normalizedPromotion = typeof promotion === "string" && /^[qrbn]$/i.test(promotion)
       ? promotion.toLowerCase()
       : null;
@@ -4637,10 +4689,20 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         return null;
       }
     };
+    let moveRejectionReason = null;
     const executeMove = () => dispatchEffect(() => {
       const game = getGame();
-      if (game !== scheduledGame || !shouldExecute()) return false;
-      if (expectedFen !== null && (typeof game.getFEN !== "function" || game.getFEN() !== expectedFen)) return false;
+      if (!isMasterEnabled() || board.isConnected === false || game !== scheduledGame || expectedMode !== gameMode || window.location?.href?.split(/[?#]/)[0] !== scheduledRoute) return false;
+      if (typeof game?.getFEN !== "function" || game.getFEN() !== scheduledFen) return false;
+      if (scheduledAuthority) {
+        const authority = readThinkerMoveAuthority(game, scheduledAuthority.side);
+        if (!authority.allowed || thinkerFenPieceSide(authority.fen, from) !== authority.side) {
+          moveRejectionReason = authority.reason || "source-piece-not-owned";
+          thinkerMoveDiagnostic = { stage: moveRejectionReason, status: null };
+          return false;
+        }
+      }
+      if (!shouldExecute()) return false;
       const move = findMove(game);
       if (!move || typeof game.move !== "function") return false;
       game.move({ ...move, promotion: normalizedPromotion || "q", animate: false, userGenerated: true });
@@ -4670,7 +4732,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     const delaySeconds = Number(baseDelaySeconds);
     const reportOutcome = outcome => {
       if (outcome === false || outcome?.allowed === false) {
-        thinkerMoveDiagnostic = { stage: "move-execution-rejected", status: null };
+        thinkerMoveDiagnostic = { stage: moveRejectionReason || "move-execution-rejected", status: null };
         if (expectedFen !== null && checkfen === expectedFen) checkfen = "";
         moveRetryAfter = Date.now() + 1000;
       } else if (outcome === true) thinkerMoveDiagnostic = { stage: "move-executed", status: null };
@@ -4687,10 +4749,6 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       return outcome;
     }
 
-    const scheduledFen = (() => {
-      try { return game && typeof game.getFEN === "function" ? game.getFEN() : expectedFen; }
-      catch (error) { return expectedFen; }
-    })();
     const pacingClocks = clockValues || getSmartPacerClockValues();
     const complexityMultiplier = Number(analysis?.complexityMultiplier);
     const scheduled = smartPacer.schedule(executeMove, {
@@ -4868,6 +4926,8 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
 
       fen = game.getFEN();
       const requestFen = fen;
+      const requestMode = gameMode;
+      const requestRoute = window.location.href.split(/[?#]/)[0];
       const requestAutoMove = auto_move;
       const requestPuzzleAutoMove = isPuzzleMode && puzzleAutoMove;
       const retryMove = () => {
@@ -4876,28 +4936,27 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         can_interval = true;
       };
       const positionObservedAt = observeSmartPacingPosition(fen);
+      let requestPlayingSide = null;
+      const requestIsCurrent = () => {
+        if (!isMasterEnabled() || board.isConnected === false || resolveThinkerBoardGame(board) !== game ||
+            gameMode !== requestMode || window.location.href.split(/[?#]/)[0] !== requestRoute ||
+            game.getFEN() !== requestFen || auto_move !== requestAutoMove) return false;
+        if (isPuzzleMode) return puzzleAutoMove === requestPuzzleAutoMove && (puzzleHint || puzzleAutoMove);
+        const authority = readThinkerMoveAuthority(game, requestPlayingSide);
+        if (!authority.allowed) thinkerMoveDiagnostic = { stage: authority.reason, status: null };
+        return authority.allowed;
+      };
 
       if (!isPuzzleMode) {
-        const normalizeSide = value => ({ white: "w", black: "b", w: "w", b: "b" })[String(value || "").toLowerCase()] || null;
-        const turn = normalizeSide(typeof game.getTurn === "function" ? game.getTurn() : null) || fen.split(" ")[1];
-        let side = normalizeSide(typeof game.getPlayingAs === "function" ? game.getPlayingAs() : null);
-
-        // Detectar cor do jogador se getPlayingAs() retornar algo invÃ¡lido
-        if (!side || side === null || side === undefined) {
-          const url = window.location.href;
-          if (url.includes("color=white") || url.includes("color=w"))
-            side = "w";
-          else if (url.includes("color=black") || url.includes("color=b"))
-            side = "b";
-
-          if (!side) side = turn;
-        }
-
-        if (turn !== side) {
-          thinkerMoveDiagnostic = { stage: "waiting-turn", status: null };
+        const authority = readThinkerMoveAuthority(game);
+        if (!authority.allowed) {
+          smartPacer.cancel();
+          checkfen = "";
+          thinkerMoveDiagnostic = { stage: authority.reason, status: null };
           $(".myhigh, .myarrow").remove();
           return;
         }
+        requestPlayingSide = authority.side;
       }
 
       if (fen === checkfen) return;
@@ -4920,12 +4979,14 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       const clockValues = getSmartPacerClockValues();
       const autoMoveOptions = {
         expectedFen: fen,
+        expectedPlayingSide: requestPlayingSide,
+        expectedMode: gameMode,
         useSmartPacing: smartPacingEnabled,
         forceImmediate: !smartPacingEnabled && autoDelayMode === "max",
         positionObservedAt,
         clockValues,
         shouldExecute: () =>
-          isPuzzleMode ? isMasterEnabled() && puzzleAutoMove : capturedSessionMove ? sessionControlBridge.movePrecheck(capturedSessionMove) : sessionControlBridge.effectiveAutoMove(auto_move) && gameMode !== "puzzle",
+          requestIsCurrent() && (isPuzzleMode ? isMasterEnabled() && puzzleAutoMove : capturedSessionMove ? sessionControlBridge.movePrecheck(capturedSessionMove) : sessionControlBridge.effectiveAutoMove(auto_move)),
         dispatchEffect: (effect) => capturedSessionMove ? sessionControlBridge.executeMove(capturedSessionMove, effect) : effect(),
       };
       const sessionV2Active = !isPuzzleMode && sessionControlBridge.isActive();
@@ -4951,6 +5012,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
           : null;
       const scheduleAutoMove = (move, onInvalid = null, v2Options = null) => {
         const perform = (analysis) => {
+          if (!requestIsCurrent()) { retryMove(); return false; }
           const scheduledMove = auto_move_piece(
             move.substring(0, 2),
             move.substring(2, 4),
@@ -4981,7 +5043,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
             if (
               v2Observation.positionRevision !== smartPacingV2Runtime.positionRevision ||
               requestFen !== smartPacingV2Runtime.fen ||
-              !isMasterEnabled() || game.getFEN() !== requestFen || auto_move !== requestAutoMove
+              !requestIsCurrent()
             ) {
               retryMove();
               return;
@@ -5060,7 +5122,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
               return;
             }
             if (resp.status < 200 || resp.status >= 300) { retryMove(); return; }
-            if (!isMasterEnabled() || board.isConnected === false || game.getFEN() !== requestFen || auto_move !== requestAutoMove || (isPuzzleMode && (puzzleAutoMove !== requestPuzzleAutoMove || (!puzzleHint && !puzzleAutoMove)))) { retryMove(); return; }
+            if (!requestIsCurrent()) { retryMove(); return; }
             const data = JSON.parse(resp.responseText);
             if (Array.isArray(data) && /^[a-h][1-8][a-h][1-8][qrbn]?$/.test(data[0])) {
               const move = data[0];
@@ -5404,7 +5466,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       ui: { hidden: _ghostModeActive, mountError: thinkerUiLastFailure },
       externalConfig: { appliedRevision: _externalAppliedRevision, error: _externalConfigError },
       banner: { enabled: thinkerBannerEnabled, shown: Boolean(banner && banner.style.display !== "none"), reason, minimumWidth: THINKER_BANNER_MIN_WIDTH_PX, geometry: layout },
-      bot: { enabled: isMasterEnabled(), autoMove: auto_move, effectiveAutoMove: sessionControlBridge.effectiveAutoMove(auto_move), sessionActive: sessionControlBridge.isActive(), stage: thinkerMoveDiagnostic.stage, status: thinkerMoveDiagnostic.status, authenticated: Boolean(engineCapability), boardFound: Boolean(board), gameApiFound: Boolean(game), fenAvailable, canReadLegalMoves: typeof game?.getLegalMoves === "function", canExecuteMove: typeof game?.move === "function", retryPending: Date.now() < moveRetryAfter },
+      bot: { enabled: isMasterEnabled(), autoMove: auto_move, effectiveAutoMove: sessionControlBridge.effectiveAutoMove(auto_move), sessionActive: sessionControlBridge.isActive(), stage: thinkerMoveDiagnostic.stage, status: thinkerMoveDiagnostic.status, moveAuthority: readThinkerMoveAuthority(game), authenticated: Boolean(engineCapability), boardFound: Boolean(board), gameApiFound: Boolean(game), fenAvailable, canReadLegalMoves: typeof game?.getLegalMoves === "function", canExecuteMove: typeof game?.move === "function", retryPending: Date.now() < moveRetryAfter },
     };
   }
 
