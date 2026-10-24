@@ -8,14 +8,14 @@
         "width": 390,
         "scrollWidth": 375,
         "field": {
-          "x": 254,
-          "y": 550.5,
-          "width": 96,
+          "x": 25,
+          "y": 837,
+          "width": 75.25,
           "height": 32,
-          "top": 550.5,
-          "right": 350,
-          "bottom": 582.5,
-          "left": 254
+          "top": 837,
+          "right": 100.25,
+          "bottom": 869,
+          "left": 25
         }
       }
     },
@@ -26,14 +26,14 @@
         "width": 800,
         "scrollWidth": 800,
         "field": {
-          "x": 667,
-          "y": 353.5,
-          "width": 96,
+          "x": 37,
+          "y": 755,
+          "width": 175.5,
           "height": 32,
-          "top": 353.5,
-          "right": 763,
-          "bottom": 385.5,
-          "left": 667
+          "top": 755,
+          "right": 212.5,
+          "bottom": 787,
+          "left": 37
         }
       }
     },
@@ -44,14 +44,14 @@
         "width": 1033,
         "scrollWidth": 1033,
         "field": {
-          "x": 843.5,
-          "y": 353.5,
-          "width": 96,
+          "x": 93.5,
+          "y": 755,
+          "width": 205.5,
           "height": 32,
-          "top": 353.5,
-          "right": 939.5,
-          "bottom": 385.5,
-          "left": 843.5
+          "top": 755,
+          "right": 299,
+          "bottom": 787,
+          "left": 93.5
         }
       }
     },
@@ -62,14 +62,14 @@
         "width": 1034,
         "scrollWidth": 1034,
         "field": {
-          "x": 844,
-          "y": 353.5,
-          "width": 96,
+          "x": 94,
+          "y": 755,
+          "width": 205.5,
           "height": 32,
-          "top": 353.5,
-          "right": 940,
-          "bottom": 385.5,
-          "left": 844
+          "top": 755,
+          "right": 299.5,
+          "bottom": 787,
+          "left": 94
         }
       }
     },
@@ -80,14 +80,14 @@
         "width": 1280,
         "scrollWidth": 1280,
         "field": {
-          "x": 967,
-          "y": 353.5,
-          "width": 96,
+          "x": 217,
+          "y": 755,
+          "width": 205.5,
           "height": 32,
-          "top": 353.5,
-          "right": 1063,
-          "bottom": 385.5,
-          "left": 967
+          "top": 755,
+          "right": 422.5,
+          "bottom": 787,
+          "left": 217
         }
       }
     },
@@ -98,14 +98,14 @@
         "width": 1440,
         "scrollWidth": 1440,
         "field": {
-          "x": 1047,
-          "y": 353.5,
-          "width": 96,
+          "x": 297,
+          "y": 755,
+          "width": 205.5,
           "height": 32,
-          "top": 353.5,
-          "right": 1143,
-          "bottom": 385.5,
-          "left": 1047
+          "top": 755,
+          "right": 502.5,
+          "bottom": 787,
+          "left": 297
         }
       }
     }
@@ -113,16 +113,17 @@
   "checks": [
     "One field in both External Config tabs; Enter persists and synchronizes",
     "Actual built userscript field visible by default and synchronized both ways through GM transport",
+    "Rating Goal lives in Auto Play, not Engine Control; pointer focus has no outline or shadow",
     "Invalid values rejected, blur commits, refresh restores, blank clears",
     "Offline draft preserved; explicit retry saves after recovery; no dashboard or extra controls"
   ],
-  "startupMs": 704,
+  "startupMs": 732.5999999940395,
   "initialDiagnostics": {
     "state": "connected",
     "identity": "tracker_user",
     "reason": null,
-    "lastSnapshotAtMs": 1792800068514,
-    "snapshotLatencyMs": 41.099999994039536,
+    "lastSnapshotAtMs": 1792802018614,
+    "snapshotLatencyMs": 12.099999994039536,
     "observationCount": 1,
     "outboxError": "evidence-rejected",
     "pendingEvidence": 0,

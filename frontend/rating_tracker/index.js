@@ -22,7 +22,7 @@ function start({ window = globalThis.window, baseUrl, gmRequest, storage = windo
   const sent = new Set();
   const draw = () => {
     if (destroyed) return;
-    const host = window.document.querySelector('#krypbot-container .kb-strength-card');
+    const host = window.document.querySelector('#kb-session-panel .kb-session-fields');
     if (!host) { field?.destroy(); field = null; fieldHost = null; return; }
     if (fieldHost === host && host.querySelector('.tc-rating-target')) return;
     field?.destroy(); fieldHost = host;

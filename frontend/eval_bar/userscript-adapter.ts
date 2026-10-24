@@ -1182,9 +1182,23 @@ export class UserscriptEvalBar {
     this.root.hidden = rect.width <= 0 || rect.height <= 0;
     const placement = left === leftCandidate ? 'left' : left === rightCandidate ? 'right' : 'overlay';
     this.root.dataset.placement = placement;
-    this.root.style.left = `${left}px`;
-    this.root.style.top = `${rect.top}px`;
-    this.root.style.height = `${rect.height}px`;
+    const parent = this.root.offsetParent as HTMLElement | null;
+    const positionedParent = parent && (parent !== this.options.document.body
+      || this.options.window.getComputedStyle(parent).position !== 'static');
+    const parentRect = positionedParent ? parent.getBoundingClientRect() : null;
+    const pageLeft = parentRect && parent
+      ? left - parentRect.left - parent.clientLeft + parent.scrollLeft
+      : left + this.options.window.scrollX;
+    const pageTop = parentRect && parent
+      ? rect.top - parentRect.top - parent.clientTop + parent.scrollTop
+      : rect.top + this.options.window.scrollY;
+    const setPosition = (property: 'left' | 'top' | 'height', value: number): void => {
+      const next = `${value}px`;
+      if (this.root && this.root.style[property] !== next) this.root.style[property] = next;
+    };
+    setPosition('left', pageLeft);
+    setPosition('top', pageTop);
+    setPosition('height', rect.height);
     this.geometry = Object.freeze({ left, top: rect.top, width, height: rect.height, placement });
     this.boardGeometry = Object.freeze({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
   }

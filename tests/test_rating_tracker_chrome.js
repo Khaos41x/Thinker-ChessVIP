@@ -40,6 +40,8 @@ async function waitFor(test, timeout = 18000) {
     console.log('Rating Tracker browser: fixture and Chromium ready');
     const panel = await tab(base + '/config');
     await waitFor(() => evaluate(panel, `document.getElementById('tc-rating-target')!==null`));
+    assert.equal(await evaluate(panel, `document.getElementById('tc-rating-target').closest('section').id`), 'autoplay');
+    assert.equal(await evaluate(panel, `document.querySelector('#engine .tc-rating-target')`), null);
     const second = await tab(base + '/config');
     await waitFor(() => evaluate(second, `document.getElementById('tc-rating-target')!==null`));
     async function enter(client, value, blur = false) {
@@ -82,6 +84,9 @@ async function waitFor(test, timeout = 18000) {
     report.startupMs = await evaluate(board, `performance.now()-trackerStart`);
     report.initialDiagnostics = await evaluate(board, `window.__thinkerRatingTracker.diagnostics()`);
     await waitFor(() => evaluate(board, `document.querySelectorAll('#krypbot-container .tc-rating-target').length===1`));
+    assert.equal(await evaluate(board, `document.getElementById('tc-rating-target').closest('section').id`), 'kb-session-panel');
+    assert.equal(await evaluate(board, `document.querySelector('.kb-strength-card .tc-rating-target')`), null);
+    assert.equal(await evaluate(board, `document.getElementById('tc-rating-target').parentElement.parentElement.classList.contains('kb-session-fields')`), true);
     await waitFor(() => evaluate(board, `document.getElementById('tc-rating-target').value==='2200'`));
     assert.equal(await evaluate(panel, `document.getElementById('rating-tracker')`), null);
     assert.equal(await evaluate(board, `document.querySelector('.tc-rating-goal')`), null);
@@ -89,6 +94,23 @@ async function waitFor(test, timeout = 18000) {
     await waitFor(() => evaluate(panel, `document.getElementById('tc-rating-target').value==='2300'`));
     await waitFor(() => evaluate(second, `document.getElementById('tc-rating-target').value==='2300'`));
     report.checks.push('Actual built userscript field visible by default and synchronized both ways through GM transport');
+    for (const client of [board, panel]) {
+      await client.send('Page.bringToFront');
+      const borderBefore = await evaluate(client, `getComputedStyle(document.getElementById('tc-rating-target')).borderColor`);
+      const point = await evaluate(client, `(()=>{const i=document.getElementById('tc-rating-target');i.scrollIntoView({block:'center'});const r=i.getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2}})()`);
+      await client.send('Input.dispatchMouseEvent', {type:'mousePressed',button:'left',clickCount:1,...point});
+      await client.send('Input.dispatchMouseEvent', {type:'mouseReleased',button:'left',clickCount:1,...point});
+      const focus = await evaluate(client, `(()=>{const i=document.getElementById('tc-rating-target');const s=getComputedStyle(i);return{focused:document.activeElement===i,outline:s.outlineStyle,shadow:s.boxShadow}})()`);
+      assert.equal(focus.focused,true);assert.equal(focus.outline,'none');assert.equal(focus.shadow,'none');
+      assert.equal(await evaluate(client, `getComputedStyle(document.getElementById('tc-rating-target')).borderColor`), borderBefore);
+      await client.send('Input.dispatchKeyEvent', { type:'keyDown',key:'Tab',code:'Tab',windowsVirtualKeyCode:9 });
+      await client.send('Input.dispatchKeyEvent', { type:'keyUp',key:'Tab',code:'Tab',windowsVirtualKeyCode:9 });
+      const labelPoint = await evaluate(client, `(()=>{const r=document.querySelector('label[for="tc-rating-target"]').getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2}})()`);
+      await client.send('Input.dispatchMouseEvent', {type:'mousePressed',button:'left',clickCount:1,...labelPoint});
+      await client.send('Input.dispatchMouseEvent', {type:'mouseReleased',button:'left',clickCount:1,...labelPoint});
+      assert.equal(await evaluate(client, `getComputedStyle(document.getElementById('tc-rating-target')).outlineStyle`), 'none');
+    }
+    report.checks.push('Rating Goal lives in Auto Play, not Engine Control; pointer focus has no outline or shadow');
     await board.send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 1100, deviceScaleFactor: 1, mobile: false });
     await evaluate(board, `document.getElementById('tc-rating-target').blur();document.getElementById('tc-rating-target').scrollIntoView({block:'center'})`);
     const boardImage = await board.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true });

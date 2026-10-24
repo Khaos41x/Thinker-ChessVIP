@@ -29,7 +29,7 @@
 }
 
 .thinker-eval-v2-overlay {
-  position: fixed;
+  position: absolute;
   min-height: 0;
   margin: 0;
   flex: none;

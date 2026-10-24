@@ -1,10 +1,13 @@
-const FIELD_CSS = '.tc-rating-target{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:36px;border-top:1px solid var(--tc-divider,#3a3a36);font:500 13px/20px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.tc-rating-target input{box-sizing:border-box;width:96px;min-width:0;height:32px;border:1px solid var(--tc-border,#3a3a36);border-radius:6px;padding:0 10px;background:#1d1d1b;color:#f2f2ee;font:inherit;font-variant-numeric:tabular-nums}.tc-rating-target input:focus-visible{outline:1px solid #b9bab3;outline-offset:2px}.tc-rating-target input[aria-invalid=true]{border-color:#e6ac72}';
+const FIELD_CSS = '.tc-rating-target{display:flex;flex-direction:column;align-items:stretch;gap:4px;min-width:0;color:#b9bab3;font:500 12px/16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.tc-rating-target input{box-sizing:border-box;width:100%;min-width:0;height:32px;border:1px solid var(--tc-border,#3a3a36);border-radius:6px;padding:0 10px;background:#1d1d1b;color:#f2f2ee;font:inherit;font-variant-numeric:tabular-nums}.tc-rating-target input:focus{outline:none!important;box-shadow:none!important}.tc-rating-target[data-focus-input=keyboard] input:focus-visible{outline:1px solid #b9bab3!important;outline-offset:2px}.tc-rating-target input[aria-invalid=true]{border-color:#e6ac72}';
 
 function mountTarget({ window, host, request, id = 'tc-rating-target', installStyle = true }) {
   const document = window.document;
-  const row = document.createElement('div'); row.className = 'tc-rating-target';
+  const row = document.createElement('div'); row.className = 'kb-session-field tc-rating-target';
   const label = document.createElement('label'); label.htmlFor = id; label.textContent = 'Rating Goal';
   const input = document.createElement('input'); input.id = id; input.type = 'text'; input.inputMode = 'numeric'; input.autocomplete = 'off'; input.placeholder = 'Not set'; input.maxLength = 6;
+  const keyboardFocus = event => { if (event.key === 'Tab') row.setAttribute('data-focus-input', 'keyboard'); };
+  document.addEventListener?.('keydown', keyboardFocus, true);
+  row.addEventListener('pointerdown', () => row.setAttribute('data-focus-input', 'pointer'));
   const style = document.createElement('style'); style.textContent = FIELD_CSS;
   row.append(label, input); host.append(row); if (installStyle) document.head.append(style);
   let dirty = false;
@@ -49,7 +52,7 @@ function mountTarget({ window, host, request, id = 'tc-rating-target', installSt
   input.addEventListener('blur', () => { if (dirty) void commit(); else input.value = saved; });
   input.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); void commit(); } });
   void refresh();
-  return { refresh, destroy() { stopped = true; clearTimeout(timer); row.remove(); style.remove(); } };
+  return { refresh, destroy() { stopped = true; clearTimeout(timer); document.removeEventListener?.('keydown', keyboardFocus, true); row.remove(); style.remove(); } };
 }
 
 module.exports = { mountTarget };

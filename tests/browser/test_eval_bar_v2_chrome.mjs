@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { access, mkdtemp, rm } from 'node:fs/promises';
+import { access, mkdtemp, rm, mkdir, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -237,6 +237,14 @@ try {
     obsoleteEventsRejected: continuity.finalSnapshot.staleResultCount,
     aborts: continuity.finalSnapshot.abortCount,
   };
+  const evidenceDirectory = join(repositoryRoot, '_bmad-output', 'implementation-artifacts', 'autoplay-field-eval-anchor');
+  await mkdir(evidenceDirectory, { recursive: true });
+  await writeFile(join(evidenceDirectory, 'scroll-validation.json'), JSON.stringify({
+    fixture: 'Chromium deterministic analysis fixture; not authenticated Chess.com',
+    behavior: result.behavior,
+    continuity: result.continuitySummary,
+    visual: result.visual,
+  }, null, 2));
   console.log(JSON.stringify({
     browser: result.browser,
     behavior: result.behavior,
@@ -295,6 +303,10 @@ try {
       && visual.viewport.height === visualViewports[index].height
       && Math.abs(visual.baseline.width - visual.expectedWidth) <= 1
       && geometryAligned
+      && visual.position === 'absolute'
+      && visual.immediateScrollFrames.length === 30
+      && visual.immediateScrollFrames.every(frame => frame.topDelta <= 1 && frame.bottomDelta <= 1 && frame.anchorUnchanged)
+      && visual.positionedBody.topDelta <= 1 && visual.positionedBody.bottomDelta <= 1
       && visual.baseline.placement === 'left'
       && visual.boardSize === expectedBoardSize
       && visual.styles.dark === 'rgb(64, 61, 57)'

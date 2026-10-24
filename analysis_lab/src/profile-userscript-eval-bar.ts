@@ -398,6 +398,18 @@ async function runUserscriptEvalBarVisualTest() {
     gap: Math.abs(resizedBoardRect.left - resizedRailRect.right),
   };
 
+  const pageAnchor = { top: root.style.top, left: root.style.left };
+  const immediateScrollFrames = Array.from({ length: 30 }, (_, index) => {
+    window.scrollTo(0, index * 4);
+    const boardFrame = board.getBoundingClientRect();
+    const railFrame = root.getBoundingClientRect();
+    return {
+      scrollY: window.scrollY,
+      topDelta: Math.abs(boardFrame.top - railFrame.top),
+      bottomDelta: Math.abs(boardFrame.bottom - railFrame.bottom),
+      anchorUnchanged: root.style.top === pageAnchor.top && root.style.left === pageAnchor.left,
+    };
+  });
   window.scrollTo(0, 60);
   await waitFrames(2);
   const scrolledBoardRect = board.getBoundingClientRect();
@@ -408,6 +420,17 @@ async function runUserscriptEvalBarVisualTest() {
     gap: Math.abs(scrolledBoardRect.left - scrolledRailRect.right),
     scrollY: window.scrollY,
   };
+  const originalBodyPosition = document.body.style.position;
+  document.body.style.position = 'relative';
+  window.dispatchEvent(new Event('resize'));
+  await waitFrames(2);
+  const positionedBody = {
+    topDelta: Math.abs(root.getBoundingClientRect().top - board.getBoundingClientRect().top),
+    bottomDelta: Math.abs(root.getBoundingClientRect().bottom - board.getBoundingClientRect().bottom),
+  };
+  document.body.style.position = originalBodyPosition;
+  window.dispatchEvent(new Event('resize'));
+  await waitFrames(2);
   const hostPreserved = hostPreservedAfterMount
     && board.parentElement === shell
     && board.getAttribute('style') === originalBoardStyle;
@@ -430,6 +453,7 @@ async function runUserscriptEvalBarVisualTest() {
     leftDelta: Math.abs(root.getBoundingClientRect().left - board.getBoundingClientRect().left),
   };
   const geometry = adapter.snapshot().geometry;
+  const position = getComputedStyle(root).position;
   adapter.destroy();
   shell.remove();
   spacer.remove();
@@ -444,6 +468,9 @@ async function runUserscriptEvalBarVisualTest() {
     flipped,
     resized,
     scrolled,
+    immediateScrollFrames,
+    positionedBody,
+    position,
     rightFallback,
     overlayFallback,
     geometry,

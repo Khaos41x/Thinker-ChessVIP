@@ -1,0 +1,1371 @@
+{
+  "fixture": "Chromium deterministic analysis fixture; not authenticated Chess.com",
+  "behavior": {
+    "domPreserved": true,
+    "singleRootAfterRepeatedStart": true,
+    "overlayAligned": true,
+    "parentPreservedAfterDestroy": true,
+    "staleRejected": true,
+    "negativeRendered": true,
+    "cachedOrientationRendered": true,
+    "oldSameFenCallbacksRejected": true,
+    "requestIdsMonotonic": true,
+    "matePerspectiveRendered": true,
+    "negativeMatePerspectiveRendered": true,
+    "neutralRendered": true,
+    "contextMissPreservedVisual": true,
+    "oldContextRejected": true,
+    "contextCacheSeparated": true,
+    "cacheMissPreservedVisual": true,
+    "cacheHitMarkedFresh": true,
+    "cacheHitContinuous": true,
+    "missingFenWaiting": true,
+    "backendFailureVisible": true,
+    "recoveredAfterBackendFailure": true,
+    "hiddenWhenBoardHidden": true,
+    "visibleAfterBoardReturns": true,
+    "abortCount": 6,
+    "mountedBlockedWhenUnauthorized": true,
+    "noRequestWhenUnauthorized": true,
+    "remountedAfterSpaRoute": true,
+    "rootsAfterDestroy": 0,
+    "styleMarkers": 1,
+    "maximumPendingFramesDuringBurst": 1
+  },
+  "continuity": {
+    "transitions": 30,
+    "detectionMs": {
+      "minimum": 0.20499998331069946,
+      "average": 0.2728333314259847,
+      "maximum": 0.5300000011920929
+    },
+    "firstEvaluationMs": {
+      "minimum": 14.504999995231628,
+      "average": 15.914333336551984,
+      "maximum": 17.979999989271164
+    },
+    "firstFrameMs": {
+      "minimum": 14.504999998807989,
+      "average": 15.735333324631075,
+      "maximum": 16.30999999046344
+    },
+    "fillOpacities": [
+      "1"
+    ],
+    "labelOpacities": [
+      "1"
+    ],
+    "neutralResets": 0,
+    "domRemounts": 0,
+    "boardRetargets": 1,
+    "obsoleteEventsRejected": 30,
+    "aborts": 30
+  },
+  "visual": [
+    {
+      "viewport": {
+        "width": 900,
+        "height": 700
+      },
+      "expectedWidth": 20,
+      "boardSize": 528,
+      "baseline": {
+        "width": 20,
+        "heightDelta": 0,
+        "topDelta": 0,
+        "gap": 10,
+        "placement": "left",
+        "labelBottomDelta": 0,
+        "labelCenterDelta": 0
+      },
+      "styles": {
+        "dark": "rgb(64, 61, 57)",
+        "light": "rgb(255, 255, 255)",
+        "draw": "rgb(119, 117, 116)",
+        "radius": "2px",
+        "borderTopWidth": "0px",
+        "shadow": "none",
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif",
+        "fontSize": "10px",
+        "fontWeight": "600",
+        "lineHeight": "14.3px",
+        "labelColor": "rgb(64, 61, 57)",
+        "mixBlendMode": "normal",
+        "paddingTop": "5px",
+        "paddingBottom": "5px",
+        "labelHeight": 24.296875,
+        "whiteOriginY": 528,
+        "writingMode": "horizontal-tb",
+        "labelTransform": "none",
+        "score": "10.3",
+        "fillTransform": "scaleY(0.891058)",
+        "fillInlineHeight": ""
+      },
+      "flipped": {
+        "labelTopDelta": 0,
+        "labelCenterDelta": 0,
+        "originY": 0
+      },
+      "resized": {
+        "heightDelta": 0,
+        "topDelta": 0,
+        "gap": 10
+      },
+      "scrolled": {
+        "heightDelta": 0,
+        "topDelta": 0,
+        "gap": 10,
+        "scrollY": 60
+      },
+      "immediateScrollFrames": [
+        {
+          "scrollY": 0,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 4,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 8,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 12,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 16,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 20,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 24,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 28,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 32,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 36,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 40,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 44,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 48,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 52,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 56,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 60,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 64,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 68,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 72,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 76,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 80,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 84,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 88,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 92,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 96,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 100,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 104,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 108,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 112,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 116,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        }
+      ],
+      "positionedBody": {
+        "topDelta": 0,
+        "bottomDelta": 0
+      },
+      "position": "absolute",
+      "rightFallback": {
+        "placement": "right",
+        "gap": 10
+      },
+      "overlayFallback": {
+        "placement": "overlay",
+        "leftDelta": 0
+      },
+      "geometry": {
+        "left": 8,
+        "top": 80,
+        "width": 20,
+        "height": 448,
+        "placement": "overlay"
+      },
+      "hostPreserved": true,
+      "originalShellStyle": "display: block; margin-left: 80px; margin-top: 140px; width: 528px; height: 528px;",
+      "rootsAfterDestroy": 0
+    },
+    {
+      "viewport": {
+        "width": 959,
+        "height": 720
+      },
+      "expectedWidth": 20,
+      "boardSize": 480,
+      "baseline": {
+        "width": 20,
+        "heightDelta": 0,
+        "topDelta": 0,
+        "gap": 10,
+        "placement": "left",
+        "labelBottomDelta": 0,
+        "labelCenterDelta": 0
+      },
+      "styles": {
+        "dark": "rgb(64, 61, 57)",
+        "light": "rgb(255, 255, 255)",
+        "draw": "rgb(119, 117, 116)",
+        "radius": "2px",
+        "borderTopWidth": "0px",
+        "shadow": "none",
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif",
+        "fontSize": "10px",
+        "fontWeight": "600",
+        "lineHeight": "14.3px",
+        "labelColor": "rgb(64, 61, 57)",
+        "mixBlendMode": "normal",
+        "paddingTop": "5px",
+        "paddingBottom": "5px",
+        "labelHeight": 24.296875,
+        "whiteOriginY": 480,
+        "writingMode": "horizontal-tb",
+        "labelTransform": "none",
+        "score": "10.3",
+        "fillTransform": "scaleY(0.894046)",
+        "fillInlineHeight": ""
+      },
+      "flipped": {
+        "labelTopDelta": 0,
+        "labelCenterDelta": 0,
+        "originY": 0
+      },
+      "resized": {
+        "heightDelta": 0,
+        "topDelta": 0,
+        "gap": 10
+      },
+      "scrolled": {
+        "heightDelta": 0,
+        "topDelta": 0,
+        "gap": 10,
+        "scrollY": 60
+      },
+      "immediateScrollFrames": [
+        {
+          "scrollY": 0,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 4,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 8,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 12,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 16,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 20,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 24,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 28,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 32,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 36,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 40,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 44,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 48,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 52,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 56,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 60,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 64,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 68,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 72,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 76,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 80,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 84,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 88,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 92,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 96,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 100,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 104,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 108,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 112,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 116,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        }
+      ],
+      "positionedBody": {
+        "topDelta": 0,
+        "bottomDelta": 0
+      },
+      "position": "absolute",
+      "rightFallback": {
+        "placement": "right",
+        "gap": 10
+      },
+      "overlayFallback": {
+        "placement": "overlay",
+        "leftDelta": 0
+      },
+      "geometry": {
+        "left": 8,
+        "top": 80,
+        "width": 20,
+        "height": 400,
+        "placement": "overlay"
+      },
+      "hostPreserved": true,
+      "originalShellStyle": "display: block; margin-left: 80px; margin-top: 140px; width: 480px; height: 480px;",
+      "rootsAfterDestroy": 0
+    },
+    {
+      "viewport": {
+        "width": 960,
+        "height": 720
+      },
+      "expectedWidth": 30,
+      "boardSize": 480,
+      "baseline": {
+        "width": 30,
+        "heightDelta": 0,
+        "topDelta": 0,
+        "gap": 10,
+        "placement": "left",
+        "labelBottomDelta": 0,
+        "labelCenterDelta": 0
+      },
+      "styles": {
+        "dark": "rgb(64, 61, 57)",
+        "light": "rgb(255, 255, 255)",
+        "draw": "rgb(119, 117, 116)",
+        "radius": "2px",
+        "borderTopWidth": "0px",
+        "shadow": "none",
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif",
+        "fontSize": "10px",
+        "fontWeight": "600",
+        "lineHeight": "14.3px",
+        "labelColor": "rgb(64, 61, 57)",
+        "mixBlendMode": "normal",
+        "paddingTop": "5px",
+        "paddingBottom": "5px",
+        "labelHeight": 24.296875,
+        "whiteOriginY": 480,
+        "writingMode": "horizontal-tb",
+        "labelTransform": "none",
+        "score": "10.3",
+        "fillTransform": "scaleY(0.886412)",
+        "fillInlineHeight": ""
+      },
+      "flipped": {
+        "labelTopDelta": 0,
+        "labelCenterDelta": 0,
+        "originY": 0
+      },
+      "resized": {
+        "heightDelta": 0,
+        "topDelta": 0,
+        "gap": 10
+      },
+      "scrolled": {
+        "heightDelta": 0,
+        "topDelta": 0,
+        "gap": 10,
+        "scrollY": 60
+      },
+      "immediateScrollFrames": [
+        {
+          "scrollY": 0,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 4,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 8,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 12,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 16,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 20,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 24,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 28,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 32,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 36,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 40,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 44,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 48,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 52,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 56,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 60,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 64,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 68,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 72,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 76,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 80,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 84,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 88,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 92,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 96,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 100,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 104,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 108,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 112,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 116,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        }
+      ],
+      "positionedBody": {
+        "topDelta": 0,
+        "bottomDelta": 0
+      },
+      "position": "absolute",
+      "rightFallback": {
+        "placement": "right",
+        "gap": 10
+      },
+      "overlayFallback": {
+        "placement": "overlay",
+        "leftDelta": 0
+      },
+      "geometry": {
+        "left": 8,
+        "top": 80,
+        "width": 30,
+        "height": 400,
+        "placement": "overlay"
+      },
+      "hostPreserved": true,
+      "originalShellStyle": "display: block; margin-left: 80px; margin-top: 140px; width: 480px; height: 480px;",
+      "rootsAfterDestroy": 0
+    },
+    {
+      "viewport": {
+        "width": 961,
+        "height": 720
+      },
+      "expectedWidth": 30,
+      "boardSize": 480,
+      "baseline": {
+        "width": 30,
+        "heightDelta": 0,
+        "topDelta": 0,
+        "gap": 10,
+        "placement": "left",
+        "labelBottomDelta": 0,
+        "labelCenterDelta": 0
+      },
+      "styles": {
+        "dark": "rgb(64, 61, 57)",
+        "light": "rgb(255, 255, 255)",
+        "draw": "rgb(119, 117, 116)",
+        "radius": "2px",
+        "borderTopWidth": "0px",
+        "shadow": "none",
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif",
+        "fontSize": "10px",
+        "fontWeight": "600",
+        "lineHeight": "14.3px",
+        "labelColor": "rgb(64, 61, 57)",
+        "mixBlendMode": "normal",
+        "paddingTop": "5px",
+        "paddingBottom": "5px",
+        "labelHeight": 24.296875,
+        "whiteOriginY": 480,
+        "writingMode": "horizontal-tb",
+        "labelTransform": "none",
+        "score": "10.3",
+        "fillTransform": "scaleY(0.894393)",
+        "fillInlineHeight": ""
+      },
+      "flipped": {
+        "labelTopDelta": 0,
+        "labelCenterDelta": 0,
+        "originY": 0
+      },
+      "resized": {
+        "heightDelta": 0,
+        "topDelta": 0,
+        "gap": 10
+      },
+      "scrolled": {
+        "heightDelta": 0,
+        "topDelta": 0,
+        "gap": 10,
+        "scrollY": 60
+      },
+      "immediateScrollFrames": [
+        {
+          "scrollY": 0,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 4,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 8,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 12,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 16,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 20,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 24,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 28,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 32,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 36,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 40,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 44,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 48,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 52,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 56,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 60,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 64,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 68,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 72,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 76,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 80,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 84,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 88,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 92,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 96,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 100,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 104,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 108,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 112,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 116,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        }
+      ],
+      "positionedBody": {
+        "topDelta": 0,
+        "bottomDelta": 0
+      },
+      "position": "absolute",
+      "rightFallback": {
+        "placement": "right",
+        "gap": 10
+      },
+      "overlayFallback": {
+        "placement": "overlay",
+        "leftDelta": 0
+      },
+      "geometry": {
+        "left": 8,
+        "top": 80,
+        "width": 30,
+        "height": 400,
+        "placement": "overlay"
+      },
+      "hostPreserved": true,
+      "originalShellStyle": "display: block; margin-left: 80px; margin-top: 140px; width: 480px; height: 480px;",
+      "rootsAfterDestroy": 0
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "expectedWidth": 30,
+      "boardSize": 584,
+      "baseline": {
+        "width": 30,
+        "heightDelta": 0,
+        "topDelta": 0,
+        "gap": 10,
+        "placement": "left",
+        "labelBottomDelta": 0,
+        "labelCenterDelta": 0
+      },
+      "styles": {
+        "dark": "rgb(64, 61, 57)",
+        "light": "rgb(255, 255, 255)",
+        "draw": "rgb(119, 117, 116)",
+        "radius": "2px",
+        "borderTopWidth": "0px",
+        "shadow": "none",
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif",
+        "fontSize": "10px",
+        "fontWeight": "600",
+        "lineHeight": "14.3px",
+        "labelColor": "rgb(64, 61, 57)",
+        "mixBlendMode": "normal",
+        "paddingTop": "5px",
+        "paddingBottom": "5px",
+        "labelHeight": 24.296875,
+        "whiteOriginY": 584,
+        "writingMode": "horizontal-tb",
+        "labelTransform": "none",
+        "score": "10.3",
+        "fillTransform": "scaleY(0.892872)",
+        "fillInlineHeight": ""
+      },
+      "flipped": {
+        "labelTopDelta": 0,
+        "labelCenterDelta": 0,
+        "originY": 0
+      },
+      "resized": {
+        "heightDelta": 0,
+        "topDelta": 0,
+        "gap": 10
+      },
+      "scrolled": {
+        "heightDelta": 0,
+        "topDelta": 0,
+        "gap": 10,
+        "scrollY": 60
+      },
+      "immediateScrollFrames": [
+        {
+          "scrollY": 0,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 4,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 8,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 12,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 16,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 20,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 24,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 28,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 32,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 36,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 40,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 44,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 48,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 52,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 56,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 60,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 64,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 68,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 72,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 76,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 80,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 84,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 88,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 92,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 96,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 100,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 104,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 108,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 112,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        },
+        {
+          "scrollY": 116,
+          "topDelta": 0,
+          "bottomDelta": 0,
+          "anchorUnchanged": true
+        }
+      ],
+      "positionedBody": {
+        "topDelta": 0,
+        "bottomDelta": 0
+      },
+      "position": "absolute",
+      "rightFallback": {
+        "placement": "right",
+        "gap": 10
+      },
+      "overlayFallback": {
+        "placement": "overlay",
+        "leftDelta": 0
+      },
+      "geometry": {
+        "left": 8,
+        "top": 80,
+        "width": 30,
+        "height": 504,
+        "placement": "overlay"
+      },
+      "hostPreserved": true,
+      "originalShellStyle": "display: block; margin-left: 80px; margin-top: 140px; width: 584px; height: 584px;",
+      "rootsAfterDestroy": 0
+    }
+  ]
+}
