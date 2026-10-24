@@ -88,12 +88,21 @@ def create_rating_tracker_blueprint(service):
     def persistence_error(exc):
         return jsonify(error={"code": "HISTORY_COULD_NOT_BE_SAVED", "retryable": True, "source": "rating-tracker"}), 503
 
-    def body():
+    def body(strict=False):
         raw = request.stream.read(16385)
         if len(raw) > 16384:
             raise TrackerError("REQUEST_TOO_LARGE", 413)
         try:
-            value = json.loads(raw)
+            def pairs(items):
+                values = dict(items)
+                if len(values) != len(items):
+                    raise ValueError("Duplicate JSON key")
+                return values
+
+            def constant(value):
+                raise ValueError("Non-finite JSON value")
+
+            value = json.loads(raw, object_pairs_hook=pairs, parse_constant=constant) if strict else json.loads(raw)
         except (ValueError, UnicodeError) as exc:
             raise TrackerError("INVALID_JSON") from exc
         if not isinstance(value, dict):
@@ -103,6 +112,10 @@ def create_rating_tracker_blueprint(service):
     @panel.route("/rating-goals/target", methods=["GET", "POST"])
     def target():
         return jsonify(service.rating_target(body() if request.method == "POST" else None))
+
+    @panel.post("/rating-goals/session")
+    def session_goal():
+        return jsonify(service.session_goal(body(strict=True)))
 
     @panel.get("/rating-goals/snapshot")
     def snapshot():

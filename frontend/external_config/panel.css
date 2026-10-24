@@ -52,6 +52,10 @@
 .tc-rating-target input[aria-invalid=true] {
   border-color: #e6ac72;
 }
+.tc-rating-goal-status {
+  font-size: 11px;
+  line-height: 16px;
+}
 * {
   box-sizing: border-box;
 }

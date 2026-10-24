@@ -1,4 +1,5 @@
-const { observePage } = require('./dom-adapter');
+const { observePage, loggedInUsername } = require('./dom-adapter');
+const { createSessionGoalGuard } = require('./session-goal');
 const { createTransport, createOutbox } = require('./bridge');
 const { mountTarget } = require('./target-field');
 const { staleSnapshot, snapshotCache } = require('./cache');
@@ -19,6 +20,19 @@ function start({ window = globalThis.window, baseUrl, gmRequest, storage = windo
   let field;
   let fieldHost;
   let snapshot;
+  let goalWasBlocking = false;
+  const sessionGoal = createSessionGoalGuard({ transport, storage, crypto: window.crypto,
+    getSession: () => window.krypbotSessionControlBridge?.sessionSnapshot(),
+    getUsername: () => loggedInUsername(window.document),
+    getRole: () => window.krypbotSessionControlBridge?.status().role,
+    stop: () => window.krypbotSessionControlBridge?.gracefulStop(),
+    onChange: value => {
+      field?.setSessionState(value);
+      const resume = goalWasBlocking && !value.blockQueue;
+      goalWasBlocking = value.blockQueue;
+      if (resume) window.krypbotSessionControlBridge?.ratingGoalUpdated();
+    },
+  });
   const sent = new Set();
   const draw = () => {
     if (destroyed) return;
@@ -27,6 +41,7 @@ function start({ window = globalThis.window, baseUrl, gmRequest, storage = windo
     if (fieldHost === host && host.querySelector('.tc-rating-target')) return;
     field?.destroy(); fieldHost = host;
     field = mountTarget({ window, host, request: transport.request });
+    field.setSessionState(sessionGoal.snapshot());
   };
   async function poll() {
     clearTimeout(snapshotTimer);
@@ -81,9 +96,10 @@ function start({ window = globalThis.window, baseUrl, gmRequest, storage = windo
   const cleanObserver = new window.MutationObserver(draw);
   cleanObserver.observe(window.document.documentElement, { childList: true, subtree: true });
   window.addEventListener('storage', draw);
-  const instance = { refresh() { observer.refresh(); draw(); void field?.refresh(); return poll(); }, diagnostics() { return { ...diagnostics, pendingEvidence: outbox.size, fieldMounted: Boolean(fieldHost?.isConnected), goalCount: snapshot?.goals?.length || 0, hostFound: Boolean(window.document.getElementById('krypbot-container')) }; }, destroy() { destroyed = true; generation++; clearTimeout(snapshotTimer); active?.abort(); observer.destroy(); outbox.destroy(); cleanObserver.disconnect(); field?.destroy(); transport.destroy?.(); window.removeEventListener('storage', draw); delete window.__thinkerRatingTracker; } };
+  const instance = { refresh() { observer.refresh(); draw(); void field?.refresh(); void sessionGoal.refresh(); return poll(); }, prepareSessionGoal: () => field?.flush(), refreshSessionGoal: sessionGoal.refresh, blocksQueue: sessionGoal.blocksQueue, onSessionGameCompleted: sessionGoal.completedGame, diagnostics() { return { ...diagnostics, sessionGoal: sessionGoal.snapshot(), pendingEvidence: outbox.size, fieldMounted: Boolean(fieldHost?.isConnected), goalCount: snapshot?.goals?.length || 0, hostFound: Boolean(window.document.getElementById('krypbot-container')) }; }, destroy() { destroyed = true; generation++; clearTimeout(snapshotTimer); active?.abort(); observer.destroy(); outbox.destroy(); sessionGoal.destroy(); cleanObserver.disconnect(); field?.destroy(); transport.destroy?.(); window.removeEventListener('storage', draw); delete window.__thinkerRatingTracker; } };
   window.__thinkerRatingTracker = instance;
   draw();
+  sessionGoal.start();
   void outbox.flush();
   return instance;
 }

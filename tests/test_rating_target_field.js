@@ -58,6 +58,11 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
     type('30'); release(); await tick();
     assert.equal(writes.at(-1), 2900, 'Editing after a queued commit invalidates that commit');
     assert.equal(input.value, '30');
+    type('3100');
+    const flushing = field.flush(); release(); await flushing;
+    assert.equal(value, 3100, 'Session Start waits for the field save instead of racing a blur POST');
+    type('bad'); await assert.rejects(field.flush(),{code:'RATING_TARGET_NOT_SAVED'});
+    type('3200'); const stoppedFlush=field.flush();field.destroy();release();await assert.rejects(stoppedFlush,{code:'RATING_TARGET_NOT_SAVED'});await tick();
     console.log('PASS target field: explicit commit boundaries, queued edits, live synchronization, draft preservation, validation and clear');
   } finally { field.destroy(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

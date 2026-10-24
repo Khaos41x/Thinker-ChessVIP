@@ -1,13 +1,19 @@
 # Rating Goal Tracker
 
-The tracker observes public Chess.com ratings. It never plays moves, changes difficulty, resigns, queues games or controls Auto Play. It works with every automation toggle off.
+The tracker observes public Chess.com ratings. It never plays moves, changes difficulty, resigns or initiates matchmaking. A separate Auto Play session guard consumes confirmed observations only to prevent another queue or request the existing graceful stop. Existing standalone rating goals remain observational and independent of automation toggles.
 
 ## Run and use
 
 1. Start the existing local server with `python app.py` and open `http://127.0.0.1:5050/config`.
 2. Find the single **Rating Goal** text field in **Auto Play**, beside the session settings on Chess.com and inside Auto Play in External Config. Engine Control contains engine settings only.
 3. Enter a whole-number rating and press Enter or leave the field. The value is saved locally in SQLite and synchronized across both surfaces. Clear the field to unset it. A failed save preserves your draft for retry.
-4. This simplified field stores the desired rating only. It does not create an account/category monitoring subscription, modify existing per-category goals, change engine strength, or control games. Previously created monitoring goals and history remain preserved in the backend.
+4. Start an Auto Play session explicitly. The saved target, your validated account and the queue's Bullet/Blitz/Rapid category are pinned for that session. Target edits apply to the next session. Leaving the target blank disables the rating stop condition after the local binding handshake; it does not require public rating lookup. Existing per-category goals and history remain unchanged.
+
+Only fresh, reconciled public evidence can establish the baseline or confirm a crossing. A target at or above the initial confirmed rating is an upward target; a lower target is a downward monitoring threshold. When confirmed, the session leader requests the existing graceful stop: no resignation, move adjustment or outcome manipulation. A game already underway follows the existing draining behavior. Reaching a target blocks legacy queue fallback even after tracker restoration; another session requires an explicit Start.
+
+After a completed game, the guard pauses new queue admission until publication is reconciled. Public data may be delayed, so completion is not instantaneous or guaranteed within a particular interval. Offline, stale, disputed, unknown-identity or unknown-category data cannot claim success. A small inline status beside the target shows pending, unavailable or reached state; no separate dashboard is added. The first session binding requires the local server even for an empty target; once an empty target is pinned it remains unconstrained if the tracker connection later fails.
+
+Bindings are stored independently of existing goals. Active polls renew a 15-minute monitoring heartbeat. Abandoned bindings become dormant and stop public-data work unless another session or goal still needs the account. Restoring the same active session preserves its target/baseline but requires fresh revalidation. Finishing is monotonic; delayed requests cannot reactivate a finished binding.
 
 Targets are not engine Strength Level. Downward thresholds are neutral observations, never instructions to lose games. Historical changes are descriptive, not predictions of how many games remain.
 
@@ -50,6 +56,6 @@ The same inputs must generate identical output. Bundle sizes are informational; 
 
 ## Validation scope
 
-Deterministic API fixtures test delayed publication, missing categories, errors and contradictory records without playing ranked games. Chromium fixtures exercise the built userscript and External Config against real Flask with a controlled provider. These do not prove the current authenticated Chess.com DOM or Tampermonkey extension behavior. Read-only authenticated smoke checks remain explicitly separate; unknown selectors must fall back to public API monitoring, not guess identity or category.
+Deterministic API fixtures test delayed publication, missing categories, errors and contradictory records without playing ranked games. Chromium fixtures exercise the built userscript and External Config against real Flask with a controlled provider, actual IndexedDB, Web Locks and the existing Session Control controller. Upward/downward crossings stop that controller and restored completion remains blocked from requeueing. These do not prove the current authenticated Chess.com DOM or Tampermonkey extension behavior. Read-only authenticated smoke checks remain explicitly separate; unknown identity or category blocks the configured stop-condition guard rather than guessing.
 
 Official provider documentation: [Chess.com Published-Data API](https://www.chess.com/news/view/published-data-api).

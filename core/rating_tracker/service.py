@@ -12,6 +12,7 @@ from .goals import evaluate
 from .public_client import PublicDataClient
 from .reconcile import reconcile
 from .repository import Repository
+from .session_goal import active_sessions, lease_live, retire_expired_sessions, session_goal
 
 
 class RatingTrackerService:
@@ -23,7 +24,17 @@ class RatingTrackerService:
         self.wake = threading.Event()
         self.worker = None
         self.worker_lock = threading.Lock()
+        self.session_goal_lock = threading.RLock()
         self.last_error = None
+
+    def session_goal(self, body):
+        return session_goal(self, body)
+
+    def _retire_session_leases(self, account_key=None):
+        bindings = [json.loads(row["value"]) for row in self.repository.rows("SELECT value FROM metadata WHERE key LIKE 'sessionGoal:%'")]
+        if any(binding.get("active") and binding.get("target") is not None and binding.get("accountKey") and not binding.get("dormantAtMs") and (not account_key or binding["accountKey"] == account_key) and not lease_live(binding, self.clock()) for binding in bindings):
+            with self.repository.transaction() as db:
+                retire_expired_sessions(self, db, account_key)
 
     def start(self):
         with self.worker_lock:
@@ -164,7 +175,7 @@ class RatingTrackerService:
                     goal.pop(field, None)
             goal["revision"] += 1
             self._save_goal(db, goal)
-            active = db.execute("SELECT 1 FROM goals WHERE account_key=? AND state IN ('tracking','awaiting-baseline','reached') LIMIT 1", (goal["accountKey"],)).fetchone()
+            active = db.execute("SELECT 1 FROM goals WHERE account_key=? AND state IN ('tracking','awaiting-baseline','reached') LIMIT 1", (goal["accountKey"],)).fetchone() or active_sessions(db, goal["accountKey"], self.clock())
             db.execute("UPDATE monitoring_preferences SET enabled=? WHERE account_key=?", (int(bool(active)), goal["accountKey"]))
             if active:
                 self._schedule(db, goal["accountKey"], self.clock())
@@ -294,6 +305,10 @@ class RatingTrackerService:
                 db.execute("INSERT OR IGNORE INTO notifications(notification_id,account_key,goal_id,data) VALUES(?,?,?,?)", (notification_id, account_key, goal["goalId"], json.dumps(notification)))
 
     def process_account(self, account_key):
+        self._retire_session_leases(account_key)
+        enabled = self.repository.rows("SELECT enabled FROM monitoring_preferences WHERE account_key=?", (account_key,))
+        if not enabled or not enabled[0]["enabled"]:
+            return
         accounts = self.repository.rows("SELECT * FROM players WHERE account_key=?", (account_key,))
         if not accounts:
             return
@@ -446,6 +461,11 @@ class RatingTrackerService:
         db.execute("DELETE FROM monitoring_preferences WHERE account_key=?", (old_key,))
         db.execute("INSERT OR REPLACE INTO monitoring_preferences VALUES(?,1)", (new_key,))
         db.execute("DELETE FROM players WHERE account_key=?", (old_key,))
+        for row in db.execute("SELECT key,value FROM metadata WHERE key LIKE 'sessionGoal:%'").fetchall():
+            binding = json.loads(row["value"])
+            if binding.get("accountKey") == old_key:
+                binding["accountKey"] = new_key
+                db.execute("UPDATE metadata SET value=? WHERE key=?", (json.dumps(binding), row["key"]))
         self._schedule(db, new_key, self.clock())
 
     def _ingest_archive(self, account, generation, response):
@@ -610,7 +630,7 @@ class RatingTrackerService:
                 raise TrackerError("REVISION_CONFLICT", 409)
             db.execute("DELETE FROM notifications WHERE goal_id=?", (goal_id,))
             db.execute("DELETE FROM goals WHERE goal_id=?", (goal_id,))
-            if not db.execute("SELECT 1 FROM goals WHERE account_key=? AND state IN ('tracking','awaiting-baseline','reached')", (goal["accountKey"],)).fetchone():
+            if not db.execute("SELECT 1 FROM goals WHERE account_key=? AND state IN ('tracking','awaiting-baseline','reached')", (goal["accountKey"],)).fetchone() and not active_sessions(db, goal["accountKey"], self.clock()):
                 db.execute("UPDATE monitoring_preferences SET enabled=0 WHERE account_key=?", (goal["accountKey"],))
                 db.execute("UPDATE players SET generation=generation+1 WHERE account_key=?", (goal["accountKey"],))
                 db.execute("DELETE FROM refresh_jobs WHERE account_key=?", (goal["accountKey"],))
@@ -626,6 +646,13 @@ class RatingTrackerService:
                 db.execute("DELETE FROM http_cache WHERE resource=? OR resource LIKE ?", ("https://api.chess.com/pub/player/" + name, "https://api.chess.com/pub/player/" + name + "/%"))
             db.execute("DELETE FROM players WHERE account_key=?", (account_key,))
             db.execute("DELETE FROM metadata WHERE key=?", ("error:" + account_key,))
+            for row in db.execute("SELECT key,value FROM metadata WHERE key LIKE 'sessionGoal:%'").fetchall():
+                binding = json.loads(row["value"])
+                if binding.get("accountKey") == account_key:
+                    binding.update(active=False, target=None, deletedAtMs=self.clock())
+                    binding.pop("goal", None)
+                    binding.pop("accountKey", None)
+                    db.execute("UPDATE metadata SET value=? WHERE key=?", (json.dumps(binding), row["key"]))
         if hasattr(self.client, "cancel"):
             for name in set(aliases + [account["username"]]):
                 self.client.cancel(name)
@@ -727,6 +754,7 @@ class RatingTrackerService:
     def _run(self):
         while not self.stopping.is_set():
             try:
+                self._retire_session_leases()
                 jobs = self.repository.rows("SELECT account_key FROM refresh_jobs WHERE due_at<=? ORDER BY due_at LIMIT 1", (self.clock(),))
                 if jobs:
                     self.process_account(jobs[0]["account_key"])

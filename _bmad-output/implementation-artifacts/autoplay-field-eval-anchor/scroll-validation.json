@@ -35,19 +35,19 @@
   "continuity": {
     "transitions": 30,
     "detectionMs": {
-      "minimum": 0.20499998331069946,
-      "average": 0.2728333314259847,
-      "maximum": 0.5300000011920929
+      "minimum": 0.2149999737739563,
+      "average": 0.25299999912579857,
+      "maximum": 0.4300000071525574
     },
     "firstEvaluationMs": {
-      "minimum": 14.504999995231628,
-      "average": 15.914333336551984,
-      "maximum": 17.979999989271164
+      "minimum": 15.055000007152557,
+      "average": 16.36983333528042,
+      "maximum": 18.030000001192093
     },
     "firstFrameMs": {
-      "minimum": 14.504999998807989,
-      "average": 15.735333324631075,
-      "maximum": 16.30999999046344
+      "minimum": 14.380000005960483,
+      "average": 15.536833336472522,
+      "maximum": 16.309999997615705
     },
     "fillOpacities": [
       "1"
@@ -98,7 +98,7 @@
         "writingMode": "horizontal-tb",
         "labelTransform": "none",
         "score": "10.3",
-        "fillTransform": "scaleY(0.891058)",
+        "fillTransform": "scaleY(0.893753)",
         "fillInlineHeight": ""
       },
       "flipped": {
@@ -359,7 +359,7 @@
         "writingMode": "horizontal-tb",
         "labelTransform": "none",
         "score": "10.3",
-        "fillTransform": "scaleY(0.894046)",
+        "fillTransform": "scaleY(0.893033)",
         "fillInlineHeight": ""
       },
       "flipped": {
@@ -620,7 +620,7 @@
         "writingMode": "horizontal-tb",
         "labelTransform": "none",
         "score": "10.3",
-        "fillTransform": "scaleY(0.886412)",
+        "fillTransform": "scaleY(0.89205)",
         "fillInlineHeight": ""
       },
       "flipped": {
@@ -881,7 +881,7 @@
         "writingMode": "horizontal-tb",
         "labelTransform": "none",
         "score": "10.3",
-        "fillTransform": "scaleY(0.894393)",
+        "fillTransform": "scaleY(0.893097)",
         "fillInlineHeight": ""
       },
       "flipped": {
@@ -1142,7 +1142,7 @@
         "writingMode": "horizontal-tb",
         "labelTransform": "none",
         "score": "10.3",
-        "fillTransform": "scaleY(0.892872)",
+        "fillTransform": "scaleY(0.893291)",
         "fillInlineHeight": ""
       },
       "flipped": {

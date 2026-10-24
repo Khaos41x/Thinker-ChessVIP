@@ -114,21 +114,72 @@
     "One field in both External Config tabs; Enter persists and synchronizes",
     "Actual built userscript field visible by default and synchronized both ways through GM transport",
     "Rating Goal lives in Auto Play, not Engine Control; pointer focus has no outline or shadow",
+    "Confirmed upward target stops real IndexedDB/leader-fenced SessionControl and remains queue-blocked after tracker restoration",
+    "Naturally crossed downward threshold uses same graceful stop without engine or outcome manipulation",
+    "Blank target leaves new sessions unconstrained; all test crossings use controlled public evidence, no competitive gameplay",
     "Invalid values rejected, blur commits, refresh restores, blank clears",
     "Offline draft preserved; explicit retry saves after recovery; no dashboard or extra controls"
   ],
-  "startupMs": 732.5999999940395,
+  "startupMs": 668.6999999880791,
   "initialDiagnostics": {
     "state": "connected",
     "identity": "tracker_user",
     "reason": null,
-    "lastSnapshotAtMs": 1792802018614,
-    "snapshotLatencyMs": 12.099999994039536,
+    "lastSnapshotAtMs": 1792805886802,
+    "snapshotLatencyMs": 16.600000023841858,
     "observationCount": 1,
     "outboxError": "evidence-rejected",
+    "sessionGoal": {
+      "state": "idle",
+      "target": null,
+      "eligible": false,
+      "reached": false,
+      "blockQueue": false
+    },
     "pendingEvidence": 0,
     "fieldMounted": true,
     "goalCount": 0,
     "hostFound": true
-  }
+  },
+  "upwardSession": {
+    "phase": "COMPLETED",
+    "completionReason": "GRACEFUL_STOP",
+    "ratingGoal": {
+      "state": "reached",
+      "target": 2300,
+      "eligible": true,
+      "reached": true,
+      "blockQueue": true,
+      "sessionId": "871f798b07e149cf9413bbf7ebe1b455",
+      "error": null,
+      "confirmedRating": 2310,
+      "currentRating": 2310,
+      "schemaVersion": 1,
+      "sessionAccountKey": "3be25901f180f15f05b8c87f55c8f860b825bd84c7326c04580b1bb2098b7ba1",
+      "timeClass": "blitz",
+      "username": "tracker_user",
+      "direction": "at-least"
+    }
+  },
+  "downwardSession": {
+    "phase": "COMPLETED",
+    "completionReason": "GRACEFUL_STOP",
+    "ratingGoal": {
+      "state": "reached",
+      "target": 1800,
+      "eligible": true,
+      "reached": true,
+      "blockQueue": true,
+      "sessionId": "56eff2b810784c788eeead76a1657b3d",
+      "error": null,
+      "confirmedRating": 1790,
+      "currentRating": 1790,
+      "schemaVersion": 1,
+      "sessionAccountKey": "3be25901f180f15f05b8c87f55c8f860b825bd84c7326c04580b1bb2098b7ba1",
+      "timeClass": "blitz",
+      "username": "tracker_user",
+      "direction": "at-most"
+    }
+  },
+  "gameplayEffects": []
 }
