@@ -1028,7 +1028,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
   }
 
   // Chess.com native orange is rgb(255,170,0); the recommendation keeps the brand accent.
-  const ARROW_COLOR = "#10B981";
+  const ARROW_COLOR = "#3B82F6";
 
   let can_interval = true,
     auto_move = false,
@@ -1036,7 +1036,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     current_color =
       (typeof GM_getValue !== "undefined" ? GM_getValue("kb_color") : null) ||
       localStorage.getItem("kb_color") ||
-      ARROW_COLOR,
+      "#10B981",
     fen,
     checkfen,
     hint = false,
@@ -4717,7 +4717,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     return scheduled;
   };
 
-  const SHAFT_W = 0.225, HEAD_W = 0.525, HEAD_L = 0.36, TAIL_INSET = 0.36, OPACITY = 0.64;
+  const SHAFT_W = 0.225, HEAD_W = 0.525, HEAD_L = 0.36, TAIL_INSET = 0.36, OPACITY = 0.8;
   const SHOW_SQUARE_HIGHLIGHTS = false;
 
   const recommendationArrowPath = (x1, y1, x2, y2) => {
@@ -4796,7 +4796,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       if (!path) return;
       $(target).append(`
         <svg viewBox="0 0 8 8" class='myarrow' aria-hidden="true" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 11;">
-          <path d="${path}" fill="${current_color || ARROW_COLOR}" fill-opacity="${OPACITY}" />
+          <path d="${path}" fill="${ARROW_COLOR}" fill-opacity="${OPACITY}" />
         </svg>
       `);
     } catch (e) {
@@ -7310,7 +7310,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
             GM_setValue("kb_color", current_color);
           }
 
-          $(".myarrow path").attr("fill", current_color);
+          $(".myarrow path").attr("fill", ARROW_COLOR);
 
           $(".myhigh").css({
             "border-color": current_color,
@@ -7545,7 +7545,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
             localStorage.setItem("kb_color", current_color);
             if (typeof GM_setValue !== "undefined") GM_setValue("kb_color", current_color);
             $("#kb-color-picker").val(current_color);
-            $(".myarrow path").attr("fill", current_color);
+            $(".myarrow path").attr("fill", ARROW_COLOR);
             $(".myhigh").css({"border-color": current_color, "background-color": current_color + "26", "box-shadow": `0 4px 12px ${current_color}33`});
           }
           if (typeof window.krypbotUpdateUI === "function") window.krypbotUpdateUI();

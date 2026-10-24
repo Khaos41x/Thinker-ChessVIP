@@ -5,7 +5,9 @@ const os=require('node:os');
 const {spawn}=require('node:child_process');
 const {rendering,constants}=require('./test_recommendation_arrows');
 const root=path.resolve(__dirname,'..');
-const out=path.join(root,'_bmad-output/implementation-artifacts/recommendation-arrows');
+const fixturePath=path.join(root,'_bmad-output/implementation-artifacts/recommendation-arrows');
+const out=process.env.TC_ARROW_ARTIFACT_DIR||fixturePath;
+fs.mkdirSync(out,{recursive:true});
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 function connect(url){
   const socket=new WebSocket(url),pending=new Map();let id=0;
@@ -22,13 +24,13 @@ function connect(url){
     for(let attempt=0;attempt<100;attempt++){try{tabs=await fetch(`http://127.0.0.1:${port}/json/list`).then(response=>response.json());if(tabs.length)break;}catch{}await sleep(100);}
     assert(tabs?.length,'Chromium unavailable');client=connect(tabs.find(tab=>tab.type==='page').webSocketDebuggerUrl);await client.ready;
     const evaluate=async expression=>{const response=await client.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});assert(!response.exceptionDetails,JSON.stringify(response.exceptionDetails));return response.result.value;};
-    const boardImage='data:image/png;base64,'+fs.readFileSync(path.join(out,'initial-board.png')).toString('base64');
-    const blackBoardImage='data:image/png;base64,'+fs.readFileSync(path.join(out,'initial-board-black.png')).toString('base64');
+    const boardImage='data:image/png;base64,'+fs.readFileSync(path.join(fixturePath,'initial-board.png')).toString('base64');
+    const blackBoardImage='data:image/png;base64,'+fs.readFileSync(path.join(fixturePath,'initial-board-black.png')).toString('base64');
     const reference='data:image/png;base64,'+fs.readFileSync(path.join(root,'assets/chesscom-arrows.png')).toString('base64');
     const bootstrap=`
       document.body.style='margin:0;background:#252523;color:#deded9;font:16px Arial';
       document.body.innerHTML='<div id="reference" style="display:none"><p>Chess.com reference (includes native knight arrow)</p><img width="645" height="647" src="${reference}"></div><div id="subject"><p>Thinker: production renderer, initial position</p><chess-board style="position:relative;display:block;width:640px;height:640px;background-image:url(${boardImage});background-size:100% 100%"><svg class="native-arrows" style="position:absolute;pointer-events:none;z-index:12"><path d="M0,0"></path></svg><div id="piece" style="position:absolute;left:0;bottom:0;width:12.5%;height:12.5%;z-index:3"></div></chess-board></div>';
-      const target=document.querySelector('chess-board');let cached_board=target;const current_color='#10B981',ARROW_COLOR='#10B981';const log=error=>{throw new Error(error);};
+      const target=document.querySelector('chess-board');let cached_board=target;const current_color='#10B981',ARROW_COLOR=${JSON.stringify(constants.ARROW_COLOR)};const log=error=>{throw new Error(error);};
       const $=value=>{const nodes=typeof value==='string'?[...document.querySelectorAll(value)]:[value];return {0:nodes[0],remove(){nodes.forEach(node=>node.remove());},css(styles){nodes.forEach(node=>Object.assign(node.style,styles));},append(html){nodes.forEach(node=>typeof html==='string'?node.insertAdjacentHTML('beforeend',html):node.append(html));},hasClass(name){return nodes[0]?.classList.contains(name);},attr(name){return nodes[0]?.getAttribute(name);}};};
       ${rendering}
       globalThis.draw=create_div;globalThis.arrowPath=recommendationArrowPath;

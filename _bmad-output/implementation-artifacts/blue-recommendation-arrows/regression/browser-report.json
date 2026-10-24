@@ -1,0 +1,535 @@
+{
+  "fixture": "Production arrow functions extracted unchanged from script.js; reconstructed initial-position tiles; not authenticated Chess.com",
+  "constants": {
+    "ARROW_COLOR": "#3B82F6",
+    "SHAFT_W": 0.225,
+    "HEAD_W": 0.525,
+    "HEAD_L": 0.36,
+    "TAIL_INSET": 0.36,
+    "OPACITY": 0.8
+  },
+  "measurements": [
+    {
+      "width": 400,
+      "dpr": 1,
+      "flipped": false,
+      "board": {
+        "x": 0,
+        "y": 34,
+        "width": 400,
+        "height": 400,
+        "top": 34,
+        "right": 400,
+        "bottom": 434,
+        "left": 0
+      },
+      "arrow": {
+        "x": 0,
+        "y": 34,
+        "width": 400,
+        "height": 400,
+        "top": 34,
+        "right": 400,
+        "bottom": 434,
+        "left": 0
+      },
+      "d": "M0.3875,6.14 L0.3875,5.86 L0.2375,5.86 L0.5,5.5 L0.7625,5.86 L0.6125,5.86 L0.6125,6.14 Z",
+      "paths": 1,
+      "markers": 0,
+      "highlights": 0,
+      "native": 1,
+      "pointerEvents": "none",
+      "filter": "none",
+      "opacity": "0.8",
+      "zIndex": "11",
+      "measured": {
+        "shaft": 0.22500000000000003,
+        "headWidth": 0.5249999999999999,
+        "headLength": 0.3600000000000003,
+        "tailInset": 0.3600000000000003
+      }
+    },
+    {
+      "width": 400,
+      "dpr": 1,
+      "flipped": true,
+      "board": {
+        "x": 0,
+        "y": 34,
+        "width": 400,
+        "height": 400,
+        "top": 34,
+        "right": 400,
+        "bottom": 434,
+        "left": 0
+      },
+      "arrow": {
+        "x": 0,
+        "y": 34,
+        "width": 400,
+        "height": 400,
+        "top": 34,
+        "right": 400,
+        "bottom": 434,
+        "left": 0
+      },
+      "d": "M7.6125,1.8599999999999999 L7.6125,2.14 L7.7625,2.14 L7.5,2.5 L7.2375,2.14 L7.3875,2.14 L7.3875,1.8599999999999999 Z",
+      "paths": 1,
+      "markers": 0,
+      "highlights": 0,
+      "native": 1,
+      "pointerEvents": "none",
+      "filter": "none",
+      "opacity": "0.8",
+      "zIndex": "11",
+      "measured": {
+        "shaft": 0.22499999999999964,
+        "headWidth": 0.5250000000000004,
+        "headLength": 0.3599999999999999,
+        "tailInset": 0.3599999999999999
+      }
+    },
+    {
+      "width": 400,
+      "dpr": 2,
+      "flipped": false,
+      "board": {
+        "x": 0,
+        "y": 34,
+        "width": 400,
+        "height": 400,
+        "top": 34,
+        "right": 400,
+        "bottom": 434,
+        "left": 0
+      },
+      "arrow": {
+        "x": 0,
+        "y": 34,
+        "width": 400,
+        "height": 400,
+        "top": 34,
+        "right": 400,
+        "bottom": 434,
+        "left": 0
+      },
+      "d": "M0.3875,6.14 L0.3875,5.86 L0.2375,5.86 L0.5,5.5 L0.7625,5.86 L0.6125,5.86 L0.6125,6.14 Z",
+      "paths": 1,
+      "markers": 0,
+      "highlights": 0,
+      "native": 1,
+      "pointerEvents": "none",
+      "filter": "none",
+      "opacity": "0.8",
+      "zIndex": "11",
+      "measured": {
+        "shaft": 0.22500000000000003,
+        "headWidth": 0.5249999999999999,
+        "headLength": 0.3600000000000003,
+        "tailInset": 0.3600000000000003
+      }
+    },
+    {
+      "width": 400,
+      "dpr": 2,
+      "flipped": true,
+      "board": {
+        "x": 0,
+        "y": 34,
+        "width": 400,
+        "height": 400,
+        "top": 34,
+        "right": 400,
+        "bottom": 434,
+        "left": 0
+      },
+      "arrow": {
+        "x": 0,
+        "y": 34,
+        "width": 400,
+        "height": 400,
+        "top": 34,
+        "right": 400,
+        "bottom": 434,
+        "left": 0
+      },
+      "d": "M7.6125,1.8599999999999999 L7.6125,2.14 L7.7625,2.14 L7.5,2.5 L7.2375,2.14 L7.3875,2.14 L7.3875,1.8599999999999999 Z",
+      "paths": 1,
+      "markers": 0,
+      "highlights": 0,
+      "native": 1,
+      "pointerEvents": "none",
+      "filter": "none",
+      "opacity": "0.8",
+      "zIndex": "11",
+      "measured": {
+        "shaft": 0.22499999999999964,
+        "headWidth": 0.5250000000000004,
+        "headLength": 0.3599999999999999,
+        "tailInset": 0.3599999999999999
+      }
+    },
+    {
+      "width": 640,
+      "dpr": 1,
+      "flipped": false,
+      "board": {
+        "x": 0,
+        "y": 34,
+        "width": 640,
+        "height": 640,
+        "top": 34,
+        "right": 640,
+        "bottom": 674,
+        "left": 0
+      },
+      "arrow": {
+        "x": 0,
+        "y": 34,
+        "width": 640,
+        "height": 640,
+        "top": 34,
+        "right": 640,
+        "bottom": 674,
+        "left": 0
+      },
+      "d": "M0.3875,6.14 L0.3875,5.86 L0.2375,5.86 L0.5,5.5 L0.7625,5.86 L0.6125,5.86 L0.6125,6.14 Z",
+      "paths": 1,
+      "markers": 0,
+      "highlights": 0,
+      "native": 1,
+      "pointerEvents": "none",
+      "filter": "none",
+      "opacity": "0.8",
+      "zIndex": "11",
+      "measured": {
+        "shaft": 0.22500000000000003,
+        "headWidth": 0.5249999999999999,
+        "headLength": 0.3600000000000003,
+        "tailInset": 0.3600000000000003
+      }
+    },
+    {
+      "width": 640,
+      "dpr": 1,
+      "flipped": true,
+      "board": {
+        "x": 0,
+        "y": 34,
+        "width": 640,
+        "height": 640,
+        "top": 34,
+        "right": 640,
+        "bottom": 674,
+        "left": 0
+      },
+      "arrow": {
+        "x": 0,
+        "y": 34,
+        "width": 640,
+        "height": 640,
+        "top": 34,
+        "right": 640,
+        "bottom": 674,
+        "left": 0
+      },
+      "d": "M7.6125,1.8599999999999999 L7.6125,2.14 L7.7625,2.14 L7.5,2.5 L7.2375,2.14 L7.3875,2.14 L7.3875,1.8599999999999999 Z",
+      "paths": 1,
+      "markers": 0,
+      "highlights": 0,
+      "native": 1,
+      "pointerEvents": "none",
+      "filter": "none",
+      "opacity": "0.8",
+      "zIndex": "11",
+      "measured": {
+        "shaft": 0.22499999999999964,
+        "headWidth": 0.5250000000000004,
+        "headLength": 0.3599999999999999,
+        "tailInset": 0.3599999999999999
+      }
+    },
+    {
+      "width": 640,
+      "dpr": 2,
+      "flipped": false,
+      "board": {
+        "x": 0,
+        "y": 34,
+        "width": 640,
+        "height": 640,
+        "top": 34,
+        "right": 640,
+        "bottom": 674,
+        "left": 0
+      },
+      "arrow": {
+        "x": 0,
+        "y": 34,
+        "width": 640,
+        "height": 640,
+        "top": 34,
+        "right": 640,
+        "bottom": 674,
+        "left": 0
+      },
+      "d": "M0.3875,6.14 L0.3875,5.86 L0.2375,5.86 L0.5,5.5 L0.7625,5.86 L0.6125,5.86 L0.6125,6.14 Z",
+      "paths": 1,
+      "markers": 0,
+      "highlights": 0,
+      "native": 1,
+      "pointerEvents": "none",
+      "filter": "none",
+      "opacity": "0.8",
+      "zIndex": "11",
+      "measured": {
+        "shaft": 0.22500000000000003,
+        "headWidth": 0.5249999999999999,
+        "headLength": 0.3600000000000003,
+        "tailInset": 0.3600000000000003
+      }
+    },
+    {
+      "width": 640,
+      "dpr": 2,
+      "flipped": true,
+      "board": {
+        "x": 0,
+        "y": 34,
+        "width": 640,
+        "height": 640,
+        "top": 34,
+        "right": 640,
+        "bottom": 674,
+        "left": 0
+      },
+      "arrow": {
+        "x": 0,
+        "y": 34,
+        "width": 640,
+        "height": 640,
+        "top": 34,
+        "right": 640,
+        "bottom": 674,
+        "left": 0
+      },
+      "d": "M7.6125,1.8599999999999999 L7.6125,2.14 L7.7625,2.14 L7.5,2.5 L7.2375,2.14 L7.3875,2.14 L7.3875,1.8599999999999999 Z",
+      "paths": 1,
+      "markers": 0,
+      "highlights": 0,
+      "native": 1,
+      "pointerEvents": "none",
+      "filter": "none",
+      "opacity": "0.8",
+      "zIndex": "11",
+      "measured": {
+        "shaft": 0.22499999999999964,
+        "headWidth": 0.5250000000000004,
+        "headLength": 0.3599999999999999,
+        "tailInset": 0.3599999999999999
+      }
+    },
+    {
+      "width": 900,
+      "dpr": 1,
+      "flipped": false,
+      "board": {
+        "x": 0,
+        "y": 34,
+        "width": 900,
+        "height": 900,
+        "top": 34,
+        "right": 900,
+        "bottom": 934,
+        "left": 0
+      },
+      "arrow": {
+        "x": 0,
+        "y": 34,
+        "width": 900,
+        "height": 900,
+        "top": 34,
+        "right": 900,
+        "bottom": 934,
+        "left": 0
+      },
+      "d": "M0.3875,6.14 L0.3875,5.86 L0.2375,5.86 L0.5,5.5 L0.7625,5.86 L0.6125,5.86 L0.6125,6.14 Z",
+      "paths": 1,
+      "markers": 0,
+      "highlights": 0,
+      "native": 1,
+      "pointerEvents": "none",
+      "filter": "none",
+      "opacity": "0.8",
+      "zIndex": "11",
+      "measured": {
+        "shaft": 0.22500000000000003,
+        "headWidth": 0.5249999999999999,
+        "headLength": 0.3600000000000003,
+        "tailInset": 0.3600000000000003
+      }
+    },
+    {
+      "width": 900,
+      "dpr": 1,
+      "flipped": true,
+      "board": {
+        "x": 0,
+        "y": 34,
+        "width": 900,
+        "height": 900,
+        "top": 34,
+        "right": 900,
+        "bottom": 934,
+        "left": 0
+      },
+      "arrow": {
+        "x": 0,
+        "y": 34,
+        "width": 900,
+        "height": 900,
+        "top": 34,
+        "right": 900,
+        "bottom": 934,
+        "left": 0
+      },
+      "d": "M7.6125,1.8599999999999999 L7.6125,2.14 L7.7625,2.14 L7.5,2.5 L7.2375,2.14 L7.3875,2.14 L7.3875,1.8599999999999999 Z",
+      "paths": 1,
+      "markers": 0,
+      "highlights": 0,
+      "native": 1,
+      "pointerEvents": "none",
+      "filter": "none",
+      "opacity": "0.8",
+      "zIndex": "11",
+      "measured": {
+        "shaft": 0.22499999999999964,
+        "headWidth": 0.5250000000000004,
+        "headLength": 0.3599999999999999,
+        "tailInset": 0.3599999999999999
+      }
+    },
+    {
+      "width": 900,
+      "dpr": 2,
+      "flipped": false,
+      "board": {
+        "x": 0,
+        "y": 34,
+        "width": 900,
+        "height": 900,
+        "top": 34,
+        "right": 900,
+        "bottom": 934,
+        "left": 0
+      },
+      "arrow": {
+        "x": 0,
+        "y": 34,
+        "width": 900,
+        "height": 900,
+        "top": 34,
+        "right": 900,
+        "bottom": 934,
+        "left": 0
+      },
+      "d": "M0.3875,6.14 L0.3875,5.86 L0.2375,5.86 L0.5,5.5 L0.7625,5.86 L0.6125,5.86 L0.6125,6.14 Z",
+      "paths": 1,
+      "markers": 0,
+      "highlights": 0,
+      "native": 1,
+      "pointerEvents": "none",
+      "filter": "none",
+      "opacity": "0.8",
+      "zIndex": "11",
+      "measured": {
+        "shaft": 0.22500000000000003,
+        "headWidth": 0.5249999999999999,
+        "headLength": 0.3600000000000003,
+        "tailInset": 0.3600000000000003
+      }
+    },
+    {
+      "width": 900,
+      "dpr": 2,
+      "flipped": true,
+      "board": {
+        "x": 0,
+        "y": 34,
+        "width": 900,
+        "height": 900,
+        "top": 34,
+        "right": 900,
+        "bottom": 934,
+        "left": 0
+      },
+      "arrow": {
+        "x": 0,
+        "y": 34,
+        "width": 900,
+        "height": 900,
+        "top": 34,
+        "right": 900,
+        "bottom": 934,
+        "left": 0
+      },
+      "d": "M7.6125,1.8599999999999999 L7.6125,2.14 L7.7625,2.14 L7.5,2.5 L7.2375,2.14 L7.3875,2.14 L7.3875,1.8599999999999999 Z",
+      "paths": 1,
+      "markers": 0,
+      "highlights": 0,
+      "native": 1,
+      "pointerEvents": "none",
+      "filter": "none",
+      "opacity": "0.8",
+      "zIndex": "11",
+      "measured": {
+        "shaft": 0.22499999999999964,
+        "headWidth": 0.5250000000000004,
+        "headLength": 0.3599999999999999,
+        "tailInset": 0.3599999999999999
+      }
+    }
+  ],
+  "interactions": {
+    "clicks": 1,
+    "drags": 1
+  },
+  "seam": [
+    {
+      "y": 388,
+      "rgba": [
+        59,
+        130,
+        246,
+        204
+      ]
+    },
+    {
+      "y": 389,
+      "rgba": [
+        59,
+        130,
+        246,
+        204
+      ]
+    },
+    {
+      "y": 390,
+      "rgba": [
+        59,
+        130,
+        246,
+        204
+      ]
+    },
+    {
+      "y": 420,
+      "rgba": [
+        59,
+        130,
+        246,
+        204
+      ]
+    }
+  ]
+}
