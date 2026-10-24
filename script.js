@@ -1027,13 +1027,16 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     return opponentRating;
   }
 
+  // Chess.com native orange is rgb(255,170,0); the recommendation keeps the brand accent.
+  const ARROW_COLOR = "#10B981";
+
   let can_interval = true,
     auto_move = false,
     auto_queue = localStorage.getItem("kb-auto-queue") === "true",
     current_color =
       (typeof GM_getValue !== "undefined" ? GM_getValue("kb_color") : null) ||
       localStorage.getItem("kb_color") ||
-      "#10B981",
+      ARROW_COLOR,
     fen,
     checkfen,
     hint = false,
@@ -4714,6 +4717,20 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     return scheduled;
   };
 
+  const SHAFT_W = 0.225, HEAD_W = 0.525, HEAD_L = 0.36, TAIL_INSET = 0.36, OPACITY = 0.64;
+  const SHOW_SQUARE_HIGHLIGHTS = false;
+
+  const recommendationArrowPath = (x1, y1, x2, y2) => {
+    const length = Math.hypot(x2 - x1, y2 - y1);
+    if (!Number.isFinite(length) || length === 0) return "";
+    const ux = (x2 - x1) / length, uy = (y2 - y1) / length;
+    const tail = Math.min(TAIL_INSET, length);
+    const head = Math.min(HEAD_L, Math.max(0, length - tail));
+    const headWidth = HEAD_W * head / HEAD_L;
+    const point = (along, across) => `${x1 + ux * along - uy * across},${y1 + uy * along + ux * across}`;
+    return `M${point(tail, -SHAFT_W / 2)} L${point(length - head, -SHAFT_W / 2)} L${point(length - head, -headWidth / 2)} L${point(length, 0)} L${point(length - head, headWidth / 2)} L${point(length - head, SHAFT_W / 2)} L${point(tail, SHAFT_W / 2)} Z`;
+  };
+
   const get_number = (elm) => {
     const data = ["a", "b", "c", "d", "e", "f", "g", "h"];
     return data.indexOf(elm) + 1;
@@ -4756,33 +4773,30 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       const row1 = parseInt(str1[1]);
       const b = get_number(str1[2]);
       const row2 = parseInt(str1[3]);
+      if (![a, row1, b, row2].every(value => Number.isInteger(value) && value >= 1 && value <= 8)) return;
 
-      create_elm(a + str1[1], target);
-      create_elm(b + str1[3], target);
+      if (SHOW_SQUARE_HIGHLIGHTS) {
+        create_elm(a + str1[1], target);
+        create_elm(b + str1[3], target);
+      }
 
       const isFlipped =
         $(target).hasClass("flipped") ||
         $(target).attr("orientation") === "black";
       const getCoord = (col, row) => {
-        const x = isFlipped ? (8 - col) * 12.5 + 6.25 : (col - 1) * 12.5 + 6.25;
-        const y = isFlipped ? (row - 1) * 12.5 + 6.25 : (8 - row) * 12.5 + 6.25;
+        const x = isFlipped ? 8 - col + 0.5 : col - 0.5;
+        const y = isFlipped ? row - 0.5 : 8 - row + 0.5;
         return [x, y];
       };
 
       const [x1, y1] = getCoord(a, row1);
       const [x2, y2] = getCoord(b, row2);
 
-      const markerId =
-        "arrowhead-" + a + row1 + b + row2 + Math.floor(Math.random() * 1000);
+      const path = recommendationArrowPath(x1, y1, x2, y2);
+      if (!path) return;
       $(target).append(`
-        <svg viewBox="0 0 100 100" class='myarrow' style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 11; filter: drop-shadow(0 4px 8px ${current_color}66); transition: all 0.3s ease;">
-          <defs>
-            <marker id="${markerId}" markerWidth="4" markerHeight="4" refX="2.6" refY="2" orient="auto">
-              <path d="M0,0.5 L3,2 L0,3.5 L0.5,2 Z" fill="${current_color}" style="transition: fill 0.3s ease" />
-            </marker>
-          </defs>
-          <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
-                stroke="${current_color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#${markerId})" style="transition: stroke 0.3s ease" />
+        <svg viewBox="0 0 8 8" class='myarrow' aria-hidden="true" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 11;">
+          <path d="${path}" fill="${current_color || ARROW_COLOR}" fill-opacity="${OPACITY}" />
         </svg>
       `);
     } catch (e) {
@@ -7296,12 +7310,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
             GM_setValue("kb_color", current_color);
           }
 
-          $(".myarrow").css(
-            "filter",
-            `drop-shadow(0 4px 8px ${current_color}66)`,
-          );
           $(".myarrow path").attr("fill", current_color);
-          $(".myarrow line").attr("stroke", current_color);
 
           $(".myhigh").css({
             "border-color": current_color,
@@ -7536,9 +7545,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
             localStorage.setItem("kb_color", current_color);
             if (typeof GM_setValue !== "undefined") GM_setValue("kb_color", current_color);
             $("#kb-color-picker").val(current_color);
-            $(".myarrow").css("filter", `drop-shadow(0 4px 8px ${current_color}66)`);
             $(".myarrow path").attr("fill", current_color);
-            $(".myarrow line").attr("stroke", current_color);
             $(".myhigh").css({"border-color": current_color, "background-color": current_color + "26", "box-shadow": `0 4px 12px ${current_color}33`});
           }
           if (typeof window.krypbotUpdateUI === "function") window.krypbotUpdateUI();

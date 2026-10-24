@@ -1,0 +1,53 @@
+{
+  "image": [
+    645,
+    647
+  ],
+  "squarePx": 80,
+  "boardBounds": [
+    3,
+    3,
+    643,
+    643
+  ],
+  "measurementMethod": "Full-coverage color runs, with antialias edge uncertainty +/-1 px; board grid repeats every 80 px.",
+  "shaftIncludingAntialiasPx": 18,
+  "headIncludingAntialiasPx": 42,
+  "headLengthPx": 29,
+  "tailInsetPx": 29,
+  "normalized": {
+    "shaft": 0.225,
+    "headWidth": 0.525,
+    "headLength": 0.3625,
+    "tailInset": 0.3625
+  },
+  "colors": {
+    "dark": [
+      115,
+      149,
+      82
+    ],
+    "light": [
+      235,
+      236,
+      208
+    ],
+    "overDark": [
+      204,
+      163,
+      29
+    ],
+    "overLight": [
+      248,
+      194,
+      75
+    ],
+    "nativeOrange": [
+      255,
+      170,
+      0
+    ]
+  },
+  "alphaDark": 0.638894078087054,
+  "alphaLight": 0.6392336526447313
+}
