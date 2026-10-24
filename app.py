@@ -651,6 +651,10 @@ cleanup_stale_komodo(ENGINE_PATH)
 komodo = KomodoSingleton(ENGINE_PATH)
 atexit.register(komodo.close)
 stockfish_eval_bar = StockfishEvalBarService()
+from core.eval_bar.registry import EngineRegistry
+from core.eval_bar.routes import create_engine_registry_blueprint
+analysis_engine_registry = EngineRegistry(Path(__file__).resolve().parent, ENGINE_PATH)
+app.register_blueprint(create_engine_registry_blueprint(analysis_engine_registry, eval_bar_control_auth))
 
 def get_base_fen(fen):
     return " ".join(fen.split(" ")[:4])
@@ -1051,6 +1055,8 @@ def evaluate_eval_bar():
     data = request.get_json(force=True, silent=True)
     if not isinstance(data, dict):
         return jsonify({"error": "JSON object required"}), 400
+    if "engineId" in data and data.get("context") not in {"analysis", "post-game"}:
+        return jsonify({"error": "An authorized analysis context is required"}), 403
     request_id = str(data.get("requestId") or f"eval-bar:{time.monotonic_ns()}")
     correlation = {"requestId": request_id}
     correlation.update({key: data[key] for key in ("generation", "cacheContext") if key in data})
@@ -1069,7 +1075,15 @@ def evaluate_eval_bar():
     if board.is_game_over():
         return jsonify({"error": "terminal position", **correlation}), 422
     try:
-        result = stockfish_eval_bar.evaluate(fen, request_id)
+        if "engineId" in data:
+            result = None
+            for item in analysis_engine_registry.evaluate_stream(fen, request_id, data["engineId"], data.get("selectionGeneration"), cache_context=data.get("cacheContext")):
+                if item["type"] == "result":
+                    result = {**item["result"], "engineId": item["engineId"], "selectionGeneration": item["selectionGeneration"]}
+            if result is None:
+                raise StockfishEvalBarError("Engine returned no result")
+        else:
+            result = stockfish_eval_bar.evaluate(fen, request_id)
         return jsonify({**result, **correlation})
     except StockfishEvalBarCancelled:
         return jsonify({"error": "evaluation superseded", **correlation}), 409
@@ -1086,6 +1100,8 @@ def stream_eval_bar():
     data = request.get_json(force=True, silent=True)
     if not isinstance(data, dict):
         return jsonify({"error": "JSON object required"}), 400
+    if "engineId" in data and data.get("context") not in {"analysis", "post-game"}:
+        return jsonify({"error": "An authorized analysis context is required"}), 403
     request_id = str(data.get("requestId") or f"eval-bar:{time.monotonic_ns()}")
     correlation = {"requestId": request_id}
     correlation.update({key: data[key] for key in ("generation", "cacheContext") if key in data})
@@ -1113,11 +1129,18 @@ def stream_eval_bar():
     def encode_event(payload):
         return json.dumps(payload, separators=(",", ":")) + "\n"
 
+    selected_stream = "engineId" in data
+    if selected_stream:
+        base_event.update({"engineId": data["engineId"], "selectionGeneration": data.get("selectionGeneration")})
+
     def generate():
         sequence = 0
         terminal = False
         try:
-            for message in stockfish_eval_bar.evaluate_stream(fen, request_id):
+            stream = analysis_engine_registry.evaluate_stream(
+                fen, request_id, data["engineId"], data.get("selectionGeneration"), cache_context=data.get("cacheContext")
+            ) if selected_stream else stockfish_eval_bar.evaluate_stream(fen, request_id)
+            for message in stream:
                 if not isinstance(message, dict):
                     raise StockfishEvalBarError("invalid Stockfish stream message")
                 message_type = message.get("type")
@@ -1204,7 +1227,7 @@ def stream_eval_bar():
             })
         finally:
             if not terminal:
-                stockfish_eval_bar.cancel(request_id)
+                (analysis_engine_registry if selected_stream else stockfish_eval_bar).cancel(request_id)
 
     response = Response(generate(), mimetype="application/x-ndjson")
     response.headers["Cache-Control"] = "no-store, no-transform"
@@ -1219,7 +1242,7 @@ def cancel_eval_bar():
     if not isinstance(data, dict) or not data.get("requestId"):
         return jsonify({"error": "requestId is required"}), 400
     request_id = str(data["requestId"])
-    return jsonify({"requestId": request_id, "cancelRequested": stockfish_eval_bar.cancel(request_id)})
+    return jsonify({"requestId": request_id, "cancelRequested": analysis_engine_registry.cancel(request_id) or stockfish_eval_bar.cancel(request_id)})
 
 
 @app.route("/eval-bar/status", methods=["GET"])

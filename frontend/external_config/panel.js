@@ -8,6 +8,9 @@
   };
   const byId = id => document.getElementById(id);
   let config = null;
+  let engineRegistry = null;
+  let engineSwitching = false;
+  let engineError = null;
   let pending = {};
   let saving = false;
   let polling = false;
@@ -24,13 +27,50 @@
 
   async function request(url, options = {}) {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 4000);
+    const timeout = setTimeout(() => controller.abort(), options.timeoutMs || 4000);
     try {
       const response = await fetch(url, { ...options, signal: controller.signal, cache: 'no-store' });
-      if (!response.ok) throw Object.assign(new Error('request-failed'), { status: response.status });
-      return await response.json();
+      const data = await response.json();
+      if (!response.ok) throw Object.assign(new Error(data.error || 'request-failed'), { status: response.status, data });
+      return data;
     } finally { clearTimeout(timeout); }
   }
+
+
+  function renderEngine() {
+    if (!engineRegistry || engineSwitching) return;
+    const selected = engineRegistry.engines.find(engine => engine.id === engineRegistry.selectedEngineId);
+    byId('analysis-engine').value = engineRegistry.selectedEngineId;
+    byId('analysis-engine').disabled = !engineRegistry.analysisContextAuthorized;
+    for (const option of byId('analysis-engine').options) {
+      const engine = engineRegistry.engines.find(item => item.id === option.value);
+      option.disabled = !engine?.installed;
+    }
+    byId('analysis-engine-state').textContent = selected?.status || 'Error';
+    byId('analysis-engine-message').textContent = engineError || (!engineRegistry.analysisContextAuthorized ? 'Open an analysis page on Chess.com to switch engines.' : selected?.status === 'Active' ? 'Available on analysis and post-game boards.' : selected?.initializationError || 'Ready to initialize for analysis.');
+    byId('analysis-engine-message').dataset.error = String(Boolean(engineError || selected?.initializationError));
+    byId('analysis-engine-details').textContent = JSON.stringify(selected, null, 2);
+  }
+
+  byId('analysis-engine').addEventListener('change', async event => {
+    if (engineSwitching) return;
+    engineSwitching = true;
+    engineError = null;
+    byId('analysis-engine').disabled = true;
+    byId('analysis-engine-state').textContent = 'Loading';
+    byId('analysis-engine-message').textContent = 'Initializing and verifying the selected engine…';
+    try {
+      engineRegistry = await request('/config/engines/select', {method: 'POST',
+        headers: {'Content-Type': 'application/json'}, timeoutMs: 30000,
+        body: JSON.stringify({engineId: event.target.value, context: 'analysis'})});
+    } catch (error) {
+      if (error.data?.engines) engineRegistry = error.data;
+      engineError = `Could not switch engine: ${error.message}. Previous engine retained.`;
+    } finally {
+      engineSwitching = false;
+      renderEngine();
+    }
+  });
 
   function render() {
     if (!config) return;
@@ -98,7 +138,8 @@
     polling = true;
     const version = editVersion;
     try {
-      const [next, status] = await Promise.all([request('/config/load'), request('/config/status')]);
+      const [next, status, engines] = await Promise.all([request('/config/load'), request('/config/status'), request('/config/engines').catch(() => null)]);
+      if (!engineSwitching && engines) { engineRegistry = engines; renderEngine(); }
       if (!saving && !Object.keys(pending).length && version === editVersion &&
           (!config || next._serverId !== config._serverId || next._revision >= config._revision)) {
         config = next;

@@ -6,9 +6,13 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ENGINE = 'Stockfish 19';
 const PACKAGE = '@lichess-org/stockfish-web@0.5.0';
-const BUILD = 'sf_19_smallnet';
-const NETWORK = 'nn-61e7af4bb97d.nnue';
-const NETWORK_SHA256 = '61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b';
+const buildIndex = process.argv.indexOf('--build');
+const BUILD = buildIndex >= 0 ? process.argv[buildIndex + 1] : 'sf_19_smallnet';
+if (!['sf_19_smallnet', 'sf_19'].includes(BUILD)) throw new Error('unsupported engine build');
+const NETWORK = BUILD === 'sf_19' ? 'nn-1a298aa575a0.nnue' : 'nn-61e7af4bb97d.nnue';
+const NETWORK_SHA256 = BUILD === 'sf_19' ? '1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2' : '61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b';
+const networkIndex = process.argv.indexOf('--network-path');
+const networkPath = networkIndex >= 0 ? process.argv[networkIndex + 1] : null;
 const PROFILE = Object.freeze({ threads: 3, hash: 16, multiPv: 1, analyseMode: true, movetime: 8000 });
 const INFO_THROTTLE_MS = 100;
 const engineRootIndex = process.argv.indexOf('--engine-root');
@@ -31,6 +35,9 @@ let nnueMs = 0;
 let uciMs = 0;
 let readyMs = 0;
 let firstInfoMs = null;
+let verified = false;
+let networkEvidence = null;
+let networkBytes = 0;
 
 function parseInfo(line, whiteToMove) {
   const tokens = line.trim().split(/\s+/);
@@ -109,7 +116,7 @@ function sameInfo(left, right) {
 }
 
 function publishInfo(force = false) {
-  if (!active || active.stopping || !latestInfo || sameInfo(latestInfo, active.lastPublishedInfo)) return;
+  if (!verified || !active || active.stopping || !latestInfo || sameInfo(latestInfo, active.lastPublishedInfo)) return;
   const now = performance.now();
   if (!force && active.lastPublishedAt !== null && now - active.lastPublishedAt < INFO_THROTTLE_MS) return;
   active.seq += 1;
@@ -137,7 +144,14 @@ function finishBestmove(line) {
   active = null;
   state = 'idle';
   const cancelMs = stopStartedAt === null ? null : performance.now() - stopStartedAt;
-  if (completed.stopping) {
+  if (completed.requestId === '__startup-proof__') {
+    if (!latestInfo || !networkEvidence) throw new Error('NNUE search verification failed');
+    verified = true;
+    output({ type: 'ready', engine: ENGINE, engineName, package: PACKAGE, build: BUILD, network: NETWORK,
+      networkSha256: NETWORK_SHA256, networkBytes, networkEvidence: { filename: NETWORK, sha256: NETWORK_SHA256, bufferLoaded: true, replica: networkEvidence }, proof: latestInfo, profile: PROFILE,
+      resources: { ...process.memoryUsage(), cpu: process.cpuUsage(), configuredSearchThreads: PROFILE.threads },
+      startup: { factoryMs, nnueMs, uciMs, readyMs, verifiedMs: performance.now() - startedAt }, pid: process.pid });
+  } else if (completed.stopping) {
     output({ type: 'cancelled', requestId: completed.requestId, reason: 'superseded', cancelMs, seq: completed.seq + 1 });
   } else if (!latestInfo) {
     output({ type: 'error', requestId: completed.requestId, error: 'engine returned no evaluation', seq: completed.seq + 1 });
@@ -171,6 +185,8 @@ function finishBestmove(line) {
 
 function onLine(line) {
   const text = String(line).trim();
+  if (process.env.THINKER_UCI_DEBUG) process.stderr.write(`${text}\n`);
+  if (/NNUE evaluation using|Network replica/.test(text)) networkEvidence = text;
   if (text.startsWith('id name ')) engineName = text.slice(8);
   else if (text === 'uciok') {
     uciMs = performance.now() - startedAt;
@@ -180,14 +196,10 @@ function onLine(line) {
     engine.uci(`setoption name MultiPV value ${PROFILE.multiPv}`);
     engine.uci('ucinewgame');
     engine.uci('isready');
-  } else if (text === 'readyok') {
+  } else if (text === 'readyok' && !verified && state === 'booting') {
     readyMs = performance.now() - startedAt;
     state = 'idle';
-    output({
-      type: 'ready', engine: ENGINE, engineName, package: PACKAGE, build: BUILD, network: NETWORK,
-      networkSha256: NETWORK_SHA256, profile: PROFILE,
-      startup: { factoryMs, nnueMs, uciMs, readyMs }, pid: process.pid,
-    });
+    startSearch({ requestId: '__startup-proof__', fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', movetime: 80 });
   } else if (text.startsWith('info ') && active && !active.stopping) {
     const parsed = parseInfo(text, active.whiteToMove);
     if (parsed) {
@@ -220,9 +232,10 @@ async function boot() {
   const recommended = engine.getRecommendedNnue();
   if (recommended !== NETWORK) throw new Error(`unexpected NNUE: ${recommended}`);
   const nnueStarted = performance.now();
-  const network = await readFile(resolve(engineRoot, NETWORK));
+  const network = await readFile(networkPath || resolve(engineRoot, NETWORK));
   const sha256 = createHash('sha256').update(network).digest('hex');
   if (sha256 !== NETWORK_SHA256) throw new Error(`NNUE integrity mismatch: ${sha256}`);
+  networkBytes = network.byteLength;
   engine.setNnueBuffer(new Uint8Array(network));
   nnueMs = performance.now() - nnueStarted;
   engine.onError = error => output({ type: 'fatal', error: String(error) });

@@ -1,0 +1,97 @@
+{
+  "checks": [
+    {
+      "viewport": {
+        "width": 900,
+        "height": 700
+      },
+      "geometry": true,
+      "width": true,
+      "immediateScroll": true,
+      "transformOnly": true,
+      "typography": true,
+      "cleanup": true
+    },
+    {
+      "viewport": {
+        "width": 959,
+        "height": 720
+      },
+      "geometry": true,
+      "width": true,
+      "immediateScroll": true,
+      "transformOnly": true,
+      "typography": true,
+      "cleanup": true
+    },
+    {
+      "viewport": {
+        "width": 960,
+        "height": 720
+      },
+      "geometry": true,
+      "width": true,
+      "immediateScroll": true,
+      "transformOnly": true,
+      "typography": true,
+      "cleanup": true
+    },
+    {
+      "viewport": {
+        "width": 961,
+        "height": 720
+      },
+      "geometry": true,
+      "width": true,
+      "immediateScroll": true,
+      "transformOnly": true,
+      "typography": true,
+      "cleanup": true
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "geometry": true,
+      "width": true,
+      "immediateScroll": true,
+      "transformOnly": true,
+      "typography": true,
+      "cleanup": true
+    }
+  ],
+  "continuity": {
+    "transitions": 30,
+    "detectionMs": {
+      "minimum": 0.20999997854232788,
+      "average": 0.26599999964237214,
+      "maximum": 0.5099999904632568
+    },
+    "firstEvaluationMs": {
+      "minimum": 14.6700000166893,
+      "average": 16.044333333770435,
+      "maximum": 17.75
+    },
+    "firstFrameMs": {
+      "minimum": 14.360000022649729,
+      "average": 15.623166682600974,
+      "maximum": 16.31000000596032
+    },
+    "fillOpacities": [
+      "1"
+    ],
+    "labelOpacities": [
+      "1"
+    ],
+    "neutralResets": 0,
+    "domRemounts": 0,
+    "boardRetargets": 1,
+    "obsoleteEventsRejected": 30,
+    "aborts": 30
+  },
+  "originalHarnessExitCode": 1,
+  "preexistingAuthorizationFixtureFailures": [
+    "mountedBlockedWhenUnauthorized"
+  ]
+}

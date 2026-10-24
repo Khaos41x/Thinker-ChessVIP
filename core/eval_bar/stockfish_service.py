@@ -72,12 +72,22 @@ class StockfishEvalBarService:
     NETWORK_SHA256 = "61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b"
     PROFILE = "threads-3_hash-16_multipv-1_analysemode_movetime-8000"
 
-    def __init__(self, root=None, node_path=None, timeout_seconds=12.0):
+    def __init__(self, root=None, node_path=None, timeout_seconds=20.0, build="sf_19_smallnet"):
+        if build not in {"sf_19_smallnet", "sf_19"}:
+            raise ValueError("unsupported Stockfish build")
+        self.BUILD = build
+        if build == "sf_19":
+            self.NETWORK = "nn-1a298aa575a0.nnue"
+            self.NETWORK_SHA256 = "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2"
         self.root = Path(root or Path(__file__).resolve().parents[2])
         self.node_path = node_path or os.environ.get("THINKER_NODE_PATH", "node")
         self.timeout_seconds = float(timeout_seconds)
         self.script = self.root / "analysis_lab" / "scripts" / "stockfish-eval-bar-service.mjs"
-        self.engine_root = self.root / "analysis_lab" / "public" / "engine"
+        self.engine_root = self.root / "analysis_lab" / "node_modules" / "@lichess-org" / "stockfish-web"
+        self.network_path = self.root / "analysis_lab" / "public" / "engine" / self.NETWORK
+        if build == "sf_19":
+            self.engine_root = self.root / "analysis_lab" / "node_modules" / "@lichess-org" / "stockfish-web"
+            self.network_path = self.root / "analysis_lab" / self.NETWORK
         self._lock = threading.RLock()
         self._write_lock = threading.Lock()
         self._process = None
@@ -110,7 +120,7 @@ class StockfishEvalBarService:
         with self._lock:
             process = self._process
             return {
-                "ready": bool(process and process.poll() is None and self._ready.is_set()),
+                "ready": bool(process and process.poll() is None and self._ready.is_set() and not self._startup_error),
                 "pid": process.pid if process and process.poll() is None else None,
                 "generation": self._generation,
                 "engine": self.ENGINE,
@@ -301,7 +311,8 @@ class StockfishEvalBarService:
                 self._identity = None
                 try:
                     self._process = subprocess.Popen(
-                        [self.node_path, str(self.script), "--engine-root", str(self.engine_root)],
+                        [self.node_path, str(self.script), "--engine-root", str(self.engine_root),
+                         "--build", self.BUILD, "--network-path", str(self.network_path)],
                         cwd=str(self.root),
                         stdin=subprocess.PIPE,
                         stdout=subprocess.PIPE,

@@ -454,3 +454,13 @@ body[data-focus-input=pointer] input:focus-visible {
   line-height: 16px;
   color: var(--muted);
 }
+
+.analysis-engine { padding: 4px 0 14px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+.analysis-engine select { width: 100%; min-height: 36px; margin-top: 8px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--field); color: var(--text); font: inherit; }
+.analysis-engine select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#analysis-engine-state { color: var(--muted); font-size: 11px; }
+#analysis-engine-message { margin: 7px 0 0; min-height: 16px; }
+#analysis-engine-message[data-error="true"] { color: #ffb4ad; }
+.engine-details { margin-top: 8px; color: var(--muted); font-size: 11px; }
+.engine-details summary { cursor: pointer; }
+.engine-details pre { max-height: 220px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 10px; }

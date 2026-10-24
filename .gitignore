@@ -22,3 +22,6 @@ node_modules/
 # Sistema
 .DS_Store
 Thumbs.db
+
+analysis-engine-preference.json
+analysis-engine-preference.tmp

@@ -1,0 +1,42 @@
+{
+  "options": [
+    "Stockfish 19 · 1MB",
+    "Stockfish 19 · 94MB",
+    "Komodo 14.1"
+  ],
+  "switches": [
+    {
+      "engineId": "stockfish-19-1mb",
+      "depth": 245,
+      "mate": 1,
+      "events": 4
+    },
+    {
+      "engineId": "stockfish-19-94mb",
+      "depth": 245,
+      "mate": 1,
+      "events": 4
+    },
+    {
+      "engineId": "komodo-14.1",
+      "depth": 99,
+      "mate": 1,
+      "events": 108
+    },
+    {
+      "engineId": "stockfish-19-1mb",
+      "depth": 245,
+      "mate": 1,
+      "events": 5
+    }
+  ],
+  "screenshots": [
+    "stockfish-19-1mb.png",
+    "stockfish-19-94mb.png",
+    "komodo-14.1.png",
+    "stockfish-19-1mb.png"
+  ],
+  "reloadPreference": true,
+  "evalBarRemainedDisabled": true,
+  "unauthorizedBlocked": true
+}

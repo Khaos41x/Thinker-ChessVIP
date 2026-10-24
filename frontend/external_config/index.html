@@ -18,6 +18,16 @@
     <div id="panels" class="panels" aria-busy="true">
       <section class="panel" id="core"><h2>Core</h2><div data-controls="core"></div></section>
       <section class="panel" id="engine"><h2>Engine Control</h2>
+        <div class="analysis-engine">
+          <div class="field-heading"><label for="analysis-engine">Analysis Engine</label><span id="analysis-engine-state" role="status">Loading</span></div>
+          <select id="analysis-engine" aria-describedby="analysis-engine-message" disabled>
+            <option value="stockfish-19-1mb">Stockfish 19 · 1MB</option>
+            <option value="stockfish-19-94mb">Stockfish 19 · 94MB</option>
+            <option value="komodo-14.1">Komodo 14.1</option>
+          </select>
+          <p id="analysis-engine-message" class="hint" role="status" aria-live="polite">Checking installed engines…</p>
+          <details class="engine-details"><summary>Technical details</summary><pre id="analysis-engine-details"></pre></details>
+        </div>
         <div data-controls="engine"></div>
         <div class="strength"><div class="field-heading"><label for="elo">Strength Level</label><output id="elo-value" for="elo">3200</output></div>
           <input type="range" id="elo" data-key="elo" min="800" max="3200" step="100" value="3200" disabled>
@@ -39,7 +49,7 @@
       <section class="panel" id="autoplay"><h2>Auto Play</h2><div class="autoplay-fields" id="rating-target-field"></div></section>
     </div>
     <footer><p id="save-state" role="status" aria-live="polite">Loading settings…</p><button id="retry" type="button">Refresh</button></footer>
-    <p class="footnote">Engine settings reset when the local server restarts. Rating goals and history are saved locally.</p>
+    <p class="footnote">Analysis engine selection, rating goals and history are saved locally. Other controls reset when the server restarts.</p>
   </main>
 </body>
 </html>
