@@ -13,7 +13,7 @@ DEFAULT_CONFIG = {
     "hint": False, "autoMove": False, "autoQueue": False,
     "autoAdjust": False, "evalBar": False, "smartPacing": False,
     "banner": True, "recentForm": True, "elo": 3200,
-    "delayMode": "random", "minDelay": 0.5, "maxDelay": 2.0,
+    "delayMode": "random", "minDelay": 0.5, "maxDelay": 1.0,
     "color": "#10B981", "ghostMode": False,
 }
 

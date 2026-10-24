@@ -795,7 +795,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     localStorage.setItem("kb-auto-queue", "false");
     localStorage.setItem("autoDelayMode", "random");
     localStorage.setItem("autoMinDelay", "0.5");
-    localStorage.setItem("autoMaxDelay", "2.0");
+    localStorage.setItem("autoMaxDelay", "1.0");
     localStorage.setItem("kb_default_off_v6", "true");
   }
   if (localStorage.getItem("thinker_visual_defaults_v1") !== "true") {
@@ -806,7 +806,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
 
   // --- CONFIGURAÃ‡Ã•ES PADRÃƒO (AUTO RUN DELAY) ---
   const DEFAULT_MIN_DELAY = 0.5,
-    DEFAULT_MAX_DELAY = 2.0,
+    DEFAULT_MAX_DELAY = 1.0,
     DEFAULT_DELAY_MODE = "random";
 
   // --- CONFIGURAÃ‡Ã•ES DO AUTO ADJUST RATING ---
@@ -7085,7 +7085,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
             elo: typeof chessBot !== "undefined" ? chessBot.elo : 3200,
             delayMode: typeof autoDelayMode !== "undefined" ? autoDelayMode : "random",
             minDelay: typeof autoDelayMin !== "undefined" ? autoDelayMin : 0.5,
-            maxDelay: typeof autoDelayMax !== "undefined" ? autoDelayMax : 2.0,
+            maxDelay: typeof autoDelayMax !== "undefined" ? autoDelayMax : 1.0,
             color: current_color,
             ghostMode: _ghostModeActive
           };
