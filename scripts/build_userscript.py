@@ -24,6 +24,8 @@ MODULES = (
     "status",
     "telemetry",
     "ui",
+    "presentation",
+    "external",
     "index",
 )
 
@@ -137,13 +139,19 @@ def main() -> int:
     args = parser.parse_args()
     current = TARGET.read_text(encoding="utf-8")
     expected = render(current)
+    external_target = ROOT / 'frontend' / 'external_config' / 'session-control.js'
+    external_bundle = bundle_source()
     print(f"Userscript size (informational): {len(expected.encode('utf-8'))} bytes")
     if args.check:
         if current != expected:
             print("script.js generated session-control region is stale", file=sys.stderr)
             return 1
+        if not external_target.exists() or external_target.read_text(encoding='utf-8') != external_bundle:
+            print('External Config session-control bundle is stale', file=sys.stderr)
+            return 1
         return 0
     TARGET.write_text(expected, encoding="utf-8", newline="\n")
+    external_target.write_text(external_bundle, encoding='utf-8', newline='\n')
     return 0
 
 

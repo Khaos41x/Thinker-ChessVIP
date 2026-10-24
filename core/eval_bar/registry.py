@@ -208,13 +208,16 @@ class EngineRegistry:
         self._active_id = None
         self._preferred = ENGINE_IDS[0]
         self._generation = 0
+        self._preference_revision = 0
         self._loading = None
         self._errors = {}
         self._requests = {}
         self._authorization_seen = 0.0
         self._authorization_context = None
         try:
-            saved = json.loads(self.preference_path.read_text(encoding='utf8')).get('analysisEngine')
+            saved_data = json.loads(self.preference_path.read_text(encoding='utf8'))
+            saved = saved_data.get('analysisEngine')
+            self._preference_revision = int(saved_data.get('revision', 0))
             if saved in ENGINE_IDS:
                 self._preferred = saved
         except (OSError, ValueError, AttributeError):
@@ -269,6 +272,8 @@ class EngineRegistry:
                                 'identity': runtime.get('identity') if active else None,
                                 'resources': resources if active else {}})
             return {'engines': entries, 'selectedEngineId': self._preferred,
+                    'preferenceRevision': self._preference_revision,
+                    'analysisRunning': any(service is self._service and not cancelled.is_set() for service, cancelled in self._requests.values()),
                     'activeEngineId': self._active_id if ready else None, 'selectionGeneration': self._generation,
                     'loadingEngineId': self._loading, 'analysisContextAuthorized': self.has_authorized_context(),
                     'cacheContext': self._context()}
@@ -280,12 +285,32 @@ class EngineRegistry:
         return '|'.join([self._active_id, str(status.get('build', 'native')), str(status.get('networkSha256', '')),
                          json.dumps(status.get('profile'), sort_keys=True), 'white-pov', 'lichess-winning-chances-0.00368208-v1'])
 
+    def prefer(self, engine_id, expected_revision=None):
+        if engine_id not in ENGINE_IDS:
+            raise ValueError('Unknown analysis engine')
+        with self._lock:
+            if expected_revision is not None and expected_revision != self._preference_revision:
+                raise ValueError('Engine preference changed. Retry your selection.')
+            if not self._installed(engine_id):
+                raise StockfishEvalBarError('Engine assets are not installed')
+            if engine_id != self._preferred:
+                revision = self._preference_revision + 1
+                self.preference_path.parent.mkdir(parents=True, exist_ok=True)
+                temporary = self.preference_path.with_suffix('.tmp')
+                temporary.write_text(json.dumps({'analysisEngine': engine_id, 'revision': revision}) + '\n', encoding='utf8')
+                os.replace(temporary, self.preference_path)
+                self._preferred = engine_id
+                self._preference_revision = revision
+            return self.snapshot()
+
     def select(self, engine_id, persist=True, initialize_only=False):
         if engine_id not in ENGINE_IDS:
             raise ValueError('Unknown analysis engine')
         with self._switch_lock:
             with self._lock:
-                if (initialize_only or self._active_id == engine_id) and self._service and self._service.status().get('ready'):
+                if initialize_only:
+                    engine_id = self._preferred
+                if self._active_id == engine_id and self._service and self._service.status().get('ready'):
                     return self.snapshot()
                 self._loading = engine_id
             candidate = None
@@ -296,15 +321,12 @@ class EngineRegistry:
                 candidate.start()
                 if not candidate.status().get('ready'):
                     raise StockfishEvalBarError('Engine did not initialize')
-                if persist:
-                    self.preference_path.parent.mkdir(parents=True, exist_ok=True)
-                    temporary = self.preference_path.with_suffix('.tmp')
-                    temporary.write_text(json.dumps({'analysisEngine': engine_id}) + '\n', encoding='utf8')
-                    os.replace(temporary, self.preference_path)
                 with self._lock:
+                    if persist and not initialize_only:
+                        self.prefer(engine_id)
                     old = self._service
                     self._generation += 1
-                    self._service, self._active_id, self._preferred = candidate, engine_id, engine_id
+                    self._service, self._active_id = candidate, engine_id
                     self._errors.pop(engine_id, None)
                     self._loading = None
                 if old:

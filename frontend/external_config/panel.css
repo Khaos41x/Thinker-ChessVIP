@@ -464,3 +464,18 @@ body[data-focus-input=pointer] input:focus-visible {
 .engine-details { margin-top: 8px; color: var(--muted); font-size: 11px; }
 .engine-details summary { cursor: pointer; }
 .engine-details pre { max-height: 220px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 10px; }
+.notice { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.autoplay-fields { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; align-items: start; }
+.session-field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; line-height: 16px; color: var(--muted); }
+.session-field input { box-sizing: border-box; width: 100%; min-width: 0; height: 32px; border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; background: var(--field); color: var(--text); font: inherit; }
+.session-field input[aria-invalid=true] { border-color: #e6ac72; }
+.session-actions { display: grid; grid-template-columns: minmax(0,1fr) auto auto; gap: 8px; margin-top: 12px; }
+.session-actions button,.compact-button { min-height: 32px; padding: 5px 12px; border: 1px solid var(--border); border-radius: 6px; background: transparent; color: var(--text); font: inherit; font-size: 12px; cursor: pointer; }
+.compact-button { margin-top: 6px; }
+.session-actions button:disabled { color: var(--muted); opacity: .6; cursor: default; }
+.session-actions button:first-child:not(:disabled) { border-color: var(--accent); }
+.session-summary { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px 24px; padding-top: 12px; border-top: 1px solid var(--border); }
+.session-summary>div { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--muted); }
+.session-summary strong { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
+#session-availability[data-error=true] { color: #ffb4ad; }
+@media(max-width:620px) { .autoplay-fields { grid-template-columns: repeat(2,minmax(0,1fr)); } .session-actions { grid-template-columns: repeat(2,minmax(0,1fr)); } .session-actions button:first-child { grid-column: 1/-1; } .session-summary { grid-template-columns: minmax(0,1fr); } }

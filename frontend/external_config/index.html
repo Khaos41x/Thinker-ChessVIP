@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Thinker Chess · External Config</title>
   <link rel="stylesheet" href="/config/assets/panel.css">
+  <script src="/config/assets/session-control.js" defer></script>
   <script src="/config/assets/panel.js" defer></script>
   <script src="/config/assets/rating-tracker.js" defer></script>
 </head>
@@ -14,18 +15,19 @@
       <div><p class="eyebrow">EXTERNAL CONFIG</p><h1>Thinker Chess</h1><p class="intro">Your controls. A separate workspace.</p></div>
       <div class="connection"><span id="connection-dot" aria-hidden="true"></span><span id="connection" role="status">Connecting…</span></div>
     </header>
-    <p class="notice">Keep Chess.com open with the userscript enabled. Changes sync automatically.</p>
+    <p class="notice"><span id="userscript-connection">Chess.com: disconnected</span><span id="execution-state">Analysis: inactive</span></p>
     <div id="panels" class="panels" aria-busy="true">
       <section class="panel" id="core"><h2>Core</h2><div data-controls="core"></div></section>
       <section class="panel" id="engine"><h2>Engine Control</h2>
         <div class="analysis-engine">
-          <div class="field-heading"><label for="analysis-engine">Analysis Engine</label><span id="analysis-engine-state" role="status">Loading</span></div>
+          <div class="field-heading"><label for="analysis-engine">Analysis Engine</label><span id="analysis-engine-state" role="status">Initializing</span></div>
           <select id="analysis-engine" aria-describedby="analysis-engine-message" disabled>
             <option value="stockfish-19-1mb">Stockfish 19 · 1MB</option>
             <option value="stockfish-19-94mb">Stockfish 19 · 94MB</option>
             <option value="komodo-14.1">Komodo 14.1</option>
           </select>
           <p id="analysis-engine-message" class="hint" role="status" aria-live="polite">Checking installed engines…</p>
+          <button id="engine-retry" class="compact-button" type="button" hidden>Retry</button>
           <details class="engine-details"><summary>Technical details</summary><pre id="analysis-engine-details"></pre></details>
         </div>
         <div data-controls="engine"></div>
@@ -38,7 +40,7 @@
             <div class="delay-fields"><label><span class="sr-only">Minimum delay</span><input id="minDelay" type="text" inputmode="decimal" data-key="minDelay" value="0.50"><span>s</span></label><span>–</span><label><span class="sr-only">Maximum delay</span><input id="maxDelay" type="text" inputmode="decimal" data-key="maxDelay" value="1.00"><span>s</span></label></div>
             <div class="segmented" role="group" aria-label="Move timing mode"><button type="button" data-mode="random" aria-pressed="true">Random</button><button type="button" data-mode="max" aria-pressed="false">Immediate</button></div>
           </fieldset>
-          <p class="hint">Timing applies when Auto Moves is enabled.</p>
+          <p id="timing-hint" class="hint">Timing applies when Auto Moves is enabled.</p>
         </div>
         <div data-controls="pacing"></div>
       </section>
@@ -46,7 +48,28 @@
         <div class="control-row"><label for="color">Theme</label><input id="color" data-key="color" type="color" value="#10b981" disabled></div>
       </section>
       <section class="panel" id="workspace"><h2>Workspace</h2><div data-controls="workspace"></div><p class="hint">Hide all Thinker Chess visuals on Chess.com. Controls remain here.</p></section>
-      <section class="panel" id="autoplay"><h2>Auto Play</h2><div class="autoplay-fields" id="rating-target-field"></div></section>
+      <section class="panel" id="autoplay"><h2>Auto Play</h2>
+        <div id="kb-session-panel">
+          <div class="autoplay-fields">
+            <label class="session-field" for="kb-session-duration">Duration (Min)<input id="kb-session-duration" data-key="sessionDurationMinutes" type="number" min="1" max="1440" step="1" disabled></label>
+            <label class="session-field" for="kb-session-min-rate">Min Wins %<input id="kb-session-min-rate" data-key="sessionMinimumPercent" type="number" min="1" max="98" step="1" disabled></label>
+            <label class="session-field" for="kb-session-max-rate">Max Wins %<input id="kb-session-max-rate" data-key="sessionMaximumPercent" type="number" min="2" max="99" step="1" disabled></label>
+            <div id="rating-target-field"></div>
+          </div>
+          <div class="session-actions">
+            <button id="kb-session-start" type="button" data-action="start" disabled>Start</button>
+            <button id="kb-session-stop" type="button" data-action="stop" disabled>Finish</button>
+            <button id="kb-session-export" type="button" data-action="export" disabled>Export Diagnostics</button>
+          </div>
+          <p id="session-availability" class="hint" role="status">Connect the Chess.com userscript to use session actions.</p>
+          <div class="session-summary" aria-live="polite">
+            <div><span>Status</span><strong id="kb-session-phase">Unavailable</strong></div>
+            <div><span>Time Left</span><strong id="kb-session-ttl">—</strong></div>
+            <div><span>Score</span><strong id="kb-session-observed">—</strong></div>
+            <div><span>Win Rate</span><strong id="kb-session-raw">—</strong></div>
+          </div>
+        </div>
+      </section>
     </div>
     <footer><p id="save-state" role="status" aria-live="polite">Loading settings…</p><button id="retry" type="button">Refresh</button></footer>
     <p class="footnote">Analysis engine selection, rating goals and history are saved locally. Other controls reset when the server restarts.</p>

@@ -109,8 +109,11 @@ try {
  const report={options,switches:[],screenshots:[]};
  for(const engineId of ['stockfish-19-1mb','stockfish-19-94mb','komodo-14.1','stockfish-19-1mb']){
   await evaluate(`(()=>{const s=document.querySelector('#analysis-engine');s.value=${JSON.stringify(engineId)};s.dispatchEvent(new Event('change',{bubbles:true}));})()`);
-  if(await evaluate("document.querySelector('#analysis-engine-state').textContent")!=='Loading')throw new Error('Missing Loading feedback');
-  await waitFor("document.querySelector('#analysis-engine-state').textContent==='Active' && !document.querySelector('#analysis-engine').disabled");
+  if(await evaluate("document.querySelector('#analysis-engine-state').textContent")!=='Switching')throw new Error('Missing Switching feedback');
+  await waitFor("document.querySelector('#analysis-engine-state').textContent!=='Switching' && !document.querySelector('#analysis-engine').disabled");
+  const initialized=await fetch(backendUrl+'/eval-bar/engines/select',{method:'POST',headers:{...auth,'Content-Type':'application/json'},body:JSON.stringify({engineId,context:'analysis',initializeOnly:true})});
+  if(!initialized.ok)throw new Error('Authorized runtime initialization failed '+await initialized.text());
+  await waitFor("document.querySelector('#analysis-engine-state').textContent==='Active'");
   const state=await(await fetch(backendUrl+'/eval-bar/engines',{headers:auth})).json();
   if(state.activeEngineId!==engineId)throw new Error('Wrong active engine '+engineId+' '+JSON.stringify(state));
   const response=await fetch(backendUrl+'/eval-bar/stream',{method:'POST',headers:{...auth,'Content-Type':'application/json'},body:JSON.stringify({engineId,selectionGeneration:state.selectionGeneration,cacheContext:state.cacheContext,context:'analysis',fen:'7k/5Q2/6K1/8/8/8/8/8 w - - 0 1',requestId:'browser-'+report.switches.length,generation:1})});
@@ -128,7 +131,9 @@ try {
  clearInterval(heartbeat);heartbeat=null;
  await fetch(backendUrl+'/eval-bar/engines?context=active-game',{headers:auth});
  const blocked=await fetch(backendUrl+'/config/engines/select',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({engineId:'komodo-14.1',context:'analysis'})});
- if(blocked.status!==403)throw new Error('Unauthorized selector access');report.unauthorizedBlocked=true;
+ if(blocked.status!==200)throw new Error('Preference configuration incorrectly requires analysis context');
+ const rejected=await fetch(backendUrl+'/eval-bar/engines/select',{method:'POST',headers:{...auth,'Content-Type':'application/json'},body:JSON.stringify({engineId:'komodo-14.1',context:'active-game'})});
+ if(rejected.status!==403)throw new Error('Unauthorized execution context was accepted');report.unauthorizedBlocked=true;
  await writeFile(join(output,'browser.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 } finally {
  clearInterval(heartbeat);cdp?.socket.close();browser?.kill();backend.stdin.write('stop\n');backend.stdin.end();

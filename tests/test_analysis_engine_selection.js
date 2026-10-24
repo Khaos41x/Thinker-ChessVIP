@@ -29,5 +29,32 @@ require('../frontend/eval_bar/engine-selection.js');
   const discovery=globalThis.ThinkerAnalysisEngine.create({serverUrl:'http://localhost',authorize:()=> 'analysis',headers:()=>({}),request(options){discoveryRequests++;assert.equal(options.method,'GET');options.onload({status:200,responseText:JSON.stringify({activeEngineId:null,selectedEngineId:'stockfish-19-1mb'})});}});
   await discovery.refresh(true);
   assert.equal(discoveryRequests,1);
+  let preferenceAttempts = 0;
+  const engines = ['stockfish-19-1mb', 'stockfish-19-94mb', 'komodo-14.1'].map(id => ({id, installed:true}));
+  const conflict = globalThis.ThinkerAnalysisEngine.create({serverUrl:'http://localhost',authorize:()=> 'active-game',headers:()=>({}),request(options){
+    let status = 200;
+    let result = {engines,selectedEngineId:'stockfish-19-1mb',preferenceRevision:0};
+    if(options.method==='POST') {
+      const data=JSON.parse(options.data);
+      preferenceAttempts++;
+      if(preferenceAttempts===1) {
+        status=409;
+        result={engines,selectedEngineId:'komodo-14.1',preferenceRevision:1,error:'Preference revision changed'};
+      } else {
+        assert.equal(data.expectedRevision,1,'Conflict snapshot revision was lost');
+        assert.equal(data.engineId,'stockfish-19-94mb','Attempted preference was lost');
+        result={ok:true,engines,selectedEngineId:data.engineId,preferenceRevision:2};
+      }
+    }
+    options.onload({status,responseText:JSON.stringify(result)});
+  }});
+  await conflict.refresh(true);
+  await conflict.selectPreference('stockfish-19-94mb');
+  assert.equal(conflict.snapshot().state.selectedEngineId,'komodo-14.1');
+  assert.equal(conflict.snapshot().state.preferenceRevision,1);
+  assert.equal(conflict.snapshot().attemptedEngineId,'stockfish-19-94mb');
+  await conflict.selectPreference(conflict.snapshot().attemptedEngineId);
+  assert.equal(conflict.snapshot().state.selectedEngineId,'stockfish-19-94mb');
+  assert.equal(conflict.snapshot().attemptedEngineId,null);
   console.log('Engine selection context and initialization race tests passed');
 })();

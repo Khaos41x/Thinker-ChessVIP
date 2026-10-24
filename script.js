@@ -138,6 +138,10 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     let pending = false;
     let lastRefresh = -Infinity;
     let error = null;
+    let selecting = false;
+    let mounted = null;
+    let selectionEpoch = 0;
+    let attemptedEngineId = null;
     const allowed = () => ['analysis', 'post-game'].includes(options.authorize());
     function send(path, payload) {
       return new Promise((resolve, reject) => {
@@ -146,7 +150,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
           onload(response) {
             try {
               const result = JSON.parse(response.responseText);
-              if (response.status !== 200) throw new Error(result.error || 'Analysis engine unavailable');
+              if (response.status !== 200) throw Object.assign(new Error(result.error || 'Analysis engine unavailable'), { status: response.status, data: result });
               resolve(result);
             } catch (cause) { reject(cause); }
           }, onerror() {reject(new Error('Cannot reach analysis engine'));},
@@ -155,26 +159,76 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       });
     }
     async function refresh(force = false, initialize = false) {
-      if (!allowed() || pending || (!force && performance.now() - lastRefresh < 1500)) return;
+      if (pending || selecting || (!force && performance.now() - lastRefresh < 1500)) return;
       pending = true;
+      const epoch = selectionEpoch;
       lastRefresh = performance.now();
       try {
-        let next = await send('/eval-bar/engines?context=' + encodeURIComponent(options.authorize()));
+        let next = await send('/eval-bar/engines' + (allowed() ? '?context=' + encodeURIComponent(options.authorize()) : ''));
+        if (epoch !== selectionEpoch) return;
         state = next;
-        if (initialize && !next.activeEngineId && !next.loadingEngineId) {
+        if (allowed() && initialize && next.activeEngineId !== next.selectedEngineId && !next.loadingEngineId) {
           next = await send('/eval-bar/engines/select', {engineId: next.selectedEngineId, context: options.authorize(), initializeOnly: true});
         }
+        if (epoch !== selectionEpoch) return;
         state = next;
         try { options.storage?.setItem("thinkerAnalysisEngine", next.selectedEngineId); } catch (_) {}
-        error = null;
-      } catch (cause) { error = String(cause.message || cause); }
-      finally { pending = false; }
+        if (!attemptedEngineId) error = null;
+      } catch (cause) {
+        if (epoch !== selectionEpoch) return;
+        if (cause.data?.engines) state = cause.data;
+        error = String(cause.message || cause);
+      }
+      finally { pending = false; render(); }
+    }
+    async function selectPreference(engineId) {
+      if (selecting || !state) return;
+      attemptedEngineId = engineId;
+      selecting = true; selectionEpoch++; error = null; render();
+      try {
+        const result = await send('/eval-bar/engines/preference', { engineId, expectedRevision: state.preferenceRevision });
+        if (!result.ok || result.selectedEngineId !== engineId) throw new Error('Preference was not acknowledged');
+        state = result;
+        attemptedEngineId = null;
+      } catch (cause) {
+        if (cause.data?.engines) state = cause.data;
+        error = String(cause.message || cause);
+      } finally { selecting = false; render(); }
+    }
+    function render() {
+      const host = options.getHost?.();
+      if (!host) return;
+      if (!mounted || mounted.parentNode !== host) {
+        const doc = host.ownerDocument;
+        mounted = doc.createElement('div'); mounted.className = 'tc-analysis-selector';
+        const heading = doc.createElement('div'); heading.className = 'tc-analysis-heading';
+        const label = doc.createElement('label'); label.htmlFor = 'tc-analysis-engine'; label.textContent = 'Analysis Engine';
+        const status = doc.createElement('span'); status.className = 'tc-analysis-status'; status.setAttribute('role', 'status');
+        const select = doc.createElement('select'); select.id = 'tc-analysis-engine'; select.setAttribute('aria-describedby', 'tc-analysis-message');
+        const message = doc.createElement('p'); message.id = 'tc-analysis-message'; message.setAttribute('role', 'status');
+        const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry'; retry.addEventListener('click', () => attemptedEngineId ? selectPreference(attemptedEngineId) : refresh(true));
+        select.addEventListener('change', () => selectPreference(select.value));
+        heading.append(label, status); mounted.append(heading, select, message, retry);
+        const caption = host.querySelector('.kb-console-caption');
+        if (caption) caption.after(mounted); else host.prepend(mounted);
+      }
+      const select = mounted.querySelector('select');
+      const selected = state?.engines?.find(engine => engine.id === state.selectedEngineId);
+      if (state?.engines && select.options.length !== state.engines.length) {
+        select.replaceChildren(...state.engines.map(engine => { const option = host.ownerDocument.createElement('option'); option.value = engine.id; option.textContent = engine.name; option.disabled = !engine.installed; return option; }));
+      }
+      if (!selecting && state) select.value = state.selectedEngineId;
+      select.disabled = selecting || !state;
+      mounted.querySelector('.tc-analysis-status').textContent = selecting ? 'Switching' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing';
+      mounted.querySelector('p').textContent = error || selected?.initializationError || (state ? 'Preference saved. Analysis follows the existing authorization.' : 'Checking installed engines…');
+      mounted.querySelector('button').hidden = !error;
     }
     return Object.freeze({
       cacheContext() { refresh(false, true); return allowed() && state?.activeEngineId ? state.cacheContext : ''; },
       requestIdentity() { return state && allowed() ? {engineId: state.activeEngineId, selectionGeneration: state.selectionGeneration} : {}; },
       refresh,
-      snapshot() { return {state, pending, error}; }
+      selectPreference,
+      snapshot() { return {state, pending, error, attemptedEngineId}; }
     });
   }
   root.ThinkerAnalysisEngine = Object.freeze({create});
@@ -3168,6 +3222,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     serverUrl: SERVER_URL,
     storage: localStorage,
     authorize: evalBarAuthorization,
+    getHost: () => document.querySelector("#krypbot-container .kb-engine-module"),
     headers: engineRequestHeaders,
     request: options => GM_xmlhttpRequest(options),
   });
@@ -6403,6 +6458,13 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         #krypbot-container .kb-core-module { grid-area:core; }
         #krypbot-container .kb-visuals-module { grid-area:visuals; }
         #krypbot-container .kb-engine-module { grid-area:engine; }
+        #krypbot-container .tc-analysis-selector { padding-bottom:12px; margin:8px 0 12px; border-bottom:1px solid var(--tc-border,#3a3a36); }
+        #krypbot-container .tc-analysis-heading { display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:12px; }
+        #krypbot-container .tc-analysis-status { color:#b9bab3; font-size:11px; }
+        #krypbot-container .tc-analysis-selector select { box-sizing:border-box; width:100%; min-height:32px; margin-top:7px; border:1px solid #3a3a36; border-radius:6px; background:#1d1d1b; color:#f2f2ee; padding:5px 8px; font:inherit; font-size:12px; }
+        #krypbot-container .tc-analysis-selector p { margin:6px 0 0; font-size:11px; line-height:16px; color:#b9bab3; }
+        #krypbot-container .tc-analysis-selector button { min-height:28px; margin-top:6px; padding:4px 10px; border:1px solid #3a3a36; border-radius:6px; background:transparent; color:#f2f2ee; font:inherit; font-size:11px; }
+
         #krypbot-container .kb-auto-play-module { grid-area:autoplay; }
         #krypbot-container .kb-scout-module { grid-area:scout; }
         #krypbot-container .kb-console-column { display:contents; }
@@ -7147,26 +7209,9 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         };
 
         function sessionConfigFromDraft(draft) {
-          const api = globalThis.ThinkerSessionControl;
-          const durationMinutes = Number.parseInt(draft.durationMinutes, 10);
-          const minimumPercent = Number.parseFloat(draft.minimumPercent);
-          const maximumPercent = Number.parseFloat(draft.maximumPercent);
-          return api.validateSessionConfig({
-            schemaVersion: 1,
-            durationMs: durationMinutes * 60000,
-            minWinRate: minimumPercent / 100,
-            maxWinRate: maximumPercent / 100,
-            boostOffsetElo: 200,
-            correctionOffsetElo: -200,
-            minCompletedGames: 5,
+          return globalThis.ThinkerSessionControl.sessionConfigFromDraft(draft, {
             perceptionElo: Number.isInteger(chessBot.elo) ? chessBot.elo : 1700,
             scaleId: sessionControlTargetScaleId || "calibration-scale-unavailable",
-            estimatorVersion: api.ESTIMATOR_VERSION,
-            controllerVersion: api.CONTROLLER_VERSION,
-            minimumAdmissionHeadroomMs: 30000,
-            queueObservationTimeoutMs: 30000,
-            maximumDrainMs: 900000,
-            maximumConsecutiveSaturatedGames: 3,
           });
         }
 
@@ -7181,12 +7226,14 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         }
 
         globalThis.ThinkerSessionControlReady.then((api) => {
+          let externalSessionBridge = null;
           const sessionControlPresenter = api.createSessionControlPresenter({
             getPanel: () => document.getElementById("kb-session-panel"),
             readStatus: () => sessionControlBridge.status(),
             readStartBlocker: () => isMasterEnabled() ? null : "BOT_DISABLED",
             formatDuration: api.formatDuration,
             createConfig: sessionConfigFromDraft,
+            onDraftChange: (draft, field) => externalSessionBridge?.draftChanged(draft, field),
             start: (config) => sessionControlBridge.start(config),
             stop: () => sessionControlBridge.gracefulStop(),
             setWarning: (code) => {
@@ -7197,6 +7244,15 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
             exportDiagnostic: () => sessionControlBridge.exportDiagnostic(),
             downloadDiagnostic: downloadSessionDiagnostic,
           });
+          externalSessionBridge = api.createExternalSessionBridge({
+            clientId: crypto.randomUUID(), bridge: sessionControlBridge, presenter: sessionControlPresenter,
+            request: api.createGmConfigRequest(GM_xmlhttpRequest, SERVER_URL), createConfig: sessionConfigFromDraft,
+            startBlocker: () => isMasterEnabled() ? null : "BOT_DISABLED",
+            setTimeout: window.setTimeout.bind(window), clearTimeout: window.clearTimeout.bind(window),
+            onError: error => debug("error", "[External Config] Session synchronization", error),
+          });
+          sessionControlPresenter.update();
+          externalSessionBridge.start();
           window.krypbotSessionControlUI = Object.freeze({ update: sessionControlPresenter.update, readConfig: sessionControlPresenter.readConfig, dispose: sessionControlPresenter.dispose });
           window.setInterval(() => {
             sessionControlPresenter.update();
@@ -7260,12 +7316,16 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
             url: SERVER_URL + "/config/save",
             headers: {"Content-Type": "application/json"},
             timeout: 5000,
-            data: snapshot,
+            data: JSON.stringify({ ...JSON.parse(snapshot), ...(_externalServerId ? { _expectedRevision: _externalAppliedRevision, _serverId: _externalServerId } : {}) }),
             onload(response) {
+              if (response.status === 409) {
+                try { const latest = JSON.parse(response.responseText).config; _externalAppliedRevision = latest._revision; _externalServerId = latest._serverId; } catch (_) {}
+              }
               if (response.status < 200 || response.status >= 300) {
                 onFailure();
                 return;
               }
+              try { const accepted = JSON.parse(response.responseText).config; _externalAppliedRevision = accepted._revision; _externalServerId = accepted._serverId; } catch (_) { onFailure(); return; }
               _configSaveInFlight = false;
               if (_queuedConfigSnapshot) {
                 flushConfigSave();
@@ -7829,10 +7889,16 @@ factories["telemetry"]=function(module,exports,require){
 const{clone,deepFreeze,exactKeys,isPlainObject}=require("./models");const TELEMETRY_VERSION="session-control-telemetry-v1";const DIAGNOSTIC_VERSION="session-control-diagnostic-v1";const EVENT_NAMES=Object.freeze(["session_started","session_recovered","session_draining","session_completed","leader_acquired","leader_lost","lease_takeover","queue_intent_admitted","queue_intent_consumed","queue_intent_expired","game_target_pinned","result_committed","duplicate_result_ignored","dda_mode_changed","target_saturated","calibration_mismatch","session_paused",]);const FIELD_NAMES=Object.freeze(["occurredAtEpochMs","phase","revision","role","observedCounts","controlCounts","controllerMode","posteriorWinRate","offsetElo","rawTargetElo","effectiveTargetElo","saturated","reasonCode","reducerVersion","estimatorVersion","controllerVersion","rolloutStage",]);function safeCounts(value,field){exactKeys(value,["wins","draws","losses","terminalGames"],[],field);const output={};for(const key of["wins","draws","losses","terminalGames"]){if(!Number.isInteger(value[key])||value[key]<0)throw new TypeError(`${field}.${key} is invalid`);output[key]=value[key];}return output;}function sanitizeFields(input){if(!isPlainObject(input))throw new TypeError("telemetry fields must be an object");for(const key of Object.keys(input))if(!FIELD_NAMES.includes(key))throw new TypeError(`telemetry field is forbidden: ${key}`);const output={};for(const[key,value]of Object.entries(input)){if(value===undefined||value===null)continue;if(key==="observedCounts"||key==="controlCounts")output[key]=safeCounts(value,`telemetry.${key}`);else if(["occurredAtEpochMs","revision","offsetElo","rawTargetElo","effectiveTargetElo"].includes(key)){if(!Number.isInteger(value))throw new TypeError(`telemetry.${key} must be an integer`);output[key]=value;}else if(key==="posteriorWinRate"){if(!Number.isFinite(value)||value<0||value>1)throw new TypeError("telemetry.posteriorWinRate is invalid");output[key]=value;}else if(key==="saturated"){if(typeof value!=="boolean")throw new TypeError("telemetry.saturated must be boolean");output[key]=value;}else{if(typeof value!=="string"||!value||value.length>120)throw new TypeError(`telemetry.${key} must be a short string`);output[key]=value;}}return output;}function sanitizeEvent(input){if(!isPlainObject(input))throw new TypeError("telemetry event must be an object");const{schemaVersion,telemetryVersion,name,...fields}=input;if(schemaVersion!==1)throw new TypeError("telemetry schema version is unsupported");if(telemetryVersion!==TELEMETRY_VERSION)throw new TypeError("telemetry version is unsupported");if(!EVENT_NAMES.includes(name))throw new TypeError("telemetry event name is unsupported");return{schemaVersion,telemetryVersion,name,...sanitizeFields(fields)};}class BoundedTelemetry{constructor(options){const settings=options||{};this.capacity=settings.capacity===undefined?500:settings.capacity;if(!Number.isInteger(this.capacity)||this.capacity<1||this.capacity>5000)throw new TypeError("telemetry capacity is invalid");this.events=[];}record(name,fields){const event=deepFreeze(sanitizeEvent({schemaVersion:1,telemetryVersion:TELEMETRY_VERSION,name,...(fields||{})}));this.events.push(event);if(this.events.length>this.capacity)this.events.splice(0,this.events.length-this.capacity);return event;}list(){return deepFreeze(clone(this.events));}clear(){this.events.length=0;}}function diagnosticExport(status,events,generatedAtEpochMs){if(!isPlainObject(status))throw new TypeError("diagnostic status must be an object");if(!Array.isArray(events))throw new TypeError("diagnostic events must be an array");if(!Number.isInteger(generatedAtEpochMs)||generatedAtEpochMs<0)throw new TypeError("diagnostic timestamp is invalid");const allowedStatus=["phase","role","remainingTtlMs","drainDeadlineEpochMs","drainRemainingMs","observedCounts","controlCounts","rawWinRate","posteriorWinRate","wilsonLower","wilsonUpper","minWinRate","maxWinRate","controllerMode","offsetElo","opponentRating","effectiveTargetElo","targetSaturated","warningCode","rolloutStage","executionMode",];const safeStatus={};for(const key of allowedStatus)if(Object.prototype.hasOwnProperty.call(status,key))safeStatus[key]=clone(status[key]);return deepFreeze({schemaVersion:1,diagnosticVersion:DIAGNOSTIC_VERSION,generatedAtEpochMs,status:safeStatus,events:events.map(sanitizeEvent)});}module.exports={BoundedTelemetry,DIAGNOSTIC_VERSION,EVENT_NAMES,FIELD_NAMES,TELEMETRY_VERSION,diagnosticExport,sanitizeEvent,sanitizeFields};
 };
 factories["ui"]=function(module,exports,require){
-const FIELD_IDS=Object.freeze({durationMinutes:"kb-session-duration",minimumPercent:"kb-session-min-rate",maximumPercent:"kb-session-max-rate",});const TERMINAL_PHASES=Object.freeze(["IDLE","COMPLETED","ABORTED"]);const PHASE_LABELS=Object.freeze({IDLE:"Idle",QUEUEING:"Searching...",IN_GAME:"Playing...",DRAINING:"Finishing session...",PAUSED_QUEUEING:"Paused",PAUSED_ACTIVE:"Paused",COMPLETED:"Completed",ABORTED:"Stopped",});const SUCCESS_LABELS=Object.freeze({SESSION_STARTED:"Session started",DRAINING:"Finishing session...",SESSION_STOPPED:"Session finished",COMPLETED:"Completed",});function phaseLabel(phase){return Object.prototype.hasOwnProperty.call(PHASE_LABELS,phase)?PHASE_LABELS[phase]:"Updating...";}function warningLabel(code){if(!code)return "";if(code==="DDA_MAPPING_UNAVAILABLE"||code.includes("ARTIFACT"))return "⚠️ Check calibration artifact";if(code.startsWith("CALIBRATION_"))return "⚠️ Calibration unavailable";return "⚠️ Unable to update session";}function successLabel(code){return SUCCESS_LABELS[code]||"Operation completed";}function reasonCode(error,fallback){if(error&&typeof error.code==="string"&&error.code)return error.code;if(error&&typeof error.reason==="string"&&error.reason)return error.reason;if(error&&typeof error.message==="string"&&/^[A-Z][A-Z0-9_]+$/.test(error.message))return error.message;return fallback;}function findById(panel,id){return panel&&typeof panel.querySelector==="function"?panel.querySelector(`#${id}`):null;}function setText(panel,id,value){const node=findById(panel,id);if(node)node.textContent=value;}function actionNode(panel,target){let node=target;while(node&&node!==panel){if(typeof node.getAttribute==="function"&&node.getAttribute("data-action"))return node;node=node.parentNode;}return null;}function availability(status,startBlocker){const terminal=TERMINAL_PHASES.includes(status.phase);return Object.freeze({start:startBlocker||(status.rolloutStage==="DISABLED"?"ROLLOUT_DISABLED":terminal?null:"ACTIVE_SESSION_EXISTS"),stop:terminal?"SESSION_NOT_ACTIVE":null,});}function presentAvailability(panel,action,reason){const button=panel.querySelector(`[data-action="${action}"]`);if(!button)return;button.toggleAttribute("disabled",Boolean(reason));button.setAttribute("aria-disabled",reason?"true":"false");if(reason){button.setAttribute("data-disabled-reason",reason);}else{button.removeAttribute("data-disabled-reason");}button.removeAttribute("title");}function presentStatus(panel,status,formatDuration,startBlocker){const counts=status.observedCounts;const controlCounts=status.controlCounts;panel.setAttribute("data-session-state",status.phase==="IDLE"?"never-started":status.phase.toLowerCase().replace(/_/g,"-"));panel.setAttribute("data-session-history",status.phase==="IDLE"?"none":"present");setText(panel,"kb-session-phase",phaseLabel(status.phase));setText(panel,"kb-session-ttl",formatDuration(status.remainingTtlMs));setText(panel,"kb-session-observed",`${counts.wins} W | ${counts.draws} D | ${counts.losses} L`);setText(panel,"kb-session-raw",controlCounts.terminalGames===0?"—":`${status.rawWinRate.toFixed(0)}%`);const state=availability(status,startBlocker);presentAvailability(panel,"start",state.start);presentAvailability(panel,"stop",state.stop);return state;}function createSessionControlPresenter(options){if(!options||typeof options.getPanel!=="function")throw new TypeError("getPanel is required");const AbortControllerType=options.AbortController||globalThis.AbortController;if(typeof AbortControllerType!=="function")throw new TypeError("AbortController is required");let panel=null;let abortController=null;let currentAvailability=Object.freeze({start:"STATUS_UNAVAILABLE",stop:"STATUS_UNAVAILABLE"});let sequence=0;const draft=Object.create(null);const inFlight=new Set();function emit(type,detail){sequence+=1;if(panel){panel.setAttribute("data-session-ui-event",type);panel.setAttribute("data-session-ui-sequence",String(sequence));}if(typeof options.onTelemetry==="function")options.onTelemetry(Object.freeze({type,sequence,...(detail||{})}));}function warning(code){const value=code||"STATUS_UNAVAILABLE";if(typeof options.setWarning==="function")options.setWarning(value);const label=warningLabel(value);if(typeof options.notify==="function")options.notify(label,{transient:true});emit("warning",{code:value});}function success(code){if(typeof options.setWarning==="function")options.setWarning(null);if(typeof options.notify==="function")options.notify(successLabel(code),{transient:true,success:true});emit("success",{code});}function captureDraft(nextPanel){for(const[field,id]of Object.entries(FIELD_IDS)){const input=findById(nextPanel,id);if(!input)continue;if(Object.prototype.hasOwnProperty.call(draft,field))input.value=draft[field];else draft[field]=String(input.value);}}function readDraft(){return Object.freeze({durationMinutes:draft.durationMinutes,minimumPercent:draft.minimumPercent,maximumPercent:draft.maximumPercent,});}function readConfig(){if(typeof options.createConfig!=="function")throw new TypeError("createConfig is required");return options.createConfig(readDraft());}async function run(action){if(inFlight.has(action))return;const blocked=currentAvailability[action];if(blocked){emit("blocked",{action,code:blocked});return;}inFlight.add(action);emit("dispatch",{action});try{if(action==="start"){let config;try{config=readConfig();}catch(error){warning(reasonCode(error,"SESSION_CONFIG_INVALID"));return;}await options.start(config);success("SESSION_STARTED");}else if(action==="stop"){const result=await options.stop();if(!result||result.allowed!==true){warning(reasonCode(result,"GRACEFUL_STOP_FAILED"));return;}success(reasonCode(result,"SESSION_STOPPED"));}}catch(error){warning(reasonCode(error,action==="start"?"SESSION_START_FAILED":"GRACEFUL_STOP_FAILED"));}finally{inFlight.delete(action);update();}}function runExport(){emit("dispatch",{action:"export"});try{const diagnostic=options.exportDiagnostic();options.downloadDiagnostic(diagnostic);}catch(error){warning(reasonCode(error,"DIAGNOSTIC_EXPORT_FAILED"));}update();}function bind(nextPanel){if(nextPanel===panel&&abortController)return false;if(abortController)abortController.abort();panel=nextPanel||null;abortController=null;if(!panel)return false;captureDraft(panel);abortController=new AbortControllerType();const signal=abortController.signal;panel.addEventListener("input",(event)=>{for(const[field,id]of Object.entries(FIELD_IDS)){if(event.target&&event.target.id===id){draft[field]=String(event.target.value);emit("draft",{field});return;}}},{signal});panel.addEventListener("click",(event)=>{const button=actionNode(panel,event.target);if(!button)return;event.preventDefault();event.stopPropagation();const action=button.getAttribute("data-action");if(action==="export")runExport();else if(action==="start"||action==="stop")void run(action);},{signal});emit("bound");return true;}function update(){const nextPanel=options.getPanel();if(nextPanel!==panel)bind(nextPanel);if(!panel)return null;try{const status=options.readStatus();const startBlocker=typeof options.readStartBlocker==="function"?options.readStartBlocker():null;currentAvailability=presentStatus(panel,status,options.formatDuration,startBlocker);return status;}catch(error){warning(reasonCode(error,"STATUS_UNAVAILABLE"));return null;}}function dispose(){if(abortController)abortController.abort();abortController=null;panel=null;}return Object.freeze({bind,dispose,readConfig,readDraft,update});}module.exports={FIELD_IDS,createSessionControlPresenter,phaseLabel,presentStatus,reasonCode,successLabel,warningLabel};
+const FIELD_IDS=Object.freeze({durationMinutes:"kb-session-duration",minimumPercent:"kb-session-min-rate",maximumPercent:"kb-session-max-rate",});const TERMINAL_PHASES=Object.freeze(["IDLE","COMPLETED","ABORTED"]);const PHASE_LABELS=Object.freeze({IDLE:"Idle",QUEUEING:"Searching...",IN_GAME:"Playing...",DRAINING:"Finishing session...",PAUSED_QUEUEING:"Paused",PAUSED_ACTIVE:"Paused",COMPLETED:"Completed",ABORTED:"Stopped",});const SUCCESS_LABELS=Object.freeze({SESSION_STARTED:"Session started",DRAINING:"Finishing session...",SESSION_STOPPED:"Session finished",COMPLETED:"Completed",});function phaseLabel(phase){return Object.prototype.hasOwnProperty.call(PHASE_LABELS,phase)?PHASE_LABELS[phase]:"Updating...";}function warningLabel(code){if(!code)return "";if(code==="DDA_MAPPING_UNAVAILABLE"||code.includes("ARTIFACT"))return "⚠️ Check calibration artifact";if(code.startsWith("CALIBRATION_"))return "⚠️ Calibration unavailable";return "⚠️ Unable to update session";}function successLabel(code){return SUCCESS_LABELS[code]||"Operation completed";}function reasonCode(error,fallback){if(error&&typeof error.code==="string"&&error.code)return error.code;if(error&&typeof error.reason==="string"&&error.reason)return error.reason;if(error&&typeof error.message==="string"&&/^[A-Z][A-Z0-9_]+$/.test(error.message))return error.message;return fallback;}function findById(panel,id){return panel&&typeof panel.querySelector==="function"?panel.querySelector(`#${id}`):null;}function setText(panel,id,value){const node=findById(panel,id);if(node)node.textContent=value;}function actionNode(panel,target){let node=target;while(node&&node!==panel){if(typeof node.getAttribute==="function"&&node.getAttribute("data-action"))return node;node=node.parentNode;}return null;}function availability(status,startBlocker){const terminal=TERMINAL_PHASES.includes(status.phase);return Object.freeze({start:startBlocker||(status.rolloutStage==="DISABLED"?"ROLLOUT_DISABLED":terminal?null:"ACTIVE_SESSION_EXISTS"),stop:terminal?"SESSION_NOT_ACTIVE":null,});}function presentAvailability(panel,action,reason){const button=panel.querySelector(`[data-action="${action}"]`);if(!button)return;button.toggleAttribute("disabled",Boolean(reason));button.setAttribute("aria-disabled",reason?"true":"false");if(reason){button.setAttribute("data-disabled-reason",reason);}else{button.removeAttribute("data-disabled-reason");}button.removeAttribute("title");}function presentStatus(panel,status,formatDuration,startBlocker){const counts=status.observedCounts;const controlCounts=status.controlCounts;panel.setAttribute("data-session-state",status.phase==="IDLE"?"never-started":status.phase.toLowerCase().replace(/_/g,"-"));panel.setAttribute("data-session-history",status.phase==="IDLE"?"none":"present");setText(panel,"kb-session-phase",phaseLabel(status.phase));setText(panel,"kb-session-ttl",formatDuration(status.remainingTtlMs));setText(panel,"kb-session-observed",`${counts.wins} W | ${counts.draws} D | ${counts.losses} L`);setText(panel,"kb-session-raw",controlCounts.terminalGames===0?"—":`${status.rawWinRate.toFixed(0)}%`);const state=availability(status,startBlocker);presentAvailability(panel,"start",state.start);presentAvailability(panel,"stop",state.stop);return state;}function createSessionControlPresenter(options){if(!options||typeof options.getPanel!=="function")throw new TypeError("getPanel is required");const AbortControllerType=options.AbortController||globalThis.AbortController;if(typeof AbortControllerType!=="function")throw new TypeError("AbortController is required");let panel=null;let abortController=null;let currentAvailability=Object.freeze({start:"STATUS_UNAVAILABLE",stop:"STATUS_UNAVAILABLE"});let sequence=0;const draft=Object.create(null);const dirtyFields=new Set();const inFlight=new Set();function emit(type,detail){sequence+=1;if(panel){panel.setAttribute("data-session-ui-event",type);panel.setAttribute("data-session-ui-sequence",String(sequence));}if(typeof options.onTelemetry==="function")options.onTelemetry(Object.freeze({type,sequence,...(detail||{})}));}function warning(code){const value=code||"STATUS_UNAVAILABLE";if(typeof options.setWarning==="function")options.setWarning(value);const label=warningLabel(value);if(typeof options.notify==="function")options.notify(label,{transient:true});emit("warning",{code:value});}function success(code){if(typeof options.setWarning==="function")options.setWarning(null);if(typeof options.notify==="function")options.notify(successLabel(code),{transient:true,success:true});emit("success",{code});}function captureDraft(nextPanel){for(const[field,id]of Object.entries(FIELD_IDS)){const input=findById(nextPanel,id);if(!input)continue;if(Object.prototype.hasOwnProperty.call(draft,field))input.value=draft[field];else draft[field]=String(input.value);}}function readDraft(){return Object.freeze({durationMinutes:draft.durationMinutes,minimumPercent:draft.minimumPercent,maximumPercent:draft.maximumPercent,});}function readConfig(){if(typeof options.createConfig!=="function")throw new TypeError("createConfig is required");return options.createConfig(readDraft());}async function run(action){if(inFlight.has(action))return;const blocked=currentAvailability[action];if(blocked){emit("blocked",{action,code:blocked});return;}inFlight.add(action);emit("dispatch",{action});try{if(action==="start"){let config;try{config=readConfig();}catch(error){warning(reasonCode(error,"SESSION_CONFIG_INVALID"));return;}await options.start(config);success("SESSION_STARTED");}else if(action==="stop"){const result=await options.stop();if(!result||result.allowed!==true){warning(reasonCode(result,"GRACEFUL_STOP_FAILED"));return;}success(reasonCode(result,"SESSION_STOPPED"));}}catch(error){warning(reasonCode(error,action==="start"?"SESSION_START_FAILED":"GRACEFUL_STOP_FAILED"));}finally{inFlight.delete(action);update();}}function runExport(){emit("dispatch",{action:"export"});try{const diagnostic=options.exportDiagnostic();options.downloadDiagnostic(diagnostic);}catch(error){warning(reasonCode(error,"DIAGNOSTIC_EXPORT_FAILED"));}update();}function bind(nextPanel){if(nextPanel===panel&&abortController)return false;if(abortController)abortController.abort();panel=nextPanel||null;abortController=null;if(!panel)return false;captureDraft(panel);abortController=new AbortControllerType();const signal=abortController.signal;panel.addEventListener("input",(event)=>{for(const[field,id]of Object.entries(FIELD_IDS)){if(event.target&&event.target.id===id){draft[field]=String(event.target.value);dirtyFields.add(field);emit("draft",{field});if(typeof options.onDraftChange==="function")options.onDraftChange(readDraft(),field);return;}}},{signal});panel.addEventListener("click",(event)=>{const button=actionNode(panel,event.target);if(!button)return;event.preventDefault();event.stopPropagation();const action=button.getAttribute("data-action");if(action==="export")runExport();else if(action==="start"||action==="stop")void run(action);},{signal});emit("bound");return true;}function update(){const nextPanel=options.getPanel();if(nextPanel!==panel)bind(nextPanel);if(!panel)return null;try{const status=options.readStatus();const startBlocker=typeof options.readStartBlocker==="function"?options.readStartBlocker():null;currentAvailability=presentStatus(panel,status,options.formatDuration,startBlocker);return status;}catch(error){warning(reasonCode(error,"STATUS_UNAVAILABLE"));return null;}}function dispose(){if(abortController)abortController.abort();abortController=null;panel=null;}function applyDraft(value){for(const[field,id]of Object.entries(FIELD_IDS)){if(value[field]===undefined)continue;const incoming=String(value[field]);if(dirtyFields.has(field)){const equivalent=incoming===draft[field]||draft[field]?.trim()!==""&&Number.isFinite(Number(draft[field]))&&Number(incoming)===Number(draft[field]);if(!equivalent)continue;dirtyFields.delete(field);}const node=findById(panel,id);if(node&&node===node.ownerDocument?.activeElement)continue;draft[field]=incoming;if(node)node.value=draft[field];}}return Object.freeze({bind,dispose,readConfig,readDraft,applyDraft,update});}module.exports={FIELD_IDS,availability,createSessionControlPresenter,phaseLabel,presentStatus,reasonCode,successLabel,warningLabel};
+};
+factories["presentation"]=function(module,exports,require){
+const{validateSessionConfig,ESTIMATOR_VERSION,CONTROLLER_VERSION}=require("./models");const SESSION_FIELDS=Object.freeze({durationMinutes:"sessionDurationMinutes",minimumPercent:"sessionMinimumPercent",maximumPercent:"sessionMaximumPercent"});function validateSessionDraft(draft){const value=Object.fromEntries(Object.keys(SESSION_FIELDS).map(key=>[key,Number(draft[key])]));if(!Number.isInteger(value.durationMinutes)||value.durationMinutes<1||value.durationMinutes>1440||!Number.isFinite(value.minimumPercent)||!Number.isFinite(value.maximumPercent)||value.minimumPercent<=0||value.maximumPercent>=100||value.minimumPercent>=value.maximumPercent){throw Object.assign(new TypeError("Use 1–1440 minutes and win rates with 0 < minimum < maximum < 100."),{code:"SESSION_CONFIG_INVALID"});}return Object.freeze(value);}function sessionConfigFromDraft(draft,context={}){const value=validateSessionDraft(draft);return validateSessionConfig({schemaVersion:1,durationMs:value.durationMinutes*60000,minWinRate:value.minimumPercent / 100,maxWinRate:value.maximumPercent / 100,boostOffsetElo:200,correctionOffsetElo:-200,minCompletedGames:5,perceptionElo:Number.isInteger(context.perceptionElo)?context.perceptionElo:1700,scaleId:context.scaleId||"calibration-scale-unavailable",estimatorVersion:ESTIMATOR_VERSION,controllerVersion:CONTROLLER_VERSION,minimumAdmissionHeadroomMs:30000,queueObservationTimeoutMs:30000,maximumDrainMs:900000,maximumConsecutiveSaturatedGames:3});}function draftFromConfig(config){return Object.fromEntries(Object.entries(SESSION_FIELDS).map(([field,key])=>[field,String(config[key])]));}function draftPatch(draft){const value=validateSessionDraft(draft);return Object.fromEntries(Object.entries(SESSION_FIELDS).map(([field,key])=>[key,value[field]]));}module.exports={SESSION_FIELDS,validateSessionDraft,sessionConfigFromDraft,draftFromConfig,draftPatch};
+};
+factories["external"]=function(module,exports,require){
+const{availability}=require('./ui');const{draftFromConfig,draftPatch,SESSION_FIELDS}=require('./presentation');function createGmConfigRequest(request,serverUrl){return(path,body)=>new Promise((resolve,reject)=>request({method:body?'POST':'GET',url:serverUrl+path,timeout:5000,headers:{'Content-Type':'application/json'},...(body?{['data']:JSON.stringify(body)}:{}),onload(response){try{const result=JSON.parse(response.responseText);if(response.status<200||response.status>=300)throw new Error(result.error||'Configuration unavailable');resolve(result);}catch(error){reject(error);}},onerror:()=>reject(new Error('Local server unavailable')),ontimeout:()=>reject(new Error('Local server timed out')),}));}function createExternalSessionBridge(options){const clientId=options.clientId;let busy=false;let stopped=false;let timer=null;let ack=null;const pendingDraft={};let accepted=null;const seen=new Set();const identity=()=>{const snapshot=options.bridge.sessionSnapshot();return snapshot?`${snapshot.sessionId}:${snapshot.revision}`:null;};function draftChanged(draft,changedField){const fields=changedField&&SESSION_FIELDS[changedField]?[changedField]:Object.keys(SESSION_FIELDS);for(const field of fields){const value=String(draft[field]);if(changedField||!accepted||Number(value)!==accepted[SESSION_FIELDS[field]]||value.trim()==='')pendingDraft[field]=value;}}async function tick(){if(busy||stopped)return;busy=true;try{const config=await options.request('/config/load');accepted=config;options.presenter.applyDraft(draftFromConfig(config));if(Object.keys(pendingDraft).length){const edits={...pendingDraft};try{const validated=draftPatch({...draftFromConfig(config),...edits});const patch=Object.fromEntries(Object.keys(edits).map(field=>[SESSION_FIELDS[field],validated[SESSION_FIELDS[field]]]));const result=await options.request('/config/save',{...patch,_expectedRevision:config._revision,_serverId:config._serverId});for(const field of Object.keys(edits))if(pendingDraft[field]===edits[field])delete pendingDraft[field];accepted=result.config;options.presenter.applyDraft(draftFromConfig(result.config));}catch(error){options.onError?.(error);}}const status=options.bridge.status();const blockers=availability(status,options.startBlocker());const projection={status,availability:{...blockers,export:null},sessionIdentity:identity()};const result=await options.request('/config/session/bridge',{clientId,projection,...(ack?{ack}:{})});ack=null;const command=result.command;if(result.owner&&command&&!seen.has(command.id)){seen.add(command.id);if(seen.size>200)seen.delete(seen.values().next().value);ack={id:command.id,ok:false,error:'Session action expired. Check the session before retrying.'};if(command.ownerId===clientId&&command.expiresAt>Date.now()&&command.sessionIdentity===identity()){try{await options.request(`/config/session/commands/${command.id}/authorize`,{clientId});if(command.expiresAt<=Date.now()||command.sessionIdentity!==identity())throw new Error('Session action is no longer current');const current=availability(options.bridge.status(),options.startBlocker());if(command.action!=='export'&&current[command.action])throw new Error(current[command.action]);let value;if(command.action==='start')value=await options.bridge.start(options.createConfig(draftFromConfig(command.config)));else if(command.action==='stop'){value=await options.bridge.gracefulStop();if(value?.allowed!==true)throw new Error(value?.reason||'Session could not finish');}else value=options.bridge.exportDiagnostic();ack={id:command.id,ok:true,result:command.action==='export'?value:null};}catch(error){ack.error=String(error.code||error.message||error);}options.presenter.update();}}}catch(error){options.onError?.(error);}finally{busy=false;if(!stopped)timer=options.setTimeout(tick,1000);}}return Object.freeze({start:tick,draftChanged,stop(){stopped=true;options.clearTimeout(timer);},snapshot:()=>({accepted,pendingDraft:{...pendingDraft},busy})});}module.exports={createExternalSessionBridge,createGmConfigRequest};
 };
 factories["index"]=function(module,exports,require){
-module.exports=Object.freeze({...require("./clock"),...require("./controller"),...require("./leader"),...require("./models"),...require("./ports"),...require("./platform-chesscom"),...require("./reducer"),...require("./repository"),...require("./runtime"),...require("./statistics"),...require("./status"),...require("./telemetry"),...require("./ui"),});
+module.exports=Object.freeze({...require("./clock"),...require("./controller"),...require("./leader"),...require("./models"),...require("./ports"),...require("./platform-chesscom"),...require("./reducer"),...require("./repository"),...require("./runtime"),...require("./statistics"),...require("./status"),...require("./telemetry"),...require("./ui"),...require("./presentation"),...require("./external"),});
 };
 const cache=Object.create(null);
 function localRequire(request){

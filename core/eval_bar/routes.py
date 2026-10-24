@@ -30,6 +30,11 @@ def create_engine_registry_blueprint(registry, control_auth):
             return jsonify({'error': 'An authorized analysis context is required'}), 403
         return select()
 
+    @routes.post('/eval-bar/engines/preference')
+    @control_auth
+    def engine_preference():
+        return local_select_engine()
+
     @routes.before_request
     def protect_local_config():
         if request.path.startswith('/config/engines'):
@@ -47,8 +52,14 @@ def create_engine_registry_blueprint(registry, control_auth):
 
     @routes.post('/config/engines/select')
     def local_select_engine():
-        if not registry.has_authorized_context():
-            return jsonify({'error': 'Open an authorized analysis page on Chess.com'}), 403
-        return select()
+        data = request.get_json(silent=True)
+        if not isinstance(data, dict) or data.get('engineId') not in ENGINE_IDS:
+            return jsonify({'error': 'Unknown analysis engine'}), 400
+        try:
+            return jsonify({'ok': True, **registry.prefer(data['engineId'], data.get('expectedRevision'))})
+        except ValueError as error:
+            return jsonify({'ok': False, 'error': str(error), **registry.snapshot()}), 409
+        except (StockfishEvalBarError, OSError) as error:
+            return jsonify({'ok': False, 'error': str(error), **registry.snapshot()}), 503
 
     return routes

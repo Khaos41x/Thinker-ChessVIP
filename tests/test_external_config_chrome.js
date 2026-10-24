@@ -66,6 +66,7 @@ async function evaluate(client, expression) {
     clients.push(board);
     await board.ready;
     await board.send('Page.enable');
+    await board.send('Page.addScriptToEvaluateOnNewDocument', { source: 'window.prompt=()=>null;' });
     await board.send('Emulation.setDeviceMetricsOverride', { width: 1433, height: 900, deviceScaleFactor: 1, mobile: false });
     await board.send('Page.navigate', { url: base + '/tests/fixtures/userscript_bootstrap.html?delay=50' });
     await waitFor(() => evaluate(board, `Boolean(document.getElementById('bn-on'))`));
@@ -86,7 +87,7 @@ async function evaluate(client, expression) {
     clients.push(panel);
     await panel.ready;
     await waitFor(() => evaluate(panel, `document.querySelector('[data-key="banner"]')?.disabled===false`));
-    await waitFor(() => evaluate(panel, `document.getElementById('connection').textContent==='Chess.com tab connected'`));
+    await waitFor(() => evaluate(panel, `document.getElementById('connection').textContent==='Local server connected' && document.getElementById('userscript-connection').textContent==='Chess.com: connected'`));
     await evaluate(panel, `document.querySelector('[data-key="banner"]').click()`);
     await waitFor(() => evaluate(board, `document.getElementById('bn-on').checked===false`));
     await waitFor(() => evaluate(panel, `document.getElementById('save-state').textContent==='Applied in a Chess.com tab'`));
@@ -193,7 +194,7 @@ async function evaluate(client, expression) {
     await evaluate(panel, `window.fixtureFetch=window.fetch;window.fetch=()=>Promise.reject(new Error('offline'));document.getElementById('retry').click()`);
     await waitFor(() => evaluate(panel, `document.getElementById('connection').textContent==='Local server offline'`));
     await evaluate(panel, `window.fetch=window.fixtureFetch;document.getElementById('retry').click()`);
-    await waitFor(() => evaluate(panel, `document.getElementById('connection').textContent==='Chess.com tab connected'`));
+    await waitFor(() => evaluate(panel, `document.getElementById('connection').textContent==='Local server connected' && document.getElementById('userscript-connection').textContent==='Chess.com: connected'`));
     await evaluate(panel, `(() => {
       const native=window.fetch;let fail=true;
       window.fetch=(url,options)=>String(url)==='/config/save'&&fail

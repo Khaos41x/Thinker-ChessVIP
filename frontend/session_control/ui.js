@@ -113,6 +113,7 @@ function createSessionControlPresenter(options) {
   let currentAvailability = Object.freeze({ start: "STATUS_UNAVAILABLE", stop: "STATUS_UNAVAILABLE" });
   let sequence = 0;
   const draft = Object.create(null);
+  const dirtyFields = new Set();
   const inFlight = new Set();
 
   function emit(type, detail) {
@@ -220,7 +221,9 @@ function createSessionControlPresenter(options) {
       for (const [field, id] of Object.entries(FIELD_IDS)) {
         if (event.target && event.target.id === id) {
           draft[field] = String(event.target.value);
+          dirtyFields.add(field);
           emit("draft", { field });
+          if (typeof options.onDraftChange === "function") options.onDraftChange(readDraft(), field);
           return;
         }
       }
@@ -259,7 +262,23 @@ function createSessionControlPresenter(options) {
     panel = null;
   }
 
-  return Object.freeze({ bind, dispose, readConfig, readDraft, update });
+  function applyDraft(value) {
+    for (const [field, id] of Object.entries(FIELD_IDS)) {
+      if (value[field] === undefined) continue;
+      const incoming = String(value[field]);
+      if (dirtyFields.has(field)) {
+        const equivalent = incoming === draft[field] || draft[field]?.trim() !== "" && Number.isFinite(Number(draft[field])) && Number(incoming) === Number(draft[field]);
+        if (!equivalent) continue;
+        dirtyFields.delete(field);
+      }
+      const node = findById(panel, id);
+      if (node && node === node.ownerDocument?.activeElement) continue;
+      draft[field] = incoming;
+      if (node) node.value = draft[field];
+    }
+  }
+
+  return Object.freeze({ bind, dispose, readConfig, readDraft, applyDraft, update });
 }
 
-module.exports = { FIELD_IDS, createSessionControlPresenter, phaseLabel, presentStatus, reasonCode, successLabel, warningLabel };
+module.exports = { FIELD_IDS, availability, createSessionControlPresenter, phaseLabel, presentStatus, reasonCode, successLabel, warningLabel };

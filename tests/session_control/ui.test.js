@@ -180,6 +180,18 @@ async function run() {
   assert.equal(panel.querySelector("#kb-session-raw").textContent, "—");
   assert.equal(panel.getAttribute("data-session-state"), "never-started");
   assert.equal(panel.getAttribute("data-session-history"), "none");
+  const preservedDraft = panel.querySelector("#kb-session-duration");
+  preservedDraft.value = "";
+  panel.dispatch("input", preservedDraft);
+  presenter.applyDraft({ durationMinutes: "120" });
+  assert.equal(preservedDraft.value, "", "accepted polling overwrote an invalid unfocused draft");
+  preservedDraft.value = "135";
+  panel.dispatch("input", preservedDraft);
+  presenter.applyDraft({ durationMinutes: "120" });
+  assert.equal(preservedDraft.value, "135", "stale polling overwrote an in-flight edit");
+  presenter.applyDraft({ durationMinutes: "135" });
+  presenter.applyDraft({ durationMinutes: "120" });
+  assert.equal(preservedDraft.value, "120", "acknowledged draft did not accept a later remote change");
   currentStatus = status({
     phase: "QUEUEING",
     observedCounts: { wins: 12, draws: 1, losses: 2, terminalGames: 15 },

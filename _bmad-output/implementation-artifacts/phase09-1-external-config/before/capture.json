@@ -1,0 +1,3807 @@
+[
+  {
+    "surface": "external",
+    "width": 1280,
+    "height": 720,
+    "zoom": 1,
+    "file": "external-1280x720-100pct.png",
+    "viewportFile": "external-1280x720-100pct-viewport.png",
+    "state": {
+      "text": "EXTERNAL CONFIG\n\nThinker Chess\n\nYour controls. A separate workspace.\n\nChess.com tab connected\n\nKeep Chess.com open with the userscript enabled. Changes sync automatically.\n\nCORE\nBot\nAuto Moves\nAuto Queue\nENGINE CONTROL\nAnalysis Engine\nLoading\nStockfish 19 · 1MB\nStockfish 19 · 94MB\nKomodo 14.1\n\nChecking installed engines…\n\nTechnical details\nAuto Rating\nStrength Level\n3200\nMin 800\nMax 3200\nMove Timing\n0.50–1.00 s\nMove timing in seconds\nMinimum delay\ns\n–\nMaximum delay\ns\nRandom\nImmediate\n\nTiming applies when Auto Moves is enabled.\n\nSmart Pacing\nVISUALS\nEvaluation Bar\nBanner\nWaiting for side panel\nRecent Form\nTheme\nWORKSPACE\nClean View\n\nHide all Thinker Chess visuals on Chess.com. Controls remain here.\n\nAUTO PLAY\nRating Goal\n\nApplied in a Chess.com tab\n\nRefresh\n\nAnalysis engine selection, rating goals and history are saved locally. Other controls reset when the server restarts.",
+      "width": 1280,
+      "height": 720,
+      "documentWidth": 1265,
+      "box": {
+        "x": 172.5,
+        "y": 0,
+        "width": 920,
+        "height": 934,
+        "scale": 1
+      },
+      "fields": [
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 573.5,
+            "y": 223,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 573.5,
+            "y": 259.5,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 573.5,
+            "y": 295.5,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "analysis-engine",
+          "label": "\n            Stockfish 19 · 1MB\n            Stockfish 19 · 94MB\n            Komodo 14.1\n          ",
+          "type": "select-one",
+          "disabled": true,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 651.5,
+            "y": 246,
+            "width": 404,
+            "height": 36
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 1015.5,
+            "y": 354,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "elo",
+          "label": "",
+          "type": "range",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 651.5,
+            "y": 426,
+            "width": 404,
+            "height": 16
+          }
+        },
+        {
+          "id": "minDelay",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 662.5,
+            "y": 531.5,
+            "width": 156,
+            "height": 17
+          }
+        },
+        {
+          "id": "maxDelay",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 875.75,
+            "y": 531.5,
+            "width": 156,
+            "height": 17
+          }
+        },
+        {
+          "id": "",
+          "label": "Random",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 652.5,
+            "y": 565,
+            "width": 201,
+            "height": 30
+          }
+        },
+        {
+          "id": "",
+          "label": "Immediate",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 853.5,
+            "y": 565,
+            "width": 201,
+            "height": 30
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 1015.5,
+            "y": 647,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 573.5,
+            "y": 403.65625,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 573.5,
+            "y": 440.15625,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 573.5,
+            "y": 476.15625,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "color",
+          "label": "",
+          "type": "color",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 589.5,
+            "y": 511.65625,
+            "width": 24,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 573.5,
+            "y": 620.328125,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "tc-rating-target",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 209.5,
+            "y": 772,
+            "width": 205.5,
+            "height": 32
+          }
+        },
+        {
+          "id": "retry",
+          "label": "Refresh",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 1006.578125,
+            "y": 833,
+            "width": 61.921875,
+            "height": 32
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surface": "embedded",
+    "width": 1280,
+    "height": 720,
+    "zoom": 1,
+    "file": "embedded-1280x720-100pct.png",
+    "viewportFile": "embedded-1280x720-100pct-viewport.png",
+    "state": {
+      "text": "CORE\n\nBot\n\nON\nOFF\n\nAuto Moves\n\nON\nOFF\n\nAuto Queue\n\nON\nOFF\nVISUALS\n\nEvaluation Bar\n\nON\nOFF\n\nBanner\n\nON\nOFF\n\nRecent Form\n\nON\nOFF\nTheme\nENGINE CONTROL\n\nAuto Rating\n\nON\nOFF\nStrength Level\nCurrent 3200\nMin 800\nMax 3200\nMove Timing\n0.50–1.00 s\ns\n–\ns\nRandom\nImmediate\n\nEnable Auto Moves to apply this timing.\n\nSmart Pacing\n\nON\nOFF\nAUTO PLAY\nDuration (Min)\nMin Wins %\nMax Wins %\nRating Goal\nStart\nFinish\nExport Diagnostics\nStatus\nIdle\nTime Left\n00:00:00\nScore\n0 W | 0 D | 0 L\nWin Rate\n—\nOPPONENT SCOUT\nWaiting for opponent\n\nPublic data appears after an opponent is identified.",
+      "width": 1280,
+      "height": 720,
+      "documentWidth": 1433,
+      "box": {
+        "x": 135,
+        "y": 1003,
+        "width": 1010,
+        "height": 599,
+        "scale": 1
+      },
+      "fields": [
+        {
+          "id": "kb-workspace-launcher",
+          "label": "Open Thinker Chess panels",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-more-settings-toggle",
+          "label": "\n            More Settings⌄\n          ",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "st-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "st-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "am-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "am-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "aq-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "aq-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "eb-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "eb-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "bn-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "bn-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "rf-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "rf-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-color-picker",
+          "label": "Theme color",
+          "type": "color",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 443,
+            "y": 1327,
+            "width": 24,
+            "height": 24
+          }
+        },
+        {
+          "id": "aa-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "aa-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-elo-slider",
+          "label": "",
+          "type": "range",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 505,
+            "y": 1119,
+            "width": 319,
+            "height": 16
+          }
+        },
+        {
+          "id": "kb-move-timing-toggle",
+          "label": "\n            \n            \n            ⌄\n          ",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "minDelayInput",
+          "label": "Minimum move delay in seconds",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 506,
+            "y": 1208,
+            "width": 120,
+            "height": 30
+          }
+        },
+        {
+          "id": "maxDelayInput",
+          "label": "Maximum move delay in seconds",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 679,
+            "y": 1208,
+            "width": 120,
+            "height": 30
+          }
+        },
+        {
+          "id": "dm-rand",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 511,
+            "y": 1251,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": "dm-max",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 511,
+            "y": 1251,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": "sp-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "sp-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "ph-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "ph-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "pa-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "pa-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-advanced-settings-toggle",
+          "label": "Configure Auto Play",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-session-duration",
+          "label": "",
+          "type": "number",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 148,
+            "y": 1450,
+            "width": 163,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-min-rate",
+          "label": "",
+          "type": "number",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 319,
+            "y": 1450,
+            "width": 163,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-max-rate",
+          "label": "",
+          "type": "number",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 490,
+            "y": 1450,
+            "width": 163,
+            "height": 32
+          }
+        },
+        {
+          "id": "tc-rating-target",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 661,
+            "y": 1450,
+            "width": 163,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-start",
+          "label": "Start",
+          "type": "button",
+          "disabled": true,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 148,
+            "y": 1494,
+            "width": 448,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-stop",
+          "label": "Finish",
+          "type": "button",
+          "disabled": true,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 604,
+            "y": 1494,
+            "width": 106,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-export",
+          "label": "Export session diagnostic",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 718,
+            "y": 1494,
+            "width": 106,
+            "height": 32
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surface": "external",
+    "width": 1440,
+    "height": 900,
+    "zoom": 1,
+    "file": "external-1440x900-100pct.png",
+    "viewportFile": "external-1440x900-100pct-viewport.png",
+    "state": {
+      "text": "EXTERNAL CONFIG\n\nThinker Chess\n\nYour controls. A separate workspace.\n\nChess.com tab connected\n\nKeep Chess.com open with the userscript enabled. Changes sync automatically.\n\nCORE\nBot\nAuto Moves\nAuto Queue\nENGINE CONTROL\nAnalysis Engine\nLoading\nStockfish 19 · 1MB\nStockfish 19 · 94MB\nKomodo 14.1\n\nChecking installed engines…\n\nTechnical details\nAuto Rating\nStrength Level\n3200\nMin 800\nMax 3200\nMove Timing\n0.50–1.00 s\nMove timing in seconds\nMinimum delay\ns\n–\nMaximum delay\ns\nRandom\nImmediate\n\nTiming applies when Auto Moves is enabled.\n\nSmart Pacing\nVISUALS\nEvaluation Bar\nBanner\nWaiting for side panel\nRecent Form\nTheme\nWORKSPACE\nClean View\n\nHide all Thinker Chess visuals on Chess.com. Controls remain here.\n\nAUTO PLAY\nRating Goal\n\nApplied in a Chess.com tab\n\nRefresh\n\nAnalysis engine selection, rating goals and history are saved locally. Other controls reset when the server restarts.",
+      "width": 1440,
+      "height": 900,
+      "documentWidth": 1425,
+      "box": {
+        "x": 252.5,
+        "y": 0,
+        "width": 920,
+        "height": 934,
+        "scale": 1
+      },
+      "fields": [
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 653.5,
+            "y": 223,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 653.5,
+            "y": 259.5,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 653.5,
+            "y": 295.5,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "analysis-engine",
+          "label": "\n            Stockfish 19 · 1MB\n            Stockfish 19 · 94MB\n            Komodo 14.1\n          ",
+          "type": "select-one",
+          "disabled": true,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 731.5,
+            "y": 246,
+            "width": 404,
+            "height": 36
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 1095.5,
+            "y": 354,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "elo",
+          "label": "",
+          "type": "range",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 731.5,
+            "y": 426,
+            "width": 404,
+            "height": 16
+          }
+        },
+        {
+          "id": "minDelay",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 742.5,
+            "y": 531.5,
+            "width": 156,
+            "height": 17
+          }
+        },
+        {
+          "id": "maxDelay",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 955.75,
+            "y": 531.5,
+            "width": 156,
+            "height": 17
+          }
+        },
+        {
+          "id": "",
+          "label": "Random",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 732.5,
+            "y": 565,
+            "width": 201,
+            "height": 30
+          }
+        },
+        {
+          "id": "",
+          "label": "Immediate",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 933.5,
+            "y": 565,
+            "width": 201,
+            "height": 30
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 1095.5,
+            "y": 647,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 653.5,
+            "y": 403.65625,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 653.5,
+            "y": 440.15625,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 653.5,
+            "y": 476.15625,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "color",
+          "label": "",
+          "type": "color",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 669.5,
+            "y": 511.65625,
+            "width": 24,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 653.5,
+            "y": 620.328125,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "tc-rating-target",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 289.5,
+            "y": 772,
+            "width": 205.5,
+            "height": 32
+          }
+        },
+        {
+          "id": "retry",
+          "label": "Refresh",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 1086.578125,
+            "y": 833,
+            "width": 61.921875,
+            "height": 32
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surface": "embedded",
+    "width": 1440,
+    "height": 900,
+    "zoom": 1,
+    "file": "embedded-1440x900-100pct.png",
+    "viewportFile": "embedded-1440x900-100pct-viewport.png",
+    "state": {
+      "text": "CORE\n\nBot\n\nON\nOFF\n\nAuto Moves\n\nON\nOFF\n\nAuto Queue\n\nON\nOFF\nVISUALS\n\nEvaluation Bar\n\nON\nOFF\n\nBanner\n\nON\nOFF\n\nRecent Form\n\nON\nOFF\nTheme\nENGINE CONTROL\n\nAuto Rating\n\nON\nOFF\nStrength Level\nCurrent 3200\nMin 800\nMax 3200\nMove Timing\n0.50–1.00 s\ns\n–\ns\nRandom\nImmediate\n\nEnable Auto Moves to apply this timing.\n\nSmart Pacing\n\nON\nOFF\nAUTO PLAY\nDuration (Min)\nMin Wins %\nMax Wins %\nRating Goal\nStart\nFinish\nExport Diagnostics\nStatus\nIdle\nTime Left\n00:00:00\nScore\n0 W | 0 D | 0 L\nWin Rate\n—\nOPPONENT SCOUT\nWaiting for opponent\n\nPublic data appears after an opponent is identified.",
+      "width": 1440,
+      "height": 900,
+      "documentWidth": 1440,
+      "box": {
+        "x": 215,
+        "y": 1024,
+        "width": 1010,
+        "height": 599,
+        "scale": 1
+      },
+      "fields": [
+        {
+          "id": "kb-workspace-launcher",
+          "label": "Open Thinker Chess panels",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-more-settings-toggle",
+          "label": "\n            More Settings⌄\n          ",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "st-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "st-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "am-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "am-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "aq-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "aq-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "eb-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "eb-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "bn-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "bn-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "rf-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "rf-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-color-picker",
+          "label": "Theme color",
+          "type": "color",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 523,
+            "y": 1348,
+            "width": 24,
+            "height": 24
+          }
+        },
+        {
+          "id": "aa-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "aa-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-elo-slider",
+          "label": "",
+          "type": "range",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 585,
+            "y": 1140,
+            "width": 319,
+            "height": 16
+          }
+        },
+        {
+          "id": "kb-move-timing-toggle",
+          "label": "\n            \n            \n            ⌄\n          ",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "minDelayInput",
+          "label": "Minimum move delay in seconds",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 586,
+            "y": 1229,
+            "width": 120,
+            "height": 30
+          }
+        },
+        {
+          "id": "maxDelayInput",
+          "label": "Maximum move delay in seconds",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 759,
+            "y": 1229,
+            "width": 120,
+            "height": 30
+          }
+        },
+        {
+          "id": "dm-rand",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 591,
+            "y": 1272,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": "dm-max",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 591,
+            "y": 1272,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": "sp-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "sp-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "ph-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "ph-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "pa-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "pa-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-advanced-settings-toggle",
+          "label": "Configure Auto Play",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-session-duration",
+          "label": "",
+          "type": "number",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 228,
+            "y": 1471,
+            "width": 163,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-min-rate",
+          "label": "",
+          "type": "number",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 399,
+            "y": 1471,
+            "width": 163,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-max-rate",
+          "label": "",
+          "type": "number",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 570,
+            "y": 1471,
+            "width": 163,
+            "height": 32
+          }
+        },
+        {
+          "id": "tc-rating-target",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 741,
+            "y": 1471,
+            "width": 163,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-start",
+          "label": "Start",
+          "type": "button",
+          "disabled": true,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 228,
+            "y": 1515,
+            "width": 448,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-stop",
+          "label": "Finish",
+          "type": "button",
+          "disabled": true,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 684,
+            "y": 1515,
+            "width": 106,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-export",
+          "label": "Export session diagnostic",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 798,
+            "y": 1515,
+            "width": 106,
+            "height": 32
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surface": "external",
+    "width": 1920,
+    "height": 1080,
+    "zoom": 1,
+    "file": "external-1920x1080-100pct.png",
+    "viewportFile": "external-1920x1080-100pct-viewport.png",
+    "state": {
+      "text": "EXTERNAL CONFIG\n\nThinker Chess\n\nYour controls. A separate workspace.\n\nChess.com tab connected\n\nKeep Chess.com open with the userscript enabled. Changes sync automatically.\n\nCORE\nBot\nAuto Moves\nAuto Queue\nENGINE CONTROL\nAnalysis Engine\nLoading\nStockfish 19 · 1MB\nStockfish 19 · 94MB\nKomodo 14.1\n\nChecking installed engines…\n\nTechnical details\nAuto Rating\nStrength Level\n3200\nMin 800\nMax 3200\nMove Timing\n0.50–1.00 s\nMove timing in seconds\nMinimum delay\ns\n–\nMaximum delay\ns\nRandom\nImmediate\n\nTiming applies when Auto Moves is enabled.\n\nSmart Pacing\nVISUALS\nEvaluation Bar\nBanner\nVisible on Chess.com\nRecent Form\nTheme\nWORKSPACE\nClean View\n\nHide all Thinker Chess visuals on Chess.com. Controls remain here.\n\nAUTO PLAY\nRating Goal\n\nApplied in a Chess.com tab\n\nRefresh\n\nAnalysis engine selection, rating goals and history are saved locally. Other controls reset when the server restarts.",
+      "width": 1920,
+      "height": 1080,
+      "documentWidth": 1920,
+      "box": {
+        "x": 500,
+        "y": 0,
+        "width": 920,
+        "height": 934,
+        "scale": 1
+      },
+      "fields": [
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 901,
+            "y": 223,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 901,
+            "y": 259.5,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 901,
+            "y": 295.5,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "analysis-engine",
+          "label": "\n            Stockfish 19 · 1MB\n            Stockfish 19 · 94MB\n            Komodo 14.1\n          ",
+          "type": "select-one",
+          "disabled": true,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 979,
+            "y": 246,
+            "width": 404,
+            "height": 36
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 1343,
+            "y": 354,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "elo",
+          "label": "",
+          "type": "range",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 979,
+            "y": 426,
+            "width": 404,
+            "height": 16
+          }
+        },
+        {
+          "id": "minDelay",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 990,
+            "y": 531.5,
+            "width": 156,
+            "height": 17
+          }
+        },
+        {
+          "id": "maxDelay",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 1203.25,
+            "y": 531.5,
+            "width": 156,
+            "height": 17
+          }
+        },
+        {
+          "id": "",
+          "label": "Random",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 980,
+            "y": 565,
+            "width": 201,
+            "height": 30
+          }
+        },
+        {
+          "id": "",
+          "label": "Immediate",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 1181,
+            "y": 565,
+            "width": 201,
+            "height": 30
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 1343,
+            "y": 647,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 901,
+            "y": 403.65625,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 901,
+            "y": 440.15625,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 901,
+            "y": 476.15625,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "color",
+          "label": "",
+          "type": "color",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 917,
+            "y": 511.65625,
+            "width": 24,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 901,
+            "y": 620.328125,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "tc-rating-target",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 537,
+            "y": 772,
+            "width": 205.5,
+            "height": 32
+          }
+        },
+        {
+          "id": "retry",
+          "label": "Refresh",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 1334.078125,
+            "y": 833,
+            "width": 61.921875,
+            "height": 32
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surface": "embedded",
+    "width": 1920,
+    "height": 1080,
+    "zoom": 1,
+    "file": "embedded-1920x1080-100pct.png",
+    "viewportFile": "embedded-1920x1080-100pct-viewport.png",
+    "state": {
+      "text": "CORE\n\nBot\n\nON\nOFF\n\nAuto Moves\n\nON\nOFF\n\nAuto Queue\n\nON\nOFF\nVISUALS\n\nEvaluation Bar\n\nON\nOFF\n\nBanner\n\nON\nOFF\n\nRecent Form\n\nON\nOFF\nTheme\nENGINE CONTROL\n\nAuto Rating\n\nON\nOFF\nStrength Level\nCurrent 3200\nMin 800\nMax 3200\nMove Timing\n0.50–1.00 s\ns\n–\ns\nRandom\nImmediate\n\nEnable Auto Moves to apply this timing.\n\nSmart Pacing\n\nON\nOFF\nAUTO PLAY\nDuration (Min)\nMin Wins %\nMax Wins %\nRating Goal\nStart\nFinish\nExport Diagnostics\nStatus\nIdle\nTime Left\n00:00:00\nScore\n0 W | 0 D | 0 L\nWin Rate\n—\nOPPONENT SCOUT\nWaiting for opponent\n\nPublic data appears after an opponent is identified.",
+      "width": 1920,
+      "height": 1080,
+      "documentWidth": 1920,
+      "box": {
+        "x": 455,
+        "y": 1204,
+        "width": 1010,
+        "height": 599,
+        "scale": 1
+      },
+      "fields": [
+        {
+          "id": "kb-workspace-launcher",
+          "label": "Open Thinker Chess panels",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-more-settings-toggle",
+          "label": "\n            More Settings⌄\n          ",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "st-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "st-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "am-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "am-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "aq-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "aq-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "eb-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "eb-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "bn-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "bn-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "rf-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "rf-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-color-picker",
+          "label": "Theme color",
+          "type": "color",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 763,
+            "y": 1528,
+            "width": 24,
+            "height": 24
+          }
+        },
+        {
+          "id": "aa-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "aa-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-elo-slider",
+          "label": "",
+          "type": "range",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 825,
+            "y": 1320,
+            "width": 319,
+            "height": 16
+          }
+        },
+        {
+          "id": "kb-move-timing-toggle",
+          "label": "\n            \n            \n            ⌄\n          ",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "minDelayInput",
+          "label": "Minimum move delay in seconds",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 826,
+            "y": 1409,
+            "width": 120,
+            "height": 30
+          }
+        },
+        {
+          "id": "maxDelayInput",
+          "label": "Maximum move delay in seconds",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 999,
+            "y": 1409,
+            "width": 120,
+            "height": 30
+          }
+        },
+        {
+          "id": "dm-rand",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 831,
+            "y": 1452,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": "dm-max",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 831,
+            "y": 1452,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": "sp-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "sp-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "ph-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "ph-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "pa-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "pa-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-advanced-settings-toggle",
+          "label": "Configure Auto Play",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-session-duration",
+          "label": "",
+          "type": "number",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 468,
+            "y": 1651,
+            "width": 163,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-min-rate",
+          "label": "",
+          "type": "number",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 639,
+            "y": 1651,
+            "width": 163,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-max-rate",
+          "label": "",
+          "type": "number",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 810,
+            "y": 1651,
+            "width": 163,
+            "height": 32
+          }
+        },
+        {
+          "id": "tc-rating-target",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 981,
+            "y": 1651,
+            "width": 163,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-start",
+          "label": "Start",
+          "type": "button",
+          "disabled": true,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 468,
+            "y": 1695,
+            "width": 448,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-stop",
+          "label": "Finish",
+          "type": "button",
+          "disabled": true,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 924,
+            "y": 1695,
+            "width": 106,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-export",
+          "label": "Export session diagnostic",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 1038,
+            "y": 1695,
+            "width": 106,
+            "height": 32
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surface": "external",
+    "width": 1440,
+    "height": 900,
+    "zoom": 1.25,
+    "file": "external-1440x900-125pct.png",
+    "viewportFile": "external-1440x900-125pct-viewport.png",
+    "state": {
+      "text": "EXTERNAL CONFIG\n\nThinker Chess\n\nYour controls. A separate workspace.\n\nChess.com tab connected\n\nKeep Chess.com open with the userscript enabled. Changes sync automatically.\n\nCORE\nBot\nAuto Moves\nAuto Queue\nENGINE CONTROL\nAnalysis Engine\nLoading\nStockfish 19 · 1MB\nStockfish 19 · 94MB\nKomodo 14.1\n\nChecking installed engines…\n\nTechnical details\nAuto Rating\nStrength Level\n3200\nMin 800\nMax 3200\nMove Timing\n0.50–1.00 s\nMove timing in seconds\nMinimum delay\ns\n–\nMaximum delay\ns\nRandom\nImmediate\n\nTiming applies when Auto Moves is enabled.\n\nSmart Pacing\nVISUALS\nEvaluation Bar\nBanner\nVisible on Chess.com\nRecent Form\nTheme\nWORKSPACE\nClean View\n\nHide all Thinker Chess visuals on Chess.com. Controls remain here.\n\nAUTO PLAY\nRating Goal\n\nApplied in a Chess.com tab\n\nRefresh\n\nAnalysis engine selection, rating goals and history are saved locally. Other controls reset when the server restarts.",
+      "width": 1152,
+      "height": 720,
+      "documentWidth": 1137,
+      "box": {
+        "x": 108.5,
+        "y": 0,
+        "width": 920,
+        "height": 934,
+        "scale": 1
+      },
+      "fields": [
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 509.5,
+            "y": 223,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 509.5,
+            "y": 259.5,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 509.5,
+            "y": 295.5,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "analysis-engine",
+          "label": "\n            Stockfish 19 · 1MB\n            Stockfish 19 · 94MB\n            Komodo 14.1\n          ",
+          "type": "select-one",
+          "disabled": true,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 587.5,
+            "y": 246,
+            "width": 404,
+            "height": 36
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 951.5,
+            "y": 354,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "elo",
+          "label": "",
+          "type": "range",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 587.5,
+            "y": 426,
+            "width": 404,
+            "height": 16
+          }
+        },
+        {
+          "id": "minDelay",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 598.5,
+            "y": 531.5,
+            "width": 156,
+            "height": 17
+          }
+        },
+        {
+          "id": "maxDelay",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 811.75,
+            "y": 531.5,
+            "width": 156,
+            "height": 17
+          }
+        },
+        {
+          "id": "",
+          "label": "Random",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 588.5,
+            "y": 565,
+            "width": 201,
+            "height": 30
+          }
+        },
+        {
+          "id": "",
+          "label": "Immediate",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 789.5,
+            "y": 565,
+            "width": 201,
+            "height": 30
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 951.5,
+            "y": 647,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 509.5,
+            "y": 403.65625,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 509.5,
+            "y": 440.15625,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 509.5,
+            "y": 476.15625,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "color",
+          "label": "",
+          "type": "color",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 525.5,
+            "y": 511.65625,
+            "width": 24,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 509.5,
+            "y": 620.328125,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "tc-rating-target",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 145.5,
+            "y": 772,
+            "width": 205.5,
+            "height": 32
+          }
+        },
+        {
+          "id": "retry",
+          "label": "Refresh",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 942.578125,
+            "y": 833,
+            "width": 61.921875,
+            "height": 32
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surface": "embedded",
+    "width": 1440,
+    "height": 900,
+    "zoom": 1.25,
+    "file": "embedded-1440x900-125pct.png",
+    "viewportFile": "embedded-1440x900-125pct-viewport.png",
+    "state": {
+      "text": "CORE\n\nBot\n\nON\nOFF\n\nAuto Moves\n\nON\nOFF\n\nAuto Queue\n\nON\nOFF\nVISUALS\n\nEvaluation Bar\n\nON\nOFF\n\nBanner\n\nON\nOFF\n\nRecent Form\n\nON\nOFF\nTheme\nENGINE CONTROL\n\nAuto Rating\n\nON\nOFF\nStrength Level\nCurrent 3200\nMin 800\nMax 3200\nMove Timing\n0.50–1.00 s\ns\n–\ns\nRandom\nImmediate\n\nEnable Auto Moves to apply this timing.\n\nSmart Pacing\n\nON\nOFF\nAUTO PLAY\nDuration (Min)\nMin Wins %\nMax Wins %\nRating Goal\nStart\nFinish\nExport Diagnostics\nStatus\nIdle\nTime Left\n00:00:00\nScore\n0 W | 0 D | 0 L\nWin Rate\n—\nOPPONENT SCOUT\nWaiting for opponent\n\nPublic data appears after an opponent is identified.",
+      "width": 1152,
+      "height": 720,
+      "documentWidth": 1433,
+      "box": {
+        "x": 71,
+        "y": 1003,
+        "width": 1010,
+        "height": 599,
+        "scale": 1
+      },
+      "fields": [
+        {
+          "id": "kb-workspace-launcher",
+          "label": "Open Thinker Chess panels",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-more-settings-toggle",
+          "label": "\n            More Settings⌄\n          ",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "st-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "st-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "am-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "am-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "aq-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "aq-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "eb-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "eb-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "bn-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "bn-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "rf-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "rf-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-color-picker",
+          "label": "Theme color",
+          "type": "color",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 379,
+            "y": 1327,
+            "width": 24,
+            "height": 24
+          }
+        },
+        {
+          "id": "aa-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "aa-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-elo-slider",
+          "label": "",
+          "type": "range",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 441,
+            "y": 1119,
+            "width": 319,
+            "height": 16
+          }
+        },
+        {
+          "id": "kb-move-timing-toggle",
+          "label": "\n            \n            \n            ⌄\n          ",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "minDelayInput",
+          "label": "Minimum move delay in seconds",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 442,
+            "y": 1208,
+            "width": 120,
+            "height": 30
+          }
+        },
+        {
+          "id": "maxDelayInput",
+          "label": "Maximum move delay in seconds",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 615,
+            "y": 1208,
+            "width": 120,
+            "height": 30
+          }
+        },
+        {
+          "id": "dm-rand",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 447,
+            "y": 1251,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": "dm-max",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 447,
+            "y": 1251,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": "sp-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "sp-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "ph-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "ph-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "pa-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "pa-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-advanced-settings-toggle",
+          "label": "Configure Auto Play",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-session-duration",
+          "label": "",
+          "type": "number",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 84,
+            "y": 1450,
+            "width": 163,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-min-rate",
+          "label": "",
+          "type": "number",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 255,
+            "y": 1450,
+            "width": 163,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-max-rate",
+          "label": "",
+          "type": "number",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 426,
+            "y": 1450,
+            "width": 163,
+            "height": 32
+          }
+        },
+        {
+          "id": "tc-rating-target",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 597,
+            "y": 1450,
+            "width": 163,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-start",
+          "label": "Start",
+          "type": "button",
+          "disabled": true,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 84,
+            "y": 1494,
+            "width": 448,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-stop",
+          "label": "Finish",
+          "type": "button",
+          "disabled": true,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 540,
+            "y": 1494,
+            "width": 106,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-export",
+          "label": "Export session diagnostic",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 654,
+            "y": 1494,
+            "width": 106,
+            "height": 32
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surface": "external",
+    "width": 1440,
+    "height": 900,
+    "zoom": 1.5,
+    "file": "external-1440x900-150pct.png",
+    "viewportFile": "external-1440x900-150pct-viewport.png",
+    "state": {
+      "text": "EXTERNAL CONFIG\n\nThinker Chess\n\nYour controls. A separate workspace.\n\nChess.com tab connected\n\nKeep Chess.com open with the userscript enabled. Changes sync automatically.\n\nCORE\nBot\nAuto Moves\nAuto Queue\nENGINE CONTROL\nAnalysis Engine\nLoading\nStockfish 19 · 1MB\nStockfish 19 · 94MB\nKomodo 14.1\n\nChecking installed engines…\n\nTechnical details\nAuto Rating\nStrength Level\n3200\nMin 800\nMax 3200\nMove Timing\n0.50–1.00 s\nMove timing in seconds\nMinimum delay\ns\n–\nMaximum delay\ns\nRandom\nImmediate\n\nTiming applies when Auto Moves is enabled.\n\nSmart Pacing\nVISUALS\nEvaluation Bar\nBanner\nVisible on Chess.com\nRecent Form\nTheme\nWORKSPACE\nClean View\n\nHide all Thinker Chess visuals on Chess.com. Controls remain here.\n\nAUTO PLAY\nRating Goal\n\nApplied in a Chess.com tab\n\nRefresh\n\nAnalysis engine selection, rating goals and history are saved locally. Other controls reset when the server restarts.",
+      "width": 960,
+      "height": 600,
+      "documentWidth": 945,
+      "box": {
+        "x": 12.5,
+        "y": 0,
+        "width": 920,
+        "height": 934,
+        "scale": 1
+      },
+      "fields": [
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 413.5,
+            "y": 223,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 413.5,
+            "y": 259.5,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 413.5,
+            "y": 295.5,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "analysis-engine",
+          "label": "\n            Stockfish 19 · 1MB\n            Stockfish 19 · 94MB\n            Komodo 14.1\n          ",
+          "type": "select-one",
+          "disabled": true,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 491.5,
+            "y": 246,
+            "width": 404,
+            "height": 36
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 855.5,
+            "y": 354,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "elo",
+          "label": "",
+          "type": "range",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 491.5,
+            "y": 426,
+            "width": 404,
+            "height": 16
+          }
+        },
+        {
+          "id": "minDelay",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 502.5,
+            "y": 531.5,
+            "width": 156,
+            "height": 17
+          }
+        },
+        {
+          "id": "maxDelay",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 715.75,
+            "y": 531.5,
+            "width": 156,
+            "height": 17
+          }
+        },
+        {
+          "id": "",
+          "label": "Random",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 492.5,
+            "y": 565,
+            "width": 201,
+            "height": 30
+          }
+        },
+        {
+          "id": "",
+          "label": "Immediate",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 693.5,
+            "y": 565,
+            "width": 201,
+            "height": 30
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 855.5,
+            "y": 647,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 413.5,
+            "y": 403.65625,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 413.5,
+            "y": 440.15625,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 413.5,
+            "y": 476.15625,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "color",
+          "label": "",
+          "type": "color",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 429.5,
+            "y": 511.65625,
+            "width": 24,
+            "height": 24
+          }
+        },
+        {
+          "id": "",
+          "label": "",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 413.5,
+            "y": 620.328125,
+            "width": 40,
+            "height": 24
+          }
+        },
+        {
+          "id": "tc-rating-target",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 49.5,
+            "y": 772,
+            "width": 205.5,
+            "height": 32
+          }
+        },
+        {
+          "id": "retry",
+          "label": "Refresh",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 846.578125,
+            "y": 833,
+            "width": 61.921875,
+            "height": 32
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surface": "embedded",
+    "width": 1440,
+    "height": 900,
+    "zoom": 1.5,
+    "file": "embedded-1440x900-150pct.png",
+    "viewportFile": "embedded-1440x900-150pct-viewport.png",
+    "state": {
+      "text": "CORE\n\nBot\n\nON\nOFF\n\nAuto Moves\n\nON\nOFF\n\nAuto Queue\n\nON\nOFF\nVISUALS\n\nEvaluation Bar\n\nON\nOFF\n\nBanner\n\nON\nOFF\n\nRecent Form\n\nON\nOFF\nTheme\nENGINE CONTROL\n\nAuto Rating\n\nON\nOFF\nStrength Level\nCurrent 3200\nMin 800\nMax 3200\nMove Timing\n0.50–1.00 s\ns\n–\ns\nRandom\nImmediate\n\nEnable Auto Moves to apply this timing.\n\nSmart Pacing\n\nON\nOFF\nAUTO PLAY\nDuration (Min)\nMin Wins %\nMax Wins %\nRating Goal\nStart\nFinish\nExport Diagnostics\nStatus\nIdle\nTime Left\n00:00:00\nScore\n0 W | 0 D | 0 L\nWin Rate\n—\nOPPONENT SCOUT\nWaiting for opponent\n\nPublic data appears after an opponent is identified.",
+      "width": 960,
+      "height": 600,
+      "documentWidth": 1433,
+      "box": {
+        "x": 12,
+        "y": 1003,
+        "width": 936,
+        "height": 1098,
+        "scale": 1
+      },
+      "fields": [
+        {
+          "id": "kb-workspace-launcher",
+          "label": "Open Thinker Chess panels",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-more-settings-toggle",
+          "label": "\n            More Settings⌄\n          ",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "st-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "st-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "am-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "am-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "aq-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "aq-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "eb-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "eb-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "bn-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "bn-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "rf-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "rf-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-color-picker",
+          "label": "Theme color",
+          "type": "color",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 911,
+            "y": 1327,
+            "width": 24,
+            "height": 24
+          }
+        },
+        {
+          "id": "aa-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "aa-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-elo-slider",
+          "label": "",
+          "type": "range",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 25,
+            "y": 1498,
+            "width": 910,
+            "height": 16
+          }
+        },
+        {
+          "id": "kb-move-timing-toggle",
+          "label": "\n            \n            \n            ⌄\n          ",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "minDelayInput",
+          "label": "Minimum move delay in seconds",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 26,
+            "y": 1587,
+            "width": 166,
+            "height": 30
+          }
+        },
+        {
+          "id": "maxDelayInput",
+          "label": "Maximum move delay in seconds",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 245,
+            "y": 1587,
+            "width": 166,
+            "height": 30
+          }
+        },
+        {
+          "id": "dm-rand",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 31,
+            "y": 1630,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": "dm-max",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 31,
+            "y": 1630,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": "sp-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "sp-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "ph-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "ph-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "pa-on",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "pa-off",
+          "label": "",
+          "type": "radio",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-advanced-settings-toggle",
+          "label": "Configure Auto Play",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        },
+        {
+          "id": "kb-session-duration",
+          "label": "",
+          "type": "number",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 25,
+            "y": 1822,
+            "width": 221.5,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-min-rate",
+          "label": "",
+          "type": "number",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 254.5,
+            "y": 1822,
+            "width": 221.5,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-max-rate",
+          "label": "",
+          "type": "number",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 484,
+            "y": 1822,
+            "width": 221.5,
+            "height": 32
+          }
+        },
+        {
+          "id": "tc-rating-target",
+          "label": "",
+          "type": "text",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 713.5,
+            "y": 1822,
+            "width": 221.5,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-start",
+          "label": "Start",
+          "type": "button",
+          "disabled": true,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 25,
+            "y": 1866,
+            "width": 604,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-stop",
+          "label": "Finish",
+          "type": "button",
+          "disabled": true,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 637,
+            "y": 1866,
+            "width": 145,
+            "height": 32
+          }
+        },
+        {
+          "id": "kb-session-export",
+          "label": "Export session diagnostic",
+          "type": "button",
+          "disabled": false,
+          "tabIndex": 0,
+          "bounds": {
+            "x": 790,
+            "y": 1866,
+            "width": 145,
+            "height": 32
+          }
+        }
+      ]
+    }
+  }
+]
