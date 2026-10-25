@@ -640,3 +640,6 @@ body[data-focus-input=keyboard] :is(button,input,select,a,[tabindex]):not([aria-
 
 .control-row > div,.control-row > label,.control-row label { line-height:15px; }
 #engine { align-self:start; }
+.analysis-engine-notice { display:flex; align-items:center; gap:8px; height:var(--row-h); }
+.analysis-engine-notice #analysis-engine-message { flex:1; min-width:0; margin:0; line-height:16px; }
+.analysis-engine-notice #engine-retry { flex:0 0 auto; height:var(--control-h); min-height:var(--control-h); margin:0; }

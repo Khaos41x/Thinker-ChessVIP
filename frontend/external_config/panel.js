@@ -10,6 +10,7 @@
   let config = null;
   let engineRegistry = null;
   let engineSwitching = false;
+  let engineRefreshing = false;
   let engineError = null;
   let engineOnline = false;
   let engineRequestVersion = 0;
@@ -56,11 +57,12 @@
       option.disabled = engine ? !engine.installed : false;
     }
     const active = selected?.runtimeReady && engineRegistry?.analysisContextAuthorized;
-    const state = engineSwitching ? 'Switching' : engineError ? (!engineOnline && engineRegistry ? 'Connection Lost' : 'Error') : !selected ? 'Initializing' : !selected.installed ? 'Unavailable' : selected.initializationError ? 'Error' : active ? 'Active' : 'Ready';
+    const state = engineSwitching ? 'Switching' : engineRefreshing && (!engineOnline || engineError) ? 'Initializing' : engineError ? (!engineOnline && engineRegistry ? 'Connection Lost' : 'Error') : !selected ? 'Initializing' : !selected.installed ? 'Unavailable' : selected.initializationError ? 'Error' : active ? 'Active' : 'Ready';
     byId('analysis-engine-state').textContent = state;
     byId('analysis-engine-message').textContent = engineError || (engineSwitching ? 'Saving engine preference…' : selected?.initializationError || (active ? 'Running in an authorized analysis context.' : selected ? `${selected.description || 'Preference saved.'} Analysis starts only in an authorized context.` : 'Checking installed engines…'));
     byId('analysis-engine-message').dataset.error = String(Boolean(engineError || selected?.initializationError));
     byId('engine-retry').hidden = !engineError && !selected?.initializationError;
+    byId('engine-retry').disabled = engineRefreshing || engineSwitching;
     byId('analysis-engine-details').textContent = selected ? JSON.stringify(selected, null, 2) : '';
     byId('execution-state').textContent = `Analysis: ${!engineOnline ? 'unavailable' : engineRegistry?.analysisRunning ? 'running' : 'inactive'}`;
   }
@@ -71,17 +73,21 @@
     renderEngine();
   }
 
-  async function refreshEngines() {
+  async function refreshEngines(clearError = false) {
+    if (engineRefreshing) return;
+    engineRefreshing = true;
+    renderEngine();
     const version = engineRequestVersion;
     try {
       const engines = await request('/config/engines');
       if (!Array.isArray(engines.engines) || !engines.selectedEngineId) throw new Error('Invalid registry response');
       if (!engineSwitching && version === engineRequestVersion) {
         engineRegistry = engines; engineOnline = true;
-        if (!engineError?.startsWith('Could not save')) engineError = null;
+        if (clearError || !engineError?.startsWith('Could not save')) engineError = null;
         renderEngine();
       }
     } catch (error) { if (!engineSwitching && version === engineRequestVersion) registryFailure(error); }
+    finally { engineRefreshing = false; renderEngine(); }
   }
 
   byId('analysis-engine').addEventListener('change', async event => {
@@ -100,7 +106,7 @@
       if (!error.status) engineOnline = false;
     } finally { engineSwitching = false; renderEngine(); }
   });
-  byId('engine-retry').addEventListener('click', () => { engineError = null; refreshEngines(); });
+  byId('engine-retry').addEventListener('click', () => refreshEngines(true));
 
   const sessionReasons = {
     BOT_DISABLED: 'Enable Bot in Core to start a session.', ROLLOUT_DISABLED: 'Session Control is disabled in this userscript.',

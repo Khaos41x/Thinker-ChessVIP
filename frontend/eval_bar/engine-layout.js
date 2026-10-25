@@ -14,6 +14,9 @@
         #krypbot-container .tc-analysis-selector select:focus-visible { outline:1px solid var(--tc-console-focus); outline-offset:2px; }
         #krypbot-container .tc-analysis-selector p { margin:var(--space-2) 0 0; font-size:11px; line-height:15px; color:#aaaba5; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         #krypbot-container .tc-analysis-selector button { min-height:28px; margin-top:6px; padding:4px 10px; border:1px solid var(--tc-console-border); border-radius:var(--radius-control); background:transparent; color:var(--tc-console-text); font:inherit; font-size:11px; }
+        #krypbot-container .tc-analysis-notice { display:flex; align-items:center; gap:var(--space-2); height:var(--row-h); }
+        #krypbot-container .tc-analysis-notice p { flex:1; min-width:0; margin:0; line-height:16px; }
+        #krypbot-container .tc-analysis-notice button { flex:0 0 auto; height:var(--control-height); min-height:var(--control-height); margin:0; }
         #krypbot-container .kb-engine-timing .kb-run-delay-controls { grid-template-columns:minmax(0,1fr) 124px; align-items:center; gap:var(--field-gap); }
         #krypbot-container .kb-engine-timing .kb-delay-range { display:grid; grid-template-columns:round(down,calc((100% - 11px - var(--field-gap) - var(--field-gap))/2),1px) 11px minmax(0,1fr); }
         #krypbot-container .kb-engine-timing .kb-num-input { padding-left:var(--space-2); padding-right:var(--space-2); }

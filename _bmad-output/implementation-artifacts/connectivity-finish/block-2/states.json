@@ -1,0 +1,242 @@
+[
+  {
+    "surface": "console",
+    "ready": {
+      "state": "Ready",
+      "panel": {
+        "x": 572,
+        "y": 1024,
+        "width": 345,
+        "height": 429,
+        "right": 917,
+        "bottom": 1453
+      },
+      "row": {
+        "x": 585,
+        "y": 1126,
+        "width": 319,
+        "height": 40,
+        "right": 904,
+        "bottom": 1166
+      },
+      "select": {
+        "x": 585,
+        "y": 1094,
+        "width": 319,
+        "height": 32,
+        "right": 904,
+        "bottom": 1126,
+        "disabled": false,
+        "options": 3
+      },
+      "retry": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0,
+        "hidden": true,
+        "disabled": false
+      }
+    },
+    "error": {
+      "state": "Error",
+      "panel": {
+        "x": 572,
+        "y": 1024,
+        "width": 345,
+        "height": 429,
+        "right": 917,
+        "bottom": 1453
+      },
+      "row": {
+        "x": 585,
+        "y": 1126,
+        "width": 319,
+        "height": 40,
+        "right": 904,
+        "bottom": 1166
+      },
+      "select": {
+        "x": 585,
+        "y": 1094,
+        "width": 319,
+        "height": 32,
+        "right": 904,
+        "bottom": 1126,
+        "disabled": true,
+        "options": 3
+      },
+      "retry": {
+        "x": 857.109375,
+        "y": 1130,
+        "width": 46.890625,
+        "height": 32,
+        "right": 904,
+        "bottom": 1162,
+        "hidden": false,
+        "disabled": false
+      }
+    },
+    "retry": {
+      "state": "Initializing",
+      "panel": {
+        "x": 572,
+        "y": 1024,
+        "width": 345,
+        "height": 429,
+        "right": 917,
+        "bottom": 1453
+      },
+      "row": {
+        "x": 585,
+        "y": 1126,
+        "width": 319,
+        "height": 40,
+        "right": 904,
+        "bottom": 1166
+      },
+      "select": {
+        "x": 585,
+        "y": 1094,
+        "width": 319,
+        "height": 32,
+        "right": 904,
+        "bottom": 1126,
+        "disabled": true,
+        "options": 3
+      },
+      "retry": {
+        "x": 857.109375,
+        "y": 1130,
+        "width": 46.890625,
+        "height": 32,
+        "right": 904,
+        "bottom": 1162,
+        "hidden": false,
+        "disabled": true
+      }
+    }
+  },
+  {
+    "surface": "config",
+    "ready": {
+      "state": "Ready",
+      "panel": {
+        "x": 718,
+        "y": 196,
+        "width": 430,
+        "height": 546,
+        "right": 1148,
+        "bottom": 742
+      },
+      "row": {
+        "x": 731,
+        "y": 303,
+        "width": 404,
+        "height": 40,
+        "right": 1135,
+        "bottom": 343
+      },
+      "select": {
+        "x": 731,
+        "y": 271,
+        "width": 404,
+        "height": 32,
+        "right": 1135,
+        "bottom": 303,
+        "disabled": false,
+        "options": 3
+      },
+      "retry": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0,
+        "hidden": true,
+        "disabled": true
+      }
+    },
+    "error": {
+      "state": "Connection Lost",
+      "panel": {
+        "x": 718,
+        "y": 196,
+        "width": 430,
+        "height": 546,
+        "right": 1148,
+        "bottom": 742
+      },
+      "row": {
+        "x": 731,
+        "y": 303,
+        "width": 404,
+        "height": 40,
+        "right": 1135,
+        "bottom": 343
+      },
+      "select": {
+        "x": 731,
+        "y": 271,
+        "width": 404,
+        "height": 32,
+        "right": 1135,
+        "bottom": 303,
+        "disabled": true,
+        "options": 3
+      },
+      "retry": {
+        "x": 1081.84375,
+        "y": 307,
+        "width": 53.15625,
+        "height": 32,
+        "right": 1135,
+        "bottom": 339,
+        "hidden": false,
+        "disabled": false
+      }
+    },
+    "retry": {
+      "state": "Initializing",
+      "panel": {
+        "x": 718,
+        "y": 196,
+        "width": 430,
+        "height": 546,
+        "right": 1148,
+        "bottom": 742
+      },
+      "row": {
+        "x": 731,
+        "y": 303,
+        "width": 404,
+        "height": 40,
+        "right": 1135,
+        "bottom": 343
+      },
+      "select": {
+        "x": 731,
+        "y": 271,
+        "width": 404,
+        "height": 32,
+        "right": 1135,
+        "bottom": 303,
+        "disabled": true,
+        "options": 3
+      },
+      "retry": {
+        "x": 1081.84375,
+        "y": 307,
+        "width": 53.15625,
+        "height": 32,
+        "right": 1135,
+        "bottom": 339,
+        "hidden": false,
+        "disabled": true
+      }
+    }
+  }
+]

@@ -30,6 +30,7 @@
     async function refresh(force = false, initialize = false) {
       if (pending || selecting || (!force && performance.now() - lastRefresh < 1500)) return;
       pending = true;
+      render();
       const epoch = selectionEpoch;
       lastRefresh = performance.now();
       try {
@@ -85,7 +86,9 @@
         select.addEventListener('change', () => selectPreference(select.value));
         const stateLine = doc.createElement('span'); stateLine.className = 'tc-analysis-state';
         const feedback = doc.createElement('span'); feedback.className = 'tc-analysis-feedback'; feedback.setAttribute('aria-live', 'polite');
-        stateLine.append(status, feedback); heading.append(label, stateLine); mounted.append(heading, select, message, retry);
+        const notice = doc.createElement('div'); notice.className = 'tc-analysis-notice';
+        notice.append(message, retry);
+        stateLine.append(status, feedback); heading.append(label, stateLine); mounted.append(heading, select, notice);
         const caption = parent.querySelector('.kb-console-caption');
         if (caption) caption.after(mounted); else parent.prepend(mounted);
       }
@@ -95,13 +98,14 @@
         select.replaceChildren(...state.engines.map(engine => { const option = host.ownerDocument.createElement('option'); option.value = engine.id; option.textContent = engine.name; option.disabled = !engine.installed; return option; }));
       }
       if (!selecting && state) select.value = state.selectedEngineId;
-      select.disabled = selecting || !state;
-      mounted.querySelector('.tc-analysis-status').textContent = selecting ? 'Switching' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing';
+      select.disabled = selecting || Boolean(error) || !state;
+      mounted.querySelector('.tc-analysis-status').textContent = selecting ? 'Switching' : pending && (!state || error) ? 'Initializing' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing';
       const hint = error || selected?.initializationError || (selected ? [selected.description?.split(' · ')[0], selected.name].filter(Boolean).join(' · ') : 'Checking installed engines…');
       mounted.querySelector('p').textContent = hint;
       mounted.querySelector('p').title = hint;
       mounted.querySelector('.tc-analysis-feedback').textContent = performance.now() < savedUntil ? 'Preference saved.' : '';
       mounted.querySelector('button').hidden = !error;
+      mounted.querySelector('button').disabled = pending || selecting;
     }
     return Object.freeze({
       cacheContext() { refresh(false, true); return allowed() && state?.activeEngineId ? state.cacheContext : ''; },

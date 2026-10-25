@@ -165,6 +165,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     async function refresh(force = false, initialize = false) {
       if (pending || selecting || (!force && performance.now() - lastRefresh < 1500)) return;
       pending = true;
+      render();
       const epoch = selectionEpoch;
       lastRefresh = performance.now();
       try {
@@ -220,7 +221,9 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         select.addEventListener('change', () => selectPreference(select.value));
         const stateLine = doc.createElement('span'); stateLine.className = 'tc-analysis-state';
         const feedback = doc.createElement('span'); feedback.className = 'tc-analysis-feedback'; feedback.setAttribute('aria-live', 'polite');
-        stateLine.append(status, feedback); heading.append(label, stateLine); mounted.append(heading, select, message, retry);
+        const notice = doc.createElement('div'); notice.className = 'tc-analysis-notice';
+        notice.append(message, retry);
+        stateLine.append(status, feedback); heading.append(label, stateLine); mounted.append(heading, select, notice);
         const caption = parent.querySelector('.kb-console-caption');
         if (caption) caption.after(mounted); else parent.prepend(mounted);
       }
@@ -230,13 +233,14 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         select.replaceChildren(...state.engines.map(engine => { const option = host.ownerDocument.createElement('option'); option.value = engine.id; option.textContent = engine.name; option.disabled = !engine.installed; return option; }));
       }
       if (!selecting && state) select.value = state.selectedEngineId;
-      select.disabled = selecting || !state;
-      mounted.querySelector('.tc-analysis-status').textContent = selecting ? 'Switching' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing';
+      select.disabled = selecting || Boolean(error) || !state;
+      mounted.querySelector('.tc-analysis-status').textContent = selecting ? 'Switching' : pending && (!state || error) ? 'Initializing' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing';
       const hint = error || selected?.initializationError || (selected ? [selected.description?.split(' · ')[0], selected.name].filter(Boolean).join(' · ') : 'Checking installed engines…');
       mounted.querySelector('p').textContent = hint;
       mounted.querySelector('p').title = hint;
       mounted.querySelector('.tc-analysis-feedback').textContent = performance.now() < savedUntil ? 'Preference saved.' : '';
       mounted.querySelector('button').hidden = !error;
+      mounted.querySelector('button').disabled = pending || selecting;
     }
     return Object.freeze({
       cacheContext() { refresh(false, true); return allowed() && state?.activeEngineId ? state.cacheContext : ''; },
@@ -264,6 +268,9 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         #krypbot-container .tc-analysis-selector select:focus-visible { outline:1px solid var(--tc-console-focus); outline-offset:2px; }
         #krypbot-container .tc-analysis-selector p { margin:var(--space-2) 0 0; font-size:11px; line-height:15px; color:#aaaba5; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         #krypbot-container .tc-analysis-selector button { min-height:28px; margin-top:6px; padding:4px 10px; border:1px solid var(--tc-console-border); border-radius:var(--radius-control); background:transparent; color:var(--tc-console-text); font:inherit; font-size:11px; }
+        #krypbot-container .tc-analysis-notice { display:flex; align-items:center; gap:var(--space-2); height:var(--row-h); }
+        #krypbot-container .tc-analysis-notice p { flex:1; min-width:0; margin:0; line-height:16px; }
+        #krypbot-container .tc-analysis-notice button { flex:0 0 auto; height:var(--control-height); min-height:var(--control-height); margin:0; }
         #krypbot-container .kb-engine-timing .kb-run-delay-controls { grid-template-columns:minmax(0,1fr) 124px; align-items:center; gap:var(--field-gap); }
         #krypbot-container .kb-engine-timing .kb-delay-range { display:grid; grid-template-columns:round(down,calc((100% - 11px - var(--field-gap) - var(--field-gap))/2),1px) 11px minmax(0,1fr); }
         #krypbot-container .kb-engine-timing .kb-num-input { padding-left:var(--space-2); padding-right:var(--space-2); }
