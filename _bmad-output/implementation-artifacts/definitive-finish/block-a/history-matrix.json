@@ -1,0 +1,56 @@
+[
+  {
+    "commit": "e1e705d",
+    "rendererSha256": "070381bf33f3e04f3c0c9d422f1479adfdfad795c8f6cbf769a150655c3b3e83",
+    "opacity": "0.8",
+    "hardcodedBlue": true,
+    "authorityBeforeRecommendation": false,
+    "getmoveUsed": true,
+    "hasRecommendationDraw": true
+  },
+  {
+    "commit": "79de3e75bfa2204e16e4df64f8bf700ecd2306ab",
+    "rendererSha256": "070381bf33f3e04f3c0c9d422f1479adfdfad795c8f6cbf769a150655c3b3e83",
+    "opacity": "0.8",
+    "hardcodedBlue": true,
+    "authorityBeforeRecommendation": true,
+    "getmoveUsed": true,
+    "hasRecommendationDraw": true
+  },
+  {
+    "commit": "3a503f6e477b7e6022f9f253675d05cb7198e77f",
+    "rendererSha256": "070381bf33f3e04f3c0c9d422f1479adfdfad795c8f6cbf769a150655c3b3e83",
+    "opacity": "0.8",
+    "hardcodedBlue": true,
+    "authorityBeforeRecommendation": true,
+    "getmoveUsed": true,
+    "hasRecommendationDraw": true
+  },
+  {
+    "commit": "b9624ebf3aa99a1169b2967fd53c9fe50e6f0910",
+    "rendererSha256": "070381bf33f3e04f3c0c9d422f1479adfdfad795c8f6cbf769a150655c3b3e83",
+    "opacity": "0.8",
+    "hardcodedBlue": true,
+    "authorityBeforeRecommendation": true,
+    "getmoveUsed": true,
+    "hasRecommendationDraw": true
+  },
+  {
+    "commit": "1926bdea5f0b3ae60236ac4b0581a71dec361b18",
+    "rendererSha256": "070381bf33f3e04f3c0c9d422f1479adfdfad795c8f6cbf769a150655c3b3e83",
+    "opacity": "0.8",
+    "hardcodedBlue": true,
+    "authorityBeforeRecommendation": true,
+    "getmoveUsed": true,
+    "hasRecommendationDraw": true
+  },
+  {
+    "commit": "d31745d8dec31bb2ca23996236b62785f852ac10",
+    "rendererSha256": "070381bf33f3e04f3c0c9d422f1479adfdfad795c8f6cbf769a150655c3b3e83",
+    "opacity": "0.8",
+    "hardcodedBlue": true,
+    "authorityBeforeRecommendation": true,
+    "getmoveUsed": true,
+    "hasRecommendationDraw": true
+  }
+]
