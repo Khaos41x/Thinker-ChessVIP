@@ -7,7 +7,7 @@ import {createServer} from 'node:net';
 const root=resolve(import.meta.dirname,'../..');
 const before=process.argv.includes('--before');
 const configOnly=process.argv.includes('--config-only');
-const output=join(root,'_bmad-output/implementation-artifacts/definitive-finish','block-i');
+const output=join(root,'_bmad-output/implementation-artifacts',process.argv.includes('--connectivity')?'connectivity-finish':'definitive-finish',process.argv.includes('--connectivity')?'block-8':'block-i');
 await mkdir(output,{recursive:true});
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const port=()=>new Promise(resolve=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>resolve(p));});});
