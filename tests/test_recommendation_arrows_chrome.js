@@ -3,7 +3,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const os=require('node:os');
 const {spawn}=require('node:child_process');
-const {rendering,constants}=require('./test_recommendation_arrows');
+const {rendering,constants,helperDeclarations}=require('./test_recommendation_arrows');
 const root=path.resolve(__dirname,'..');
 const fixturePath=path.join(root,'_bmad-output/implementation-artifacts/recommendation-arrows');
 const out=process.env.TC_ARROW_ARTIFACT_DIR||fixturePath;
@@ -30,7 +30,7 @@ function connect(url){
     const bootstrap=`
       document.body.style='margin:0;background:#252523;color:#deded9;font:16px Arial';
       document.body.innerHTML='<div id="reference" style="display:none"><p>Chess.com reference (includes native knight arrow)</p><img width="645" height="647" src="${reference}"></div><div id="subject"><p>Thinker: production renderer, initial position</p><chess-board style="position:relative;display:block;width:640px;height:640px;background-image:url(${boardImage});background-size:100% 100%"><svg class="native-arrows" style="position:absolute;pointer-events:none;z-index:12"><path d="M0,0"></path></svg><div id="piece" style="position:absolute;left:0;bottom:0;width:12.5%;height:12.5%;z-index:3"></div></chess-board></div>';
-      const target=document.querySelector('chess-board');let cached_board=target;const current_color='#10B981',ARROW_COLOR=${JSON.stringify(constants.ARROW_COLOR)};const log=error=>{throw new Error(error);};
+      const target=document.querySelector('chess-board');let cached_board=target;let current_color='#10B981';${helperDeclarations}const log=error=>{throw new Error(error);};
       const $=value=>{const nodes=typeof value==='string'?[...document.querySelectorAll(value)]:[value];return {0:nodes[0],remove(){nodes.forEach(node=>node.remove());},css(styles){nodes.forEach(node=>Object.assign(node.style,styles));},append(html){nodes.forEach(node=>typeof html==='string'?node.insertAdjacentHTML('beforeend',html):node.append(html));},hasClass(name){return nodes[0]?.classList.contains(name);},attr(name){return nodes[0]?.getAttribute(name);}};};
       ${rendering}
       globalThis.draw=create_div;globalThis.arrowPath=recommendationArrowPath;

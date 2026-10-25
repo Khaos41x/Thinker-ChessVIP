@@ -4,7 +4,8 @@ const vm = require('node:vm');
 const source = fs.readFileSync('script.js', 'utf8');
 const colorDeclaration=source.match(/const ARROW_COLOR = "#[A-Fa-f0-9]{6}";/g);
 assert.equal(colorDeclaration.length,1);
-const color=vm.runInNewContext(colorDeclaration[0]+';ARROW_COLOR');
+const helperDeclarations = source.slice(source.indexOf('  const ARROW_COLOR ='), source.indexOf('  let can_interval =')).trim();
+const color=vm.runInNewContext(helperDeclarations+';ARROW_COLOR');
 assert.equal(color,'#3B82F6');
 const start = source.indexOf('  const SHAFT_W =');
 const end = source.indexOf('  let cached_board =', start);
@@ -14,7 +15,7 @@ vm.runInNewContext(rendering + ';globalThis.subject={recommendationArrowPath,SHA
 const subject = sandbox.subject;
 assert.equal(subject.SHOW_SQUARE_HIGHLIGHTS, false);
 assert.equal(subject.OPACITY,0.8);
-assert(rendering.includes('fill="${ARROW_COLOR}"'));
+assert(rendering.includes('fill="${normalizeArrowColor(current_color)}"'));
 assert(!source.includes('$(".myarrow path").attr("fill", current_color)'));
 for (const delta of [[0,1],[0,7],[1,0],[7,0],[4,4],[-4,-4],[1,2],[0,0.5]]) {
   const path = subject.recommendationArrowPath(0.5,0.5,0.5+delta[0],0.5+delta[1]);
@@ -31,5 +32,5 @@ assert(!rendering.includes('<marker'));
 assert(!rendering.includes('<line'));
 assert(!rendering.includes('drop-shadow'));
 assert.equal((source.match(/\.myarrow[^\n]*drop-shadow/g)||[]).length,0);
-module.exports={rendering, constants:{ARROW_COLOR:color,SHAFT_W:subject.SHAFT_W,HEAD_W:subject.HEAD_W,HEAD_L:subject.HEAD_L,TAIL_INSET:subject.TAIL_INSET,OPACITY:subject.OPACITY}};
+module.exports={rendering, helperDeclarations, constants:{ARROW_COLOR:color,SHAFT_W:subject.SHAFT_W,HEAD_W:subject.HEAD_W,HEAD_L:subject.HEAD_L,TAIL_INSET:subject.TAIL_INSET,OPACITY:subject.OPACITY}};
 console.log('PASS recommendation arrow geometry: straight, diagonal, knight, short, long, zero and invalid lengths');

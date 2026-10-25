@@ -1133,14 +1133,15 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
 
   // Chess.com native orange is rgb(255,170,0); the recommendation keeps the brand accent.
   const ARROW_COLOR = "#3B82F6";
+  const HIGHLIGHT_COLOR = "#10B981";
+  const normalizeArrowColor = value => /^#[0-9a-fA-F]{6}$/.test(String(value || "")) && String(value).toUpperCase() !== "#10B981" ? String(value) : ARROW_COLOR;
 
   let can_interval = true,
     auto_move = false,
     auto_queue = localStorage.getItem("kb-auto-queue") === "true",
-    current_color =
+    current_color = normalizeArrowColor(
       (typeof GM_getValue !== "undefined" ? GM_getValue("kb_color") : null) ||
-      localStorage.getItem("kb_color") ||
-      "#10B981",
+      localStorage.getItem("kb_color") || ARROW_COLOR),
     fen,
     checkfen,
     hint = false,
@@ -1152,6 +1153,9 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     puzzleAutoMove = false,
     puzzleFenCache = "",
     puzzleMoveCache = new Map();
+
+  localStorage.setItem("kb_color", current_color);
+  if (typeof GM_setValue === "function") GM_setValue("kb_color", current_color);
 
   let masterStatusKnown = false;
 
@@ -4917,10 +4921,10 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     elm.setAttribute("class", `highlight square-${num} myhigh`);
     $(elm).css({
       opacity: "0.85",
-      border: `3px solid ${current_color}`,
-      background: `${current_color}26`,
+      border: `3px solid ${HIGHLIGHT_COLOR}`,
+      background: `${HIGHLIGHT_COLOR}26`,
       "border-radius": "25%",
-      "box-shadow": `0 4px 12px ${current_color}33`,
+      "box-shadow": `0 4px 12px ${HIGHLIGHT_COLOR}33`,
       "z-index": "10",
       transition: "all 0.3s ease",
     });
@@ -4971,7 +4975,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       if (!path) return;
       $(target).append(`
         <svg viewBox="0 0 8 8" class='myarrow' aria-hidden="true" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 11;">
-          <path d="${path}" fill="${ARROW_COLOR}" fill-opacity="${OPACITY}" />
+          <path d="${path}" fill="${normalizeArrowColor(current_color)}" fill-opacity="${OPACITY}" />
         </svg>
       `);
     } catch (e) {
@@ -6040,6 +6044,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         }
         #krypbot-container .kb-footer > div { width: 100%; justify-content: space-between; }
         #krypbot-container .kb-color-input {
+          appearance:none; -webkit-appearance:none;
           width: 19px; height: 19px; border: 0; border-radius: 6px; padding: 0; overflow: hidden;
         }
         #krypbot-container .kb-session-panel {
@@ -6786,7 +6791,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         </section>
 
         <div id="kb-session-toast" role="status" aria-live="assertive" aria-atomic="true"></div>
-        <div class="kb-footer"><div><span>Theme</span><input type="color" id="kb-color-picker" class="kb-color-input" value="#00ff88" aria-label="Theme color"></div></div>
+        <div class="kb-footer"><div><span>Arrow Color</span><input type="color" id="kb-color-picker" class="kb-color-input" value="#3B82F6" aria-label="Arrow Color"></div></div>
       </div>
     `;
 
@@ -7508,19 +7513,15 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         });
 
         $("#kb-color-picker").on("input", function () {
-          current_color = $(this).val();
+          current_color = normalizeArrowColor($(this).val());
           localStorage.setItem("kb_color", current_color);
           if (typeof GM_setValue !== "undefined") {
             GM_setValue("kb_color", current_color);
           }
 
-          $(".myarrow path").attr("fill", ARROW_COLOR);
+          $(".myarrow path").attr("fill", normalizeArrowColor(current_color));
 
-          $(".myhigh").css({
-            "border-color": current_color,
-            "background-color": current_color + "26",
-            "box-shadow": `0 4px 12px ${current_color}33`,
-          });
+
           pushToServer();
         });
 
@@ -7746,12 +7747,12 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
           }
           // Color
           if (s.color && current_color !== s.color) {
-            current_color = s.color;
+            current_color = normalizeArrowColor(s.color);
             localStorage.setItem("kb_color", current_color);
             if (typeof GM_setValue !== "undefined") GM_setValue("kb_color", current_color);
             $("#kb-color-picker").val(current_color);
-            $(".myarrow path").attr("fill", ARROW_COLOR);
-            $(".myhigh").css({"border-color": current_color, "background-color": current_color + "26", "box-shadow": `0 4px 12px ${current_color}33`});
+            $(".myarrow path").attr("fill", normalizeArrowColor(current_color));
+
           }
           if (typeof window.krypbotUpdateUI === "function") window.krypbotUpdateUI();
           if (typeof window.krypbotConfigApplied === "function") window.krypbotConfigApplied();

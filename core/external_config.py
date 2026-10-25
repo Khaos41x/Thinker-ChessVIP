@@ -16,7 +16,7 @@ DEFAULT_CONFIG = {
     "autoAdjust": False, "evalBar": False, "smartPacing": False,
     "banner": True, "recentForm": True, "elo": 3200,
     "delayMode": "random", "minDelay": 0.5, "maxDelay": 1.0,
-    "color": "#10B981", "ghostMode": False,
+    "color": "#3B82F6", "ghostMode": False,
     "sessionDurationMinutes": 120, "sessionMinimumPercent": None, "sessionMaximumPercent": None,
 }
 
@@ -92,6 +92,21 @@ def create_external_config_blueprint(preference_path=None):
             if not isinstance(stored, dict) or stored.get('version') != 1 or configuration_error(stored.get('config')):
                 raise ValueError('Invalid saved configuration')
             config.update(stored['config'])
+            if config['color'].upper() == '#10B981':
+                config['color'] = '#3B82F6'
+                temporary = preference_path.with_name(preference_path.name + '.' + uuid.uuid4().hex + '.tmp')
+                try:
+                    with temporary.open('w', encoding='utf-8', newline='\n') as stream:
+                        json.dump({'version': 1, 'config': config}, stream, ensure_ascii=False)
+                        stream.flush()
+                        os.fsync(stream.fileno())
+                    os.replace(temporary, preference_path)
+                except OSError:
+                    try:
+                        temporary.unlink(missing_ok=True)
+                    except OSError:
+                        pass
+                    persistence_error = 'Settings could not be saved to disk. Check local file permissions and retry.'
             has_saved_preferences = True
         except (OSError, ValueError, TypeError):
             persistence_error = 'Saved settings could not be loaded. Check the local configuration file.'
@@ -281,6 +296,8 @@ def create_external_config_blueprint(preference_path=None):
             if expected_revision is not None and (expected_revision != revision or expected_server != server_id):
                 return jsonify({'ok': False, 'error': 'Configuration revision changed', 'config': {**config, '_revision': revision, '_serverId': server_id}}), 409
             updated = {**config, **data}
+            if updated['color'].upper() == '#10B981':
+                updated['color'] = '#3B82F6'
             if updated['sessionMinimumPercent'] is not None and updated['sessionMaximumPercent'] is not None and updated['sessionMinimumPercent'] >= updated['sessionMaximumPercent']:
                 return jsonify({'ok': False, 'error': 'Minimum win rate must be below maximum win rate'}), 400
             if updated["delayMode"] == "random":
