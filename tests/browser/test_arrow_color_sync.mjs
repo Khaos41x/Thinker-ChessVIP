@@ -6,7 +6,7 @@ import {resolve,join} from 'node:path';
 import {createServer} from 'node:net';
 const root=resolve(import.meta.dirname,'../..');
 const before=process.argv.includes('--before');
-const output=join(root,'_bmad-output/implementation-artifacts/definitive-finish/block-b');
+const output=join(root,process.argv.includes('--connectivity')?'_bmad-output/implementation-artifacts/connectivity-finish/block-1/arrow-ui':'_bmad-output/implementation-artifacts/definitive-finish/block-b');
 await mkdir(output,{recursive:true});
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const port=()=>new Promise(resolve=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>resolve(p));});});
@@ -36,7 +36,8 @@ try{
  const arrow=()=>{
    const n=document.querySelector('.myarrow'),p=n?.querySelector('path'),b=document.querySelector('wc-chess-board');
    const rect=e=>{const r=e.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,right:r.right,bottom:r.bottom}};
-   return{board:rect(b),box:n&&rect(n),fill:p?.getAttribute('fill'),opacity:p?.getAttribute('fill-opacity'),path:p?.getAttribute('d'),orientation:b.getAttribute('orientation'),flipped:b.classList.contains('flipped'),high:[...document.querySelectorAll('.myhigh')].map(e=>{const s=getComputedStyle(e);return{border:s.borderColor,background:s.backgroundColor,shadow:s.boxShadow}})};
+   const style=n&&getComputedStyle(n);const a=n&&rect(n);const overlays=[...document.querySelectorAll('#thinker-chess-banner,#oi-zone2,.tc-hud-stats')].map(e=>{const x=rect(e),s=getComputedStyle(e);return{selector:e.id||e.className,box:x,display:s.display,overlapsArrow:Boolean(a&&x.width&&x.height&&x.x<a.right&&x.right>a.x&&x.y<a.bottom&&x.bottom>a.y)}});
+   return{display:style?.display,visibility:style?.visibility,zIndex:style?.zIndex,pointerEvents:style?.pointerEvents,inCorrectBoard:n?.parentElement===b,overlays,board:rect(b),box:n&&rect(n),fill:p?.getAttribute('fill'),opacity:p?.getAttribute('fill-opacity'),path:p?.getAttribute('d'),orientation:b.getAttribute('orientation'),flipped:b.classList.contains('flipped'),high:[...document.querySelectorAll('.myhigh')].map(e=>{const s=getComputedStyle(e);return{border:s.borderColor,background:s.backgroundColor,shadow:s.boxShadow}})};
  };
  const colors=()=>[...document.querySelectorAll('#krypbot-container *,#oi-zone2 *,#thinker-chess-banner *, .myhigh')].filter(n=>n.getBoundingClientRect().width&&n.getBoundingClientRect().height&&!n.matches('#kb-color-picker,.myarrow,.myarrow *')).map(n=>{const s=getComputedStyle(n);return{tag:n.tagName,id:n.id,cls:String(n.className),color:s.color,background:s.backgroundColor,border:s.borderColor,shadow:s.boxShadow,fill:s.fill,stroke:s.stroke,opacity:s.opacity}});
  await value(embedded,'('+paint.toString()+')()');
@@ -48,7 +49,7 @@ try{
    await value(embedded,`{const b=document.querySelector('wc-chess-board');b.setAttribute('orientation',${JSON.stringify(orientation==='black'?'black':'white')});b.classList.toggle('flipped',${orientation==='flipped'});}`);
    await value(embedded,'('+paint.toString()+')()');
    const a=await value(embedded,'('+arrow.toString()+')()');
-   assert.equal(a.opacity,'0.8');assert(a.path.length>30);
+   assert.equal(a.opacity,'0.8');assert(a.path.length>30);assert(a.inCorrectBoard);assert.equal(a.visibility,'visible');assert.notEqual(a.display,'none');assert.equal(a.zIndex,'11');assert.equal(a.pointerEvents,'none');assert(a.overlays.every(o=>o.display==='none'||!o.overlapsArrow),'Overlay covers the recommendation board');
    assert.equal(a.box.x,a.board.x);assert.equal(a.box.y,a.board.y);assert.equal(a.box.width,a.board.width);assert.equal(a.box.height,a.board.height);
    const shot=await embedded.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:{x:a.board.x,y:a.board.y,width:a.board.width,height:a.board.height,scale:1}});
    await writeFile(join(output,'arrow-'+orientation+'.png'),Buffer.from(shot.data,'base64'));

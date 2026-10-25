@@ -1,0 +1,1355 @@
+{
+  "engines": [
+    {
+      "engineId": "stockfish-19-1mb",
+      "coldInitializationMs": 593.3765000081621,
+      "warmInitializationMs": 2.167099970392883,
+      "identity": {
+        "type": "ready",
+        "engine": "Stockfish 19",
+        "engineName": "Stockfish 19",
+        "package": "@lichess-org/stockfish-web@0.5.0",
+        "build": "sf_19_smallnet",
+        "network": "nn-61e7af4bb97d.nnue",
+        "networkSha256": "61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b",
+        "networkBytes": 1166381,
+        "networkEvidence": {
+          "filename": "nn-61e7af4bb97d.nnue",
+          "sha256": "61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b",
+          "bufferLoaded": true,
+          "replica": "info string Network replica 1: Local memory. Shared memory not supported by the OS. Local allocation fallback."
+        },
+        "proof": {
+          "cp": 26,
+          "mate": null,
+          "depth": 11,
+          "seldepth": 12,
+          "nodes": 54139,
+          "nps": 668382,
+          "time": 81,
+          "bound": "upperbound"
+        },
+        "profile": {
+          "threads": 3,
+          "hash": 16,
+          "multiPv": 1,
+          "analyseMode": true,
+          "movetime": 8000
+        },
+        "resources": {
+          "rss": 219951104,
+          "heapTotal": 8491008,
+          "heapUsed": 6283768,
+          "external": 4511632,
+          "arrayBuffers": 2351481,
+          "cpu": {
+            "user": 625000,
+            "system": 171000
+          },
+          "configuredSearchThreads": 3
+        },
+        "startup": {
+          "factoryMs": 22.564099999999996,
+          "nnueMs": 5.894800000000004,
+          "uciMs": 225.8372,
+          "readyMs": 396.4835,
+          "verifiedMs": 480.6605
+        },
+        "pid": 804
+      },
+      "resources": {
+        "rssBytes": 220028928,
+        "cpuSeconds": 0.796875,
+        "osThreads": 21,
+        "pid": 804
+      },
+      "positions": [
+        {
+          "position": "initial",
+          "firstEvaluationMs": 3.267300024162978,
+          "elapsedMs": 8003.576799994335,
+          "depthProgression": [
+            {
+              "depth": 1,
+              "elapsedMs": 3.267300024162978
+            },
+            {
+              "depth": 15,
+              "elapsedMs": 197.64369999757037
+            },
+            {
+              "depth": 16,
+              "elapsedMs": 431.0381999821402
+            },
+            {
+              "depth": 17,
+              "elapsedMs": 608.5840999730863
+            },
+            {
+              "depth": 20,
+              "elapsedMs": 1094.091999984812
+            },
+            {
+              "depth": 21,
+              "elapsedMs": 1394.1297000274062
+            },
+            {
+              "depth": 22,
+              "elapsedMs": 1861.1402999958955
+            },
+            {
+              "depth": 23,
+              "elapsedMs": 2283.8561999960802
+            },
+            {
+              "depth": 24,
+              "elapsedMs": 2518.460799998138
+            },
+            {
+              "depth": 25,
+              "elapsedMs": 3193.1723000016063
+            },
+            {
+              "depth": 26,
+              "elapsedMs": 3345.9060000022873
+            },
+            {
+              "depth": 27,
+              "elapsedMs": 8003.193599986844
+            }
+          ],
+          "cpuPercent": 288.34764226934556,
+          "peakSampledRssBytes": 220356608,
+          "result": {
+            "cp": 23,
+            "mate": null,
+            "depth": 27,
+            "seldepth": 46,
+            "nodes": 11187609,
+            "nps": 1398276,
+            "time": 8001,
+            "bound": null,
+            "bestmove": "e2e4",
+            "engine": "Stockfish 19",
+            "package": "@lichess-org/stockfish-web@0.5.0",
+            "engineName": "Stockfish 19",
+            "build": "sf_19_smallnet",
+            "network": "nn-61e7af4bb97d.nnue",
+            "networkSha256": "61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b",
+            "profile": {
+              "threads": 3,
+              "hash": 16,
+              "multiPv": 1,
+              "analyseMode": true,
+              "movetime": 8000
+            },
+            "firstInfoMs": 1.1977000000000544,
+            "searchMs": 8002.0138
+          }
+        },
+        {
+          "position": "middlegame",
+          "firstEvaluationMs": 1.6546000260859728,
+          "elapsedMs": 8001.460700004827,
+          "depthProgression": [
+            {
+              "depth": 1,
+              "elapsedMs": 1.6546000260859728
+            },
+            {
+              "depth": 14,
+              "elapsedMs": 110.24880001787096
+            },
+            {
+              "depth": 16,
+              "elapsedMs": 297.3806000081822
+            },
+            {
+              "depth": 17,
+              "elapsedMs": 537.0479000266641
+            },
+            {
+              "depth": 19,
+              "elapsedMs": 797.0811999985017
+            },
+            {
+              "depth": 20,
+              "elapsedMs": 951.1946000275202
+            },
+            {
+              "depth": 21,
+              "elapsedMs": 1705.9247000142932
+            },
+            {
+              "depth": 22,
+              "elapsedMs": 1892.8779999841936
+            },
+            {
+              "depth": 23,
+              "elapsedMs": 3480.1828999770805
+            },
+            {
+              "depth": 24,
+              "elapsedMs": 4884.885800012853
+            },
+            {
+              "depth": 25,
+              "elapsedMs": 5583.061399986036
+            },
+            {
+              "depth": 29,
+              "elapsedMs": 8001.140700012911
+            }
+          ],
+          "cpuPercent": 294.4774820925607,
+          "peakSampledRssBytes": 218755072,
+          "result": {
+            "cp": -67,
+            "mate": null,
+            "depth": 29,
+            "seldepth": 43,
+            "nodes": 11283553,
+            "nps": 1410444,
+            "time": 8000,
+            "bound": null,
+            "bestmove": "e1g1",
+            "engine": "Stockfish 19",
+            "package": "@lichess-org/stockfish-web@0.5.0",
+            "engineName": "Stockfish 19",
+            "build": "sf_19_smallnet",
+            "network": "nn-61e7af4bb97d.nnue",
+            "networkSha256": "61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b",
+            "profile": {
+              "threads": 3,
+              "hash": 16,
+              "multiPv": 1,
+              "analyseMode": true,
+              "movetime": 8000
+            },
+            "firstInfoMs": 1.1063999999987573,
+            "searchMs": 8000.705799999998
+          }
+        },
+        {
+          "position": "mate",
+          "firstEvaluationMs": 1.8456000252626836,
+          "elapsedMs": 25.06449999054894,
+          "depthProgression": [
+            {
+              "depth": 1,
+              "elapsedMs": 1.8456000252626836
+            },
+            {
+              "depth": 245,
+              "elapsedMs": 24.930300016421825
+            }
+          ],
+          "cpuPercent": 249.35665991169523,
+          "peakSampledRssBytes": 219324416,
+          "result": {
+            "cp": null,
+            "mate": 1,
+            "depth": 245,
+            "seldepth": 2,
+            "nodes": 19114,
+            "nps": 831043,
+            "time": 23,
+            "bound": null,
+            "bestmove": "f7h7",
+            "engine": "Stockfish 19",
+            "package": "@lichess-org/stockfish-web@0.5.0",
+            "engineName": "Stockfish 19",
+            "build": "sf_19_smallnet",
+            "network": "nn-61e7af4bb97d.nnue",
+            "networkSha256": "61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b",
+            "profile": {
+              "threads": 3,
+              "hash": 16,
+              "multiPv": 1,
+              "analyseMode": true,
+              "movetime": 8000
+            },
+            "firstInfoMs": 1.1688999999969383,
+            "searchMs": 24.271199999999226
+          }
+        }
+      ],
+      "blackMateEvidence": {
+        "cp": null,
+        "mate": -1,
+        "depth": 245,
+        "seldepth": 2,
+        "nodes": 19115,
+        "nps": 796458,
+        "time": 24,
+        "bound": null,
+        "bestmove": "f2e1",
+        "engine": "Stockfish 19",
+        "package": "@lichess-org/stockfish-web@0.5.0",
+        "engineName": "Stockfish 19",
+        "build": "sf_19_smallnet",
+        "network": "nn-61e7af4bb97d.nnue",
+        "networkSha256": "61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b",
+        "profile": {
+          "threads": 3,
+          "hash": 16,
+          "multiPv": 1,
+          "analyseMode": true,
+          "movetime": 8000
+        },
+        "firstInfoMs": 0.870600000002014,
+        "searchMs": 24.291300000000774
+      },
+      "cancellationMs": 1.672099984716624,
+      "errorRecovery": true,
+      "preferenceReload": true
+    },
+    {
+      "engineId": "stockfish-19-94mb",
+      "coldInitializationMs": 1163.5871999897063,
+      "warmInitializationMs": 2.647800021804869,
+      "identity": {
+        "type": "ready",
+        "engine": "Stockfish 19",
+        "engineName": "Stockfish 19",
+        "package": "@lichess-org/stockfish-web@0.5.0",
+        "build": "sf_19",
+        "network": "nn-1a298aa575a0.nnue",
+        "networkSha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2",
+        "networkBytes": 98511183,
+        "networkEvidence": {
+          "filename": "nn-1a298aa575a0.nnue",
+          "sha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2",
+          "bufferLoaded": true,
+          "replica": "info string Network replica 1: Local memory. Shared memory not supported by the OS. Local allocation fallback."
+        },
+        "proof": {
+          "cp": 31,
+          "mate": null,
+          "depth": 12,
+          "seldepth": 13,
+          "nodes": 22254,
+          "nps": 274740,
+          "time": 81,
+          "bound": null
+        },
+        "profile": {
+          "threads": 3,
+          "hash": 16,
+          "multiPv": 1,
+          "analyseMode": true,
+          "movetime": 8000
+        },
+        "resources": {
+          "rss": 638242816,
+          "heapTotal": 10850304,
+          "heapUsed": 5875616,
+          "external": 100689017,
+          "arrayBuffers": 98528866,
+          "cpu": {
+            "user": 1265000,
+            "system": 281000
+          },
+          "configuredSearchThreads": 3
+        },
+        "startup": {
+          "factoryMs": 21.4711,
+          "nnueMs": 284.3583,
+          "uciMs": 773.3187,
+          "readyMs": 921.4621,
+          "verifiedMs": 1005.7519
+        },
+        "pid": 5792
+      },
+      "resources": {
+        "rssBytes": 638246912,
+        "cpuSeconds": 1.546875,
+        "osThreads": 21,
+        "pid": 5792
+      },
+      "positions": [
+        {
+          "position": "initial",
+          "firstEvaluationMs": 2.707200008444488,
+          "elapsedMs": 8002.935900003649,
+          "depthProgression": [
+            {
+              "depth": 1,
+              "elapsedMs": 2.707200008444488
+            },
+            {
+              "depth": 15,
+              "elapsedMs": 215.00029996968806
+            },
+            {
+              "depth": 17,
+              "elapsedMs": 528.4497999818996
+            },
+            {
+              "depth": 18,
+              "elapsedMs": 846.014800015837
+            },
+            {
+              "depth": 20,
+              "elapsedMs": 1487.8741999855265
+            },
+            {
+              "depth": 21,
+              "elapsedMs": 1624.9629000085406
+            },
+            {
+              "depth": 22,
+              "elapsedMs": 2585.24220000254
+            },
+            {
+              "depth": 23,
+              "elapsedMs": 3385.604700015392
+            },
+            {
+              "depth": 24,
+              "elapsedMs": 3957.0196999702603
+            },
+            {
+              "depth": 25,
+              "elapsedMs": 4590.288800012786
+            },
+            {
+              "depth": 26,
+              "elapsedMs": 5203.114199975971
+            },
+            {
+              "depth": 27,
+              "elapsedMs": 7055.928300018422
+            },
+            {
+              "depth": 28,
+              "elapsedMs": 8002.5222999975085
+            }
+          ],
+          "cpuPercent": 286.8088072527175,
+          "peakSampledRssBytes": 639107072,
+          "result": {
+            "cp": 23,
+            "mate": null,
+            "depth": 28,
+            "seldepth": 34,
+            "nodes": 6745990,
+            "nps": 843143,
+            "time": 8001,
+            "bound": "lowerbound",
+            "bestmove": "d2d4",
+            "engine": "Stockfish 19",
+            "package": "@lichess-org/stockfish-web@0.5.0",
+            "engineName": "Stockfish 19",
+            "build": "sf_19",
+            "network": "nn-1a298aa575a0.nnue",
+            "networkSha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2",
+            "profile": {
+              "threads": 3,
+              "hash": 16,
+              "multiPv": 1,
+              "analyseMode": true,
+              "movetime": 8000
+            },
+            "firstInfoMs": 1.187599999999975,
+            "searchMs": 8001.362
+          }
+        },
+        {
+          "position": "middlegame",
+          "firstEvaluationMs": 1.7621000297367573,
+          "elapsedMs": 8001.232300011907,
+          "depthProgression": [
+            {
+              "depth": 1,
+              "elapsedMs": 1.7621000297367573
+            },
+            {
+              "depth": 13,
+              "elapsedMs": 139.07319999998435
+            },
+            {
+              "depth": 14,
+              "elapsedMs": 245.03420002292842
+            },
+            {
+              "depth": 16,
+              "elapsedMs": 606.0680000227876
+            },
+            {
+              "depth": 17,
+              "elapsedMs": 770.080299989786
+            },
+            {
+              "depth": 18,
+              "elapsedMs": 1151.5090999891981
+            },
+            {
+              "depth": 20,
+              "elapsedMs": 1519.9432999943383
+            },
+            {
+              "depth": 21,
+              "elapsedMs": 3212.3658999917097
+            },
+            {
+              "depth": 22,
+              "elapsedMs": 4480.5894999881275
+            },
+            {
+              "depth": 23,
+              "elapsedMs": 5671.533700020518
+            },
+            {
+              "depth": 24,
+              "elapsedMs": 6864.17379998602
+            },
+            {
+              "depth": 25,
+              "elapsedMs": 8000.958800024819
+            }
+          ],
+          "cpuPercent": 294.8764529679371,
+          "peakSampledRssBytes": 539766784,
+          "result": {
+            "cp": -72,
+            "mate": null,
+            "depth": 25,
+            "seldepth": 39,
+            "nodes": 6557498,
+            "nps": 819687,
+            "time": 8000,
+            "bound": "upperbound",
+            "bestmove": "e1g1",
+            "engine": "Stockfish 19",
+            "package": "@lichess-org/stockfish-web@0.5.0",
+            "engineName": "Stockfish 19",
+            "build": "sf_19",
+            "network": "nn-1a298aa575a0.nnue",
+            "networkSha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2",
+            "profile": {
+              "threads": 3,
+              "hash": 16,
+              "multiPv": 1,
+              "analyseMode": true,
+              "movetime": 8000
+            },
+            "firstInfoMs": 1.2356999999992695,
+            "searchMs": 8000.5334
+          }
+        },
+        {
+          "position": "mate",
+          "firstEvaluationMs": 1.753699965775013,
+          "elapsedMs": 26.67449996806681,
+          "depthProgression": [
+            {
+              "depth": 1,
+              "elapsedMs": 1.753699965775013
+            },
+            {
+              "depth": 245,
+              "elapsedMs": 26.534799952059984
+            }
+          ],
+          "cpuPercent": 175.72962963173094,
+          "peakSampledRssBytes": 540778496,
+          "result": {
+            "cp": null,
+            "mate": 1,
+            "depth": 245,
+            "seldepth": 2,
+            "nodes": 19116,
+            "nps": 764640,
+            "time": 25,
+            "bound": null,
+            "bestmove": "f7h7",
+            "engine": "Stockfish 19",
+            "package": "@lichess-org/stockfish-web@0.5.0",
+            "engineName": "Stockfish 19",
+            "build": "sf_19",
+            "network": "nn-1a298aa575a0.nnue",
+            "networkSha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2",
+            "profile": {
+              "threads": 3,
+              "hash": 16,
+              "multiPv": 1,
+              "analyseMode": true,
+              "movetime": 8000
+            },
+            "firstInfoMs": 1.1039999999993597,
+            "searchMs": 25.817599999998492
+          }
+        }
+      ],
+      "blackMateEvidence": {
+        "cp": null,
+        "mate": -1,
+        "depth": 245,
+        "seldepth": 2,
+        "nodes": 19116,
+        "nps": 796500,
+        "time": 24,
+        "bound": null,
+        "bestmove": "f2e1",
+        "engine": "Stockfish 19",
+        "package": "@lichess-org/stockfish-web@0.5.0",
+        "engineName": "Stockfish 19",
+        "build": "sf_19",
+        "network": "nn-1a298aa575a0.nnue",
+        "networkSha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2",
+        "profile": {
+          "threads": 3,
+          "hash": 16,
+          "multiPv": 1,
+          "analyseMode": true,
+          "movetime": 8000
+        },
+        "firstInfoMs": 0.9851999999991676,
+        "searchMs": 23.766899999998714
+      },
+      "cancellationMs": 1.8073999672196805,
+      "errorRecovery": true,
+      "preferenceReload": true
+    },
+    {
+      "engineId": "komodo-14.1",
+      "coldInitializationMs": 331.79690001998097,
+      "warmInitializationMs": 2.3676000419072807,
+      "identity": {
+        "engineName": "Komodo 14.1 64-bit",
+        "proof": {
+          "cp": 36,
+          "mate": null,
+          "depth": 12,
+          "nodes": 324593,
+          "nps": 4046612,
+          "time": 80,
+          "engine": "Komodo 14.1",
+          "engineName": "Komodo 14.1 64-bit",
+          "profile": {
+            "Threads": 3,
+            "Hash": 16,
+            "Skill": 25
+          }
+        },
+        "profile": {
+          "Threads": 3,
+          "Hash": 16,
+          "Skill": 25
+        }
+      },
+      "resources": {
+        "rssBytes": 45301760,
+        "cpuSeconds": 0.4375,
+        "osThreads": 7,
+        "pid": 4140
+      },
+      "positions": [
+        {
+          "position": "initial",
+          "firstEvaluationMs": 3.410800010897219,
+          "elapsedMs": 8002.324000000954,
+          "depthProgression": [
+            {
+              "depth": 1,
+              "elapsedMs": 3.410800010897219
+            },
+            {
+              "depth": 2,
+              "elapsedMs": 4.758300026878715
+            },
+            {
+              "depth": 3,
+              "elapsedMs": 5.05530001828447
+            },
+            {
+              "depth": 4,
+              "elapsedMs": 5.592100031208247
+            },
+            {
+              "depth": 5,
+              "elapsedMs": 5.833700008224696
+            },
+            {
+              "depth": 6,
+              "elapsedMs": 6.02280005114153
+            },
+            {
+              "depth": 7,
+              "elapsedMs": 6.319300038740039
+            },
+            {
+              "depth": 8,
+              "elapsedMs": 6.497900001704693
+            },
+            {
+              "depth": 9,
+              "elapsedMs": 6.677100027445704
+            },
+            {
+              "depth": 10,
+              "elapsedMs": 6.856599997263402
+            },
+            {
+              "depth": 11,
+              "elapsedMs": 7.035200018435717
+            },
+            {
+              "depth": 12,
+              "elapsedMs": 7.6222000061534345
+            },
+            {
+              "depth": 13,
+              "elapsedMs": 20.353200030513108
+            },
+            {
+              "depth": 14,
+              "elapsedMs": 41.2404999951832
+            },
+            {
+              "depth": 15,
+              "elapsedMs": 77.64990004943684
+            },
+            {
+              "depth": 16,
+              "elapsedMs": 167.15500003192574
+            },
+            {
+              "depth": 17,
+              "elapsedMs": 511.99190004263073
+            },
+            {
+              "depth": 18,
+              "elapsedMs": 709.4602000433952
+            },
+            {
+              "depth": 19,
+              "elapsedMs": 927.9248000239022
+            },
+            {
+              "depth": 20,
+              "elapsedMs": 1491.5252000209875
+            },
+            {
+              "depth": 21,
+              "elapsedMs": 2595.291800040286
+            },
+            {
+              "depth": 22,
+              "elapsedMs": 3812.060800031759
+            },
+            {
+              "depth": 23,
+              "elapsedMs": 7523.112500028219
+            }
+          ],
+          "cpuPercent": 291.1263652908483,
+          "peakSampledRssBytes": 45441024,
+          "result": {
+            "cp": 30,
+            "mate": null,
+            "depth": 23,
+            "nodes": 29888764,
+            "nps": 3973952,
+            "time": 7521,
+            "engine": "Komodo 14.1",
+            "engineName": "Komodo 14.1 64-bit",
+            "profile": {
+              "Threads": 3,
+              "Hash": 16,
+              "Skill": 25
+            }
+          }
+        },
+        {
+          "position": "middlegame",
+          "firstEvaluationMs": 2.9892000020481646,
+          "elapsedMs": 8002.286000002641,
+          "depthProgression": [
+            {
+              "depth": 1,
+              "elapsedMs": 2.9892000020481646
+            },
+            {
+              "depth": 2,
+              "elapsedMs": 3.7672000471502542
+            },
+            {
+              "depth": 3,
+              "elapsedMs": 4.4315000413917005
+            },
+            {
+              "depth": 4,
+              "elapsedMs": 5.4648000514134765
+            },
+            {
+              "depth": 5,
+              "elapsedMs": 5.704600014723837
+            },
+            {
+              "depth": 6,
+              "elapsedMs": 6.04790000943467
+            },
+            {
+              "depth": 7,
+              "elapsedMs": 6.764500052668154
+            },
+            {
+              "depth": 8,
+              "elapsedMs": 8.222400036174804
+            },
+            {
+              "depth": 9,
+              "elapsedMs": 8.682000043336302
+            },
+            {
+              "depth": 10,
+              "elapsedMs": 12.484800012316555
+            },
+            {
+              "depth": 11,
+              "elapsedMs": 20.682100031990558
+            },
+            {
+              "depth": 12,
+              "elapsedMs": 25.39200003957376
+            },
+            {
+              "depth": 13,
+              "elapsedMs": 40.330000047106296
+            },
+            {
+              "depth": 14,
+              "elapsedMs": 56.850000051781535
+            },
+            {
+              "depth": 15,
+              "elapsedMs": 58.05500003043562
+            },
+            {
+              "depth": 16,
+              "elapsedMs": 160.16680002212524
+            },
+            {
+              "depth": 17,
+              "elapsedMs": 227.71500004455447
+            },
+            {
+              "depth": 18,
+              "elapsedMs": 450.2362000057474
+            },
+            {
+              "depth": 19,
+              "elapsedMs": 495.47620001249015
+            },
+            {
+              "depth": 20,
+              "elapsedMs": 1103.167100052815
+            },
+            {
+              "depth": 21,
+              "elapsedMs": 1619.4634000421502
+            },
+            {
+              "depth": 22,
+              "elapsedMs": 2033.12720003305
+            },
+            {
+              "depth": 23,
+              "elapsedMs": 6594.647900026757
+            },
+            {
+              "depth": 24,
+              "elapsedMs": 7201.994200004265
+            },
+            {
+              "depth": 25,
+              "elapsedMs": 7299.961900047492
+            }
+          ],
+          "cpuPercent": 293.4708282107419,
+          "peakSampledRssBytes": 45461504,
+          "result": {
+            "cp": -56,
+            "mate": null,
+            "depth": 25,
+            "nodes": 29420770,
+            "nps": 4031019,
+            "time": 7298,
+            "engine": "Komodo 14.1",
+            "engineName": "Komodo 14.1 64-bit",
+            "profile": {
+              "Threads": 3,
+              "Hash": 16,
+              "Skill": 25
+            }
+          }
+        },
+        {
+          "position": "mate",
+          "firstEvaluationMs": 2.413199981674552,
+          "elapsedMs": 34.13949999958277,
+          "depthProgression": [
+            {
+              "depth": 1,
+              "elapsedMs": 2.413199981674552
+            },
+            {
+              "depth": 2,
+              "elapsedMs": 4.3187999981455505
+            },
+            {
+              "depth": 3,
+              "elapsedMs": 6.131700007244945
+            },
+            {
+              "depth": 4,
+              "elapsedMs": 8.135200012475252
+            },
+            {
+              "depth": 5,
+              "elapsedMs": 9.27630002843216
+            },
+            {
+              "depth": 6,
+              "elapsedMs": 9.573000017553568
+            },
+            {
+              "depth": 7,
+              "elapsedMs": 9.837299992796034
+            },
+            {
+              "depth": 8,
+              "elapsedMs": 10.097899998072535
+            },
+            {
+              "depth": 9,
+              "elapsedMs": 10.386199981439859
+            },
+            {
+              "depth": 10,
+              "elapsedMs": 10.637800034601241
+            },
+            {
+              "depth": 11,
+              "elapsedMs": 10.88980003260076
+            },
+            {
+              "depth": 12,
+              "elapsedMs": 11.14020001841709
+            },
+            {
+              "depth": 13,
+              "elapsedMs": 11.389699997380376
+            },
+            {
+              "depth": 14,
+              "elapsedMs": 11.644900019746274
+            },
+            {
+              "depth": 15,
+              "elapsedMs": 11.941200005821884
+            },
+            {
+              "depth": 16,
+              "elapsedMs": 12.230399996042252
+            },
+            {
+              "depth": 17,
+              "elapsedMs": 12.524200021289289
+            },
+            {
+              "depth": 18,
+              "elapsedMs": 12.776300020050257
+            },
+            {
+              "depth": 19,
+              "elapsedMs": 13.025799999013543
+            },
+            {
+              "depth": 20,
+              "elapsedMs": 13.284999993629754
+            },
+            {
+              "depth": 21,
+              "elapsedMs": 13.574199983850121
+            },
+            {
+              "depth": 22,
+              "elapsedMs": 13.876900018658489
+            },
+            {
+              "depth": 23,
+              "elapsedMs": 14.15080000879243
+            },
+            {
+              "depth": 24,
+              "elapsedMs": 14.426600013393909
+            },
+            {
+              "depth": 25,
+              "elapsedMs": 14.704500033985823
+            },
+            {
+              "depth": 26,
+              "elapsedMs": 14.97900002868846
+            },
+            {
+              "depth": 27,
+              "elapsedMs": 15.252000011969358
+            },
+            {
+              "depth": 28,
+              "elapsedMs": 15.504700015299022
+            },
+            {
+              "depth": 29,
+              "elapsedMs": 15.790699981153011
+            },
+            {
+              "depth": 30,
+              "elapsedMs": 16.037900000810623
+            },
+            {
+              "depth": 31,
+              "elapsedMs": 16.28440001513809
+            },
+            {
+              "depth": 32,
+              "elapsedMs": 16.557900002226233
+            },
+            {
+              "depth": 33,
+              "elapsedMs": 16.80300000589341
+            },
+            {
+              "depth": 34,
+              "elapsedMs": 17.054399999324232
+            },
+            {
+              "depth": 35,
+              "elapsedMs": 17.303100030403584
+            },
+            {
+              "depth": 36,
+              "elapsedMs": 17.550599994137883
+            },
+            {
+              "depth": 37,
+              "elapsedMs": 17.808200034778565
+            },
+            {
+              "depth": 38,
+              "elapsedMs": 18.056600005365908
+            },
+            {
+              "depth": 39,
+              "elapsedMs": 18.304100027307868
+            },
+            {
+              "depth": 40,
+              "elapsedMs": 18.57499999459833
+            },
+            {
+              "depth": 41,
+              "elapsedMs": 18.82260001730174
+            },
+            {
+              "depth": 42,
+              "elapsedMs": 19.071499991696328
+            },
+            {
+              "depth": 43,
+              "elapsedMs": 19.322299980558455
+            },
+            {
+              "depth": 44,
+              "elapsedMs": 19.571300013922155
+            },
+            {
+              "depth": 45,
+              "elapsedMs": 19.82960000168532
+            },
+            {
+              "depth": 46,
+              "elapsedMs": 20.084000017959625
+            },
+            {
+              "depth": 47,
+              "elapsedMs": 20.334300003014505
+            },
+            {
+              "depth": 48,
+              "elapsedMs": 20.59430000372231
+            },
+            {
+              "depth": 49,
+              "elapsedMs": 20.843499980401248
+            },
+            {
+              "depth": 50,
+              "elapsedMs": 21.091200003866106
+            },
+            {
+              "depth": 51,
+              "elapsedMs": 21.350499999243766
+            },
+            {
+              "depth": 52,
+              "elapsedMs": 21.599700034130365
+            },
+            {
+              "depth": 53,
+              "elapsedMs": 21.847199997864664
+            },
+            {
+              "depth": 54,
+              "elapsedMs": 22.094000014476478
+            },
+            {
+              "depth": 55,
+              "elapsedMs": 22.33950002118945
+            },
+            {
+              "depth": 56,
+              "elapsedMs": 22.60480000404641
+            },
+            {
+              "depth": 57,
+              "elapsedMs": 22.853000031318516
+            },
+            {
+              "depth": 58,
+              "elapsedMs": 23.100099992007017
+            },
+            {
+              "depth": 59,
+              "elapsedMs": 23.350699979346246
+            },
+            {
+              "depth": 60,
+              "elapsedMs": 23.596299986820668
+            },
+            {
+              "depth": 61,
+              "elapsedMs": 23.86130002560094
+            },
+            {
+              "depth": 62,
+              "elapsedMs": 24.109099991619587
+            },
+            {
+              "depth": 63,
+              "elapsedMs": 24.353899993002415
+            },
+            {
+              "depth": 64,
+              "elapsedMs": 24.620199983473867
+            },
+            {
+              "depth": 65,
+              "elapsedMs": 24.869900022167712
+            },
+            {
+              "depth": 66,
+              "elapsedMs": 25.118399993516505
+            },
+            {
+              "depth": 67,
+              "elapsedMs": 25.372100004460663
+            },
+            {
+              "depth": 68,
+              "elapsedMs": 25.62309999484569
+            },
+            {
+              "depth": 69,
+              "elapsedMs": 25.868099997751415
+            },
+            {
+              "depth": 70,
+              "elapsedMs": 26.115500018931925
+            },
+            {
+              "depth": 71,
+              "elapsedMs": 26.35770000051707
+            },
+            {
+              "depth": 72,
+              "elapsedMs": 26.633700006641448
+            },
+            {
+              "depth": 73,
+              "elapsedMs": 26.879000011831522
+            },
+            {
+              "depth": 74,
+              "elapsedMs": 27.279699977952987
+            },
+            {
+              "depth": 75,
+              "elapsedMs": 27.581100002862513
+            },
+            {
+              "depth": 76,
+              "elapsedMs": 27.86899998318404
+            },
+            {
+              "depth": 77,
+              "elapsedMs": 28.124500007834285
+            },
+            {
+              "depth": 78,
+              "elapsedMs": 28.381899988744408
+            },
+            {
+              "depth": 79,
+              "elapsedMs": 28.662200027611107
+            },
+            {
+              "depth": 80,
+              "elapsedMs": 28.918600000906736
+            },
+            {
+              "depth": 81,
+              "elapsedMs": 29.17280001565814
+            },
+            {
+              "depth": 82,
+              "elapsedMs": 29.444699990563095
+            },
+            {
+              "depth": 83,
+              "elapsedMs": 29.70200002891943
+            },
+            {
+              "depth": 84,
+              "elapsedMs": 29.975500016007572
+            },
+            {
+              "depth": 85,
+              "elapsedMs": 30.228100018575788
+            },
+            {
+              "depth": 86,
+              "elapsedMs": 30.477199994493276
+            },
+            {
+              "depth": 87,
+              "elapsedMs": 30.74640000704676
+            },
+            {
+              "depth": 88,
+              "elapsedMs": 31.00120002636686
+            },
+            {
+              "depth": 89,
+              "elapsedMs": 31.254799978341907
+            },
+            {
+              "depth": 90,
+              "elapsedMs": 31.504000013228506
+            },
+            {
+              "depth": 91,
+              "elapsedMs": 31.753399991430342
+            },
+            {
+              "depth": 92,
+              "elapsedMs": 32.037500001024455
+            },
+            {
+              "depth": 93,
+              "elapsedMs": 32.28390001459047
+            },
+            {
+              "depth": 94,
+              "elapsedMs": 32.55689999787137
+            },
+            {
+              "depth": 95,
+              "elapsedMs": 32.80659997835755
+            },
+            {
+              "depth": 96,
+              "elapsedMs": 33.05420000106096
+            },
+            {
+              "depth": 97,
+              "elapsedMs": 33.30100001767278
+            },
+            {
+              "depth": 98,
+              "elapsedMs": 33.547100028954446
+            },
+            {
+              "depth": 99,
+              "elapsedMs": 33.79060002043843
+            }
+          ],
+          "cpuPercent": 0.0,
+          "peakSampledRssBytes": 45461504,
+          "result": {
+            "cp": null,
+            "mate": 1,
+            "depth": 99,
+            "nodes": 2601,
+            "nps": 354113,
+            "time": 7,
+            "engine": "Komodo 14.1",
+            "engineName": "Komodo 14.1 64-bit",
+            "profile": {
+              "Threads": 3,
+              "Hash": 16,
+              "Skill": 25
+            }
+          }
+        }
+      ],
+      "blackMateEvidence": {
+        "cp": null,
+        "mate": -1,
+        "depth": 99,
+        "nodes": 2601,
+        "nps": 360528,
+        "time": 7,
+        "engine": "Komodo 14.1",
+        "engineName": "Komodo 14.1 64-bit",
+        "profile": {
+          "Threads": 3,
+          "Hash": 16,
+          "Skill": 25
+        }
+      },
+      "cancellationMs": 0.12039998546242714,
+      "errorRecovery": true,
+      "preferenceReload": true
+    }
+  ],
+  "switches": [
+    {
+      "engineId": "stockfish-19-1mb",
+      "latencyMs": 593.3765000081621,
+      "pid": 804
+    },
+    {
+      "engineId": "stockfish-19-94mb",
+      "latencyMs": 1163.5871999897063,
+      "pid": 5792
+    },
+    {
+      "engineId": "komodo-14.1",
+      "latencyMs": 331.79690001998097,
+      "pid": 4140
+    },
+    {
+      "engineId": "stockfish-19-1mb",
+      "latencyMs": 583.698500005994,
+      "pid": 28608
+    }
+  ],
+  "nativeStallDeadlineRecovery": true,
+  "cleanupMs": 82.09410001290962,
+  "staleStreamRejected": true
+}

@@ -1,0 +1,122 @@
+{
+  "missingCapability": {
+    "status": 401,
+    "headers": {
+      "Server": "Werkzeug/3.1.8 Python/3.12.7",
+      "Date": "Sun, 25 Oct 2026 15:59:47 GMT",
+      "Content-Type": "application/json",
+      "Content-Length": "32",
+      "Access-Control-Allow-Origin": "https://www.chess.com",
+      "Vary": "Origin",
+      "Connection": "close"
+    },
+    "body": {
+      "error": "capability_required"
+    }
+  },
+  "staleCapability": {
+    "status": 401,
+    "headers": {
+      "Server": "Werkzeug/3.1.8 Python/3.12.7",
+      "Date": "Sun, 25 Oct 2026 15:59:47 GMT",
+      "Content-Type": "application/json",
+      "Content-Length": "31",
+      "Access-Control-Allow-Origin": "https://www.chess.com",
+      "Vary": "Origin",
+      "Connection": "close"
+    },
+    "body": {
+      "error": "invalid_capability"
+    }
+  },
+  "validCapability": {
+    "status": 200,
+    "headers": {
+      "Server": "Werkzeug/3.1.8 Python/3.12.7",
+      "Date": "Sun, 25 Oct 2026 15:59:47 GMT",
+      "Content-Type": "application/json",
+      "Content-Length": "1419",
+      "Access-Control-Allow-Origin": "https://www.chess.com",
+      "Vary": "Origin",
+      "Connection": "close"
+    },
+    "body": {
+      "activeEngineId": null,
+      "analysisContextAuthorized": false,
+      "analysisRunning": false,
+      "cacheContext": "",
+      "engines": [
+        {
+          "capabilities": [
+            "analysis",
+            "streaming",
+            "cancellation",
+            "centipawns",
+            "mate",
+            "white-pov"
+          ],
+          "configuration": null,
+          "description": "Fast Analysis \u00b7 Lichess Stockfish with a 1.11 MiB NNUE network.",
+          "id": "stockfish-19-1mb",
+          "identity": null,
+          "initializationError": null,
+          "installed": true,
+          "name": "Stockfish 19 \u00b7 1MB",
+          "networkBytes": 1166381,
+          "resources": {},
+          "runtimeReady": false,
+          "status": "Ready",
+          "version": "19"
+        },
+        {
+          "capabilities": [
+            "analysis",
+            "streaming",
+            "cancellation",
+            "centipawns",
+            "mate",
+            "white-pov"
+          ],
+          "configuration": null,
+          "description": "Deep Analysis \u00b7 Lichess Stockfish with a 93.95 MiB NNUE network.",
+          "id": "stockfish-19-94mb",
+          "identity": null,
+          "initializationError": null,
+          "installed": true,
+          "name": "Stockfish 19 \u00b7 94MB",
+          "networkBytes": 98511183,
+          "resources": {},
+          "runtimeReady": false,
+          "status": "Ready",
+          "version": "19"
+        },
+        {
+          "capabilities": [
+            "analysis",
+            "streaming",
+            "cancellation",
+            "centipawns",
+            "mate",
+            "white-pov"
+          ],
+          "configuration": null,
+          "description": "Classic UCI \u00b7 Native Komodo 14.1 with streaming position analysis.",
+          "id": "komodo-14.1",
+          "identity": null,
+          "initializationError": null,
+          "installed": true,
+          "name": "Komodo 14.1",
+          "networkBytes": null,
+          "resources": {},
+          "runtimeReady": false,
+          "status": "Ready",
+          "version": "14.1"
+        }
+      ],
+      "loadingEngineId": null,
+      "preferenceRevision": 20,
+      "selectedEngineId": "stockfish-19-1mb",
+      "selectionGeneration": 0
+    }
+  }
+}

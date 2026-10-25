@@ -1,0 +1,51 @@
+[
+  {
+    "commit": "e1e705d",
+    "geometrySha256": "605993cecd12413fa2331e867cb6f24b5f1109524521b8bfb6ca30f629870f66",
+    "transportFailureMessagePresent": false,
+    "getmoveUsed": true,
+    "drawCallPresent": true
+  },
+  {
+    "commit": "3a503f6",
+    "geometrySha256": "605993cecd12413fa2331e867cb6f24b5f1109524521b8bfb6ca30f629870f66",
+    "transportFailureMessagePresent": true,
+    "getmoveUsed": true,
+    "drawCallPresent": true
+  },
+  {
+    "commit": "b9624eb",
+    "geometrySha256": "605993cecd12413fa2331e867cb6f24b5f1109524521b8bfb6ca30f629870f66",
+    "transportFailureMessagePresent": true,
+    "getmoveUsed": true,
+    "drawCallPresent": true
+  },
+  {
+    "commit": "1926bde",
+    "geometrySha256": "605993cecd12413fa2331e867cb6f24b5f1109524521b8bfb6ca30f629870f66",
+    "transportFailureMessagePresent": true,
+    "getmoveUsed": true,
+    "drawCallPresent": true
+  },
+  {
+    "commit": "c8ba23f",
+    "geometrySha256": "605993cecd12413fa2331e867cb6f24b5f1109524521b8bfb6ca30f629870f66",
+    "transportFailureMessagePresent": true,
+    "getmoveUsed": true,
+    "drawCallPresent": true
+  },
+  {
+    "commit": "37b878f",
+    "geometrySha256": "605993cecd12413fa2331e867cb6f24b5f1109524521b8bfb6ca30f629870f66",
+    "transportFailureMessagePresent": true,
+    "getmoveUsed": true,
+    "drawCallPresent": true
+  },
+  {
+    "commit": "1985a33",
+    "geometrySha256": "605993cecd12413fa2331e867cb6f24b5f1109524521b8bfb6ca30f629870f66",
+    "transportFailureMessagePresent": true,
+    "getmoveUsed": true,
+    "drawCallPresent": true
+  }
+]
