@@ -288,6 +288,11 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         #krypbot-container .kb-engine-strength .kb-strength-limits { margin-top:0; }
         @media(min-width:1034px) and (max-width:1086px) {
           #krypbot-container .kb-engine-timing .kb-delay-range { gap:2px; grid-template-columns:round(down,calc((100% - 3px - 2px - 2px)/2),1px) 3px minmax(0,1fr); }
+          #krypbot-container .kb-engine-timing .kb-run-delay-controls { grid-template-columns:minmax(0,1fr) 158px; gap:var(--space-1); }
+          #krypbot-container .kb-engine-timing .kb-delay-input { grid-template-columns:minmax(0,1fr) 9px; }
+          #krypbot-container .kb-engine-timing .kb-delay-unit { width:9px; padding:0 2px 0 0; }
+          #krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) { grid-template-columns:round(down,50%,1px) minmax(0,1fr); }
+          #krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) label { padding:0 12px; }
         }
         #krypbot-container .kb-auto-play-module .kb-session-fields,
         #krypbot-container .kb-auto-play-module .kb-session-actions { grid-template-columns:repeat(3,round(down,calc((100% - 24px)/4),1px)) minmax(0,1fr); }

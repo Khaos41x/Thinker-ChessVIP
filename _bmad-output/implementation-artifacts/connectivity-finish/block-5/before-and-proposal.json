@@ -1,0 +1,538 @@
+[
+  {
+    "before": {
+      "width": 1086,
+      "engine": 394,
+      "inputs": [
+        {
+          "x": 409,
+          "y": 1265,
+          "width": 64,
+          "height": 30,
+          "padding": "0px 10px"
+        },
+        {
+          "x": 506,
+          "y": 1265,
+          "width": 64,
+          "height": 30,
+          "padding": "0px 10px"
+        }
+      ],
+      "segmented": {
+        "x": 603,
+        "y": 1264,
+        "width": 124,
+        "height": 32
+      },
+      "options": [
+        {
+          "text": "Random",
+          "x": 604,
+          "y": 1265,
+          "width": 61,
+          "height": 30,
+          "textWidth": 41.953125,
+          "paddingLeft": "0px",
+          "paddingRight": "0px"
+        },
+        {
+          "text": "Immediate",
+          "x": 665,
+          "y": 1265,
+          "width": 61,
+          "height": 30,
+          "textWidth": 53.546875,
+          "paddingLeft": "0px",
+          "paddingRight": "0px"
+        }
+      ],
+      "units": [
+        {
+          "x": 473,
+          "y": 1272,
+          "width": 24,
+          "height": 16,
+          "textWidth": 4.75,
+          "padding": "0px 10px 0px 3px"
+        },
+        {
+          "x": 570,
+          "y": 1272,
+          "width": 24,
+          "height": 16,
+          "textWidth": 4.75,
+          "padding": "0px 10px 0px 3px"
+        }
+      ]
+    },
+    "after": {
+      "width": 1086,
+      "engine": 394,
+      "inputs": [
+        {
+          "x": 409,
+          "y": 1265,
+          "width": 64,
+          "height": 30,
+          "padding": "0px 10px"
+        },
+        {
+          "x": 491,
+          "y": 1265,
+          "width": 64,
+          "height": 30,
+          "padding": "0px 10px"
+        }
+      ],
+      "segmented": {
+        "x": 569,
+        "y": 1264,
+        "width": 158,
+        "height": 32
+      },
+      "options": [
+        {
+          "text": "Random",
+          "x": 570,
+          "y": 1265,
+          "width": 78,
+          "height": 30,
+          "textWidth": 41.953125,
+          "paddingLeft": "12px",
+          "paddingRight": "12px"
+        },
+        {
+          "text": "Immediate",
+          "x": 648,
+          "y": 1265,
+          "width": 78,
+          "height": 30,
+          "textWidth": 53.546875,
+          "paddingLeft": "12px",
+          "paddingRight": "12px"
+        }
+      ],
+      "units": [
+        {
+          "x": 473,
+          "y": 1272,
+          "width": 9,
+          "height": 16,
+          "textWidth": 4.75,
+          "padding": "0px 2px 0px 3px"
+        },
+        {
+          "x": 555,
+          "y": 1272,
+          "width": 9,
+          "height": 16,
+          "textWidth": 4.75,
+          "padding": "0px 2px 0px 3px"
+        }
+      ]
+    }
+  },
+  {
+    "before": {
+      "width": 1280,
+      "engine": 394,
+      "inputs": [
+        {
+          "x": 506,
+          "y": 1265,
+          "width": 54,
+          "height": 30,
+          "padding": "0px 10px"
+        },
+        {
+          "x": 613,
+          "y": 1265,
+          "width": 54,
+          "height": 30,
+          "padding": "0px 10px"
+        }
+      ],
+      "segmented": {
+        "x": 700,
+        "y": 1264,
+        "width": 124,
+        "height": 32
+      },
+      "options": [
+        {
+          "text": "Random",
+          "x": 701,
+          "y": 1265,
+          "width": 61,
+          "height": 30,
+          "textWidth": 41.953125,
+          "paddingLeft": "0px",
+          "paddingRight": "0px"
+        },
+        {
+          "text": "Immediate",
+          "x": 762,
+          "y": 1265,
+          "width": 61,
+          "height": 30,
+          "textWidth": 53.546875,
+          "paddingLeft": "0px",
+          "paddingRight": "0px"
+        }
+      ],
+      "units": [
+        {
+          "x": 560,
+          "y": 1272,
+          "width": 24,
+          "height": 16,
+          "textWidth": 4.75,
+          "padding": "0px 10px 0px 3px"
+        },
+        {
+          "x": 667,
+          "y": 1272,
+          "width": 24,
+          "height": 16,
+          "textWidth": 4.75,
+          "padding": "0px 10px 0px 3px"
+        }
+      ]
+    },
+    "after": {
+      "width": 1280,
+      "engine": 394,
+      "inputs": [
+        {
+          "x": 506,
+          "y": 1265,
+          "width": 54,
+          "height": 30,
+          "padding": "0px 10px"
+        },
+        {
+          "x": 613,
+          "y": 1265,
+          "width": 54,
+          "height": 30,
+          "padding": "0px 10px"
+        }
+      ],
+      "segmented": {
+        "x": 700,
+        "y": 1264,
+        "width": 124,
+        "height": 32
+      },
+      "options": [
+        {
+          "text": "Random",
+          "x": 701,
+          "y": 1265,
+          "width": 61,
+          "height": 30,
+          "textWidth": 41.953125,
+          "paddingLeft": "0px",
+          "paddingRight": "0px"
+        },
+        {
+          "text": "Immediate",
+          "x": 762,
+          "y": 1265,
+          "width": 61,
+          "height": 30,
+          "textWidth": 53.546875,
+          "paddingLeft": "0px",
+          "paddingRight": "0px"
+        }
+      ],
+      "units": [
+        {
+          "x": 560,
+          "y": 1272,
+          "width": 24,
+          "height": 16,
+          "textWidth": 4.75,
+          "padding": "0px 10px 0px 3px"
+        },
+        {
+          "x": 667,
+          "y": 1272,
+          "width": 24,
+          "height": 16,
+          "textWidth": 4.75,
+          "padding": "0px 10px 0px 3px"
+        }
+      ]
+    }
+  },
+  {
+    "before": {
+      "width": 1440,
+      "engine": 394,
+      "inputs": [
+        {
+          "x": 586,
+          "y": 1265,
+          "width": 54,
+          "height": 30,
+          "padding": "0px 10px"
+        },
+        {
+          "x": 693,
+          "y": 1265,
+          "width": 54,
+          "height": 30,
+          "padding": "0px 10px"
+        }
+      ],
+      "segmented": {
+        "x": 780,
+        "y": 1264,
+        "width": 124,
+        "height": 32
+      },
+      "options": [
+        {
+          "text": "Random",
+          "x": 781,
+          "y": 1265,
+          "width": 61,
+          "height": 30,
+          "textWidth": 41.953125,
+          "paddingLeft": "0px",
+          "paddingRight": "0px"
+        },
+        {
+          "text": "Immediate",
+          "x": 842,
+          "y": 1265,
+          "width": 61,
+          "height": 30,
+          "textWidth": 53.546875,
+          "paddingLeft": "0px",
+          "paddingRight": "0px"
+        }
+      ],
+      "units": [
+        {
+          "x": 640,
+          "y": 1272,
+          "width": 24,
+          "height": 16,
+          "textWidth": 4.75,
+          "padding": "0px 10px 0px 3px"
+        },
+        {
+          "x": 747,
+          "y": 1272,
+          "width": 24,
+          "height": 16,
+          "textWidth": 4.75,
+          "padding": "0px 10px 0px 3px"
+        }
+      ]
+    },
+    "after": {
+      "width": 1440,
+      "engine": 394,
+      "inputs": [
+        {
+          "x": 586,
+          "y": 1265,
+          "width": 54,
+          "height": 30,
+          "padding": "0px 10px"
+        },
+        {
+          "x": 693,
+          "y": 1265,
+          "width": 54,
+          "height": 30,
+          "padding": "0px 10px"
+        }
+      ],
+      "segmented": {
+        "x": 780,
+        "y": 1264,
+        "width": 124,
+        "height": 32
+      },
+      "options": [
+        {
+          "text": "Random",
+          "x": 781,
+          "y": 1265,
+          "width": 61,
+          "height": 30,
+          "textWidth": 41.953125,
+          "paddingLeft": "0px",
+          "paddingRight": "0px"
+        },
+        {
+          "text": "Immediate",
+          "x": 842,
+          "y": 1265,
+          "width": 61,
+          "height": 30,
+          "textWidth": 53.546875,
+          "paddingLeft": "0px",
+          "paddingRight": "0px"
+        }
+      ],
+      "units": [
+        {
+          "x": 640,
+          "y": 1272,
+          "width": 24,
+          "height": 16,
+          "textWidth": 4.75,
+          "padding": "0px 10px 0px 3px"
+        },
+        {
+          "x": 747,
+          "y": 1272,
+          "width": 24,
+          "height": 16,
+          "textWidth": 4.75,
+          "padding": "0px 10px 0px 3px"
+        }
+      ]
+    }
+  },
+  {
+    "before": {
+      "width": 1920,
+      "engine": 394,
+      "inputs": [
+        {
+          "x": 826,
+          "y": 1265,
+          "width": 54,
+          "height": 30,
+          "padding": "0px 10px"
+        },
+        {
+          "x": 933,
+          "y": 1265,
+          "width": 54,
+          "height": 30,
+          "padding": "0px 10px"
+        }
+      ],
+      "segmented": {
+        "x": 1020,
+        "y": 1264,
+        "width": 124,
+        "height": 32
+      },
+      "options": [
+        {
+          "text": "Random",
+          "x": 1021,
+          "y": 1265,
+          "width": 61,
+          "height": 30,
+          "textWidth": 41.953125,
+          "paddingLeft": "0px",
+          "paddingRight": "0px"
+        },
+        {
+          "text": "Immediate",
+          "x": 1082,
+          "y": 1265,
+          "width": 61,
+          "height": 30,
+          "textWidth": 53.546875,
+          "paddingLeft": "0px",
+          "paddingRight": "0px"
+        }
+      ],
+      "units": [
+        {
+          "x": 880,
+          "y": 1272,
+          "width": 24,
+          "height": 16,
+          "textWidth": 4.75,
+          "padding": "0px 10px 0px 3px"
+        },
+        {
+          "x": 987,
+          "y": 1272,
+          "width": 24,
+          "height": 16,
+          "textWidth": 4.75,
+          "padding": "0px 10px 0px 3px"
+        }
+      ]
+    },
+    "after": {
+      "width": 1920,
+      "engine": 394,
+      "inputs": [
+        {
+          "x": 826,
+          "y": 1265,
+          "width": 54,
+          "height": 30,
+          "padding": "0px 10px"
+        },
+        {
+          "x": 933,
+          "y": 1265,
+          "width": 54,
+          "height": 30,
+          "padding": "0px 10px"
+        }
+      ],
+      "segmented": {
+        "x": 1020,
+        "y": 1264,
+        "width": 124,
+        "height": 32
+      },
+      "options": [
+        {
+          "text": "Random",
+          "x": 1021,
+          "y": 1265,
+          "width": 61,
+          "height": 30,
+          "textWidth": 41.953125,
+          "paddingLeft": "0px",
+          "paddingRight": "0px"
+        },
+        {
+          "text": "Immediate",
+          "x": 1082,
+          "y": 1265,
+          "width": 61,
+          "height": 30,
+          "textWidth": 53.546875,
+          "paddingLeft": "0px",
+          "paddingRight": "0px"
+        }
+      ],
+      "units": [
+        {
+          "x": 880,
+          "y": 1272,
+          "width": 24,
+          "height": 16,
+          "textWidth": 4.75,
+          "padding": "0px 10px 0px 3px"
+        },
+        {
+          "x": 987,
+          "y": 1272,
+          "width": 24,
+          "height": 16,
+          "textWidth": 4.75,
+          "padding": "0px 10px 0px 3px"
+        }
+      ]
+    }
+  }
+]
