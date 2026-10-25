@@ -280,7 +280,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         #krypbot-container .kb-console-module .kb-section + .kb-section,
         #krypbot-container .kb-console-module.kb-visuals-module .kb-footer { border-top:0 !important; background:linear-gradient(var(--tc-console-divider),var(--tc-console-divider)) top / 100% 1px no-repeat; }
         #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-core-spacing,
-        #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-visuals-spacing { margin-top:6px !important; }
+        #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-visuals-spacing { margin-top:0 !important; }
         #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-engine-module { min-height:412px; }
         #krypbot-container .kb-engine-timing:has(#auto-delay-section[style*="display: none"]) { display:none; }
         #krypbot-container .kb-engine-strength .kb-slider { display:block; margin:8px 0; }
