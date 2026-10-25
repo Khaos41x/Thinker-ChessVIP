@@ -3,7 +3,7 @@
   const css = `
         #krypbot-container .kb-engine-section { margin:0; padding:0; border:0; }
         #krypbot-container .kb-engine-analysis { padding-top:var(--space-2); }
-        #krypbot-container .kb-engine-section + .kb-engine-section { margin-top:var(--space-2); padding-top:var(--space-2); border-top:1px solid var(--tc-console-divider); }
+        #krypbot-container .kb-engine-section + .kb-engine-section { margin-top:0; padding-top:var(--space-1); border-top:1px solid var(--tc-console-divider); }
         #krypbot-container .kb-engine-section .kb-strength-card,
         #krypbot-container .kb-engine-section .kb-run-delay-card { margin:0 !important; padding:0 !important; border:0 !important; }
         #krypbot-container .kb-engine-section .kb-run-delay-card + .kb-section { border-top:0 !important; }
@@ -27,7 +27,8 @@
         #krypbot-container .kb-console-module.kb-visuals-module .kb-footer { border-top:0 !important; background:linear-gradient(var(--tc-console-divider),var(--tc-console-divider)) top / 100% 1px no-repeat; }
         #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-core-spacing,
         #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-visuals-spacing { margin-top:0 !important; }
-        #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-engine-module { min-height:412px; }
+        #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-engine-module { min-height:394px; }
+        #krypbot-container .kb-engine-section .kb-dependency-hint { line-height:16px; }
         #krypbot-container .kb-engine-timing:has(#auto-delay-section[style*="display: none"]) { display:none; }
         #krypbot-container .kb-engine-strength .kb-slider { display:block; margin:8px 0; }
         #krypbot-container .kb-engine-strength .kb-strength-limits { margin-top:0; }
