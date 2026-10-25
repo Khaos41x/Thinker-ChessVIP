@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-24.2
+// @version      2026-10-25.1
 // @downloadURL  http://127.0.0.1:5050/thinker-chess.user.js
 // @updateURL    http://127.0.0.1:5050/thinker-chess.meta.js
 // @description  Chess Bot com Servidor Local
@@ -269,6 +269,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         #krypbot-container .kb-engine-timing .kb-num-input { padding-left:var(--space-2); padding-right:var(--space-2); }
         #oi-wrapper { --row-h:40px; --row-height:var(--row-h); }
         #krypbot-container .kb-section-label,#krypbot-container .kb-footer > div > span { line-height:15px !important; }
+        #krypbot-container .kb-console-module.kb-visuals-module .kb-section + .kb-section,
         #krypbot-container .kb-console-module .kb-section + .kb-section,
         #krypbot-container .kb-console-module.kb-visuals-module .kb-footer { border-top:0 !important; background:linear-gradient(var(--tc-console-divider),var(--tc-console-divider)) top / 100% 1px no-repeat; }
         #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-core-spacing,
@@ -373,13 +374,13 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         #krypbot-container .kb-timing-mode input:focus + label {
           outline:none !important; box-shadow:none !important;
         }
-        #krypbot-container[data-focus-input="pointer"] ${controls}:focus {
+        #krypbot-container[data-focus-input="pointer"] :is(input:not([type=radio]):not([type=checkbox]),select):not([aria-invalid=true]):focus {
           border-color:var(--tc-idle-border,var(--tc-console-border)) !important;
         }
         #krypbot-container[data-focus-input="pointer"] .kb-delay-input:focus-within {
           border-color:var(--tc-console-border) !important;
         }
-        #krypbot-container[data-focus-input="keyboard"] ${controls}:focus-visible {
+        #krypbot-container[data-focus-input="keyboard"] ${controls}:not([aria-invalid=true]):focus-visible {
           border:1px solid #A0A19B !important; box-sizing:border-box;
         }
         #krypbot-container[data-focus-input="keyboard"] .kb-delay-input:has(input:focus-visible),
@@ -1296,7 +1297,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
   // Chess.com native orange is rgb(255,170,0); the recommendation keeps the brand accent.
   const ARROW_COLOR = "#3B82F6";
   const HIGHLIGHT_COLOR = "#10B981";
-  const normalizeArrowColor = value => /^#[0-9a-fA-F]{6}$/.test(String(value || "")) && String(value).toUpperCase() !== "#10B981" ? String(value) : ARROW_COLOR;
+  const normalizeArrowColor = value => /^#[0-9a-fA-F]{6}$/.test(String(value || "")) ? String(value) : ARROW_COLOR;
 
   let can_interval = true,
     auto_move = false,
@@ -1316,6 +1317,10 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     puzzleFenCache = "",
     puzzleMoveCache = new Map();
 
+  const arrowColorMigrated = localStorage.getItem("kb_arrow_color_version") === "1" || (typeof GM_getValue === "function" && GM_getValue("kb_arrow_color_version") === 1);
+  if (!arrowColorMigrated && current_color.toUpperCase() === "#10B981") current_color = ARROW_COLOR;
+  localStorage.setItem("kb_arrow_color_version", "1");
+  if (typeof GM_setValue === "function") GM_setValue("kb_arrow_color_version", 1);
   localStorage.setItem("kb_color", current_color);
   if (typeof GM_setValue === "function") GM_setValue("kb_color", current_color);
 
@@ -8028,7 +8033,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
 })();
 
 /* THINKER_SESSION_CONTROL_GENERATED_START */
-globalThis.ThinkerClientVersion="2026-10-24.2";
+globalThis.ThinkerClientVersion="2026-10-25.1";
 globalThis.ThinkerSessionControlReady=(async()=>{
 (function(root){
 "use strict";

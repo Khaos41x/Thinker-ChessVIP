@@ -18,7 +18,7 @@ class ArrowColorTests(unittest.TestCase):
         client = self.connect()
         self.assertEqual(client.get('/config/load').json['color'], '#3B82F6')
         client.post('/config/save', json={'color': '#10b981'})
-        self.assertEqual(client.get('/config/load').json['color'], '#3B82F6')
+        self.assertEqual(client.get('/config/load').json['color'], '#10b981')
         client.post('/config/save', json={'color': '#a24fd1'})
         self.assertEqual(client.get('/config/load').json['color'], '#a24fd1')
         for bad in ('', 'blue', '#123', '#00000080'):
@@ -36,6 +36,8 @@ class ArrowColorTests(unittest.TestCase):
             self.assertEqual(json.loads(path.read_text())['config']['color'], '#3B82F6')
             client.post('/config/save', json={'color': '#c65d42'})
             self.assertEqual(self.connect(path).get('/config/load').json['color'], '#c65d42')
+            client.post('/config/save', json={'color': '#10B981'})
+            self.assertEqual(self.connect(path).get('/config/load').json['color'], '#10B981')
 
 
 if __name__ == '__main__':

@@ -92,12 +92,12 @@ def create_external_config_blueprint(preference_path=None):
             if not isinstance(stored, dict) or stored.get('version') != 1 or configuration_error(stored.get('config')):
                 raise ValueError('Invalid saved configuration')
             config.update(stored['config'])
-            if config['color'].upper() == '#10B981':
+            if config['color'].upper() == '#10B981' and stored.get('arrowColorVersion') != 1:
                 config['color'] = '#3B82F6'
                 temporary = preference_path.with_name(preference_path.name + '.' + uuid.uuid4().hex + '.tmp')
                 try:
                     with temporary.open('w', encoding='utf-8', newline='\n') as stream:
-                        json.dump({'version': 1, 'config': config}, stream, ensure_ascii=False)
+                        json.dump({'version': 1, 'arrowColorVersion': 1, 'config': config}, stream, ensure_ascii=False)
                         stream.flush()
                         os.fsync(stream.fileno())
                     os.replace(temporary, preference_path)
@@ -296,8 +296,6 @@ def create_external_config_blueprint(preference_path=None):
             if expected_revision is not None and (expected_revision != revision or expected_server != server_id):
                 return jsonify({'ok': False, 'error': 'Configuration revision changed', 'config': {**config, '_revision': revision, '_serverId': server_id}}), 409
             updated = {**config, **data}
-            if updated['color'].upper() == '#10B981':
-                updated['color'] = '#3B82F6'
             if updated['sessionMinimumPercent'] is not None and updated['sessionMaximumPercent'] is not None and updated['sessionMinimumPercent'] >= updated['sessionMaximumPercent']:
                 return jsonify({'ok': False, 'error': 'Minimum win rate must be below maximum win rate'}), 400
             if updated["delayMode"] == "random":
@@ -312,7 +310,7 @@ def create_external_config_blueprint(preference_path=None):
                     try:
                         preference_path.parent.mkdir(parents=True, exist_ok=True)
                         with temporary.open('w', encoding='utf-8', newline='\n') as stream:
-                            json.dump({'version': 1, 'config': updated}, stream, ensure_ascii=False)
+                            json.dump({'version': 1, 'arrowColorVersion': 1, 'config': updated}, stream, ensure_ascii=False)
                             stream.flush()
                             os.fsync(stream.fileno())
                         if invalid_saved_configuration and preference_path.exists():

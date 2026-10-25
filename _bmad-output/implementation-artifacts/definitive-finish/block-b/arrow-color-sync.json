@@ -215,6 +215,6 @@
     }
   ],
   "componentCount": 140,
-  "externalComponentCount": 143,
+  "externalComponentCount": 145,
   "fixture": "Local Chromium + actual userscript, Flask config and draw closure; test-only closure exposure, no game recommendation authority bypass"
 }

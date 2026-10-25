@@ -7,13 +7,13 @@
         #krypbot-container .kb-timing-mode input:focus + label {
           outline:none !important; box-shadow:none !important;
         }
-        #krypbot-container[data-focus-input="pointer"] ${controls}:focus {
+        #krypbot-container[data-focus-input="pointer"] :is(input:not([type=radio]):not([type=checkbox]),select):not([aria-invalid=true]):focus {
           border-color:var(--tc-idle-border,var(--tc-console-border)) !important;
         }
         #krypbot-container[data-focus-input="pointer"] .kb-delay-input:focus-within {
           border-color:var(--tc-console-border) !important;
         }
-        #krypbot-container[data-focus-input="keyboard"] ${controls}:focus-visible {
+        #krypbot-container[data-focus-input="keyboard"] ${controls}:not([aria-invalid=true]):focus-visible {
           border:1px solid #A0A19B !important; box-sizing:border-box;
         }
         #krypbot-container[data-focus-input="keyboard"] .kb-delay-input:has(input:focus-visible),

@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {resolve,join} from 'node:path';
 import {createServer} from 'node:net';
 const root=resolve(import.meta.dirname,'../..');
-const integrated=process.argv.includes('--integrated');
+const integrated=!process.argv.includes('--before');
 const output=join(root,'_bmad-output/implementation-artifacts/definitive-finish/block-f');
 await mkdir(output,{recursive:true});
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));

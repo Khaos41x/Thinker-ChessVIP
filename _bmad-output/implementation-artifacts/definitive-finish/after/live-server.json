@@ -1,0 +1,15 @@
+{
+  "acknowledged": [
+    {
+      "color": "#10B981",
+      "revision": 1
+    },
+    {
+      "color": "#3B82F6",
+      "revision": 2
+    }
+  ],
+  "migrationVersion": 1,
+  "unrelatedSettingsPreserved": true,
+  "servingVersion": "2026-10-25.1"
+}

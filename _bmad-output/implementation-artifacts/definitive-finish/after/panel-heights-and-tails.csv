@@ -1,0 +1,341 @@
+surface,width,bot,smartPacing,populated,panel,x,y,height,bottom,right,centerY,tail
+console,345,False,False,False,kb-console-module kb-core-module,38,1124,177,1301,383,1212.5,12
+console,345,False,False,False,kb-console-module kb-visuals-module,38,1313,223,1536,383,1424.5,12
+console,345,False,False,False,kb-console-module kb-engine-module,395,1124,412,1536,740,1330,12
+console,702,False,False,False,kb-session-panel,38,1548,252,1800,740,1674,12
+console,296,False,False,False,oi-zone2,752,1124,676,1800,1048,1462,573
+console,345,False,False,False,kb-console-module kb-core-module,135,1124,177,1301,480,1212.5,12
+console,345,False,False,False,kb-console-module kb-visuals-module,135,1313,223,1536,480,1424.5,12
+console,345,False,False,False,kb-console-module kb-engine-module,492,1124,412,1536,837,1330,12
+console,702,False,False,False,kb-session-panel,135,1548,252,1800,837,1674,12
+console,296,False,False,False,oi-zone2,849,1124,676,1800,1145,1462,573
+console,345,False,False,False,kb-console-module kb-core-module,215,1124,177,1301,560,1212.5,12
+console,345,False,False,False,kb-console-module kb-visuals-module,215,1313,223,1536,560,1424.5,12
+console,345,False,False,False,kb-console-module kb-engine-module,572,1124,412,1536,917,1330,12
+console,702,False,False,False,kb-session-panel,215,1548,252,1800,917,1674,12
+console,296,False,False,False,oi-zone2,929,1124,676,1800,1225,1462,573
+console,345,False,False,False,kb-console-module kb-core-module,455,1124,177,1301,800,1212.5,12
+console,345,False,False,False,kb-console-module kb-visuals-module,455,1313,223,1536,800,1424.5,12
+console,345,False,False,False,kb-console-module kb-engine-module,812,1124,412,1536,1157,1330,12
+console,702,False,False,False,kb-session-panel,455,1548,252,1800,1157,1674,12
+console,296,False,False,False,oi-zone2,1169,1124,676,1800,1465,1462,573
+console,1009,False,False,False,kb-console-module kb-core-module,12,1124,171,1295,1021,1209.5,12
+console,1009,False,False,False,kb-console-module kb-visuals-module,12,1307,211,1518,1021,1412.5,12
+console,1009,False,False,False,kb-console-module kb-engine-module,12,1530,412,1942,1021,1736,12
+console,1009,False,False,False,kb-session-panel,12,1954,252,2206,1021,2080,12
+console,1009,False,False,False,oi-zone2,12,2218,115,2333,1021,2275.5,12
+console,776,False,False,False,kb-console-module kb-core-module,12,1124,171,1295,788,1209.5,12
+console,776,False,False,False,kb-console-module kb-visuals-module,12,1307,211,1518,788,1412.5,12
+console,776,False,False,False,kb-console-module kb-engine-module,12,1530,412,1942,788,1736,12
+console,776,False,False,False,kb-session-panel,12,1954,252,2206,788,2080,12
+console,776,False,False,False,oi-zone2,12,2218,115,2333,788,2275.5,12
+console,345,False,True,False,kb-console-module kb-core-module,38,1124,177,1301,383,1212.5,12
+console,345,False,True,False,kb-console-module kb-visuals-module,38,1313,223,1536,383,1424.5,12
+console,345,False,True,False,kb-console-module kb-engine-module,395,1124,412,1536,740,1330,109
+console,702,False,True,False,kb-session-panel,38,1548,252,1800,740,1674,12
+console,296,False,True,False,oi-zone2,752,1124,676,1800,1048,1462,573
+console,345,False,True,False,kb-console-module kb-core-module,135,1124,177,1301,480,1212.5,12
+console,345,False,True,False,kb-console-module kb-visuals-module,135,1313,223,1536,480,1424.5,12
+console,345,False,True,False,kb-console-module kb-engine-module,492,1124,412,1536,837,1330,109
+console,702,False,True,False,kb-session-panel,135,1548,252,1800,837,1674,12
+console,296,False,True,False,oi-zone2,849,1124,676,1800,1145,1462,573
+console,345,False,True,False,kb-console-module kb-core-module,215,1124,177,1301,560,1212.5,12
+console,345,False,True,False,kb-console-module kb-visuals-module,215,1313,223,1536,560,1424.5,12
+console,345,False,True,False,kb-console-module kb-engine-module,572,1124,412,1536,917,1330,109
+console,702,False,True,False,kb-session-panel,215,1548,252,1800,917,1674,12
+console,296,False,True,False,oi-zone2,929,1124,676,1800,1225,1462,573
+console,345,False,True,False,kb-console-module kb-core-module,455,1124,177,1301,800,1212.5,12
+console,345,False,True,False,kb-console-module kb-visuals-module,455,1313,223,1536,800,1424.5,12
+console,345,False,True,False,kb-console-module kb-engine-module,812,1124,412,1536,1157,1330,109
+console,702,False,True,False,kb-session-panel,455,1548,252,1800,1157,1674,12
+console,296,False,True,False,oi-zone2,1169,1124,676,1800,1465,1462,573
+console,1009,False,True,False,kb-console-module kb-core-module,12,1124,171,1295,1021,1209.5,12
+console,1009,False,True,False,kb-console-module kb-visuals-module,12,1307,211,1518,1021,1412.5,12
+console,1009,False,True,False,kb-console-module kb-engine-module,12,1530,315,1845,1021,1687.5,12
+console,1009,False,True,False,kb-session-panel,12,1857,252,2109,1021,1983,12
+console,1009,False,True,False,oi-zone2,12,2121,115,2236,1021,2178.5,12
+console,776,False,True,False,kb-console-module kb-core-module,12,1124,171,1295,788,1209.5,12
+console,776,False,True,False,kb-console-module kb-visuals-module,12,1307,211,1518,788,1412.5,12
+console,776,False,True,False,kb-console-module kb-engine-module,12,1530,315,1845,788,1687.5,12
+console,776,False,True,False,kb-session-panel,12,1857,252,2109,788,1983,12
+console,776,False,True,False,oi-zone2,12,2121,115,2236,788,2178.5,12
+console,345,True,False,False,kb-console-module kb-core-module,38,1124,177,1301,383,1212.5,12
+console,345,True,False,False,kb-console-module kb-visuals-module,38,1313,223,1536,383,1424.5,12
+console,345,True,False,False,kb-console-module kb-engine-module,395,1124,412,1536,740,1330,12
+console,702,True,False,False,kb-session-panel,38,1548,252,1800,740,1674,12
+console,296,True,False,False,oi-zone2,752,1124,676,1800,1048,1462,573
+console,345,True,False,False,kb-console-module kb-core-module,135,1124,177,1301,480,1212.5,12
+console,345,True,False,False,kb-console-module kb-visuals-module,135,1313,223,1536,480,1424.5,12
+console,345,True,False,False,kb-console-module kb-engine-module,492,1124,412,1536,837,1330,12
+console,702,True,False,False,kb-session-panel,135,1548,252,1800,837,1674,12
+console,296,True,False,False,oi-zone2,849,1124,676,1800,1145,1462,573
+console,345,True,False,False,kb-console-module kb-core-module,215,1124,177,1301,560,1212.5,12
+console,345,True,False,False,kb-console-module kb-visuals-module,215,1313,223,1536,560,1424.5,12
+console,345,True,False,False,kb-console-module kb-engine-module,572,1124,412,1536,917,1330,12
+console,702,True,False,False,kb-session-panel,215,1548,252,1800,917,1674,12
+console,296,True,False,False,oi-zone2,929,1124,676,1800,1225,1462,573
+console,345,True,False,False,kb-console-module kb-core-module,455,1124,177,1301,800,1212.5,12
+console,345,True,False,False,kb-console-module kb-visuals-module,455,1313,223,1536,800,1424.5,12
+console,345,True,False,False,kb-console-module kb-engine-module,812,1124,412,1536,1157,1330,12
+console,702,True,False,False,kb-session-panel,455,1548,252,1800,1157,1674,12
+console,296,True,False,False,oi-zone2,1169,1124,676,1800,1465,1462,573
+console,1009,True,False,False,kb-console-module kb-core-module,12,1124,171,1295,1021,1209.5,12
+console,1009,True,False,False,kb-console-module kb-visuals-module,12,1307,211,1518,1021,1412.5,12
+console,1009,True,False,False,kb-console-module kb-engine-module,12,1530,412,1942,1021,1736,12
+console,1009,True,False,False,kb-session-panel,12,1954,252,2206,1021,2080,12
+console,1009,True,False,False,oi-zone2,12,2218,115,2333,1021,2275.5,12
+console,776,True,False,False,kb-console-module kb-core-module,12,1124,171,1295,788,1209.5,12
+console,776,True,False,False,kb-console-module kb-visuals-module,12,1307,211,1518,788,1412.5,12
+console,776,True,False,False,kb-console-module kb-engine-module,12,1530,412,1942,788,1736,12
+console,776,True,False,False,kb-session-panel,12,1954,252,2206,788,2080,12
+console,776,True,False,False,oi-zone2,12,2218,115,2333,788,2275.5,12
+console,345,True,True,False,kb-console-module kb-core-module,38,1124,177,1301,383,1212.5,12
+console,345,True,True,False,kb-console-module kb-visuals-module,38,1313,223,1536,383,1424.5,12
+console,345,True,True,False,kb-console-module kb-engine-module,395,1124,412,1536,740,1330,109
+console,702,True,True,False,kb-session-panel,38,1548,252,1800,740,1674,12
+console,296,True,True,False,oi-zone2,752,1124,676,1800,1048,1462,573
+console,345,True,True,False,kb-console-module kb-core-module,135,1124,177,1301,480,1212.5,12
+console,345,True,True,False,kb-console-module kb-visuals-module,135,1313,223,1536,480,1424.5,12
+console,345,True,True,False,kb-console-module kb-engine-module,492,1124,412,1536,837,1330,109
+console,702,True,True,False,kb-session-panel,135,1548,252,1800,837,1674,12
+console,296,True,True,False,oi-zone2,849,1124,676,1800,1145,1462,573
+console,345,True,True,False,kb-console-module kb-core-module,215,1124,177,1301,560,1212.5,12
+console,345,True,True,False,kb-console-module kb-visuals-module,215,1313,223,1536,560,1424.5,12
+console,345,True,True,False,kb-console-module kb-engine-module,572,1124,412,1536,917,1330,109
+console,702,True,True,False,kb-session-panel,215,1548,252,1800,917,1674,12
+console,296,True,True,False,oi-zone2,929,1124,676,1800,1225,1462,573
+console,345,True,True,False,kb-console-module kb-core-module,455,1124,177,1301,800,1212.5,12
+console,345,True,True,False,kb-console-module kb-visuals-module,455,1313,223,1536,800,1424.5,12
+console,345,True,True,False,kb-console-module kb-engine-module,812,1124,412,1536,1157,1330,109
+console,702,True,True,False,kb-session-panel,455,1548,252,1800,1157,1674,12
+console,296,True,True,False,oi-zone2,1169,1124,676,1800,1465,1462,573
+console,1009,True,True,False,kb-console-module kb-core-module,12,1124,171,1295,1021,1209.5,12
+console,1009,True,True,False,kb-console-module kb-visuals-module,12,1307,211,1518,1021,1412.5,12
+console,1009,True,True,False,kb-console-module kb-engine-module,12,1530,315,1845,1021,1687.5,12
+console,1009,True,True,False,kb-session-panel,12,1857,252,2109,1021,1983,12
+console,1009,True,True,False,oi-zone2,12,2121,115,2236,1021,2178.5,12
+console,776,True,True,False,kb-console-module kb-core-module,12,1124,171,1295,788,1209.5,12
+console,776,True,True,False,kb-console-module kb-visuals-module,12,1307,211,1518,788,1412.5,12
+console,776,True,True,False,kb-console-module kb-engine-module,12,1530,315,1845,788,1687.5,12
+console,776,True,True,False,kb-session-panel,12,1857,252,2109,788,1983,12
+console,776,True,True,False,oi-zone2,12,2121,115,2236,788,2178.5,12
+console,345,False,False,True,kb-console-module kb-core-module,38,1124,177,1301,383,1212.5,12
+console,345,False,False,True,kb-console-module kb-visuals-module,38,1313,223,1536,383,1424.5,12
+console,345,False,False,True,kb-console-module kb-engine-module,395,1124,412,1536,740,1330,12
+console,702,False,False,True,kb-session-panel,38,1548,252,1800,740,1674,12
+console,296,False,False,True,oi-zone2,752,1124,676,1800,1048,1462,147
+console,345,False,False,True,kb-console-module kb-core-module,135,1124,177,1301,480,1212.5,12
+console,345,False,False,True,kb-console-module kb-visuals-module,135,1313,223,1536,480,1424.5,12
+console,345,False,False,True,kb-console-module kb-engine-module,492,1124,412,1536,837,1330,12
+console,702,False,False,True,kb-session-panel,135,1548,252,1800,837,1674,12
+console,296,False,False,True,oi-zone2,849,1124,676,1800,1145,1462,147
+console,345,False,False,True,kb-console-module kb-core-module,215,1124,177,1301,560,1212.5,12
+console,345,False,False,True,kb-console-module kb-visuals-module,215,1313,223,1536,560,1424.5,12
+console,345,False,False,True,kb-console-module kb-engine-module,572,1124,412,1536,917,1330,12
+console,702,False,False,True,kb-session-panel,215,1548,252,1800,917,1674,12
+console,296,False,False,True,oi-zone2,929,1124,676,1800,1225,1462,147
+console,345,False,False,True,kb-console-module kb-core-module,455,1124,177,1301,800,1212.5,12
+console,345,False,False,True,kb-console-module kb-visuals-module,455,1313,223,1536,800,1424.5,12
+console,345,False,False,True,kb-console-module kb-engine-module,812,1124,412,1536,1157,1330,12
+console,702,False,False,True,kb-session-panel,455,1548,252,1800,1157,1674,12
+console,296,False,False,True,oi-zone2,1169,1124,676,1800,1465,1462,147
+console,1009,False,False,True,kb-console-module kb-core-module,12,1124,171,1295,1021,1209.5,12
+console,1009,False,False,True,kb-console-module kb-visuals-module,12,1307,211,1518,1021,1412.5,12
+console,1009,False,False,True,kb-console-module kb-engine-module,12,1530,412,1942,1021,1736,12
+console,1009,False,False,True,kb-session-panel,12,1954,252,2206,1021,2080,12
+console,1009,False,False,True,oi-zone2,12,2218,541,2759,1021,2488.5,12
+console,776,False,False,True,kb-console-module kb-core-module,12,1124,171,1295,788,1209.5,12
+console,776,False,False,True,kb-console-module kb-visuals-module,12,1307,211,1518,788,1412.5,12
+console,776,False,False,True,kb-console-module kb-engine-module,12,1530,412,1942,788,1736,12
+console,776,False,False,True,kb-session-panel,12,1954,252,2206,788,2080,12
+console,776,False,False,True,oi-zone2,12,2218,541,2759,788,2488.5,12
+console,345,False,True,True,kb-console-module kb-core-module,38,1124,177,1301,383,1212.5,12
+console,345,False,True,True,kb-console-module kb-visuals-module,38,1313,223,1536,383,1424.5,12
+console,345,False,True,True,kb-console-module kb-engine-module,395,1124,412,1536,740,1330,109
+console,702,False,True,True,kb-session-panel,38,1548,252,1800,740,1674,12
+console,296,False,True,True,oi-zone2,752,1124,676,1800,1048,1462,147
+console,345,False,True,True,kb-console-module kb-core-module,135,1124,177,1301,480,1212.5,12
+console,345,False,True,True,kb-console-module kb-visuals-module,135,1313,223,1536,480,1424.5,12
+console,345,False,True,True,kb-console-module kb-engine-module,492,1124,412,1536,837,1330,109
+console,702,False,True,True,kb-session-panel,135,1548,252,1800,837,1674,12
+console,296,False,True,True,oi-zone2,849,1124,676,1800,1145,1462,147
+console,345,False,True,True,kb-console-module kb-core-module,215,1124,177,1301,560,1212.5,12
+console,345,False,True,True,kb-console-module kb-visuals-module,215,1313,223,1536,560,1424.5,12
+console,345,False,True,True,kb-console-module kb-engine-module,572,1124,412,1536,917,1330,109
+console,702,False,True,True,kb-session-panel,215,1548,252,1800,917,1674,12
+console,296,False,True,True,oi-zone2,929,1124,676,1800,1225,1462,147
+console,345,False,True,True,kb-console-module kb-core-module,455,1124,177,1301,800,1212.5,12
+console,345,False,True,True,kb-console-module kb-visuals-module,455,1313,223,1536,800,1424.5,12
+console,345,False,True,True,kb-console-module kb-engine-module,812,1124,412,1536,1157,1330,109
+console,702,False,True,True,kb-session-panel,455,1548,252,1800,1157,1674,12
+console,296,False,True,True,oi-zone2,1169,1124,676,1800,1465,1462,147
+console,1009,False,True,True,kb-console-module kb-core-module,12,1124,171,1295,1021,1209.5,12
+console,1009,False,True,True,kb-console-module kb-visuals-module,12,1307,211,1518,1021,1412.5,12
+console,1009,False,True,True,kb-console-module kb-engine-module,12,1530,315,1845,1021,1687.5,12
+console,1009,False,True,True,kb-session-panel,12,1857,252,2109,1021,1983,12
+console,1009,False,True,True,oi-zone2,12,2121,541,2662,1021,2391.5,12
+console,776,False,True,True,kb-console-module kb-core-module,12,1124,171,1295,788,1209.5,12
+console,776,False,True,True,kb-console-module kb-visuals-module,12,1307,211,1518,788,1412.5,12
+console,776,False,True,True,kb-console-module kb-engine-module,12,1530,315,1845,788,1687.5,12
+console,776,False,True,True,kb-session-panel,12,1857,252,2109,788,1983,12
+console,776,False,True,True,oi-zone2,12,2121,541,2662,788,2391.5,12
+console,345,True,False,True,kb-console-module kb-core-module,38,1124,177,1301,383,1212.5,12
+console,345,True,False,True,kb-console-module kb-visuals-module,38,1313,223,1536,383,1424.5,12
+console,345,True,False,True,kb-console-module kb-engine-module,395,1124,412,1536,740,1330,12
+console,702,True,False,True,kb-session-panel,38,1548,252,1800,740,1674,12
+console,296,True,False,True,oi-zone2,752,1124,676,1800,1048,1462,147
+console,345,True,False,True,kb-console-module kb-core-module,135,1124,177,1301,480,1212.5,12
+console,345,True,False,True,kb-console-module kb-visuals-module,135,1313,223,1536,480,1424.5,12
+console,345,True,False,True,kb-console-module kb-engine-module,492,1124,412,1536,837,1330,12
+console,702,True,False,True,kb-session-panel,135,1548,252,1800,837,1674,12
+console,296,True,False,True,oi-zone2,849,1124,676,1800,1145,1462,147
+console,345,True,False,True,kb-console-module kb-core-module,215,1124,177,1301,560,1212.5,12
+console,345,True,False,True,kb-console-module kb-visuals-module,215,1313,223,1536,560,1424.5,12
+console,345,True,False,True,kb-console-module kb-engine-module,572,1124,412,1536,917,1330,12
+console,702,True,False,True,kb-session-panel,215,1548,252,1800,917,1674,12
+console,296,True,False,True,oi-zone2,929,1124,676,1800,1225,1462,147
+console,345,True,False,True,kb-console-module kb-core-module,455,1124,177,1301,800,1212.5,12
+console,345,True,False,True,kb-console-module kb-visuals-module,455,1313,223,1536,800,1424.5,12
+console,345,True,False,True,kb-console-module kb-engine-module,812,1124,412,1536,1157,1330,12
+console,702,True,False,True,kb-session-panel,455,1548,252,1800,1157,1674,12
+console,296,True,False,True,oi-zone2,1169,1124,676,1800,1465,1462,147
+console,1009,True,False,True,kb-console-module kb-core-module,12,1124,171,1295,1021,1209.5,12
+console,1009,True,False,True,kb-console-module kb-visuals-module,12,1307,211,1518,1021,1412.5,12
+console,1009,True,False,True,kb-console-module kb-engine-module,12,1530,412,1942,1021,1736,12
+console,1009,True,False,True,kb-session-panel,12,1954,252,2206,1021,2080,12
+console,1009,True,False,True,oi-zone2,12,2218,541,2759,1021,2488.5,12
+console,776,True,False,True,kb-console-module kb-core-module,12,1124,171,1295,788,1209.5,12
+console,776,True,False,True,kb-console-module kb-visuals-module,12,1307,211,1518,788,1412.5,12
+console,776,True,False,True,kb-console-module kb-engine-module,12,1530,412,1942,788,1736,12
+console,776,True,False,True,kb-session-panel,12,1954,252,2206,788,2080,12
+console,776,True,False,True,oi-zone2,12,2218,541,2759,788,2488.5,12
+console,345,True,True,True,kb-console-module kb-core-module,38,1124,177,1301,383,1212.5,12
+console,345,True,True,True,kb-console-module kb-visuals-module,38,1313,223,1536,383,1424.5,12
+console,345,True,True,True,kb-console-module kb-engine-module,395,1124,412,1536,740,1330,109
+console,702,True,True,True,kb-session-panel,38,1548,252,1800,740,1674,12
+console,296,True,True,True,oi-zone2,752,1124,676,1800,1048,1462,147
+console,345,True,True,True,kb-console-module kb-core-module,135,1124,177,1301,480,1212.5,12
+console,345,True,True,True,kb-console-module kb-visuals-module,135,1313,223,1536,480,1424.5,12
+console,345,True,True,True,kb-console-module kb-engine-module,492,1124,412,1536,837,1330,109
+console,702,True,True,True,kb-session-panel,135,1548,252,1800,837,1674,12
+console,296,True,True,True,oi-zone2,849,1124,676,1800,1145,1462,147
+console,345,True,True,True,kb-console-module kb-core-module,215,1124,177,1301,560,1212.5,12
+console,345,True,True,True,kb-console-module kb-visuals-module,215,1313,223,1536,560,1424.5,12
+console,345,True,True,True,kb-console-module kb-engine-module,572,1124,412,1536,917,1330,109
+console,702,True,True,True,kb-session-panel,215,1548,252,1800,917,1674,12
+console,296,True,True,True,oi-zone2,929,1124,676,1800,1225,1462,147
+console,345,True,True,True,kb-console-module kb-core-module,455,1124,177,1301,800,1212.5,12
+console,345,True,True,True,kb-console-module kb-visuals-module,455,1313,223,1536,800,1424.5,12
+console,345,True,True,True,kb-console-module kb-engine-module,812,1124,412,1536,1157,1330,109
+console,702,True,True,True,kb-session-panel,455,1548,252,1800,1157,1674,12
+console,296,True,True,True,oi-zone2,1169,1124,676,1800,1465,1462,147
+console,1009,True,True,True,kb-console-module kb-core-module,12,1124,171,1295,1021,1209.5,12
+console,1009,True,True,True,kb-console-module kb-visuals-module,12,1307,211,1518,1021,1412.5,12
+console,1009,True,True,True,kb-console-module kb-engine-module,12,1530,315,1845,1021,1687.5,12
+console,1009,True,True,True,kb-session-panel,12,1857,252,2109,1021,1983,12
+console,1009,True,True,True,oi-zone2,12,2121,541,2662,1021,2391.5,12
+console,776,True,True,True,kb-console-module kb-core-module,12,1124,171,1295,788,1209.5,12
+console,776,True,True,True,kb-console-module kb-visuals-module,12,1307,211,1518,788,1412.5,12
+console,776,True,True,True,kb-console-module kb-engine-module,12,1530,315,1845,788,1687.5,12
+console,776,True,True,True,kb-session-panel,12,1857,252,2109,788,1983,12
+console,776,True,True,True,oi-zone2,12,2121,541,2662,788,2391.5,12
+config,429,False,False,,core,277,196,175,371,706,283.5,12
+config,430,False,False,,engine,718,196,530,726,1148,461,12
+config,429,False,False,,visuals,277,383,240,623,706,503,12
+config,429,False,False,,workspace,277,635,112,747,706,691,12
+config,871,False,False,,autoplay,277,759,256,1015,1148,887,12
+config,429,False,False,,core,197,196,175,371,626,283.5,12
+config,430,False,False,,engine,638,196,530,726,1068,461,12
+config,429,False,False,,visuals,197,383,240,623,626,503,12
+config,429,False,False,,workspace,197,635,112,747,626,691,12
+config,871,False,False,,autoplay,197,759,256,1015,1068,887,12
+config,429,False,False,,core,69,196,175,371,498,283.5,12
+config,430,False,False,,engine,510,196,530,726,940,461,12
+config,429,False,False,,visuals,69,383,240,623,498,503,12
+config,429,False,False,,workspace,69,635,112,747,498,691,12
+config,871,False,False,,autoplay,69,759,256,1015,940,887,12
+config,705,False,False,,core,24,196,175,371,729,283.5,12
+config,705,False,False,,engine,24,383,530,913,729,648,12
+config,705,False,False,,visuals,24,925,240,1165,729,1045,12
+config,705,False,False,,workspace,24,1177,112,1289,729,1233,12
+config,705,False,False,,autoplay,24,1301,256,1557,729,1429,12
+config,351,False,False,,core,12,208,175,383,363,295.5,12
+config,351,False,False,,engine,12,395,530,925,363,660,12
+config,351,False,False,,visuals,12,937,240,1177,363,1057,12
+config,351,False,False,,workspace,12,1189,112,1301,363,1245,12
+config,351,False,False,,autoplay,12,1313,373,1686,363,1499.5,12
+config,429,False,True,,core,277,196,175,371,706,283.5,12
+config,430,False,True,,engine,718,196,379,575,1148,385.5,12
+config,429,False,True,,visuals,277,383,240,623,706,503,12
+config,429,False,True,,workspace,277,635,112,747,706,691,12
+config,871,False,True,,autoplay,277,759,256,1015,1148,887,12
+config,429,False,True,,core,197,196,175,371,626,283.5,12
+config,430,False,True,,engine,638,196,379,575,1068,385.5,12
+config,429,False,True,,visuals,197,383,240,623,626,503,12
+config,429,False,True,,workspace,197,635,112,747,626,691,12
+config,871,False,True,,autoplay,197,759,256,1015,1068,887,12
+config,429,False,True,,core,69,196,175,371,498,283.5,12
+config,430,False,True,,engine,510,196,379,575,940,385.5,12
+config,429,False,True,,visuals,69,383,240,623,498,503,12
+config,429,False,True,,workspace,69,635,112,747,498,691,12
+config,871,False,True,,autoplay,69,759,256,1015,940,887,12
+config,705,False,True,,core,24,196,175,371,729,283.5,12
+config,705,False,True,,engine,24,383,379,762,729,572.5,12
+config,705,False,True,,visuals,24,774,240,1014,729,894,12
+config,705,False,True,,workspace,24,1026,112,1138,729,1082,12
+config,705,False,True,,autoplay,24,1150,256,1406,729,1278,12
+config,351,False,True,,core,12,208,175,383,363,295.5,12
+config,351,False,True,,engine,12,395,379,774,363,584.5,12
+config,351,False,True,,visuals,12,786,240,1026,363,906,12
+config,351,False,True,,workspace,12,1038,112,1150,363,1094,12
+config,351,False,True,,autoplay,12,1162,373,1535,363,1348.5,12
+config,429,True,False,,core,277,196,175,371,706,283.5,12
+config,430,True,False,,engine,718,196,530,726,1148,461,12
+config,429,True,False,,visuals,277,383,240,623,706,503,12
+config,429,True,False,,workspace,277,635,112,747,706,691,12
+config,871,True,False,,autoplay,277,759,256,1015,1148,887,12
+config,429,True,False,,core,197,196,175,371,626,283.5,12
+config,430,True,False,,engine,638,196,530,726,1068,461,12
+config,429,True,False,,visuals,197,383,240,623,626,503,12
+config,429,True,False,,workspace,197,635,112,747,626,691,12
+config,871,True,False,,autoplay,197,759,256,1015,1068,887,12
+config,429,True,False,,core,69,196,175,371,498,283.5,12
+config,430,True,False,,engine,510,196,530,726,940,461,12
+config,429,True,False,,visuals,69,383,240,623,498,503,12
+config,429,True,False,,workspace,69,635,112,747,498,691,12
+config,871,True,False,,autoplay,69,759,256,1015,940,887,12
+config,705,True,False,,core,24,196,175,371,729,283.5,12
+config,705,True,False,,engine,24,383,530,913,729,648,12
+config,705,True,False,,visuals,24,925,240,1165,729,1045,12
+config,705,True,False,,workspace,24,1177,112,1289,729,1233,12
+config,705,True,False,,autoplay,24,1301,256,1557,729,1429,12
+config,351,True,False,,core,12,208,175,383,363,295.5,12
+config,351,True,False,,engine,12,395,530,925,363,660,12
+config,351,True,False,,visuals,12,937,240,1177,363,1057,12
+config,351,True,False,,workspace,12,1189,112,1301,363,1245,12
+config,351,True,False,,autoplay,12,1313,373,1686,363,1499.5,12
+config,429,True,True,,core,277,196,175,371,706,283.5,12
+config,430,True,True,,engine,718,196,379,575,1148,385.5,12
+config,429,True,True,,visuals,277,383,240,623,706,503,12
+config,429,True,True,,workspace,277,635,112,747,706,691,12
+config,871,True,True,,autoplay,277,759,256,1015,1148,887,12
+config,429,True,True,,core,197,196,175,371,626,283.5,12
+config,430,True,True,,engine,638,196,379,575,1068,385.5,12
+config,429,True,True,,visuals,197,383,240,623,626,503,12
+config,429,True,True,,workspace,197,635,112,747,626,691,12
+config,871,True,True,,autoplay,197,759,256,1015,1068,887,12
+config,429,True,True,,core,69,196,175,371,498,283.5,12
+config,430,True,True,,engine,510,196,379,575,940,385.5,12
+config,429,True,True,,visuals,69,383,240,623,498,503,12
+config,429,True,True,,workspace,69,635,112,747,498,691,12
+config,871,True,True,,autoplay,69,759,256,1015,940,887,12
+config,705,True,True,,core,24,196,175,371,729,283.5,12
+config,705,True,True,,engine,24,383,379,762,729,572.5,12
+config,705,True,True,,visuals,24,774,240,1014,729,894,12
+config,705,True,True,,workspace,24,1026,112,1138,729,1082,12
+config,705,True,True,,autoplay,24,1150,256,1406,729,1278,12
+config,351,True,True,,core,12,208,175,383,363,295.5,12
+config,351,True,True,,engine,12,395,379,774,363,584.5,12
+config,351,True,True,,visuals,12,786,240,1026,363,906,12
+config,351,True,True,,workspace,12,1038,112,1150,363,1094,12
+config,351,True,True,,autoplay,12,1162,373,1535,363,1348.5,12

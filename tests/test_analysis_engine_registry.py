@@ -89,6 +89,10 @@ class RegistryTests(unittest.TestCase):
         self.assertTrue(self.registry._service.status()['ready'])
 
     def test_real_engines_switch_recovery_and_benchmarks(self):
+        self.registry.prefer(ENGINE_IDS[1])
+        self.registry.prefer(ENGINE_IDS[0])
+        self.assertIsNone(self.registry.snapshot()['activeEngineId'])
+        self.assertEqual(json.loads(self.preference.read_text())['analysisEngine'], ENGINE_IDS[0])
         report = {'engines': [], 'switches': []}
         positions = [('initial', chess.STARTING_FEN),
                      ('middlegame', 'r2q1rk1/pp1bbppp/2np1n2/2p1p3/4P3/2NP1N2/PPPQBPPP/R1B1K2R w KQ - 4 9'),

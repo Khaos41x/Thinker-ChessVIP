@@ -1060,9 +1060,9 @@
       "x": 929,
       "y": 1124,
       "width": 296,
-      "height": 644,
+      "height": 676,
       "right": 1225,
-      "bottom": 1768
+      "bottom": 1800
     },
     "empty": false
   },
@@ -2129,9 +2129,9 @@
         "x": 752,
         "y": 1124,
         "width": 296,
-        "height": 644,
+        "height": 676,
         "right": 1048,
-        "bottom": 1768
+        "bottom": 1800
       },
       "empty": false
     },
@@ -3197,9 +3197,9 @@
         "x": 849,
         "y": 1124,
         "width": 296,
-        "height": 644,
+        "height": 676,
         "right": 1145,
-        "bottom": 1768
+        "bottom": 1800
       },
       "empty": false
     },
@@ -4265,9 +4265,9 @@
         "x": 929,
         "y": 1124,
         "width": 296,
-        "height": 644,
+        "height": 676,
         "right": 1225,
-        "bottom": 1768
+        "bottom": 1800
       },
       "empty": false
     },
@@ -5333,9 +5333,9 @@
         "x": 1169,
         "y": 1124,
         "width": 296,
-        "height": 644,
+        "height": 676,
         "right": 1465,
-        "bottom": 1768
+        "bottom": 1800
       },
       "empty": false
     },
@@ -6117,105 +6117,105 @@
           "label": "White",
           "left": {
             "x": 43,
-            "y": 2333,
+            "y": 2392,
             "width": 885,
             "height": 16,
             "right": 928,
-            "bottom": 2349
+            "bottom": 2408
           },
           "value": {
             "x": 936,
-            "y": 2333,
+            "y": 2392,
             "width": 72,
             "height": 16,
             "right": 1008,
-            "bottom": 2349
+            "bottom": 2408
           },
           "first": {
             "x": 961.234375,
-            "y": 2333,
+            "y": 2392,
             "width": 21.25,
             "height": 16,
             "right": 982.484375,
-            "bottom": 2349
+            "bottom": 2408
           },
           "small": {
             "x": 986.484375,
-            "y": 2333,
+            "y": 2392,
             "width": 21.515625,
             "height": 16,
             "right": 1008,
-            "bottom": 2349
+            "bottom": 2408
           }
         },
         {
           "label": "Black",
           "left": {
             "x": 43,
-            "y": 2377,
+            "y": 2436,
             "width": 885,
             "height": 16,
             "right": 928,
-            "bottom": 2393
+            "bottom": 2452
           },
           "value": {
             "x": 936,
-            "y": 2377,
+            "y": 2436,
             "width": 72,
             "height": 16,
             "right": 1008,
-            "bottom": 2393
+            "bottom": 2452
           },
           "first": {
             "x": 954.90625,
-            "y": 2377,
+            "y": 2436,
             "width": 27.578125,
             "height": 16,
             "right": 982.484375,
-            "bottom": 2393
+            "bottom": 2452
           },
           "small": {
             "x": 986.484375,
-            "y": 2377,
+            "y": 2436,
             "width": 21.515625,
             "height": 16,
             "right": 1008,
-            "bottom": 2393
+            "bottom": 2452
           }
         },
         {
           "label": "Bullet",
           "left": {
             "x": 43,
-            "y": 2438,
+            "y": 2497,
             "width": 885,
             "height": 16,
             "right": 928,
-            "bottom": 2454
+            "bottom": 2513
           },
           "value": {
             "x": 936,
-            "y": 2438,
+            "y": 2497,
             "width": 72,
             "height": 16,
             "right": 1008,
-            "bottom": 2454
+            "bottom": 2513
           },
           "first": {
             "x": 961.015625,
-            "y": 2438,
+            "y": 2497,
             "width": 21.46875,
             "height": 16,
             "right": 982.484375,
-            "bottom": 2454
+            "bottom": 2513
           },
           "small": {
             "x": 986.484375,
-            "y": 2438,
+            "y": 2497,
             "width": 21.515625,
             "height": 16,
             "right": 1008,
-            "bottom": 2454
+            "bottom": 2513
           }
         }
       ],
@@ -6225,11 +6225,11 @@
           "title": "Center Game Accepted 3.Qxd4",
           "box": {
             "x": 43,
-            "y": 2523,
+            "y": 2582,
             "width": 901,
             "height": 16,
             "right": 944,
-            "bottom": 2539
+            "bottom": 2598
           },
           "scroll": 901,
           "client": 901,
@@ -6237,11 +6237,11 @@
           "whiteSpace": "nowrap",
           "count": {
             "x": 952,
-            "y": 2523,
+            "y": 2582,
             "width": 56,
             "height": 32,
             "right": 1008,
-            "bottom": 2555
+            "bottom": 2614
           }
         },
         {
@@ -6249,11 +6249,11 @@
           "title": "English Opening Four Knights Nimzowitsch Variation 4...Bc5",
           "box": {
             "x": 43,
-            "y": 2563,
+            "y": 2622,
             "width": 901,
             "height": 16,
             "right": 944,
-            "bottom": 2579
+            "bottom": 2638
           },
           "scroll": 901,
           "client": 901,
@@ -6261,11 +6261,11 @@
           "whiteSpace": "nowrap",
           "count": {
             "x": 952,
-            "y": 2563,
+            "y": 2622,
             "width": 56,
             "height": 32,
             "right": 1008,
-            "bottom": 2595
+            "bottom": 2654
           }
         },
         {
@@ -6273,11 +6273,11 @@
           "title": "French Defense Knight Variation 2...d5 3.exd5",
           "box": {
             "x": 43,
-            "y": 2603,
+            "y": 2662,
             "width": 901,
             "height": 16,
             "right": 944,
-            "bottom": 2619
+            "bottom": 2678
           },
           "scroll": 901,
           "client": 901,
@@ -6285,11 +6285,11 @@
           "whiteSpace": "nowrap",
           "count": {
             "x": 952,
-            "y": 2603,
+            "y": 2662,
             "width": 56,
             "height": 32,
             "right": 1008,
-            "bottom": 2635
+            "bottom": 2694
           }
         },
         {
@@ -6297,11 +6297,11 @@
           "title": "Scandinavian Defense",
           "box": {
             "x": 43,
-            "y": 2643,
+            "y": 2702,
             "width": 901,
             "height": 16,
             "right": 944,
-            "bottom": 2659
+            "bottom": 2718
           },
           "scroll": 901,
           "client": 901,
@@ -6309,88 +6309,88 @@
           "whiteSpace": "nowrap",
           "count": {
             "x": 952,
-            "y": 2643,
+            "y": 2702,
             "width": 56,
             "height": 32,
             "right": 1008,
-            "bottom": 2675
+            "bottom": 2734
           }
         }
       ],
       "markers": [
         {
           "x": 25,
-          "y": 2336,
+          "y": 2395,
           "width": 10,
           "height": 10,
           "right": 35,
-          "bottom": 2346,
+          "bottom": 2405,
           "radius": "2px",
           "pointerEvents": "none",
           "hidden": "true"
         },
         {
           "x": 25,
-          "y": 2380,
+          "y": 2439,
           "width": 10,
           "height": 10,
           "right": 35,
-          "bottom": 2390,
+          "bottom": 2449,
           "radius": "2px",
           "pointerEvents": "none",
           "hidden": "true"
         },
         {
           "x": 25,
-          "y": 2441,
+          "y": 2500,
           "width": 10,
           "height": 10,
           "right": 35,
-          "bottom": 2451,
+          "bottom": 2510,
           "radius": "2px",
           "pointerEvents": "none",
           "hidden": "true"
         },
         {
           "x": 25,
-          "y": 2526,
+          "y": 2585,
           "width": 10,
           "height": 10,
           "right": 35,
-          "bottom": 2536,
+          "bottom": 2595,
           "radius": "2px",
           "pointerEvents": "none",
           "hidden": "true"
         },
         {
           "x": 25,
-          "y": 2566,
+          "y": 2625,
           "width": 10,
           "height": 10,
           "right": 35,
-          "bottom": 2576,
+          "bottom": 2635,
           "radius": "2px",
           "pointerEvents": "none",
           "hidden": "true"
         },
         {
           "x": 25,
-          "y": 2606,
+          "y": 2665,
           "width": 10,
           "height": 10,
           "right": 35,
-          "bottom": 2616,
+          "bottom": 2675,
           "radius": "2px",
           "pointerEvents": "none",
           "hidden": "true"
         },
         {
           "x": 25,
-          "y": 2646,
+          "y": 2705,
           "width": 10,
           "height": 10,
           "right": 35,
-          "bottom": 2656,
+          "bottom": 2715,
           "radius": "2px",
           "pointerEvents": "none",
           "hidden": "true"
@@ -6399,11 +6399,11 @@
       "natural": 541,
       "panel": {
         "x": 12,
-        "y": 2159,
+        "y": 2218,
         "width": 1009,
         "height": 541,
         "right": 1021,
-        "bottom": 2700
+        "bottom": 2759
       },
       "empty": false
     },
@@ -7185,105 +7185,105 @@
           "label": "White",
           "left": {
             "x": 43,
-            "y": 2333,
+            "y": 2392,
             "width": 652,
             "height": 16,
             "right": 695,
-            "bottom": 2349
+            "bottom": 2408
           },
           "value": {
             "x": 703,
-            "y": 2333,
+            "y": 2392,
             "width": 72,
             "height": 16,
             "right": 775,
-            "bottom": 2349
+            "bottom": 2408
           },
           "first": {
             "x": 728.234375,
-            "y": 2333,
+            "y": 2392,
             "width": 21.25,
             "height": 16,
             "right": 749.484375,
-            "bottom": 2349
+            "bottom": 2408
           },
           "small": {
             "x": 753.484375,
-            "y": 2333,
+            "y": 2392,
             "width": 21.515625,
             "height": 16,
             "right": 775,
-            "bottom": 2349
+            "bottom": 2408
           }
         },
         {
           "label": "Black",
           "left": {
             "x": 43,
-            "y": 2377,
+            "y": 2436,
             "width": 652,
             "height": 16,
             "right": 695,
-            "bottom": 2393
+            "bottom": 2452
           },
           "value": {
             "x": 703,
-            "y": 2377,
+            "y": 2436,
             "width": 72,
             "height": 16,
             "right": 775,
-            "bottom": 2393
+            "bottom": 2452
           },
           "first": {
             "x": 721.90625,
-            "y": 2377,
+            "y": 2436,
             "width": 27.578125,
             "height": 16,
             "right": 749.484375,
-            "bottom": 2393
+            "bottom": 2452
           },
           "small": {
             "x": 753.484375,
-            "y": 2377,
+            "y": 2436,
             "width": 21.515625,
             "height": 16,
             "right": 775,
-            "bottom": 2393
+            "bottom": 2452
           }
         },
         {
           "label": "Bullet",
           "left": {
             "x": 43,
-            "y": 2438,
+            "y": 2497,
             "width": 652,
             "height": 16,
             "right": 695,
-            "bottom": 2454
+            "bottom": 2513
           },
           "value": {
             "x": 703,
-            "y": 2438,
+            "y": 2497,
             "width": 72,
             "height": 16,
             "right": 775,
-            "bottom": 2454
+            "bottom": 2513
           },
           "first": {
             "x": 728.015625,
-            "y": 2438,
+            "y": 2497,
             "width": 21.46875,
             "height": 16,
             "right": 749.484375,
-            "bottom": 2454
+            "bottom": 2513
           },
           "small": {
             "x": 753.484375,
-            "y": 2438,
+            "y": 2497,
             "width": 21.515625,
             "height": 16,
             "right": 775,
-            "bottom": 2454
+            "bottom": 2513
           }
         }
       ],
@@ -7293,11 +7293,11 @@
           "title": "Center Game Accepted 3.Qxd4",
           "box": {
             "x": 43,
-            "y": 2523,
+            "y": 2582,
             "width": 668,
             "height": 16,
             "right": 711,
-            "bottom": 2539
+            "bottom": 2598
           },
           "scroll": 668,
           "client": 668,
@@ -7305,11 +7305,11 @@
           "whiteSpace": "nowrap",
           "count": {
             "x": 719,
-            "y": 2523,
+            "y": 2582,
             "width": 56,
             "height": 32,
             "right": 775,
-            "bottom": 2555
+            "bottom": 2614
           }
         },
         {
@@ -7317,11 +7317,11 @@
           "title": "English Opening Four Knights Nimzowitsch Variation 4...Bc5",
           "box": {
             "x": 43,
-            "y": 2563,
+            "y": 2622,
             "width": 668,
             "height": 16,
             "right": 711,
-            "bottom": 2579
+            "bottom": 2638
           },
           "scroll": 668,
           "client": 668,
@@ -7329,11 +7329,11 @@
           "whiteSpace": "nowrap",
           "count": {
             "x": 719,
-            "y": 2563,
+            "y": 2622,
             "width": 56,
             "height": 32,
             "right": 775,
-            "bottom": 2595
+            "bottom": 2654
           }
         },
         {
@@ -7341,11 +7341,11 @@
           "title": "French Defense Knight Variation 2...d5 3.exd5",
           "box": {
             "x": 43,
-            "y": 2603,
+            "y": 2662,
             "width": 668,
             "height": 16,
             "right": 711,
-            "bottom": 2619
+            "bottom": 2678
           },
           "scroll": 668,
           "client": 668,
@@ -7353,11 +7353,11 @@
           "whiteSpace": "nowrap",
           "count": {
             "x": 719,
-            "y": 2603,
+            "y": 2662,
             "width": 56,
             "height": 32,
             "right": 775,
-            "bottom": 2635
+            "bottom": 2694
           }
         },
         {
@@ -7365,11 +7365,11 @@
           "title": "Scandinavian Defense",
           "box": {
             "x": 43,
-            "y": 2643,
+            "y": 2702,
             "width": 668,
             "height": 16,
             "right": 711,
-            "bottom": 2659
+            "bottom": 2718
           },
           "scroll": 668,
           "client": 668,
@@ -7377,88 +7377,88 @@
           "whiteSpace": "nowrap",
           "count": {
             "x": 719,
-            "y": 2643,
+            "y": 2702,
             "width": 56,
             "height": 32,
             "right": 775,
-            "bottom": 2675
+            "bottom": 2734
           }
         }
       ],
       "markers": [
         {
           "x": 25,
-          "y": 2336,
+          "y": 2395,
           "width": 10,
           "height": 10,
           "right": 35,
-          "bottom": 2346,
+          "bottom": 2405,
           "radius": "2px",
           "pointerEvents": "none",
           "hidden": "true"
         },
         {
           "x": 25,
-          "y": 2380,
+          "y": 2439,
           "width": 10,
           "height": 10,
           "right": 35,
-          "bottom": 2390,
+          "bottom": 2449,
           "radius": "2px",
           "pointerEvents": "none",
           "hidden": "true"
         },
         {
           "x": 25,
-          "y": 2441,
+          "y": 2500,
           "width": 10,
           "height": 10,
           "right": 35,
-          "bottom": 2451,
+          "bottom": 2510,
           "radius": "2px",
           "pointerEvents": "none",
           "hidden": "true"
         },
         {
           "x": 25,
-          "y": 2526,
+          "y": 2585,
           "width": 10,
           "height": 10,
           "right": 35,
-          "bottom": 2536,
+          "bottom": 2595,
           "radius": "2px",
           "pointerEvents": "none",
           "hidden": "true"
         },
         {
           "x": 25,
-          "y": 2566,
+          "y": 2625,
           "width": 10,
           "height": 10,
           "right": 35,
-          "bottom": 2576,
+          "bottom": 2635,
           "radius": "2px",
           "pointerEvents": "none",
           "hidden": "true"
         },
         {
           "x": 25,
-          "y": 2606,
+          "y": 2665,
           "width": 10,
           "height": 10,
           "right": 35,
-          "bottom": 2616,
+          "bottom": 2675,
           "radius": "2px",
           "pointerEvents": "none",
           "hidden": "true"
         },
         {
           "x": 25,
-          "y": 2646,
+          "y": 2705,
           "width": 10,
           "height": 10,
           "right": 35,
-          "bottom": 2656,
+          "bottom": 2715,
           "radius": "2px",
           "pointerEvents": "none",
           "hidden": "true"
@@ -7467,11 +7467,11 @@
       "natural": 541,
       "panel": {
         "x": 12,
-        "y": 2159,
+        "y": 2218,
         "width": 776,
         "height": 541,
         "right": 788,
-        "bottom": 2700
+        "bottom": 2759
       },
       "empty": false
     }

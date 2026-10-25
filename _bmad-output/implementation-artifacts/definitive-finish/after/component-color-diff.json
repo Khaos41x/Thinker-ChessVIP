@@ -1,0 +1,702 @@
+[
+  {
+    "surface": "config",
+    "width": 1440,
+    "state": {
+      "bot": false,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-start",
+    "text": "Start",
+    "changes": {
+      "color": [
+        "rgb(185, 186, 179)",
+        "rgb(242, 242, 238)"
+      ],
+      "border": [
+        "rgb(58, 58, 54)",
+        "rgb(34, 211, 107)"
+      ],
+      "opacity": [
+        "0.6",
+        "1"
+      ],
+      "before": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(185, 186, 179)"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(242, 242, 238)"
+        }
+      ],
+      "after": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(185, 186, 179)"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(242, 242, 238)"
+        }
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1440,
+    "state": {
+      "bot": false,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1280,
+    "state": {
+      "bot": false,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-start",
+    "text": "Start",
+    "changes": {
+      "color": [
+        "rgb(185, 186, 179)",
+        "rgb(242, 242, 238)"
+      ],
+      "border": [
+        "rgb(58, 58, 54)",
+        "rgb(34, 211, 107)"
+      ],
+      "opacity": [
+        "0.6",
+        "1"
+      ],
+      "before": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(185, 186, 179)"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(242, 242, 238)"
+        }
+      ],
+      "after": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(185, 186, 179)"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(242, 242, 238)"
+        }
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1280,
+    "state": {
+      "bot": false,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1024,
+    "state": {
+      "bot": false,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-start",
+    "text": "Start",
+    "changes": {
+      "color": [
+        "rgb(185, 186, 179)",
+        "rgb(242, 242, 238)"
+      ],
+      "border": [
+        "rgb(58, 58, 54)",
+        "rgb(34, 211, 107)"
+      ],
+      "opacity": [
+        "0.6",
+        "1"
+      ],
+      "before": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(185, 186, 179)"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(242, 242, 238)"
+        }
+      ],
+      "after": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(185, 186, 179)"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(242, 242, 238)"
+        }
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1024,
+    "state": {
+      "bot": false,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 768,
+    "state": {
+      "bot": false,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-start",
+    "text": "Start",
+    "changes": {
+      "color": [
+        "rgb(185, 186, 179)",
+        "rgb(242, 242, 238)"
+      ],
+      "border": [
+        "rgb(58, 58, 54)",
+        "rgb(34, 211, 107)"
+      ],
+      "opacity": [
+        "0.6",
+        "1"
+      ],
+      "before": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(185, 186, 179)"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(242, 242, 238)"
+        }
+      ],
+      "after": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(185, 186, 179)"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(242, 242, 238)"
+        }
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 768,
+    "state": {
+      "bot": false,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 390,
+    "state": {
+      "bot": false,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-start",
+    "text": "Start",
+    "changes": {
+      "color": [
+        "rgb(185, 186, 179)",
+        "rgb(242, 242, 238)"
+      ],
+      "border": [
+        "rgb(58, 58, 54)",
+        "rgb(34, 211, 107)"
+      ],
+      "opacity": [
+        "0.6",
+        "1"
+      ],
+      "before": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(185, 186, 179)"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(242, 242, 238)"
+        }
+      ],
+      "after": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(185, 186, 179)"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(242, 242, 238)"
+        }
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 390,
+    "state": {
+      "bot": false,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1440,
+    "state": {
+      "bot": false,
+      "smartPacing": true
+    },
+    "selector": "#kb-session-start",
+    "text": "Start",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1440,
+    "state": {
+      "bot": false,
+      "smartPacing": true
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1280,
+    "state": {
+      "bot": false,
+      "smartPacing": true
+    },
+    "selector": "#kb-session-start",
+    "text": "Start",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1280,
+    "state": {
+      "bot": false,
+      "smartPacing": true
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1024,
+    "state": {
+      "bot": false,
+      "smartPacing": true
+    },
+    "selector": "#kb-session-start",
+    "text": "Start",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1024,
+    "state": {
+      "bot": false,
+      "smartPacing": true
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 768,
+    "state": {
+      "bot": false,
+      "smartPacing": true
+    },
+    "selector": "#kb-session-start",
+    "text": "Start",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 768,
+    "state": {
+      "bot": false,
+      "smartPacing": true
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 390,
+    "state": {
+      "bot": false,
+      "smartPacing": true
+    },
+    "selector": "#kb-session-start",
+    "text": "Start",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 390,
+    "state": {
+      "bot": false,
+      "smartPacing": true
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1440,
+    "state": {
+      "bot": true,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-start",
+    "text": "Start",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1440,
+    "state": {
+      "bot": true,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1280,
+    "state": {
+      "bot": true,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-start",
+    "text": "Start",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1280,
+    "state": {
+      "bot": true,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1024,
+    "state": {
+      "bot": true,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-start",
+    "text": "Start",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1024,
+    "state": {
+      "bot": true,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 768,
+    "state": {
+      "bot": true,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-start",
+    "text": "Start",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 768,
+    "state": {
+      "bot": true,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 390,
+    "state": {
+      "bot": true,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-start",
+    "text": "Start",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 390,
+    "state": {
+      "bot": true,
+      "smartPacing": false
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1440,
+    "state": {
+      "bot": true,
+      "smartPacing": true
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1280,
+    "state": {
+      "bot": true,
+      "smartPacing": true
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 1024,
+    "state": {
+      "bot": true,
+      "smartPacing": true
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 768,
+    "state": {
+      "bot": true,
+      "smartPacing": true
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  },
+  {
+    "surface": "config",
+    "width": 390,
+    "state": {
+      "bot": true,
+      "smartPacing": true
+    },
+    "selector": "#kb-session-stop",
+    "text": "Finish",
+    "changes": {
+      "opacity": [
+        "0.6",
+        "1"
+      ]
+    }
+  }
+]

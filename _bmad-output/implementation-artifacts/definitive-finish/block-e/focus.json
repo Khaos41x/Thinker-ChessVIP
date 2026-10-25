@@ -42,6 +42,16 @@
   {
     "surface": "console",
     "pointer": {
+      "selector": "#kb-session-start",
+      "active": "",
+      "outline": "none",
+      "shadow": "none",
+      "border": "rgb(86, 87, 82)"
+    }
+  },
+  {
+    "surface": "console",
+    "pointer": {
       "selector": ".kb-timing-mode label",
       "active": "dm-rand",
       "outline": "none",
@@ -112,6 +122,16 @@
   {
     "surface": "config",
     "pointer": {
+      "selector": "#kb-session-start",
+      "active": "",
+      "outline": "none",
+      "shadow": "none",
+      "border": "rgb(58, 58, 54)"
+    }
+  },
+  {
+    "surface": "config",
+    "pointer": {
       "selector": "[data-mode=random]",
       "active": "",
       "outline": "none",
@@ -126,7 +146,23 @@
       "active": "",
       "outline": "none",
       "shadow": "none",
-      "border": "rgb(34, 211, 107)"
+      "border": "rgb(58, 58, 54)"
+    }
+  },
+  {
+    "surface": "config",
+    "transition": {
+      "state": "true",
+      "focused": "rgb(34, 211, 107)",
+      "idle": "rgb(34, 211, 107)"
+    }
+  },
+  {
+    "surface": "config",
+    "transition": {
+      "state": "false",
+      "focused": "rgb(58, 58, 54)",
+      "idle": "rgb(58, 58, 54)"
     }
   },
   {

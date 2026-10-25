@@ -1,0 +1,26 @@
+{
+  "realService": "http://127.0.0.1:5050",
+  "results": [
+    {
+      "selected": "stockfish-19-94mb",
+      "state": "Ready",
+      "connection": "Local server connected",
+      "userscript": "Chess.com: disconnected"
+    },
+    {
+      "selected": "komodo-14.1",
+      "state": "Ready",
+      "connection": "Local server connected",
+      "userscript": "Chess.com: disconnected"
+    },
+    {
+      "selected": "stockfish-19-1mb",
+      "state": "Ready",
+      "connection": "Local server connected",
+      "userscript": "Chess.com: disconnected"
+    }
+  ],
+  "originalRestored": true,
+  "analysisAuthorizationUnchanged": true,
+  "configurationUnchanged": true
+}

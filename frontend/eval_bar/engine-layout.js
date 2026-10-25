@@ -19,6 +19,7 @@
         #krypbot-container .kb-engine-timing .kb-num-input { padding-left:var(--space-2); padding-right:var(--space-2); }
         #oi-wrapper { --row-h:40px; --row-height:var(--row-h); }
         #krypbot-container .kb-section-label,#krypbot-container .kb-footer > div > span { line-height:15px !important; }
+        #krypbot-container .kb-console-module.kb-visuals-module .kb-section + .kb-section,
         #krypbot-container .kb-console-module .kb-section + .kb-section,
         #krypbot-container .kb-console-module.kb-visuals-module .kb-footer { border-top:0 !important; background:linear-gradient(var(--tc-console-divider),var(--tc-console-divider)) top / 100% 1px no-repeat; }
         #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-core-spacing,

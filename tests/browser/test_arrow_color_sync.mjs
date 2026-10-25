@@ -78,11 +78,14 @@ try{
  assert.equal(externalDifferences.length,0,'External Config non-arrow component changed colors');
  await waitFor(()=>value(embedded,"document.querySelector('#kb-color-picker').value.toLowerCase()==='#f59e0b'"));
  const saved=await(await fetch(base+'/config/load')).json();assert.equal(saved.color.toLowerCase(),'#f59e0b');
+ await value(panel,"{const n=document.querySelector('#color');n.value='#10b981';n.dispatchEvent(new Event('input',{bubbles:true}));}");
+ await waitFor(()=>value(embedded,"document.querySelector('.myarrow path')?.getAttribute('fill')?.toLowerCase()==='#10b981'"));
+ assert.equal((await(await fetch(base+'/config/load')).json()).color.toLowerCase(),'#10b981');
+ await embedded.send('Page.reload');
+ await waitFor(()=>value(embedded,"document.querySelector('#kb-color-picker')?.value.toLowerCase()==='#10b981'"));
+
  await writeFile(join(output,'arrow-color-sync.json'),JSON.stringify({passed:true,initial,evidence,componentCount:initialColors.length,externalComponentCount:externalBefore.length,fixture:'Local Chromium + actual userscript, Flask config and draw closure; test-only closure exposure, no game recommendation authority bypass'},null,2));
  console.log(JSON.stringify({passed:true,orientations:3,swatchSurfaces:2,componentCount:initialColors.length,externalComponentCount:externalBefore.length,highlight:initial.high[0],colorDiffs:0}));
 }finally{
  for(const c of clients)c.socket.close();browser.kill();backend.kill();await delay(500);await rm(profile,{recursive:true,force:true,maxRetries:5,retryDelay:150});
 }
-
-
-

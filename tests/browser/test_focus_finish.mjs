@@ -35,7 +35,7 @@ try{
  await delay(2500);
 
  const report=[];
- for(const [surface,client,selectors] of [['console',embedded,['#tc-analysis-engine','#minDelayInput','#kb-session-duration','#kb-color-picker','.kb-timing-mode label','.kb-radio-group']],['config',panel,['#analysis-engine','#minDelay','#kb-session-duration','#color','[data-mode=random]','[data-key=hint]']]]){
+ for(const [surface,client,selectors] of [['console',embedded,['#tc-analysis-engine','#minDelayInput','#kb-session-duration','#kb-color-picker','#kb-session-start','.kb-timing-mode label','.kb-radio-group']],['config',panel,['#analysis-engine','#minDelay','#kb-session-duration','#color','#kb-session-start','[data-mode=random]','[data-key=hint]']]]){
   await client.send('Page.bringToFront');
   await client.send('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
   for(const selector of selectors){
@@ -44,6 +44,23 @@ try{
    await client.send('Input.dispatchKeyEvent',{type:'keyDown',key:'Escape',code:'Escape',windowsVirtualKeyCode:27});await client.send('Input.dispatchKeyEvent',{type:'keyUp',key:'Escape',code:'Escape',windowsVirtualKeyCode:27});
    const state=await value(client,`(()=>{const n=document.querySelector(${JSON.stringify(selector)}),s=getComputedStyle(n);return{selector:${JSON.stringify(selector)},active:document.activeElement.id,outline:s.outlineStyle,shadow:s.boxShadow,border:s.borderColor}})()`);
    assert.equal(state.outline,'none');assert.equal(state.shadow,'none');report.push({surface,pointer:state});
+   const pointerShot=await client.send('Page.captureScreenshot',{format:'png'});await writeFile(join(output,`${surface}-pointer-${selectors.indexOf(selector)}.png`),Buffer.from(pointerShot.data,'base64'));
+  }
+
+  if(surface==='config'){
+   for(let i=0;i<2;i++){
+    const b=await value(client,"(()=>{const n=document.querySelector('[data-key=hint]');n.scrollIntoView({block:'center'});const b=n.getBoundingClientRect();return{x:b.x+b.width/2,y:b.y+b.height/2}})()");
+    await client.send('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',clickCount:1,...b});await client.send('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',clickCount:1,...b});await delay(100);
+    const transition=await value(client,"(()=>{const n=document.querySelector('[data-key=hint]'),focused=getComputedStyle(n).borderColor,state=n.getAttribute('aria-checked');n.blur();return{state,focused,idle:getComputedStyle(n).borderColor}})()");
+    assert.equal(transition.focused,transition.idle,'Pointer focus freezes the previous toggle border');report.push({surface,transition});
+   }
+   await value(client,"(()=>{const n=document.querySelector('#kb-session-duration');n.focus();n.value='0';n.dispatchEvent(new Event('input',{bubbles:true}));n.blur()})()");
+   const invalid=await value(client,"(()=>{const n=document.querySelector('#kb-session-duration');return{invalid:n.getAttribute('aria-invalid'),border:getComputedStyle(n).borderColor}})()");
+   assert.equal(invalid.invalid,'true');
+   const b=await value(client,"(()=>{const n=document.querySelector('#kb-session-duration');n.scrollIntoView({block:'center'});const b=n.getBoundingClientRect();return{x:b.x+b.width/2,y:b.y+b.height/2}})()");
+   await client.send('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',clickCount:1,...b});await client.send('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',clickCount:1,...b});
+   assert.equal(await value(client,"getComputedStyle(document.querySelector('#kb-session-duration')).borderColor"),invalid.border,'Pointer focus suppresses validation border');
+   await value(client,"(()=>{const n=document.querySelector('#kb-session-duration');n.value='120';n.dispatchEvent(new Event('input',{bubbles:true}));n.blur()})()");
   }
   await client.send('Input.dispatchKeyEvent',{type:'keyDown',key:'Tab',code:'Tab',windowsVirtualKeyCode:9});await client.send('Input.dispatchKeyEvent',{type:'keyUp',key:'Tab',code:'Tab',windowsVirtualKeyCode:9});
   await value(client,`document.querySelector(${JSON.stringify(selectors[0])}).focus()`);

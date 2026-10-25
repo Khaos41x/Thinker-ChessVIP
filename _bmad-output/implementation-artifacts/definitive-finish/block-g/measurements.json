@@ -419,59 +419,59 @@
     "fields": {
       "kb-session-duration": {
         "x": 290,
-        "y": 805,
+        "y": 829,
         "width": 205,
         "height": 32,
         "right": 495,
-        "bottom": 837
+        "bottom": 861
       },
       "kb-session-min-rate": {
         "x": 503,
-        "y": 805,
+        "y": 829,
         "width": 205,
         "height": 32,
         "right": 708,
-        "bottom": 837
+        "bottom": 861
       },
       "kb-session-max-rate": {
         "x": 716,
-        "y": 805,
+        "y": 829,
         "width": 205,
         "height": 32,
         "right": 921,
-        "bottom": 837
+        "bottom": 861
       },
       "tc-rating-target": {
         "x": 929,
-        "y": 805,
+        "y": 829,
         "width": 206,
         "height": 32,
         "right": 1135,
-        "bottom": 837
+        "bottom": 861
       },
       "kb-session-start": {
         "x": 290,
-        "y": 874,
+        "y": 898,
         "width": 418,
         "height": 32,
         "right": 708,
-        "bottom": 906
+        "bottom": 930
       },
       "kb-session-stop": {
         "x": 716,
-        "y": 874,
+        "y": 898,
         "width": 205,
         "height": 32,
         "right": 921,
-        "bottom": 906
+        "bottom": 930
       },
       "kb-session-export": {
         "x": 929,
-        "y": 874,
+        "y": 898,
         "width": 206,
         "height": 32,
         "right": 1135,
-        "bottom": 906
+        "bottom": 930
       }
     },
     "exportText": 90.03125,
@@ -488,59 +488,59 @@
     "fields": {
       "kb-session-duration": {
         "x": 210,
-        "y": 805,
+        "y": 829,
         "width": 205,
         "height": 32,
         "right": 415,
-        "bottom": 837
+        "bottom": 861
       },
       "kb-session-min-rate": {
         "x": 423,
-        "y": 805,
+        "y": 829,
         "width": 205,
         "height": 32,
         "right": 628,
-        "bottom": 837
+        "bottom": 861
       },
       "kb-session-max-rate": {
         "x": 636,
-        "y": 805,
+        "y": 829,
         "width": 205,
         "height": 32,
         "right": 841,
-        "bottom": 837
+        "bottom": 861
       },
       "tc-rating-target": {
         "x": 849,
-        "y": 805,
+        "y": 829,
         "width": 206,
         "height": 32,
         "right": 1055,
-        "bottom": 837
+        "bottom": 861
       },
       "kb-session-start": {
         "x": 210,
-        "y": 874,
+        "y": 898,
         "width": 418,
         "height": 32,
         "right": 628,
-        "bottom": 906
+        "bottom": 930
       },
       "kb-session-stop": {
         "x": 636,
-        "y": 874,
+        "y": 898,
         "width": 205,
         "height": 32,
         "right": 841,
-        "bottom": 906
+        "bottom": 930
       },
       "kb-session-export": {
         "x": 849,
-        "y": 874,
+        "y": 898,
         "width": 206,
         "height": 32,
         "right": 1055,
-        "bottom": 906
+        "bottom": 930
       }
     },
     "exportText": 90.03125,
@@ -557,59 +557,59 @@
     "fields": {
       "kb-session-duration": {
         "x": 82,
-        "y": 805,
+        "y": 829,
         "width": 205,
         "height": 32,
         "right": 287,
-        "bottom": 837
+        "bottom": 861
       },
       "kb-session-min-rate": {
         "x": 295,
-        "y": 805,
+        "y": 829,
         "width": 205,
         "height": 32,
         "right": 500,
-        "bottom": 837
+        "bottom": 861
       },
       "kb-session-max-rate": {
         "x": 508,
-        "y": 805,
+        "y": 829,
         "width": 205,
         "height": 32,
         "right": 713,
-        "bottom": 837
+        "bottom": 861
       },
       "tc-rating-target": {
         "x": 721,
-        "y": 805,
+        "y": 829,
         "width": 206,
         "height": 32,
         "right": 927,
-        "bottom": 837
+        "bottom": 861
       },
       "kb-session-start": {
         "x": 82,
-        "y": 874,
+        "y": 898,
         "width": 418,
         "height": 32,
         "right": 500,
-        "bottom": 906
+        "bottom": 930
       },
       "kb-session-stop": {
         "x": 508,
-        "y": 874,
+        "y": 898,
         "width": 205,
         "height": 32,
         "right": 713,
-        "bottom": 906
+        "bottom": 930
       },
       "kb-session-export": {
         "x": 721,
-        "y": 874,
+        "y": 898,
         "width": 206,
         "height": 32,
         "right": 927,
-        "bottom": 906
+        "bottom": 930
       }
     },
     "exportText": 90.03125,
@@ -626,59 +626,59 @@
     "fields": {
       "kb-session-duration": {
         "x": 37,
-        "y": 1339,
+        "y": 1371,
         "width": 163,
         "height": 32,
         "right": 200,
-        "bottom": 1371
+        "bottom": 1403
       },
       "kb-session-min-rate": {
         "x": 208,
-        "y": 1339,
+        "y": 1371,
         "width": 163,
         "height": 32,
         "right": 371,
-        "bottom": 1371
+        "bottom": 1403
       },
       "kb-session-max-rate": {
         "x": 379,
-        "y": 1339,
+        "y": 1371,
         "width": 163,
         "height": 32,
         "right": 542,
-        "bottom": 1371
+        "bottom": 1403
       },
       "tc-rating-target": {
         "x": 550,
-        "y": 1339,
+        "y": 1371,
         "width": 166,
         "height": 32,
         "right": 716,
-        "bottom": 1371
+        "bottom": 1403
       },
       "kb-session-start": {
         "x": 37,
-        "y": 1408,
+        "y": 1440,
         "width": 334,
         "height": 32,
         "right": 371,
-        "bottom": 1440
+        "bottom": 1472
       },
       "kb-session-stop": {
         "x": 379,
-        "y": 1408,
+        "y": 1440,
         "width": 163,
         "height": 32,
         "right": 542,
-        "bottom": 1440
+        "bottom": 1472
       },
       "kb-session-export": {
         "x": 550,
-        "y": 1408,
+        "y": 1440,
         "width": 166,
         "height": 32,
         "right": 716,
-        "bottom": 1440
+        "bottom": 1472
       }
     },
     "exportText": 90.03125,
@@ -695,59 +695,59 @@
     "fields": {
       "kb-session-duration": {
         "x": 25,
-        "y": 1351,
+        "y": 1383,
         "width": 158,
         "height": 32,
         "right": 183,
-        "bottom": 1383
+        "bottom": 1415
       },
       "kb-session-min-rate": {
         "x": 191,
-        "y": 1351,
+        "y": 1383,
         "width": 159,
         "height": 32,
         "right": 350,
-        "bottom": 1383
+        "bottom": 1415
       },
       "kb-session-max-rate": {
         "x": 25,
-        "y": 1411,
+        "y": 1443,
         "width": 158,
         "height": 32,
         "right": 183,
-        "bottom": 1443
+        "bottom": 1475
       },
       "tc-rating-target": {
         "x": 191,
-        "y": 1411,
+        "y": 1443,
         "width": 159,
         "height": 32,
         "right": 350,
-        "bottom": 1443
+        "bottom": 1475
       },
       "kb-session-start": {
         "x": 25,
-        "y": 1497,
+        "y": 1529,
         "width": 325,
         "height": 32,
         "right": 350,
-        "bottom": 1529
+        "bottom": 1561
       },
       "kb-session-stop": {
         "x": 25,
-        "y": 1537,
+        "y": 1569,
         "width": 158,
         "height": 32,
         "right": 183,
-        "bottom": 1569
+        "bottom": 1601
       },
       "kb-session-export": {
         "x": 191,
-        "y": 1537,
+        "y": 1569,
         "width": 159,
         "height": 32,
         "right": 350,
-        "bottom": 1569
+        "bottom": 1601
       }
     },
     "exportText": 90.03125,

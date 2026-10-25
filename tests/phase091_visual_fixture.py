@@ -41,7 +41,7 @@ if not BEFORE:
     from core.smart_pacing.security import CapabilityStore, SlidingWindowRateLimiter, require_engine_capability
     registry = EngineRegistry(ROOT, ROOT / 'engine/komodo-14.1-64bit.exe', preference.with_name('engine.json') if preference is not None else Path(temporary.name) / 'engine.json')
     auth = require_engine_capability(CapabilityStore(environ={'THINKER_CAPABILITY_TOKEN': 'phase091-visual-isolated-capability'}),
-        allowed_origins={'https://www.chess.com'}, rate_limiter=SlidingWindowRateLimiter(limit=1000))
+        allowed_origins={'https://www.chess.com', f'http://127.0.0.1:{int(sys.argv[1])}'}, rate_limiter=SlidingWindowRateLimiter(limit=1000))
     app.register_blueprint(create_engine_registry_blueprint(registry, auth))
 
 @app.get('/tests/fixtures/userscript_bootstrap.html')

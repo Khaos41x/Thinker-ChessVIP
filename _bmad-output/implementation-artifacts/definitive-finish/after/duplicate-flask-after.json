@@ -1,0 +1,7 @@
+{
+  "listeners": [
+    17900
+  ],
+  "port": 5050,
+  "singleVerifiedInstance": true
+}

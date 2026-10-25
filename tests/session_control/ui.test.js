@@ -355,7 +355,7 @@ async function run() {
   assert(source.includes('const visuals = module("Visuals", "kb-visuals-module")'), "Visuals module is missing");
   assert(source.includes('const engine = module("Engine Control", "kb-engine-module")'), "Engine Control module is missing");
   assert(source.includes('[bot, autoMoves, autoQueue, queueNote]'), "Core controls are not grouped together");
-  assert(source.includes('[autoRating, strength, timing, smartPacing, puzzle]'), "Engine controls are not grouped together");
+  assert(source.includes('ThinkerEngineLayout.group({ core, visuals, engine, autoRating, strength, timing, smartPacing, puzzle, autoMoves })'), "Engine controls are not grouped together");
   assert(source.includes("grid-template-columns:345px 345px 296px"), "three-column named console grid is missing");
   assert(source.includes("border:0 !important; border-radius:0 !important"), "embedded console shell is not visually removed");
   assert(source.includes("backdrop-filter:none !important"), "glass blur is not neutralized");
@@ -375,7 +375,7 @@ async function run() {
   assert(source.includes('#krypbot-container #autoDelayDisplay {\n          color:#b8b9b4 !important; font-size:11px !important; line-height:16px !important;\n          font-weight:550 !important; font-variant-numeric:tabular-nums;'), "Strength and Move Timing summaries do not share typography");
   assert(source.includes("text-transform:uppercase"), "compact uppercase module captions are missing");
   assert(source.includes("width:40px; height:24px"), "compact switch geometry is missing");
-  const wrapperCss = sourceBlock(source, "        #oi-wrapper {", "        #oi-wrapper > * {");
+  const wrapperCss = sourceBlock(source.slice(source.indexOf("    const css = `")), "        #oi-wrapper {", "        #oi-wrapper > * {");
   for (const declaration of [
     "position: absolute !important",
     "top: calc(100vh + ${THINKER_WORKSPACE_GAP_PX}px) !important",
