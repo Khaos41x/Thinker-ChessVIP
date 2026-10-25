@@ -1,0 +1,30 @@
+Initial raw observations (before restart):
+netstat -ano | findstr 5050
+  UDP    0.0.0.0:5050           *:*                                    1936
+
+Get-NetTCPConnection -LocalPort 5050
+(no TCP rows)
+
+Python app process:
+ProcessId       : 27972
+ParentProcessId : 12272
+CommandLine     : "C:\Program Files\Python312\python.exe" app.py
+
+curl.exe -v --max-time 8 http://127.0.0.1:5050/config
+*   Trying 127.0.0.1:5050...
+* connect to 127.0.0.1 port 5050 from 0.0.0.0 port 34558 failed: Connection refused
+* Failed to connect to 127.0.0.1:5050 after 2049 ms: Could not connect to server
+* closing connection #0
+curl: (7) Failed to connect to 127.0.0.1:5050 after 2049 ms: Could not connect to server
+
+curl.exe -v --max-time 8 http://localhost:5050/config
+* Host localhost:5050 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:5050...
+*   Trying 127.0.0.1:5050...
+* connect to ::1 port 5050 from :: port 3561 failed: Connection refused
+* connect to 127.0.0.1 port 5050 from 0.0.0.0 port 3562 failed: Connection refused
+* Failed to connect to localhost:5050 after 2243 ms: Could not connect to server
+* closing connection #0
+curl: (7) Failed to connect to localhost:5050 after 2243 ms: Could not connect to server

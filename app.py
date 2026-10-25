@@ -1484,10 +1484,23 @@ def print_pairing_instructions():
     return capability
 
 
+def run_server(port=5050):
+    from core.local_server import serve_local
+
+    def initialize():
+        rating_tracker.start()
+        print_pairing_instructions()
+        initialize_engine()
+        Log.banner()
+
+    try:
+        serve_local(app, initialize, lambda bound_port: Log.success(f"Rodando em http://127.0.0.1:{bound_port}"), port)
+    finally:
+        rating_tracker.stop()
+        analysis_engine_registry.close()
+        stockfish_eval_bar.close()
+        komodo.close()
+
+
 if __name__ == "__main__":
-    rating_tracker.start()
-    print_pairing_instructions()
-    initialize_engine()
-    Log.banner()
-    Log.success("Rodando em http://127.0.0.1:5050")
-    app.run(host="127.0.0.1", port=5050, debug=False, threaded=True)
+    run_server()

@@ -1,0 +1,124 @@
+    def server_bind(self):
+        """Override server_bind to store the server name."""
+        socketserver.TCPServer.server_bind(self)
+        host, port = self.server_address[:2]
+        self.server_name = socket.getfqdn(host)
+        self.server_port = port
+
+    def __init__(
+        self,
+        host: str,
+        port: int,
+        app: WSGIApplication,
+        handler: type[WSGIRequestHandler] | None = None,
+        passthrough_errors: bool = False,
+        ssl_context: _TSSLContextArg | None = None,
+        fd: int | None = None,
+    ) -> None:
+        if handler is None:
+            handler = WSGIRequestHandler
+
+        # If the handler doesn't directly set a protocol version and
+        # thread or process workers are used, then allow chunked
+        # responses and keep-alive connections by enabling HTTP/1.1.
+        if "protocol_version" not in vars(handler) and (
+            self.multithread or self.multiprocess
+        ):
+            handler.protocol_version = "HTTP/1.1"
+
+        self.host = host
+        self.port = port
+        self.app = app
+        self.passthrough_errors = passthrough_errors
+
+        self.address_family = address_family = select_address_family(host, port)
+        server_address = get_sockaddr(host, int(port), address_family)
+
+        # Remove a leftover Unix socket file from a previous run. Don't
+        # remove a file that was set up by run_simple.
+        if address_family == af_unix and fd is None:
+            server_address = t.cast(str, server_address)
+
+            if os.path.exists(server_address):
+                os.unlink(server_address)
+
+        # Bind and activate will be handled manually, it should only
+        # happen if we're not using a socket that was already set up.
+        super().__init__(
+            server_address,  # type: ignore[arg-type]
+            handler,
+            bind_and_activate=False,
+        )
+
+        if fd is None:
+            # No existing socket descriptor, do bind_and_activate=True.
+            try:
+                self.server_bind()
+                self.server_activate()
+            except OSError as e:
+                # Catch connection issues and show them without the traceback. Show
+                # extra instructions for address not found, and for macOS.
+                self.server_close()
+                print(e.strerror, file=sys.stderr)
+
+                if e.errno == errno.EADDRINUSE:
+                    print(
+                        f"Port {port} is in use by another program. Either identify and"
+                        " stop that program, or start the server with a different"
+                        " port.",
+                        file=sys.stderr,
+                    )
+
+                    if sys.platform == "darwin" and port == 5000:
+                        print(
+                            "On macOS, try searching for and disabling"
+                            " 'AirPlay Receiver' in System Settings.",
+                            file=sys.stderr,
+                        )
+
+                sys.exit(1)
+            except BaseException:
+                self.server_close()
+                raise
+        else:
+            # TCPServer automatically opens a socket even if bind_and_activate is False.
+            # Close it to silence a ResourceWarning.
+            self.server_close()
+
+            # Use the passed in socket directly.
+            self.socket = socket.fromfd(fd, address_family, socket.SOCK_STREAM)
+            self.server_address = self.socket.getsockname()
+
+        if address_family != af_unix:
+            # If port was 0, this will record the bound port.
+            self.port = self.server_address[1]
+
+        if ssl_context is not None:
+            if isinstance(ssl_context, tuple):
+                ssl_context = load_ssl_context(*ssl_context)
+            elif ssl_context == "adhoc":
+                ssl_context = generate_adhoc_ssl_context()
+
+            self.socket = ssl_context.wrap_socket(self.socket, server_side=True)
+            self.ssl_context: ssl.SSLContext | None = ssl_context
+        else:
+            self.ssl_context = None
+
+        import importlib.metadata
+
+        self._server_version = f"Werkzeug/{importlib.metadata.version('werkzeug')}"
+
+
+DisplayName Enabled Direction Action Profile
+----------- ------- --------- ------ -------
+Python         True   Inbound  Allow  Domain
+Python         True   Inbound  Allow  Domain
+Python         True   Inbound  Allow  Domain
+Python         True   Inbound  Allow  Domain
+python.exe     True   Inbound  Allow  Domain
+python.exe     True   Inbound  Allow  Domain
+
+
+displayName      productState
+-----------      ------------
+Windows Defender       397568
