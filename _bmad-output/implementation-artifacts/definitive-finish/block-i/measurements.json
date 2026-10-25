@@ -1,0 +1,17 @@
+{
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "fontSize": "18.72px",
+  "availableWidth": 144,
+  "textWidth": 121.328125,
+  "ratio": 0.8425564236111112,
+  "card": {
+    "x": 1263,
+    "y": 137,
+    "width": 170,
+    "height": 742,
+    "scale": 1
+  }
+}
