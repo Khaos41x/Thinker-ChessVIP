@@ -1,0 +1,645 @@
+surface,viewport,bot,smartPacing,populated,selector,text,fontSize,color,lineHeight
+console,1086,False,False,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1280,False,False,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1440,False,False,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1920,False,False,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1033,False,False,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,800,False,False,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1086,False,True,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1280,False,True,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1440,False,True,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1920,False,True,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1033,False,True,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,800,False,True,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1086,True,False,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1280,True,False,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1440,True,False,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1920,True,False,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1033,True,False,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,800,True,False,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1086,True,True,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1280,True,True,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1440,True,True,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1920,True,True,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1033,True,True,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,800,True,True,False,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1086,False,False,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1086,False,False,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1086,False,False,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1086,False,False,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1086,False,False,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1086,False,False,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1086,False,False,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1086,False,False,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1086,False,False,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1086,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1086,False,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1086,False,False,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1086,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1086,False,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1086,False,False,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1086,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1086,False,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1086,False,False,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1086,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1086,False,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1280,False,False,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1280,False,False,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1280,False,False,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1280,False,False,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1280,False,False,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1280,False,False,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1280,False,False,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1280,False,False,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1280,False,False,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1280,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1280,False,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1280,False,False,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1280,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1280,False,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1280,False,False,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1280,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1280,False,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1280,False,False,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1280,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1280,False,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1440,False,False,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1440,False,False,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1440,False,False,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1440,False,False,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1440,False,False,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1440,False,False,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1440,False,False,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1440,False,False,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1440,False,False,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1440,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1440,False,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1440,False,False,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1440,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1440,False,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1440,False,False,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1440,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1440,False,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1440,False,False,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1440,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1440,False,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1920,False,False,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1920,False,False,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1920,False,False,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1920,False,False,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1920,False,False,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1920,False,False,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1920,False,False,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1920,False,False,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1920,False,False,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1920,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1920,False,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1920,False,False,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1920,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1920,False,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1920,False,False,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1920,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1920,False,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1920,False,False,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1920,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1920,False,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1033,False,False,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1033,False,False,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1033,False,False,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1033,False,False,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1033,False,False,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1033,False,False,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1033,False,False,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1033,False,False,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1033,False,False,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1033,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1033,False,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1033,False,False,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1033,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1033,False,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1033,False,False,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1033,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1033,False,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1033,False,False,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1033,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1033,False,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,800,False,False,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,800,False,False,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,800,False,False,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,800,False,False,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,800,False,False,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,800,False,False,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,800,False,False,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,800,False,False,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,800,False,False,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,800,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,800,False,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,800,False,False,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,800,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,800,False,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,800,False,False,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,800,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,800,False,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,800,False,False,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,800,False,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,800,False,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1086,False,True,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1086,False,True,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1086,False,True,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1086,False,True,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1086,False,True,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1086,False,True,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1086,False,True,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1086,False,True,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1086,False,True,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1086,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1086,False,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1086,False,True,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1086,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1086,False,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1086,False,True,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1086,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1086,False,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1086,False,True,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1086,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1086,False,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1280,False,True,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1280,False,True,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1280,False,True,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1280,False,True,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1280,False,True,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1280,False,True,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1280,False,True,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1280,False,True,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1280,False,True,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1280,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1280,False,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1280,False,True,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1280,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1280,False,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1280,False,True,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1280,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1280,False,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1280,False,True,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1280,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1280,False,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1440,False,True,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1440,False,True,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1440,False,True,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1440,False,True,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1440,False,True,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1440,False,True,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1440,False,True,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1440,False,True,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1440,False,True,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1440,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1440,False,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1440,False,True,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1440,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1440,False,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1440,False,True,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1440,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1440,False,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1440,False,True,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1440,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1440,False,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1920,False,True,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1920,False,True,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1920,False,True,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1920,False,True,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1920,False,True,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1920,False,True,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1920,False,True,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1920,False,True,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1920,False,True,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1920,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1920,False,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1920,False,True,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1920,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1920,False,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1920,False,True,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1920,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1920,False,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1920,False,True,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1920,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1920,False,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1033,False,True,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1033,False,True,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1033,False,True,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1033,False,True,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1033,False,True,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1033,False,True,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1033,False,True,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1033,False,True,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1033,False,True,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1033,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1033,False,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1033,False,True,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1033,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1033,False,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1033,False,True,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1033,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1033,False,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1033,False,True,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1033,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1033,False,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,800,False,True,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,800,False,True,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,800,False,True,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,800,False,True,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,800,False,True,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,800,False,True,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,800,False,True,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,800,False,True,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,800,False,True,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,800,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,800,False,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,800,False,True,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,800,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,800,False,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,800,False,True,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,800,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,800,False,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,800,False,True,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,800,False,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,800,False,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1086,True,False,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1086,True,False,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1086,True,False,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1086,True,False,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1086,True,False,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1086,True,False,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1086,True,False,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1086,True,False,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1086,True,False,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1086,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1086,True,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1086,True,False,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1086,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1086,True,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1086,True,False,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1086,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1086,True,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1086,True,False,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1086,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1086,True,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1280,True,False,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1280,True,False,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1280,True,False,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1280,True,False,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1280,True,False,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1280,True,False,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1280,True,False,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1280,True,False,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1280,True,False,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1280,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1280,True,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1280,True,False,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1280,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1280,True,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1280,True,False,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1280,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1280,True,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1280,True,False,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1280,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1280,True,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1440,True,False,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1440,True,False,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1440,True,False,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1440,True,False,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1440,True,False,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1440,True,False,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1440,True,False,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1440,True,False,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1440,True,False,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1440,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1440,True,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1440,True,False,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1440,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1440,True,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1440,True,False,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1440,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1440,True,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1440,True,False,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1440,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1440,True,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1920,True,False,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1920,True,False,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1920,True,False,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1920,True,False,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1920,True,False,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1920,True,False,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1920,True,False,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1920,True,False,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1920,True,False,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1920,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1920,True,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1920,True,False,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1920,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1920,True,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1920,True,False,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1920,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1920,True,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1920,True,False,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1920,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1920,True,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1033,True,False,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1033,True,False,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1033,True,False,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1033,True,False,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1033,True,False,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1033,True,False,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1033,True,False,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1033,True,False,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1033,True,False,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1033,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1033,True,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1033,True,False,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1033,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1033,True,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1033,True,False,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1033,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1033,True,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1033,True,False,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1033,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1033,True,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,800,True,False,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,800,True,False,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,800,True,False,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,800,True,False,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,800,True,False,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,800,True,False,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,800,True,False,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,800,True,False,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,800,True,False,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,800,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,800,True,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,800,True,False,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,800,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,800,True,False,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,800,True,False,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,800,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,800,True,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,800,True,False,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,800,True,False,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,800,True,False,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1086,True,True,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1086,True,True,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1086,True,True,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1086,True,True,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1086,True,True,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1086,True,True,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1086,True,True,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1086,True,True,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1086,True,True,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1086,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1086,True,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1086,True,True,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1086,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1086,True,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1086,True,True,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1086,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1086,True,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1086,True,True,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1086,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1086,True,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1280,True,True,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1280,True,True,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1280,True,True,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1280,True,True,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1280,True,True,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1280,True,True,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1280,True,True,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1280,True,True,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1280,True,True,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1280,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1280,True,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1280,True,True,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1280,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1280,True,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1280,True,True,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1280,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1280,True,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1280,True,True,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1280,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1280,True,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1440,True,True,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1440,True,True,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1440,True,True,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1440,True,True,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1440,True,True,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1440,True,True,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1440,True,True,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1440,True,True,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1440,True,True,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1440,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1440,True,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1440,True,True,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1440,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1440,True,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1440,True,True,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1440,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1440,True,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1440,True,True,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1440,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1440,True,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1920,True,True,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1920,True,True,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1920,True,True,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1920,True,True,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1920,True,True,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1920,True,True,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1920,True,True,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1920,True,True,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1920,True,True,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1920,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1920,True,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1920,True,True,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1920,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1920,True,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1920,True,True,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1920,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1920,True,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1920,True,True,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1920,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1920,True,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1033,True,True,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,1033,True,True,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,1033,True,True,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,1033,True,True,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,1033,True,True,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,1033,True,True,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,1033,True,True,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,1033,True,True,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,1033,True,True,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,1033,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1033,True,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1033,True,True,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,1033,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1033,True,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,1033,True,True,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,1033,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1033,True,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,1033,True,True,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,1033,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,1033,True,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,800,True,True,True,#kb-session-target-help,Win-rate targets are not set by default. Configure both before starting. Win Rate is calculated from,9px,"rgb(154, 183, 163)",13px
+console,800,True,True,True,b,White,10px,"rgb(217, 217, 213)",13px
+console,800,True,True,True,b,67%,10px,"rgb(70, 217, 119)",13px
+console,800,True,True,True,b,Black,10px,"rgb(217, 217, 213)",13px
+console,800,True,True,True,b,100%,10px,"rgb(70, 217, 119)",13px
+console,800,True,True,True,b,Bullet,10px,"rgb(217, 217, 213)",13px
+console,800,True,True,True,b,86%,10px,"rgb(70, 217, 119)",13px
+console,800,True,True,True,div.tc-scout-section-title,Most-played openings,9px,"rgb(160, 161, 155)",13px
+console,800,True,True,True,span.tc-scout-opening-name,Center Game Accepted 3.Qxd4,8px,"rgb(217, 217, 213)",normal
+console,800,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,800,True,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,800,True,True,True,span.tc-scout-opening-name,English Opening Four Knights Nimzowitsch Variation 4...Bc5,8px,"rgb(217, 217, 213)",normal
+console,800,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,800,True,True,True,small,of 3,7px,"rgb(119, 120, 115)",normal
+console,800,True,True,True,span.tc-scout-opening-name,French Defense Knight Variation 2...d5 3.exd5,8px,"rgb(217, 217, 213)",normal
+console,800,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,800,True,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+console,800,True,True,True,span.tc-scout-opening-name,Scandinavian Defense,8px,"rgb(217, 217, 213)",normal
+console,800,True,True,True,b,1,9px,"rgb(255, 255, 255)",normal
+console,800,True,True,True,small,of 4,7px,"rgb(119, 120, 115)",normal
+config,1440,False,False,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,1280,False,False,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,1024,False,False,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,768,False,False,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,390,False,False,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,1440,False,True,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,1280,False,True,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,1024,False,True,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,768,False,True,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,390,False,True,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,1440,True,False,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,1280,True,False,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,1024,True,False,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,768,True,False,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,390,True,False,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,1440,True,True,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,1280,True,True,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,1024,True,True,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,768,True,True,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal
+config,390,True,True,,#analysis-engine-details,"{
+  ""capabilities"": [
+    ""analysis"",
+    ""streaming"",
+    ""cancellation"",
+    ""centipawns"",
+    ""ma",10px,"rgb(185, 186, 179)",normal

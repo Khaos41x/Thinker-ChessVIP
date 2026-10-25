@@ -292,10 +292,12 @@
         detail.id = 'banner-display-state';
         detail.className = 'control-detail';
         detail.textContent = 'Waiting for display status';
-        copy.append(detail);
+        row.setAttribute('aria-describedby', detail.id);
+        row._detail = detail;
       }
       row.append(copy, toggle);
       host.append(row);
+      if (row._detail) { host.append(row._detail); delete row._detail; }
     });
   });
 

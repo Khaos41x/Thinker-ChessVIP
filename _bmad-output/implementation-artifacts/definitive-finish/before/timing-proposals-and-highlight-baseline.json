@@ -1,0 +1,98 @@
+{
+  "original": {
+    "engine": 391,
+    "inputs": [
+      {
+        "id": "minDelayInput",
+        "width": 54,
+        "wrapper": 80
+      },
+      {
+        "id": "maxDelayInput",
+        "width": 54,
+        "wrapper": 80
+      }
+    ],
+    "segmented": {
+      "width": 124,
+      "labels": [
+        {
+          "text": "Random",
+          "width": 61,
+          "textWidth": 41.953125
+        },
+        {
+          "text": "Immediate",
+          "width": 61,
+          "textWidth": 53.546875
+        }
+      ]
+    }
+  },
+  "third": {
+    "engine": 391,
+    "inputs": [
+      {
+        "id": "minDelayInput",
+        "width": 64,
+        "wrapper": 90
+      },
+      {
+        "id": "maxDelayInput",
+        "width": 64,
+        "wrapper": 90
+      }
+    ],
+    "separator": 3,
+    "gap": "2px"
+  },
+  "ownRow": {
+    "engine": 431,
+    "inputs": [
+      {
+        "id": "minDelayInput",
+        "width": 120,
+        "wrapper": 146
+      },
+      {
+        "id": "maxDelayInput",
+        "width": 120,
+        "wrapper": 146
+      }
+    ],
+    "segmented": 319
+  },
+  "wide": {
+    "engine": 391,
+    "inputs": [
+      {
+        "id": "minDelayInput",
+        "width": 54
+      },
+      {
+        "id": "maxDelayInput",
+        "width": 54
+      }
+    ]
+  },
+  "highlights": [
+    {
+      "configured": "#10B981",
+      "border": "3px solid rgb(16, 185, 129)",
+      "borderColor": "rgb(16, 185, 129)",
+      "background": "rgba(16, 185, 129, 0.15)",
+      "boxShadow": "rgba(16, 185, 129, 0.2) 0px 4px 12px 0px",
+      "opacity": "0.85",
+      "borderRadius": "25%"
+    },
+    {
+      "configured": "#3B82F6",
+      "border": "3px solid rgb(59, 130, 246)",
+      "borderColor": "rgb(59, 130, 246)",
+      "background": "rgba(59, 130, 246, 0.15)",
+      "boxShadow": "rgba(59, 130, 246, 0.2) 0px 4px 12px 0px",
+      "opacity": "0.85",
+      "borderRadius": "25%"
+    }
+  ]
+}

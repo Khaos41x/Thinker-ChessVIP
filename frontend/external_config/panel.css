@@ -9,6 +9,8 @@
   --accent:#22d36b;
   --space:12px;
   --radius:8px;
+  --row-h:36px;
+  --control-h:32px;
   font-family:
     -apple-system,
     BlinkMacSystemFont,
@@ -63,7 +65,7 @@ body {
   margin: 0;
 }
 main {
-  max-width: 920px;
+  max-width: calc(920px - mod(100%, 2px));
   margin: 0 auto;
   padding: 40px 24px;
 }
@@ -172,14 +174,17 @@ h2 {
   border-bottom: 1px solid var(--border);
 }
 .control-row {
-  min-height: 36px;
+  height: var(--row-h);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
 .control-row + .control-row {
-  border-top: 1px solid var(--border);
+  background-image: linear-gradient(var(--border), var(--border));
+  background-size: 100% 1px;
+  background-position: top;
+  background-repeat: no-repeat;
 }
 label,
 .field-heading > span {
@@ -479,3 +484,122 @@ body[data-focus-input=pointer] input:focus-visible {
 .session-summary strong { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
 #session-availability[data-error=true] { color: #ffb4ad; }
 @media(max-width:620px) { .autoplay-fields { grid-template-columns: repeat(2,minmax(0,1fr)); } .session-actions { grid-template-columns: repeat(2,minmax(0,1fr)); } .session-actions button:first-child { grid-column: 1/-1; } .session-summary { grid-template-columns: minmax(0,1fr); } }
+
+.connection-status {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  margin: 24px 0 12px;
+}
+.connection-status .notice,
+.connection-status > .hint {
+  margin: 0;
+}
+.notice > span {
+  min-width: 0;
+}
+#userscript-update,
+#userscript-update:visited {
+  color: #9e9eff;
+  text-decoration: none;
+}
+#userscript-update:hover,
+#userscript-update:focus-visible {
+  text-decoration: underline;
+}
+.panels {
+  grid-template-columns: round(down, calc((100% - var(--space)) / 2), 1px) minmax(0, 1fr);
+  grid-template-rows: repeat(4, max-content);
+}
+.control-row > div,
+.control-row > label {
+  display: flex;
+  align-items: center;
+  min-height: 20px;
+  line-height: 20px;
+}
+.control-detail {
+  margin: 0 0 8px;
+  line-height: 17px;
+}
+.control-detail + .control-row,
+[data-controls=visuals] + .control-row {
+  background: linear-gradient(var(--border), var(--border)) top / 100% 1px no-repeat;
+}
+#workspace > .hint {
+  margin: 0 0 8px;
+}
+.analysis-engine select {
+  appearance: none;
+  -webkit-appearance: none;
+  height: var(--control-h);
+  min-height: var(--control-h);
+  padding: 0 32px 0 10px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='m3 4.5 3 3 3-3' fill='none' stroke='%23b9bab3' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+.engine-details summary {
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  gap: 6px;
+  list-style: none;
+}
+.engine-details summary::-webkit-details-marker {
+  display: none;
+}
+.engine-details summary::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  flex: 0 0 12px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='m4.5 3 3 3-3 3' fill='none' stroke='%23b9bab3' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center no-repeat;
+}
+.engine-details[open] summary::before {
+  transform: rotate(90deg);
+}
+.engine-details pre {
+  font-size: 11px;
+  line-height: 17px;
+}
+.delay-fields {
+  display: grid;
+  grid-template-columns: round(down, calc((100% - 27px) / 2), 1px) 11px minmax(0, 1fr);
+}
+.delay-fields label {
+  width: 100%;
+}
+.delay-fields input {
+  height: 20px;
+}
+.delay-fields label > span:last-child {
+  flex: 0 0 12px;
+  text-align: right;
+}
+.segmented {
+  grid-template-columns: round(down, calc((100% - 2px) / 2), 1px) minmax(0, 1fr);
+}
+footer {
+  min-height: var(--control-h);
+  margin-top: 12px;
+}
+footer > p {
+  min-width: 0;
+  line-height: 18px;
+}
+#retry {
+  width: 62px;
+  flex: 0 0 62px;
+}
+.footnote {
+  line-height: 17px;
+}
+@media (max-width: 899px) {
+  .panels {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(5, max-content);
+    grid-template-areas: "core" "engine" "visuals" "workspace" "autoplay";
+  }
+}
+

@@ -1,0 +1,933 @@
+surface,viewport,bot,smartPacing,populated,selector,text,x,y,width,height,bottom,right,centerY,borderTop,borderBottom,dividerAboveY,dividerBelowY,marginTop,marginBottom,paddingTop,paddingBottom,alignItems,textCenterY,textOffset,controlCenterY,controlOffset
+console,1086,False,False,False,div.kb-section,Bot ON OFF,51,1162,319,36,1198,370,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1086,False,False,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,51,1206,319,36,1242,370,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1086,False,False,False,div.kb-section,Auto Queue ON OFF,51,1242,319,36,1278,370,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1086,False,False,False,div.kb-section,Evaluation Bar ON OFF,51,1341,319,36,1377,370,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1086,False,False,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,51,1385,319,36,1421,370,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1086,False,False,False,div.kb-section,Recent Form ON OFF,51,1421,319,36,1457,370,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1086,False,False,False,div,Theme,51,1466,319,36,1502,370,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1086,False,False,False,div.tc-analysis-heading,Analysis Engine Ready,408,1170,319,16,1186,727,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1086,False,False,False,div.kb-section,Auto Rating ON OFF,408,1266,319,36,1302,727,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1086,False,False,False,div.kb-strength-head,Strength Level Current 3200,408,1302,319,17,1319,727,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1086,False,False,False,div.kb-timing-heading,Move Timing 0.50–1.00 s,408,1386,319,17,1403,727,1394.5,0px,0px,,,0px,0px,0px,0px,baseline,1393.5,-1,,
+console,1086,False,False,False,div.kb-section,Smart Pacing ON OFF,408,1466,319,36,1502,727,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1280,False,False,False,div.kb-section,Bot ON OFF,148,1162,319,36,1198,467,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1280,False,False,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,148,1206,319,36,1242,467,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1280,False,False,False,div.kb-section,Auto Queue ON OFF,148,1242,319,36,1278,467,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1280,False,False,False,div.kb-section,Evaluation Bar ON OFF,148,1341,319,36,1377,467,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1280,False,False,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,148,1385,319,36,1421,467,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1280,False,False,False,div.kb-section,Recent Form ON OFF,148,1421,319,36,1457,467,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1280,False,False,False,div,Theme,148,1466,319,36,1502,467,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1280,False,False,False,div.tc-analysis-heading,Analysis Engine Ready,505,1170,319,16,1186,824,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1280,False,False,False,div.kb-section,Auto Rating ON OFF,505,1266,319,36,1302,824,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1280,False,False,False,div.kb-strength-head,Strength Level Current 3200,505,1302,319,17,1319,824,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1280,False,False,False,div.kb-timing-heading,Move Timing 0.50–1.00 s,505,1386,319,17,1403,824,1394.5,0px,0px,,,0px,0px,0px,0px,baseline,1393.5,-1,,
+console,1280,False,False,False,div.kb-section,Smart Pacing ON OFF,505,1466,319,36,1502,824,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1440,False,False,False,div.kb-section,Bot ON OFF,228,1162,319,36,1198,547,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1440,False,False,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,228,1206,319,36,1242,547,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1440,False,False,False,div.kb-section,Auto Queue ON OFF,228,1242,319,36,1278,547,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1440,False,False,False,div.kb-section,Evaluation Bar ON OFF,228,1341,319,36,1377,547,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1440,False,False,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,228,1385,319,36,1421,547,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1440,False,False,False,div.kb-section,Recent Form ON OFF,228,1421,319,36,1457,547,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1440,False,False,False,div,Theme,228,1466,319,36,1502,547,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1440,False,False,False,div.tc-analysis-heading,Analysis Engine Ready,585,1170,319,16,1186,904,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1440,False,False,False,div.kb-section,Auto Rating ON OFF,585,1266,319,36,1302,904,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1440,False,False,False,div.kb-strength-head,Strength Level Current 3200,585,1302,319,17,1319,904,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1440,False,False,False,div.kb-timing-heading,Move Timing 0.50–1.00 s,585,1386,319,17,1403,904,1394.5,0px,0px,,,0px,0px,0px,0px,baseline,1393.5,-1,,
+console,1440,False,False,False,div.kb-section,Smart Pacing ON OFF,585,1466,319,36,1502,904,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1920,False,False,False,div.kb-section,Bot ON OFF,468,1162,319,36,1198,787,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1920,False,False,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,468,1206,319,36,1242,787,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1920,False,False,False,div.kb-section,Auto Queue ON OFF,468,1242,319,36,1278,787,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1920,False,False,False,div.kb-section,Evaluation Bar ON OFF,468,1341,319,36,1377,787,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1920,False,False,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,468,1385,319,36,1421,787,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1920,False,False,False,div.kb-section,Recent Form ON OFF,468,1421,319,36,1457,787,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1920,False,False,False,div,Theme,468,1466,319,36,1502,787,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1920,False,False,False,div.tc-analysis-heading,Analysis Engine Ready,825,1170,319,16,1186,1144,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1920,False,False,False,div.kb-section,Auto Rating ON OFF,825,1266,319,36,1302,1144,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1920,False,False,False,div.kb-strength-head,Strength Level Current 3200,825,1302,319,17,1319,1144,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1920,False,False,False,div.kb-timing-heading,Move Timing 0.50–1.00 s,825,1386,319,17,1403,1144,1394.5,0px,0px,,,0px,0px,0px,0px,baseline,1393.5,-1,,
+console,1920,False,False,False,div.kb-section,Smart Pacing ON OFF,825,1466,319,36,1502,1144,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1033,False,False,False,div.kb-section,Bot ON OFF,25,1162,983,36,1198,1008,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1033,False,False,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,25,1198,983,36,1234,1008,1216,0px,0px,1198,,0px,0px,0px,0px,center,1215.5,-0.5,1216,0
+console,1033,False,False,False,div.kb-section,Auto Queue ON OFF,25,1234,983,36,1270,1008,1252,0px,0px,1234,,0px,0px,0px,0px,center,1251.5,-0.5,1252,0
+console,1033,False,False,False,div.kb-section,Evaluation Bar ON OFF,25,1333,983,36,1369,1008,1351,0px,0px,,,0px,0px,0px,0px,center,1350.5,-0.5,1351,0
+console,1033,False,False,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,25,1369,983,36,1405,1008,1387,1px,0px,1369,,0px,0px,0px,0px,center,1387,0,1387.5,0.5
+console,1033,False,False,False,div.kb-section,Recent Form ON OFF,25,1405,983,36,1441,1008,1423,1px,0px,1405,,0px,0px,0px,0px,center,1423,0,1423.5,0.5
+console,1033,False,False,False,div,Theme,25,1442,983,36,1478,1008,1460,0px,0px,,,0px,0px,0px,0px,center,1459.5,-0.5,1460,0
+console,1033,False,False,False,div.tc-analysis-heading,Analysis Engine Ready,25,1549,983,16,1565,1008,1557,0px,0px,,,0px,0px,0px,0px,center,1557,0,,
+console,1033,False,False,False,div.kb-section,Auto Rating ON OFF,25,1645,983,36,1681,1008,1663,0px,0px,,,0px,0px,0px,0px,center,1662.5,-0.5,1663,0
+console,1033,False,False,False,div.kb-strength-head,Strength Level Current 3200,25,1681,983,17,1698,1008,1689.5,0px,0px,,,0px,8px,0px,0px,baseline,1688.5,-1,,
+console,1033,False,False,False,div.kb-timing-heading,Move Timing 0.50–1.00 s,25,1765,983,17,1782,1008,1773.5,0px,0px,,,0px,0px,0px,0px,baseline,1772.5,-1,,
+console,1033,False,False,False,div.kb-section,Smart Pacing ON OFF,25,1845,983,36,1881,1008,1863,0px,0px,,,0px,0px,0px,0px,center,1862.5,-0.5,1863,0
+console,800,False,False,False,div.kb-section,Bot ON OFF,25,1162,750,36,1198,775,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,800,False,False,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,25,1198,750,36,1234,775,1216,0px,0px,1198,,0px,0px,0px,0px,center,1215.5,-0.5,1216,0
+console,800,False,False,False,div.kb-section,Auto Queue ON OFF,25,1234,750,36,1270,775,1252,0px,0px,1234,,0px,0px,0px,0px,center,1251.5,-0.5,1252,0
+console,800,False,False,False,div.kb-section,Evaluation Bar ON OFF,25,1333,750,36,1369,775,1351,0px,0px,,,0px,0px,0px,0px,center,1350.5,-0.5,1351,0
+console,800,False,False,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,25,1369,750,36,1405,775,1387,1px,0px,1369,,0px,0px,0px,0px,center,1387,0,1387.5,0.5
+console,800,False,False,False,div.kb-section,Recent Form ON OFF,25,1405,750,36,1441,775,1423,1px,0px,1405,,0px,0px,0px,0px,center,1423,0,1423.5,0.5
+console,800,False,False,False,div,Theme,25,1442,750,36,1478,775,1460,0px,0px,,,0px,0px,0px,0px,center,1459.5,-0.5,1460,0
+console,800,False,False,False,div.tc-analysis-heading,Analysis Engine Ready,25,1549,750,16,1565,775,1557,0px,0px,,,0px,0px,0px,0px,center,1557,0,,
+console,800,False,False,False,div.kb-section,Auto Rating ON OFF,25,1645,750,36,1681,775,1663,0px,0px,,,0px,0px,0px,0px,center,1662.5,-0.5,1663,0
+console,800,False,False,False,div.kb-strength-head,Strength Level Current 3200,25,1681,750,17,1698,775,1689.5,0px,0px,,,0px,8px,0px,0px,baseline,1688.5,-1,,
+console,800,False,False,False,div.kb-timing-heading,Move Timing 0.50–1.00 s,25,1765,750,17,1782,775,1773.5,0px,0px,,,0px,0px,0px,0px,baseline,1772.5,-1,,
+console,800,False,False,False,div.kb-section,Smart Pacing ON OFF,25,1845,750,36,1881,775,1863,0px,0px,,,0px,0px,0px,0px,center,1862.5,-0.5,1863,0
+console,1086,False,True,False,div.kb-section,Bot ON OFF,51,1162,319,36,1198,370,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1086,False,True,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,51,1206,319,36,1242,370,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1086,False,True,False,div.kb-section,Auto Queue ON OFF,51,1242,319,36,1278,370,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1086,False,True,False,div.kb-section,Evaluation Bar ON OFF,51,1341,319,36,1377,370,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1086,False,True,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,51,1385,319,36,1421,370,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1086,False,True,False,div.kb-section,Recent Form ON OFF,51,1421,319,36,1457,370,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1086,False,True,False,div,Theme,51,1466,319,36,1502,370,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1086,False,True,False,div.tc-analysis-heading,Analysis Engine Ready,408,1170,319,16,1186,727,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1086,False,True,False,div.kb-section,Auto Rating ON OFF,408,1266,319,36,1302,727,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1086,False,True,False,div.kb-strength-head,Strength Level Current 3200,408,1302,319,17,1319,727,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1086,False,True,False,div.kb-section,Smart Pacing ON OFF,408,1386,319,36,1422,727,1404,0px,0px,,,0px,0px,0px,0px,center,1403.5,-0.5,1404,0
+console,1280,False,True,False,div.kb-section,Bot ON OFF,148,1162,319,36,1198,467,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1280,False,True,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,148,1206,319,36,1242,467,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1280,False,True,False,div.kb-section,Auto Queue ON OFF,148,1242,319,36,1278,467,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1280,False,True,False,div.kb-section,Evaluation Bar ON OFF,148,1341,319,36,1377,467,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1280,False,True,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,148,1385,319,36,1421,467,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1280,False,True,False,div.kb-section,Recent Form ON OFF,148,1421,319,36,1457,467,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1280,False,True,False,div,Theme,148,1466,319,36,1502,467,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1280,False,True,False,div.tc-analysis-heading,Analysis Engine Ready,505,1170,319,16,1186,824,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1280,False,True,False,div.kb-section,Auto Rating ON OFF,505,1266,319,36,1302,824,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1280,False,True,False,div.kb-strength-head,Strength Level Current 3200,505,1302,319,17,1319,824,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1280,False,True,False,div.kb-section,Smart Pacing ON OFF,505,1386,319,36,1422,824,1404,0px,0px,,,0px,0px,0px,0px,center,1403.5,-0.5,1404,0
+console,1440,False,True,False,div.kb-section,Bot ON OFF,228,1162,319,36,1198,547,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1440,False,True,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,228,1206,319,36,1242,547,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1440,False,True,False,div.kb-section,Auto Queue ON OFF,228,1242,319,36,1278,547,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1440,False,True,False,div.kb-section,Evaluation Bar ON OFF,228,1341,319,36,1377,547,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1440,False,True,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,228,1385,319,36,1421,547,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1440,False,True,False,div.kb-section,Recent Form ON OFF,228,1421,319,36,1457,547,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1440,False,True,False,div,Theme,228,1466,319,36,1502,547,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1440,False,True,False,div.tc-analysis-heading,Analysis Engine Ready,585,1170,319,16,1186,904,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1440,False,True,False,div.kb-section,Auto Rating ON OFF,585,1266,319,36,1302,904,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1440,False,True,False,div.kb-strength-head,Strength Level Current 3200,585,1302,319,17,1319,904,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1440,False,True,False,div.kb-section,Smart Pacing ON OFF,585,1386,319,36,1422,904,1404,0px,0px,,,0px,0px,0px,0px,center,1403.5,-0.5,1404,0
+console,1920,False,True,False,div.kb-section,Bot ON OFF,468,1162,319,36,1198,787,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1920,False,True,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,468,1206,319,36,1242,787,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1920,False,True,False,div.kb-section,Auto Queue ON OFF,468,1242,319,36,1278,787,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1920,False,True,False,div.kb-section,Evaluation Bar ON OFF,468,1341,319,36,1377,787,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1920,False,True,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,468,1385,319,36,1421,787,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1920,False,True,False,div.kb-section,Recent Form ON OFF,468,1421,319,36,1457,787,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1920,False,True,False,div,Theme,468,1466,319,36,1502,787,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1920,False,True,False,div.tc-analysis-heading,Analysis Engine Ready,825,1170,319,16,1186,1144,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1920,False,True,False,div.kb-section,Auto Rating ON OFF,825,1266,319,36,1302,1144,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1920,False,True,False,div.kb-strength-head,Strength Level Current 3200,825,1302,319,17,1319,1144,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1920,False,True,False,div.kb-section,Smart Pacing ON OFF,825,1386,319,36,1422,1144,1404,0px,0px,,,0px,0px,0px,0px,center,1403.5,-0.5,1404,0
+console,1033,False,True,False,div.kb-section,Bot ON OFF,25,1162,983,36,1198,1008,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1033,False,True,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,25,1198,983,36,1234,1008,1216,0px,0px,1198,,0px,0px,0px,0px,center,1215.5,-0.5,1216,0
+console,1033,False,True,False,div.kb-section,Auto Queue ON OFF,25,1234,983,36,1270,1008,1252,0px,0px,1234,,0px,0px,0px,0px,center,1251.5,-0.5,1252,0
+console,1033,False,True,False,div.kb-section,Evaluation Bar ON OFF,25,1333,983,36,1369,1008,1351,0px,0px,,,0px,0px,0px,0px,center,1350.5,-0.5,1351,0
+console,1033,False,True,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,25,1369,983,36,1405,1008,1387,1px,0px,1369,,0px,0px,0px,0px,center,1387,0,1387.5,0.5
+console,1033,False,True,False,div.kb-section,Recent Form ON OFF,25,1405,983,36,1441,1008,1423,1px,0px,1405,,0px,0px,0px,0px,center,1423,0,1423.5,0.5
+console,1033,False,True,False,div,Theme,25,1442,983,36,1478,1008,1460,0px,0px,,,0px,0px,0px,0px,center,1459.5,-0.5,1460,0
+console,1033,False,True,False,div.tc-analysis-heading,Analysis Engine Ready,25,1549,983,16,1565,1008,1557,0px,0px,,,0px,0px,0px,0px,center,1557,0,,
+console,1033,False,True,False,div.kb-section,Auto Rating ON OFF,25,1645,983,36,1681,1008,1663,0px,0px,,,0px,0px,0px,0px,center,1662.5,-0.5,1663,0
+console,1033,False,True,False,div.kb-strength-head,Strength Level Current 3200,25,1681,983,17,1698,1008,1689.5,0px,0px,,,0px,8px,0px,0px,baseline,1688.5,-1,,
+console,1033,False,True,False,div.kb-section,Smart Pacing ON OFF,25,1765,983,36,1801,1008,1783,0px,0px,,,0px,0px,0px,0px,center,1782.5,-0.5,1783,0
+console,800,False,True,False,div.kb-section,Bot ON OFF,25,1162,750,36,1198,775,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,800,False,True,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,25,1198,750,36,1234,775,1216,0px,0px,1198,,0px,0px,0px,0px,center,1215.5,-0.5,1216,0
+console,800,False,True,False,div.kb-section,Auto Queue ON OFF,25,1234,750,36,1270,775,1252,0px,0px,1234,,0px,0px,0px,0px,center,1251.5,-0.5,1252,0
+console,800,False,True,False,div.kb-section,Evaluation Bar ON OFF,25,1333,750,36,1369,775,1351,0px,0px,,,0px,0px,0px,0px,center,1350.5,-0.5,1351,0
+console,800,False,True,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,25,1369,750,36,1405,775,1387,1px,0px,1369,,0px,0px,0px,0px,center,1387,0,1387.5,0.5
+console,800,False,True,False,div.kb-section,Recent Form ON OFF,25,1405,750,36,1441,775,1423,1px,0px,1405,,0px,0px,0px,0px,center,1423,0,1423.5,0.5
+console,800,False,True,False,div,Theme,25,1442,750,36,1478,775,1460,0px,0px,,,0px,0px,0px,0px,center,1459.5,-0.5,1460,0
+console,800,False,True,False,div.tc-analysis-heading,Analysis Engine Ready,25,1549,750,16,1565,775,1557,0px,0px,,,0px,0px,0px,0px,center,1557,0,,
+console,800,False,True,False,div.kb-section,Auto Rating ON OFF,25,1645,750,36,1681,775,1663,0px,0px,,,0px,0px,0px,0px,center,1662.5,-0.5,1663,0
+console,800,False,True,False,div.kb-strength-head,Strength Level Current 3200,25,1681,750,17,1698,775,1689.5,0px,0px,,,0px,8px,0px,0px,baseline,1688.5,-1,,
+console,800,False,True,False,div.kb-section,Smart Pacing ON OFF,25,1765,750,36,1801,775,1783,0px,0px,,,0px,0px,0px,0px,center,1782.5,-0.5,1783,0
+console,1086,True,False,False,div.kb-section,Bot ON OFF,51,1162,319,36,1198,370,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1086,True,False,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,51,1206,319,36,1242,370,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1086,True,False,False,div.kb-section,Auto Queue ON OFF,51,1242,319,36,1278,370,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1086,True,False,False,div.kb-section,Evaluation Bar ON OFF,51,1341,319,36,1377,370,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1086,True,False,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,51,1385,319,36,1421,370,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1086,True,False,False,div.kb-section,Recent Form ON OFF,51,1421,319,36,1457,370,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1086,True,False,False,div,Theme,51,1466,319,36,1502,370,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1086,True,False,False,div.tc-analysis-heading,Analysis Engine Ready,408,1170,319,16,1186,727,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1086,True,False,False,div.kb-section,Auto Rating ON OFF,408,1266,319,36,1302,727,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1086,True,False,False,div.kb-strength-head,Strength Level Current 3200,408,1302,319,17,1319,727,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1086,True,False,False,div.kb-timing-heading,Move Timing 0.50–1.00 s,408,1386,319,17,1403,727,1394.5,0px,0px,,,0px,0px,0px,0px,baseline,1393.5,-1,,
+console,1086,True,False,False,div.kb-section,Smart Pacing ON OFF,408,1466,319,36,1502,727,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1280,True,False,False,div.kb-section,Bot ON OFF,148,1162,319,36,1198,467,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1280,True,False,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,148,1206,319,36,1242,467,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1280,True,False,False,div.kb-section,Auto Queue ON OFF,148,1242,319,36,1278,467,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1280,True,False,False,div.kb-section,Evaluation Bar ON OFF,148,1341,319,36,1377,467,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1280,True,False,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,148,1385,319,36,1421,467,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1280,True,False,False,div.kb-section,Recent Form ON OFF,148,1421,319,36,1457,467,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1280,True,False,False,div,Theme,148,1466,319,36,1502,467,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1280,True,False,False,div.tc-analysis-heading,Analysis Engine Ready,505,1170,319,16,1186,824,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1280,True,False,False,div.kb-section,Auto Rating ON OFF,505,1266,319,36,1302,824,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1280,True,False,False,div.kb-strength-head,Strength Level Current 3200,505,1302,319,17,1319,824,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1280,True,False,False,div.kb-timing-heading,Move Timing 0.50–1.00 s,505,1386,319,17,1403,824,1394.5,0px,0px,,,0px,0px,0px,0px,baseline,1393.5,-1,,
+console,1280,True,False,False,div.kb-section,Smart Pacing ON OFF,505,1466,319,36,1502,824,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1440,True,False,False,div.kb-section,Bot ON OFF,228,1162,319,36,1198,547,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1440,True,False,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,228,1206,319,36,1242,547,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1440,True,False,False,div.kb-section,Auto Queue ON OFF,228,1242,319,36,1278,547,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1440,True,False,False,div.kb-section,Evaluation Bar ON OFF,228,1341,319,36,1377,547,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1440,True,False,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,228,1385,319,36,1421,547,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1440,True,False,False,div.kb-section,Recent Form ON OFF,228,1421,319,36,1457,547,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1440,True,False,False,div,Theme,228,1466,319,36,1502,547,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1440,True,False,False,div.tc-analysis-heading,Analysis Engine Ready,585,1170,319,16,1186,904,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1440,True,False,False,div.kb-section,Auto Rating ON OFF,585,1266,319,36,1302,904,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1440,True,False,False,div.kb-strength-head,Strength Level Current 3200,585,1302,319,17,1319,904,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1440,True,False,False,div.kb-timing-heading,Move Timing 0.50–1.00 s,585,1386,319,17,1403,904,1394.5,0px,0px,,,0px,0px,0px,0px,baseline,1393.5,-1,,
+console,1440,True,False,False,div.kb-section,Smart Pacing ON OFF,585,1466,319,36,1502,904,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1920,True,False,False,div.kb-section,Bot ON OFF,468,1162,319,36,1198,787,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1920,True,False,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,468,1206,319,36,1242,787,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1920,True,False,False,div.kb-section,Auto Queue ON OFF,468,1242,319,36,1278,787,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1920,True,False,False,div.kb-section,Evaluation Bar ON OFF,468,1341,319,36,1377,787,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1920,True,False,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,468,1385,319,36,1421,787,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1920,True,False,False,div.kb-section,Recent Form ON OFF,468,1421,319,36,1457,787,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1920,True,False,False,div,Theme,468,1466,319,36,1502,787,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1920,True,False,False,div.tc-analysis-heading,Analysis Engine Ready,825,1170,319,16,1186,1144,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1920,True,False,False,div.kb-section,Auto Rating ON OFF,825,1266,319,36,1302,1144,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1920,True,False,False,div.kb-strength-head,Strength Level Current 3200,825,1302,319,17,1319,1144,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1920,True,False,False,div.kb-timing-heading,Move Timing 0.50–1.00 s,825,1386,319,17,1403,1144,1394.5,0px,0px,,,0px,0px,0px,0px,baseline,1393.5,-1,,
+console,1920,True,False,False,div.kb-section,Smart Pacing ON OFF,825,1466,319,36,1502,1144,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1033,True,False,False,div.kb-section,Bot ON OFF,25,1162,983,36,1198,1008,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1033,True,False,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,25,1198,983,36,1234,1008,1216,0px,0px,1198,,0px,0px,0px,0px,center,1215.5,-0.5,1216,0
+console,1033,True,False,False,div.kb-section,Auto Queue ON OFF,25,1234,983,36,1270,1008,1252,0px,0px,1234,,0px,0px,0px,0px,center,1251.5,-0.5,1252,0
+console,1033,True,False,False,div.kb-section,Evaluation Bar ON OFF,25,1333,983,36,1369,1008,1351,0px,0px,,,0px,0px,0px,0px,center,1350.5,-0.5,1351,0
+console,1033,True,False,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,25,1369,983,36,1405,1008,1387,1px,0px,1369,,0px,0px,0px,0px,center,1387,0,1387.5,0.5
+console,1033,True,False,False,div.kb-section,Recent Form ON OFF,25,1405,983,36,1441,1008,1423,1px,0px,1405,,0px,0px,0px,0px,center,1423,0,1423.5,0.5
+console,1033,True,False,False,div,Theme,25,1442,983,36,1478,1008,1460,0px,0px,,,0px,0px,0px,0px,center,1459.5,-0.5,1460,0
+console,1033,True,False,False,div.tc-analysis-heading,Analysis Engine Ready,25,1549,983,16,1565,1008,1557,0px,0px,,,0px,0px,0px,0px,center,1557,0,,
+console,1033,True,False,False,div.kb-section,Auto Rating ON OFF,25,1645,983,36,1681,1008,1663,0px,0px,,,0px,0px,0px,0px,center,1662.5,-0.5,1663,0
+console,1033,True,False,False,div.kb-strength-head,Strength Level Current 3200,25,1681,983,17,1698,1008,1689.5,0px,0px,,,0px,8px,0px,0px,baseline,1688.5,-1,,
+console,1033,True,False,False,div.kb-timing-heading,Move Timing 0.50–1.00 s,25,1765,983,17,1782,1008,1773.5,0px,0px,,,0px,0px,0px,0px,baseline,1772.5,-1,,
+console,1033,True,False,False,div.kb-section,Smart Pacing ON OFF,25,1845,983,36,1881,1008,1863,0px,0px,,,0px,0px,0px,0px,center,1862.5,-0.5,1863,0
+console,800,True,False,False,div.kb-section,Bot ON OFF,25,1162,750,36,1198,775,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,800,True,False,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,25,1198,750,36,1234,775,1216,0px,0px,1198,,0px,0px,0px,0px,center,1215.5,-0.5,1216,0
+console,800,True,False,False,div.kb-section,Auto Queue ON OFF,25,1234,750,36,1270,775,1252,0px,0px,1234,,0px,0px,0px,0px,center,1251.5,-0.5,1252,0
+console,800,True,False,False,div.kb-section,Evaluation Bar ON OFF,25,1333,750,36,1369,775,1351,0px,0px,,,0px,0px,0px,0px,center,1350.5,-0.5,1351,0
+console,800,True,False,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,25,1369,750,36,1405,775,1387,1px,0px,1369,,0px,0px,0px,0px,center,1387,0,1387.5,0.5
+console,800,True,False,False,div.kb-section,Recent Form ON OFF,25,1405,750,36,1441,775,1423,1px,0px,1405,,0px,0px,0px,0px,center,1423,0,1423.5,0.5
+console,800,True,False,False,div,Theme,25,1442,750,36,1478,775,1460,0px,0px,,,0px,0px,0px,0px,center,1459.5,-0.5,1460,0
+console,800,True,False,False,div.tc-analysis-heading,Analysis Engine Ready,25,1549,750,16,1565,775,1557,0px,0px,,,0px,0px,0px,0px,center,1557,0,,
+console,800,True,False,False,div.kb-section,Auto Rating ON OFF,25,1645,750,36,1681,775,1663,0px,0px,,,0px,0px,0px,0px,center,1662.5,-0.5,1663,0
+console,800,True,False,False,div.kb-strength-head,Strength Level Current 3200,25,1681,750,17,1698,775,1689.5,0px,0px,,,0px,8px,0px,0px,baseline,1688.5,-1,,
+console,800,True,False,False,div.kb-timing-heading,Move Timing 0.50–1.00 s,25,1765,750,17,1782,775,1773.5,0px,0px,,,0px,0px,0px,0px,baseline,1772.5,-1,,
+console,800,True,False,False,div.kb-section,Smart Pacing ON OFF,25,1845,750,36,1881,775,1863,0px,0px,,,0px,0px,0px,0px,center,1862.5,-0.5,1863,0
+console,1086,True,True,False,div.kb-section,Bot ON OFF,51,1162,319,36,1198,370,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1086,True,True,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,51,1206,319,36,1242,370,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1086,True,True,False,div.kb-section,Auto Queue ON OFF,51,1242,319,36,1278,370,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1086,True,True,False,div.kb-section,Evaluation Bar ON OFF,51,1341,319,36,1377,370,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1086,True,True,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,51,1385,319,36,1421,370,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1086,True,True,False,div.kb-section,Recent Form ON OFF,51,1421,319,36,1457,370,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1086,True,True,False,div,Theme,51,1466,319,36,1502,370,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1086,True,True,False,div.tc-analysis-heading,Analysis Engine Ready,408,1170,319,16,1186,727,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1086,True,True,False,div.kb-section,Auto Rating ON OFF,408,1266,319,36,1302,727,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1086,True,True,False,div.kb-strength-head,Strength Level Current 3200,408,1302,319,17,1319,727,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1086,True,True,False,div.kb-section,Smart Pacing ON OFF,408,1386,319,36,1422,727,1404,0px,0px,,,0px,0px,0px,0px,center,1403.5,-0.5,1404,0
+console,1280,True,True,False,div.kb-section,Bot ON OFF,148,1162,319,36,1198,467,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1280,True,True,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,148,1206,319,36,1242,467,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1280,True,True,False,div.kb-section,Auto Queue ON OFF,148,1242,319,36,1278,467,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1280,True,True,False,div.kb-section,Evaluation Bar ON OFF,148,1341,319,36,1377,467,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1280,True,True,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,148,1385,319,36,1421,467,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1280,True,True,False,div.kb-section,Recent Form ON OFF,148,1421,319,36,1457,467,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1280,True,True,False,div,Theme,148,1466,319,36,1502,467,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1280,True,True,False,div.tc-analysis-heading,Analysis Engine Ready,505,1170,319,16,1186,824,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1280,True,True,False,div.kb-section,Auto Rating ON OFF,505,1266,319,36,1302,824,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1280,True,True,False,div.kb-strength-head,Strength Level Current 3200,505,1302,319,17,1319,824,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1280,True,True,False,div.kb-section,Smart Pacing ON OFF,505,1386,319,36,1422,824,1404,0px,0px,,,0px,0px,0px,0px,center,1403.5,-0.5,1404,0
+console,1440,True,True,False,div.kb-section,Bot ON OFF,228,1162,319,36,1198,547,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1440,True,True,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,228,1206,319,36,1242,547,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1440,True,True,False,div.kb-section,Auto Queue ON OFF,228,1242,319,36,1278,547,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1440,True,True,False,div.kb-section,Evaluation Bar ON OFF,228,1341,319,36,1377,547,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1440,True,True,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,228,1385,319,36,1421,547,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1440,True,True,False,div.kb-section,Recent Form ON OFF,228,1421,319,36,1457,547,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1440,True,True,False,div,Theme,228,1466,319,36,1502,547,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1440,True,True,False,div.tc-analysis-heading,Analysis Engine Ready,585,1170,319,16,1186,904,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1440,True,True,False,div.kb-section,Auto Rating ON OFF,585,1266,319,36,1302,904,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1440,True,True,False,div.kb-strength-head,Strength Level Current 3200,585,1302,319,17,1319,904,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1440,True,True,False,div.kb-section,Smart Pacing ON OFF,585,1386,319,36,1422,904,1404,0px,0px,,,0px,0px,0px,0px,center,1403.5,-0.5,1404,0
+console,1920,True,True,False,div.kb-section,Bot ON OFF,468,1162,319,36,1198,787,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1920,True,True,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,468,1206,319,36,1242,787,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1920,True,True,False,div.kb-section,Auto Queue ON OFF,468,1242,319,36,1278,787,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1920,True,True,False,div.kb-section,Evaluation Bar ON OFF,468,1341,319,36,1377,787,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1920,True,True,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,468,1385,319,36,1421,787,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1920,True,True,False,div.kb-section,Recent Form ON OFF,468,1421,319,36,1457,787,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1920,True,True,False,div,Theme,468,1466,319,36,1502,787,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1920,True,True,False,div.tc-analysis-heading,Analysis Engine Ready,825,1170,319,16,1186,1144,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1920,True,True,False,div.kb-section,Auto Rating ON OFF,825,1266,319,36,1302,1144,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1920,True,True,False,div.kb-strength-head,Strength Level Current 3200,825,1302,319,17,1319,1144,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1920,True,True,False,div.kb-section,Smart Pacing ON OFF,825,1386,319,36,1422,1144,1404,0px,0px,,,0px,0px,0px,0px,center,1403.5,-0.5,1404,0
+console,1033,True,True,False,div.kb-section,Bot ON OFF,25,1162,983,36,1198,1008,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1033,True,True,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,25,1198,983,36,1234,1008,1216,0px,0px,1198,,0px,0px,0px,0px,center,1215.5,-0.5,1216,0
+console,1033,True,True,False,div.kb-section,Auto Queue ON OFF,25,1234,983,36,1270,1008,1252,0px,0px,1234,,0px,0px,0px,0px,center,1251.5,-0.5,1252,0
+console,1033,True,True,False,div.kb-section,Evaluation Bar ON OFF,25,1333,983,36,1369,1008,1351,0px,0px,,,0px,0px,0px,0px,center,1350.5,-0.5,1351,0
+console,1033,True,True,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,25,1369,983,36,1405,1008,1387,1px,0px,1369,,0px,0px,0px,0px,center,1387,0,1387.5,0.5
+console,1033,True,True,False,div.kb-section,Recent Form ON OFF,25,1405,983,36,1441,1008,1423,1px,0px,1405,,0px,0px,0px,0px,center,1423,0,1423.5,0.5
+console,1033,True,True,False,div,Theme,25,1442,983,36,1478,1008,1460,0px,0px,,,0px,0px,0px,0px,center,1459.5,-0.5,1460,0
+console,1033,True,True,False,div.tc-analysis-heading,Analysis Engine Ready,25,1549,983,16,1565,1008,1557,0px,0px,,,0px,0px,0px,0px,center,1557,0,,
+console,1033,True,True,False,div.kb-section,Auto Rating ON OFF,25,1645,983,36,1681,1008,1663,0px,0px,,,0px,0px,0px,0px,center,1662.5,-0.5,1663,0
+console,1033,True,True,False,div.kb-strength-head,Strength Level Current 3200,25,1681,983,17,1698,1008,1689.5,0px,0px,,,0px,8px,0px,0px,baseline,1688.5,-1,,
+console,1033,True,True,False,div.kb-section,Smart Pacing ON OFF,25,1765,983,36,1801,1008,1783,0px,0px,,,0px,0px,0px,0px,center,1782.5,-0.5,1783,0
+console,800,True,True,False,div.kb-section,Bot ON OFF,25,1162,750,36,1198,775,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,800,True,True,False,div.kb-section.kb-core-spacing,Auto Moves ON OFF,25,1198,750,36,1234,775,1216,0px,0px,1198,,0px,0px,0px,0px,center,1215.5,-0.5,1216,0
+console,800,True,True,False,div.kb-section,Auto Queue ON OFF,25,1234,750,36,1270,775,1252,0px,0px,1234,,0px,0px,0px,0px,center,1251.5,-0.5,1252,0
+console,800,True,True,False,div.kb-section,Evaluation Bar ON OFF,25,1333,750,36,1369,775,1351,0px,0px,,,0px,0px,0px,0px,center,1350.5,-0.5,1351,0
+console,800,True,True,False,div.kb-section.kb-visuals-spacing,Banner ON OFF,25,1369,750,36,1405,775,1387,1px,0px,1369,,0px,0px,0px,0px,center,1387,0,1387.5,0.5
+console,800,True,True,False,div.kb-section,Recent Form ON OFF,25,1405,750,36,1441,775,1423,1px,0px,1405,,0px,0px,0px,0px,center,1423,0,1423.5,0.5
+console,800,True,True,False,div,Theme,25,1442,750,36,1478,775,1460,0px,0px,,,0px,0px,0px,0px,center,1459.5,-0.5,1460,0
+console,800,True,True,False,div.tc-analysis-heading,Analysis Engine Ready,25,1549,750,16,1565,775,1557,0px,0px,,,0px,0px,0px,0px,center,1557,0,,
+console,800,True,True,False,div.kb-section,Auto Rating ON OFF,25,1645,750,36,1681,775,1663,0px,0px,,,0px,0px,0px,0px,center,1662.5,-0.5,1663,0
+console,800,True,True,False,div.kb-strength-head,Strength Level Current 3200,25,1681,750,17,1698,775,1689.5,0px,0px,,,0px,8px,0px,0px,baseline,1688.5,-1,,
+console,800,True,True,False,div.kb-section,Smart Pacing ON OFF,25,1765,750,36,1801,775,1783,0px,0px,,,0px,0px,0px,0px,center,1782.5,-0.5,1783,0
+console,1086,False,False,True,div.kb-section,Bot ON OFF,51,1162,319,36,1198,370,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1086,False,False,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,51,1206,319,36,1242,370,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1086,False,False,True,div.kb-section,Auto Queue ON OFF,51,1242,319,36,1278,370,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1086,False,False,True,div.kb-section,Evaluation Bar ON OFF,51,1341,319,36,1377,370,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1086,False,False,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,51,1385,319,36,1421,370,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1086,False,False,True,div.kb-section,Recent Form ON OFF,51,1421,319,36,1457,370,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1086,False,False,True,div,Theme,51,1466,319,36,1502,370,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1086,False,False,True,div.tc-analysis-heading,Analysis Engine Ready,408,1170,319,16,1186,727,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1086,False,False,True,div.kb-section,Auto Rating ON OFF,408,1266,319,36,1302,727,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1086,False,False,True,div.kb-strength-head,Strength Level Current 3200,408,1302,319,17,1319,727,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1086,False,False,True,div.kb-timing-heading,Move Timing 0.50–1.00 s,408,1386,319,17,1403,727,1394.5,0px,0px,,,0px,0px,0px,0px,baseline,1393.5,-1,,
+console,1086,False,False,True,div.kb-section,Smart Pacing ON OFF,408,1466,319,36,1502,727,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1280,False,False,True,div.kb-section,Bot ON OFF,148,1162,319,36,1198,467,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1280,False,False,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,148,1206,319,36,1242,467,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1280,False,False,True,div.kb-section,Auto Queue ON OFF,148,1242,319,36,1278,467,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1280,False,False,True,div.kb-section,Evaluation Bar ON OFF,148,1341,319,36,1377,467,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1280,False,False,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,148,1385,319,36,1421,467,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1280,False,False,True,div.kb-section,Recent Form ON OFF,148,1421,319,36,1457,467,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1280,False,False,True,div,Theme,148,1466,319,36,1502,467,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1280,False,False,True,div.tc-analysis-heading,Analysis Engine Ready,505,1170,319,16,1186,824,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1280,False,False,True,div.kb-section,Auto Rating ON OFF,505,1266,319,36,1302,824,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1280,False,False,True,div.kb-strength-head,Strength Level Current 3200,505,1302,319,17,1319,824,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1280,False,False,True,div.kb-timing-heading,Move Timing 0.50–1.00 s,505,1386,319,17,1403,824,1394.5,0px,0px,,,0px,0px,0px,0px,baseline,1393.5,-1,,
+console,1280,False,False,True,div.kb-section,Smart Pacing ON OFF,505,1466,319,36,1502,824,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1440,False,False,True,div.kb-section,Bot ON OFF,228,1162,319,36,1198,547,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1440,False,False,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,228,1206,319,36,1242,547,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1440,False,False,True,div.kb-section,Auto Queue ON OFF,228,1242,319,36,1278,547,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1440,False,False,True,div.kb-section,Evaluation Bar ON OFF,228,1341,319,36,1377,547,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1440,False,False,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,228,1385,319,36,1421,547,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1440,False,False,True,div.kb-section,Recent Form ON OFF,228,1421,319,36,1457,547,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1440,False,False,True,div,Theme,228,1466,319,36,1502,547,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1440,False,False,True,div.tc-analysis-heading,Analysis Engine Ready,585,1170,319,16,1186,904,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1440,False,False,True,div.kb-section,Auto Rating ON OFF,585,1266,319,36,1302,904,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1440,False,False,True,div.kb-strength-head,Strength Level Current 3200,585,1302,319,17,1319,904,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1440,False,False,True,div.kb-timing-heading,Move Timing 0.50–1.00 s,585,1386,319,17,1403,904,1394.5,0px,0px,,,0px,0px,0px,0px,baseline,1393.5,-1,,
+console,1440,False,False,True,div.kb-section,Smart Pacing ON OFF,585,1466,319,36,1502,904,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1920,False,False,True,div.kb-section,Bot ON OFF,468,1162,319,36,1198,787,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1920,False,False,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,468,1206,319,36,1242,787,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1920,False,False,True,div.kb-section,Auto Queue ON OFF,468,1242,319,36,1278,787,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1920,False,False,True,div.kb-section,Evaluation Bar ON OFF,468,1341,319,36,1377,787,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1920,False,False,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,468,1385,319,36,1421,787,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1920,False,False,True,div.kb-section,Recent Form ON OFF,468,1421,319,36,1457,787,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1920,False,False,True,div,Theme,468,1466,319,36,1502,787,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1920,False,False,True,div.tc-analysis-heading,Analysis Engine Ready,825,1170,319,16,1186,1144,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1920,False,False,True,div.kb-section,Auto Rating ON OFF,825,1266,319,36,1302,1144,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1920,False,False,True,div.kb-strength-head,Strength Level Current 3200,825,1302,319,17,1319,1144,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1920,False,False,True,div.kb-timing-heading,Move Timing 0.50–1.00 s,825,1386,319,17,1403,1144,1394.5,0px,0px,,,0px,0px,0px,0px,baseline,1393.5,-1,,
+console,1920,False,False,True,div.kb-section,Smart Pacing ON OFF,825,1466,319,36,1502,1144,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1033,False,False,True,div.kb-section,Bot ON OFF,25,1162,983,36,1198,1008,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1033,False,False,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,25,1198,983,36,1234,1008,1216,0px,0px,1198,,0px,0px,0px,0px,center,1215.5,-0.5,1216,0
+console,1033,False,False,True,div.kb-section,Auto Queue ON OFF,25,1234,983,36,1270,1008,1252,0px,0px,1234,,0px,0px,0px,0px,center,1251.5,-0.5,1252,0
+console,1033,False,False,True,div.kb-section,Evaluation Bar ON OFF,25,1333,983,36,1369,1008,1351,0px,0px,,,0px,0px,0px,0px,center,1350.5,-0.5,1351,0
+console,1033,False,False,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,25,1369,983,36,1405,1008,1387,1px,0px,1369,,0px,0px,0px,0px,center,1387,0,1387.5,0.5
+console,1033,False,False,True,div.kb-section,Recent Form ON OFF,25,1405,983,36,1441,1008,1423,1px,0px,1405,,0px,0px,0px,0px,center,1423,0,1423.5,0.5
+console,1033,False,False,True,div,Theme,25,1442,983,36,1478,1008,1460,0px,0px,,,0px,0px,0px,0px,center,1459.5,-0.5,1460,0
+console,1033,False,False,True,div.tc-analysis-heading,Analysis Engine Ready,25,1549,983,16,1565,1008,1557,0px,0px,,,0px,0px,0px,0px,center,1557,0,,
+console,1033,False,False,True,div.kb-section,Auto Rating ON OFF,25,1645,983,36,1681,1008,1663,0px,0px,,,0px,0px,0px,0px,center,1662.5,-0.5,1663,0
+console,1033,False,False,True,div.kb-strength-head,Strength Level Current 3200,25,1681,983,17,1698,1008,1689.5,0px,0px,,,0px,8px,0px,0px,baseline,1688.5,-1,,
+console,1033,False,False,True,div.kb-timing-heading,Move Timing 0.50–1.00 s,25,1765,983,17,1782,1008,1773.5,0px,0px,,,0px,0px,0px,0px,baseline,1772.5,-1,,
+console,1033,False,False,True,div.kb-section,Smart Pacing ON OFF,25,1845,983,36,1881,1008,1863,0px,0px,,,0px,0px,0px,0px,center,1862.5,-0.5,1863,0
+console,800,False,False,True,div.kb-section,Bot ON OFF,25,1162,750,36,1198,775,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,800,False,False,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,25,1198,750,36,1234,775,1216,0px,0px,1198,,0px,0px,0px,0px,center,1215.5,-0.5,1216,0
+console,800,False,False,True,div.kb-section,Auto Queue ON OFF,25,1234,750,36,1270,775,1252,0px,0px,1234,,0px,0px,0px,0px,center,1251.5,-0.5,1252,0
+console,800,False,False,True,div.kb-section,Evaluation Bar ON OFF,25,1333,750,36,1369,775,1351,0px,0px,,,0px,0px,0px,0px,center,1350.5,-0.5,1351,0
+console,800,False,False,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,25,1369,750,36,1405,775,1387,1px,0px,1369,,0px,0px,0px,0px,center,1387,0,1387.5,0.5
+console,800,False,False,True,div.kb-section,Recent Form ON OFF,25,1405,750,36,1441,775,1423,1px,0px,1405,,0px,0px,0px,0px,center,1423,0,1423.5,0.5
+console,800,False,False,True,div,Theme,25,1442,750,36,1478,775,1460,0px,0px,,,0px,0px,0px,0px,center,1459.5,-0.5,1460,0
+console,800,False,False,True,div.tc-analysis-heading,Analysis Engine Ready,25,1549,750,16,1565,775,1557,0px,0px,,,0px,0px,0px,0px,center,1557,0,,
+console,800,False,False,True,div.kb-section,Auto Rating ON OFF,25,1645,750,36,1681,775,1663,0px,0px,,,0px,0px,0px,0px,center,1662.5,-0.5,1663,0
+console,800,False,False,True,div.kb-strength-head,Strength Level Current 3200,25,1681,750,17,1698,775,1689.5,0px,0px,,,0px,8px,0px,0px,baseline,1688.5,-1,,
+console,800,False,False,True,div.kb-timing-heading,Move Timing 0.50–1.00 s,25,1765,750,17,1782,775,1773.5,0px,0px,,,0px,0px,0px,0px,baseline,1772.5,-1,,
+console,800,False,False,True,div.kb-section,Smart Pacing ON OFF,25,1845,750,36,1881,775,1863,0px,0px,,,0px,0px,0px,0px,center,1862.5,-0.5,1863,0
+console,1086,False,True,True,div.kb-section,Bot ON OFF,51,1162,319,36,1198,370,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1086,False,True,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,51,1206,319,36,1242,370,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1086,False,True,True,div.kb-section,Auto Queue ON OFF,51,1242,319,36,1278,370,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1086,False,True,True,div.kb-section,Evaluation Bar ON OFF,51,1341,319,36,1377,370,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1086,False,True,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,51,1385,319,36,1421,370,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1086,False,True,True,div.kb-section,Recent Form ON OFF,51,1421,319,36,1457,370,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1086,False,True,True,div,Theme,51,1466,319,36,1502,370,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1086,False,True,True,div.tc-analysis-heading,Analysis Engine Ready,408,1170,319,16,1186,727,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1086,False,True,True,div.kb-section,Auto Rating ON OFF,408,1266,319,36,1302,727,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1086,False,True,True,div.kb-strength-head,Strength Level Current 3200,408,1302,319,17,1319,727,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1086,False,True,True,div.kb-section,Smart Pacing ON OFF,408,1386,319,36,1422,727,1404,0px,0px,,,0px,0px,0px,0px,center,1403.5,-0.5,1404,0
+console,1280,False,True,True,div.kb-section,Bot ON OFF,148,1162,319,36,1198,467,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1280,False,True,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,148,1206,319,36,1242,467,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1280,False,True,True,div.kb-section,Auto Queue ON OFF,148,1242,319,36,1278,467,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1280,False,True,True,div.kb-section,Evaluation Bar ON OFF,148,1341,319,36,1377,467,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1280,False,True,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,148,1385,319,36,1421,467,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1280,False,True,True,div.kb-section,Recent Form ON OFF,148,1421,319,36,1457,467,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1280,False,True,True,div,Theme,148,1466,319,36,1502,467,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1280,False,True,True,div.tc-analysis-heading,Analysis Engine Ready,505,1170,319,16,1186,824,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1280,False,True,True,div.kb-section,Auto Rating ON OFF,505,1266,319,36,1302,824,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1280,False,True,True,div.kb-strength-head,Strength Level Current 3200,505,1302,319,17,1319,824,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1280,False,True,True,div.kb-section,Smart Pacing ON OFF,505,1386,319,36,1422,824,1404,0px,0px,,,0px,0px,0px,0px,center,1403.5,-0.5,1404,0
+console,1440,False,True,True,div.kb-section,Bot ON OFF,228,1162,319,36,1198,547,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1440,False,True,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,228,1206,319,36,1242,547,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1440,False,True,True,div.kb-section,Auto Queue ON OFF,228,1242,319,36,1278,547,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1440,False,True,True,div.kb-section,Evaluation Bar ON OFF,228,1341,319,36,1377,547,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1440,False,True,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,228,1385,319,36,1421,547,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1440,False,True,True,div.kb-section,Recent Form ON OFF,228,1421,319,36,1457,547,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1440,False,True,True,div,Theme,228,1466,319,36,1502,547,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1440,False,True,True,div.tc-analysis-heading,Analysis Engine Ready,585,1170,319,16,1186,904,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1440,False,True,True,div.kb-section,Auto Rating ON OFF,585,1266,319,36,1302,904,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1440,False,True,True,div.kb-strength-head,Strength Level Current 3200,585,1302,319,17,1319,904,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1440,False,True,True,div.kb-section,Smart Pacing ON OFF,585,1386,319,36,1422,904,1404,0px,0px,,,0px,0px,0px,0px,center,1403.5,-0.5,1404,0
+console,1920,False,True,True,div.kb-section,Bot ON OFF,468,1162,319,36,1198,787,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1920,False,True,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,468,1206,319,36,1242,787,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1920,False,True,True,div.kb-section,Auto Queue ON OFF,468,1242,319,36,1278,787,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1920,False,True,True,div.kb-section,Evaluation Bar ON OFF,468,1341,319,36,1377,787,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1920,False,True,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,468,1385,319,36,1421,787,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1920,False,True,True,div.kb-section,Recent Form ON OFF,468,1421,319,36,1457,787,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1920,False,True,True,div,Theme,468,1466,319,36,1502,787,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1920,False,True,True,div.tc-analysis-heading,Analysis Engine Ready,825,1170,319,16,1186,1144,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1920,False,True,True,div.kb-section,Auto Rating ON OFF,825,1266,319,36,1302,1144,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1920,False,True,True,div.kb-strength-head,Strength Level Current 3200,825,1302,319,17,1319,1144,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1920,False,True,True,div.kb-section,Smart Pacing ON OFF,825,1386,319,36,1422,1144,1404,0px,0px,,,0px,0px,0px,0px,center,1403.5,-0.5,1404,0
+console,1033,False,True,True,div.kb-section,Bot ON OFF,25,1162,983,36,1198,1008,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1033,False,True,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,25,1198,983,36,1234,1008,1216,0px,0px,1198,,0px,0px,0px,0px,center,1215.5,-0.5,1216,0
+console,1033,False,True,True,div.kb-section,Auto Queue ON OFF,25,1234,983,36,1270,1008,1252,0px,0px,1234,,0px,0px,0px,0px,center,1251.5,-0.5,1252,0
+console,1033,False,True,True,div.kb-section,Evaluation Bar ON OFF,25,1333,983,36,1369,1008,1351,0px,0px,,,0px,0px,0px,0px,center,1350.5,-0.5,1351,0
+console,1033,False,True,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,25,1369,983,36,1405,1008,1387,1px,0px,1369,,0px,0px,0px,0px,center,1387,0,1387.5,0.5
+console,1033,False,True,True,div.kb-section,Recent Form ON OFF,25,1405,983,36,1441,1008,1423,1px,0px,1405,,0px,0px,0px,0px,center,1423,0,1423.5,0.5
+console,1033,False,True,True,div,Theme,25,1442,983,36,1478,1008,1460,0px,0px,,,0px,0px,0px,0px,center,1459.5,-0.5,1460,0
+console,1033,False,True,True,div.tc-analysis-heading,Analysis Engine Ready,25,1549,983,16,1565,1008,1557,0px,0px,,,0px,0px,0px,0px,center,1557,0,,
+console,1033,False,True,True,div.kb-section,Auto Rating ON OFF,25,1645,983,36,1681,1008,1663,0px,0px,,,0px,0px,0px,0px,center,1662.5,-0.5,1663,0
+console,1033,False,True,True,div.kb-strength-head,Strength Level Current 3200,25,1681,983,17,1698,1008,1689.5,0px,0px,,,0px,8px,0px,0px,baseline,1688.5,-1,,
+console,1033,False,True,True,div.kb-section,Smart Pacing ON OFF,25,1765,983,36,1801,1008,1783,0px,0px,,,0px,0px,0px,0px,center,1782.5,-0.5,1783,0
+console,800,False,True,True,div.kb-section,Bot ON OFF,25,1162,750,36,1198,775,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,800,False,True,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,25,1198,750,36,1234,775,1216,0px,0px,1198,,0px,0px,0px,0px,center,1215.5,-0.5,1216,0
+console,800,False,True,True,div.kb-section,Auto Queue ON OFF,25,1234,750,36,1270,775,1252,0px,0px,1234,,0px,0px,0px,0px,center,1251.5,-0.5,1252,0
+console,800,False,True,True,div.kb-section,Evaluation Bar ON OFF,25,1333,750,36,1369,775,1351,0px,0px,,,0px,0px,0px,0px,center,1350.5,-0.5,1351,0
+console,800,False,True,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,25,1369,750,36,1405,775,1387,1px,0px,1369,,0px,0px,0px,0px,center,1387,0,1387.5,0.5
+console,800,False,True,True,div.kb-section,Recent Form ON OFF,25,1405,750,36,1441,775,1423,1px,0px,1405,,0px,0px,0px,0px,center,1423,0,1423.5,0.5
+console,800,False,True,True,div,Theme,25,1442,750,36,1478,775,1460,0px,0px,,,0px,0px,0px,0px,center,1459.5,-0.5,1460,0
+console,800,False,True,True,div.tc-analysis-heading,Analysis Engine Ready,25,1549,750,16,1565,775,1557,0px,0px,,,0px,0px,0px,0px,center,1557,0,,
+console,800,False,True,True,div.kb-section,Auto Rating ON OFF,25,1645,750,36,1681,775,1663,0px,0px,,,0px,0px,0px,0px,center,1662.5,-0.5,1663,0
+console,800,False,True,True,div.kb-strength-head,Strength Level Current 3200,25,1681,750,17,1698,775,1689.5,0px,0px,,,0px,8px,0px,0px,baseline,1688.5,-1,,
+console,800,False,True,True,div.kb-section,Smart Pacing ON OFF,25,1765,750,36,1801,775,1783,0px,0px,,,0px,0px,0px,0px,center,1782.5,-0.5,1783,0
+console,1086,True,False,True,div.kb-section,Bot ON OFF,51,1162,319,36,1198,370,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1086,True,False,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,51,1206,319,36,1242,370,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1086,True,False,True,div.kb-section,Auto Queue ON OFF,51,1242,319,36,1278,370,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1086,True,False,True,div.kb-section,Evaluation Bar ON OFF,51,1341,319,36,1377,370,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1086,True,False,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,51,1385,319,36,1421,370,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1086,True,False,True,div.kb-section,Recent Form ON OFF,51,1421,319,36,1457,370,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1086,True,False,True,div,Theme,51,1466,319,36,1502,370,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1086,True,False,True,div.tc-analysis-heading,Analysis Engine Ready,408,1170,319,16,1186,727,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1086,True,False,True,div.kb-section,Auto Rating ON OFF,408,1266,319,36,1302,727,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1086,True,False,True,div.kb-strength-head,Strength Level Current 3200,408,1302,319,17,1319,727,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1086,True,False,True,div.kb-timing-heading,Move Timing 0.50–1.00 s,408,1386,319,17,1403,727,1394.5,0px,0px,,,0px,0px,0px,0px,baseline,1393.5,-1,,
+console,1086,True,False,True,div.kb-section,Smart Pacing ON OFF,408,1466,319,36,1502,727,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1280,True,False,True,div.kb-section,Bot ON OFF,148,1162,319,36,1198,467,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1280,True,False,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,148,1206,319,36,1242,467,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1280,True,False,True,div.kb-section,Auto Queue ON OFF,148,1242,319,36,1278,467,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1280,True,False,True,div.kb-section,Evaluation Bar ON OFF,148,1341,319,36,1377,467,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1280,True,False,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,148,1385,319,36,1421,467,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1280,True,False,True,div.kb-section,Recent Form ON OFF,148,1421,319,36,1457,467,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1280,True,False,True,div,Theme,148,1466,319,36,1502,467,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1280,True,False,True,div.tc-analysis-heading,Analysis Engine Ready,505,1170,319,16,1186,824,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1280,True,False,True,div.kb-section,Auto Rating ON OFF,505,1266,319,36,1302,824,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1280,True,False,True,div.kb-strength-head,Strength Level Current 3200,505,1302,319,17,1319,824,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1280,True,False,True,div.kb-timing-heading,Move Timing 0.50–1.00 s,505,1386,319,17,1403,824,1394.5,0px,0px,,,0px,0px,0px,0px,baseline,1393.5,-1,,
+console,1280,True,False,True,div.kb-section,Smart Pacing ON OFF,505,1466,319,36,1502,824,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1440,True,False,True,div.kb-section,Bot ON OFF,228,1162,319,36,1198,547,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1440,True,False,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,228,1206,319,36,1242,547,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1440,True,False,True,div.kb-section,Auto Queue ON OFF,228,1242,319,36,1278,547,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1440,True,False,True,div.kb-section,Evaluation Bar ON OFF,228,1341,319,36,1377,547,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1440,True,False,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,228,1385,319,36,1421,547,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1440,True,False,True,div.kb-section,Recent Form ON OFF,228,1421,319,36,1457,547,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1440,True,False,True,div,Theme,228,1466,319,36,1502,547,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1440,True,False,True,div.tc-analysis-heading,Analysis Engine Ready,585,1170,319,16,1186,904,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1440,True,False,True,div.kb-section,Auto Rating ON OFF,585,1266,319,36,1302,904,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1440,True,False,True,div.kb-strength-head,Strength Level Current 3200,585,1302,319,17,1319,904,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1440,True,False,True,div.kb-timing-heading,Move Timing 0.50–1.00 s,585,1386,319,17,1403,904,1394.5,0px,0px,,,0px,0px,0px,0px,baseline,1393.5,-1,,
+console,1440,True,False,True,div.kb-section,Smart Pacing ON OFF,585,1466,319,36,1502,904,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1920,True,False,True,div.kb-section,Bot ON OFF,468,1162,319,36,1198,787,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1920,True,False,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,468,1206,319,36,1242,787,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1920,True,False,True,div.kb-section,Auto Queue ON OFF,468,1242,319,36,1278,787,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1920,True,False,True,div.kb-section,Evaluation Bar ON OFF,468,1341,319,36,1377,787,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1920,True,False,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,468,1385,319,36,1421,787,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1920,True,False,True,div.kb-section,Recent Form ON OFF,468,1421,319,36,1457,787,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1920,True,False,True,div,Theme,468,1466,319,36,1502,787,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1920,True,False,True,div.tc-analysis-heading,Analysis Engine Ready,825,1170,319,16,1186,1144,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1920,True,False,True,div.kb-section,Auto Rating ON OFF,825,1266,319,36,1302,1144,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1920,True,False,True,div.kb-strength-head,Strength Level Current 3200,825,1302,319,17,1319,1144,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1920,True,False,True,div.kb-timing-heading,Move Timing 0.50–1.00 s,825,1386,319,17,1403,1144,1394.5,0px,0px,,,0px,0px,0px,0px,baseline,1393.5,-1,,
+console,1920,True,False,True,div.kb-section,Smart Pacing ON OFF,825,1466,319,36,1502,1144,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1033,True,False,True,div.kb-section,Bot ON OFF,25,1162,983,36,1198,1008,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1033,True,False,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,25,1198,983,36,1234,1008,1216,0px,0px,1198,,0px,0px,0px,0px,center,1215.5,-0.5,1216,0
+console,1033,True,False,True,div.kb-section,Auto Queue ON OFF,25,1234,983,36,1270,1008,1252,0px,0px,1234,,0px,0px,0px,0px,center,1251.5,-0.5,1252,0
+console,1033,True,False,True,div.kb-section,Evaluation Bar ON OFF,25,1333,983,36,1369,1008,1351,0px,0px,,,0px,0px,0px,0px,center,1350.5,-0.5,1351,0
+console,1033,True,False,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,25,1369,983,36,1405,1008,1387,1px,0px,1369,,0px,0px,0px,0px,center,1387,0,1387.5,0.5
+console,1033,True,False,True,div.kb-section,Recent Form ON OFF,25,1405,983,36,1441,1008,1423,1px,0px,1405,,0px,0px,0px,0px,center,1423,0,1423.5,0.5
+console,1033,True,False,True,div,Theme,25,1442,983,36,1478,1008,1460,0px,0px,,,0px,0px,0px,0px,center,1459.5,-0.5,1460,0
+console,1033,True,False,True,div.tc-analysis-heading,Analysis Engine Ready,25,1549,983,16,1565,1008,1557,0px,0px,,,0px,0px,0px,0px,center,1557,0,,
+console,1033,True,False,True,div.kb-section,Auto Rating ON OFF,25,1645,983,36,1681,1008,1663,0px,0px,,,0px,0px,0px,0px,center,1662.5,-0.5,1663,0
+console,1033,True,False,True,div.kb-strength-head,Strength Level Current 3200,25,1681,983,17,1698,1008,1689.5,0px,0px,,,0px,8px,0px,0px,baseline,1688.5,-1,,
+console,1033,True,False,True,div.kb-timing-heading,Move Timing 0.50–1.00 s,25,1765,983,17,1782,1008,1773.5,0px,0px,,,0px,0px,0px,0px,baseline,1772.5,-1,,
+console,1033,True,False,True,div.kb-section,Smart Pacing ON OFF,25,1845,983,36,1881,1008,1863,0px,0px,,,0px,0px,0px,0px,center,1862.5,-0.5,1863,0
+console,800,True,False,True,div.kb-section,Bot ON OFF,25,1162,750,36,1198,775,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,800,True,False,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,25,1198,750,36,1234,775,1216,0px,0px,1198,,0px,0px,0px,0px,center,1215.5,-0.5,1216,0
+console,800,True,False,True,div.kb-section,Auto Queue ON OFF,25,1234,750,36,1270,775,1252,0px,0px,1234,,0px,0px,0px,0px,center,1251.5,-0.5,1252,0
+console,800,True,False,True,div.kb-section,Evaluation Bar ON OFF,25,1333,750,36,1369,775,1351,0px,0px,,,0px,0px,0px,0px,center,1350.5,-0.5,1351,0
+console,800,True,False,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,25,1369,750,36,1405,775,1387,1px,0px,1369,,0px,0px,0px,0px,center,1387,0,1387.5,0.5
+console,800,True,False,True,div.kb-section,Recent Form ON OFF,25,1405,750,36,1441,775,1423,1px,0px,1405,,0px,0px,0px,0px,center,1423,0,1423.5,0.5
+console,800,True,False,True,div,Theme,25,1442,750,36,1478,775,1460,0px,0px,,,0px,0px,0px,0px,center,1459.5,-0.5,1460,0
+console,800,True,False,True,div.tc-analysis-heading,Analysis Engine Ready,25,1549,750,16,1565,775,1557,0px,0px,,,0px,0px,0px,0px,center,1557,0,,
+console,800,True,False,True,div.kb-section,Auto Rating ON OFF,25,1645,750,36,1681,775,1663,0px,0px,,,0px,0px,0px,0px,center,1662.5,-0.5,1663,0
+console,800,True,False,True,div.kb-strength-head,Strength Level Current 3200,25,1681,750,17,1698,775,1689.5,0px,0px,,,0px,8px,0px,0px,baseline,1688.5,-1,,
+console,800,True,False,True,div.kb-timing-heading,Move Timing 0.50–1.00 s,25,1765,750,17,1782,775,1773.5,0px,0px,,,0px,0px,0px,0px,baseline,1772.5,-1,,
+console,800,True,False,True,div.kb-section,Smart Pacing ON OFF,25,1845,750,36,1881,775,1863,0px,0px,,,0px,0px,0px,0px,center,1862.5,-0.5,1863,0
+console,1086,True,True,True,div.kb-section,Bot ON OFF,51,1162,319,36,1198,370,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1086,True,True,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,51,1206,319,36,1242,370,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1086,True,True,True,div.kb-section,Auto Queue ON OFF,51,1242,319,36,1278,370,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1086,True,True,True,div.kb-section,Evaluation Bar ON OFF,51,1341,319,36,1377,370,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1086,True,True,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,51,1385,319,36,1421,370,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1086,True,True,True,div.kb-section,Recent Form ON OFF,51,1421,319,36,1457,370,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1086,True,True,True,div,Theme,51,1466,319,36,1502,370,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1086,True,True,True,div.tc-analysis-heading,Analysis Engine Ready,408,1170,319,16,1186,727,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1086,True,True,True,div.kb-section,Auto Rating ON OFF,408,1266,319,36,1302,727,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1086,True,True,True,div.kb-strength-head,Strength Level Current 3200,408,1302,319,17,1319,727,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1086,True,True,True,div.kb-section,Smart Pacing ON OFF,408,1386,319,36,1422,727,1404,0px,0px,,,0px,0px,0px,0px,center,1403.5,-0.5,1404,0
+console,1280,True,True,True,div.kb-section,Bot ON OFF,148,1162,319,36,1198,467,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1280,True,True,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,148,1206,319,36,1242,467,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1280,True,True,True,div.kb-section,Auto Queue ON OFF,148,1242,319,36,1278,467,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1280,True,True,True,div.kb-section,Evaluation Bar ON OFF,148,1341,319,36,1377,467,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1280,True,True,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,148,1385,319,36,1421,467,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1280,True,True,True,div.kb-section,Recent Form ON OFF,148,1421,319,36,1457,467,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1280,True,True,True,div,Theme,148,1466,319,36,1502,467,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1280,True,True,True,div.tc-analysis-heading,Analysis Engine Ready,505,1170,319,16,1186,824,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1280,True,True,True,div.kb-section,Auto Rating ON OFF,505,1266,319,36,1302,824,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1280,True,True,True,div.kb-strength-head,Strength Level Current 3200,505,1302,319,17,1319,824,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1280,True,True,True,div.kb-section,Smart Pacing ON OFF,505,1386,319,36,1422,824,1404,0px,0px,,,0px,0px,0px,0px,center,1403.5,-0.5,1404,0
+console,1440,True,True,True,div.kb-section,Bot ON OFF,228,1162,319,36,1198,547,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1440,True,True,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,228,1206,319,36,1242,547,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1440,True,True,True,div.kb-section,Auto Queue ON OFF,228,1242,319,36,1278,547,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1440,True,True,True,div.kb-section,Evaluation Bar ON OFF,228,1341,319,36,1377,547,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1440,True,True,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,228,1385,319,36,1421,547,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1440,True,True,True,div.kb-section,Recent Form ON OFF,228,1421,319,36,1457,547,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1440,True,True,True,div,Theme,228,1466,319,36,1502,547,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1440,True,True,True,div.tc-analysis-heading,Analysis Engine Ready,585,1170,319,16,1186,904,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1440,True,True,True,div.kb-section,Auto Rating ON OFF,585,1266,319,36,1302,904,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1440,True,True,True,div.kb-strength-head,Strength Level Current 3200,585,1302,319,17,1319,904,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1440,True,True,True,div.kb-section,Smart Pacing ON OFF,585,1386,319,36,1422,904,1404,0px,0px,,,0px,0px,0px,0px,center,1403.5,-0.5,1404,0
+console,1920,True,True,True,div.kb-section,Bot ON OFF,468,1162,319,36,1198,787,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1920,True,True,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,468,1206,319,36,1242,787,1224,0px,0px,1206,,8px,0px,0px,0px,center,1223.5,-0.5,1224,0
+console,1920,True,True,True,div.kb-section,Auto Queue ON OFF,468,1242,319,36,1278,787,1260,0px,0px,1242,,0px,0px,0px,0px,center,1259.5,-0.5,1260,0
+console,1920,True,True,True,div.kb-section,Evaluation Bar ON OFF,468,1341,319,36,1377,787,1359,0px,0px,,,0px,0px,0px,0px,center,1358.5,-0.5,1359,0
+console,1920,True,True,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,468,1385,319,36,1421,787,1403,1px,0px,1385,,8px,0px,0px,0px,center,1403,0,1403.5,0.5
+console,1920,True,True,True,div.kb-section,Recent Form ON OFF,468,1421,319,36,1457,787,1439,1px,0px,1421,,0px,0px,0px,0px,center,1439,0,1439.5,0.5
+console,1920,True,True,True,div,Theme,468,1466,319,36,1502,787,1484,0px,0px,,,0px,0px,0px,0px,center,1483.5,-0.5,1484,0
+console,1920,True,True,True,div.tc-analysis-heading,Analysis Engine Ready,825,1170,319,16,1186,1144,1178,0px,0px,,,0px,0px,0px,0px,center,1178,0,,
+console,1920,True,True,True,div.kb-section,Auto Rating ON OFF,825,1266,319,36,1302,1144,1284,0px,0px,,,0px,0px,0px,0px,center,1283.5,-0.5,1284,0
+console,1920,True,True,True,div.kb-strength-head,Strength Level Current 3200,825,1302,319,17,1319,1144,1310.5,0px,0px,,,0px,8px,0px,0px,baseline,1309.5,-1,,
+console,1920,True,True,True,div.kb-section,Smart Pacing ON OFF,825,1386,319,36,1422,1144,1404,0px,0px,,,0px,0px,0px,0px,center,1403.5,-0.5,1404,0
+console,1033,True,True,True,div.kb-section,Bot ON OFF,25,1162,983,36,1198,1008,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,1033,True,True,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,25,1198,983,36,1234,1008,1216,0px,0px,1198,,0px,0px,0px,0px,center,1215.5,-0.5,1216,0
+console,1033,True,True,True,div.kb-section,Auto Queue ON OFF,25,1234,983,36,1270,1008,1252,0px,0px,1234,,0px,0px,0px,0px,center,1251.5,-0.5,1252,0
+console,1033,True,True,True,div.kb-section,Evaluation Bar ON OFF,25,1333,983,36,1369,1008,1351,0px,0px,,,0px,0px,0px,0px,center,1350.5,-0.5,1351,0
+console,1033,True,True,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,25,1369,983,36,1405,1008,1387,1px,0px,1369,,0px,0px,0px,0px,center,1387,0,1387.5,0.5
+console,1033,True,True,True,div.kb-section,Recent Form ON OFF,25,1405,983,36,1441,1008,1423,1px,0px,1405,,0px,0px,0px,0px,center,1423,0,1423.5,0.5
+console,1033,True,True,True,div,Theme,25,1442,983,36,1478,1008,1460,0px,0px,,,0px,0px,0px,0px,center,1459.5,-0.5,1460,0
+console,1033,True,True,True,div.tc-analysis-heading,Analysis Engine Ready,25,1549,983,16,1565,1008,1557,0px,0px,,,0px,0px,0px,0px,center,1557,0,,
+console,1033,True,True,True,div.kb-section,Auto Rating ON OFF,25,1645,983,36,1681,1008,1663,0px,0px,,,0px,0px,0px,0px,center,1662.5,-0.5,1663,0
+console,1033,True,True,True,div.kb-strength-head,Strength Level Current 3200,25,1681,983,17,1698,1008,1689.5,0px,0px,,,0px,8px,0px,0px,baseline,1688.5,-1,,
+console,1033,True,True,True,div.kb-section,Smart Pacing ON OFF,25,1765,983,36,1801,1008,1783,0px,0px,,,0px,0px,0px,0px,center,1782.5,-0.5,1783,0
+console,800,True,True,True,div.kb-section,Bot ON OFF,25,1162,750,36,1198,775,1180,0px,0px,,,0px,0px,0px,0px,center,1179.5,-0.5,1180,0
+console,800,True,True,True,div.kb-section.kb-core-spacing,Auto Moves ON OFF,25,1198,750,36,1234,775,1216,0px,0px,1198,,0px,0px,0px,0px,center,1215.5,-0.5,1216,0
+console,800,True,True,True,div.kb-section,Auto Queue ON OFF,25,1234,750,36,1270,775,1252,0px,0px,1234,,0px,0px,0px,0px,center,1251.5,-0.5,1252,0
+console,800,True,True,True,div.kb-section,Evaluation Bar ON OFF,25,1333,750,36,1369,775,1351,0px,0px,,,0px,0px,0px,0px,center,1350.5,-0.5,1351,0
+console,800,True,True,True,div.kb-section.kb-visuals-spacing,Banner ON OFF,25,1369,750,36,1405,775,1387,1px,0px,1369,,0px,0px,0px,0px,center,1387,0,1387.5,0.5
+console,800,True,True,True,div.kb-section,Recent Form ON OFF,25,1405,750,36,1441,775,1423,1px,0px,1405,,0px,0px,0px,0px,center,1423,0,1423.5,0.5
+console,800,True,True,True,div,Theme,25,1442,750,36,1478,775,1460,0px,0px,,,0px,0px,0px,0px,center,1459.5,-0.5,1460,0
+console,800,True,True,True,div.tc-analysis-heading,Analysis Engine Ready,25,1549,750,16,1565,775,1557,0px,0px,,,0px,0px,0px,0px,center,1557,0,,
+console,800,True,True,True,div.kb-section,Auto Rating ON OFF,25,1645,750,36,1681,775,1663,0px,0px,,,0px,0px,0px,0px,center,1662.5,-0.5,1663,0
+console,800,True,True,True,div.kb-strength-head,Strength Level Current 3200,25,1681,750,17,1698,775,1689.5,0px,0px,,,0px,8px,0px,0px,baseline,1688.5,-1,,
+console,800,True,True,True,div.kb-section,Smart Pacing ON OFF,25,1765,750,36,1801,775,1783,0px,0px,,,0px,0px,0px,0px,center,1782.5,-0.5,1783,0
+config,1440,False,False,,div.control-row,Bot,289.5,234,404,36,270,693.5,252,0px,0px,,,0px,0px,0px,0px,center,252,0,252,0
+config,1440,False,False,,div.control-row,Auto Moves,289.5,270,404,36,306,693.5,288,1px,0px,270,,0px,0px,0px,0px,center,288.5,0.5,288.5,0.5
+config,1440,False,False,,div.control-row,Auto Queue,289.5,306,404,36,342,693.5,324,1px,0px,306,,0px,0px,0px,0px,center,324.5,0.5,324.5,0.5
+config,1440,False,False,,div.field-heading,Analysis Engine Ready,731.5,238,404,17,255,1135.5,246.5,0px,0px,,,0px,0px,0px,0px,baseline,246.5,0,,
+config,1440,False,False,,div.control-row,Auto Rating,731.5,382,404,36,418,1135.5,400,0px,0px,,,0px,0px,0px,0px,center,400,0,400,0
+config,1440,False,False,,div.field-heading,Strength Level 3200,731.5,431,404,17,448,1135.5,439.5,0px,0px,,,0px,0px,0px,0px,baseline,439.5,0,,
+config,1440,False,False,,div.field-heading,Move Timing 0.50–1.00 s,731.5,529,404,17,546,1135.5,537.5,0px,0px,,,0px,0px,0px,0px,baseline,537.5,0,,
+config,1440,False,False,,div.delay-fields,Minimum delay s – Maximum delay s,731.5,558,404,32,590,1135.5,574,0px,0px,,,0px,0px,0px,0px,center,582,8,,
+config,1440,False,False,,div.segmented,Random Immediate,731.5,598,404,32,630,1135.5,614,1px,1px,598,629,0px,0px,0px,0px,normal,614,0,614,0
+config,1440,False,False,,div.control-row,Smart Pacing,731.5,675,404,36,711,1135.5,693,0px,0px,,,0px,0px,0px,0px,center,693,0,693,0
+config,1440,False,False,,div.control-row,Evaluation Bar,289.5,420.328125,404,36,456.328125,693.5,438.328125,0px,0px,,,0px,0px,0px,0px,center,438.328125,0,438.328125,0
+config,1440,False,False,,div.control-row,Banner Not enough room (96 px minimum),289.5,456.328125,404,36,492.328125,693.5,474.328125,1px,0px,456.328125,,0px,0px,0px,0px,center,466.828125,-7.5,474.828125,0.5
+config,1440,False,False,,div.control-row,Recent Form,289.5,492.328125,404,36,528.328125,693.5,510.328125,1px,0px,492.328125,,0px,0px,0px,0px,center,510.828125,0.5,510.828125,0.5
+config,1440,False,False,,div.control-row,Theme,289.5,528.328125,404,36,564.328125,693.5,546.328125,0px,0px,,,0px,0px,0px,0px,center,546.328125,0,546.328125,0
+config,1440,False,False,,div.control-row,Clean View,289.5,642.65625,404,36,678.65625,693.5,660.65625,0px,0px,,,0px,0px,0px,0px,center,660.65625,0,660.65625,0
+config,1440,False,False,,div,Status Idle,289.5,937,411,15,952,700.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1440,False,False,,div,Time Left 00:00:00,724.5,937,411,15,952,1135.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1440,False,False,,div,Score 0 W | 0 D | 0 L,289.5,960,411,15,975,700.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1440,False,False,,div,Win Rate —,724.5,960,411,15,975,1135.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1280,False,False,,div.control-row,Bot,209.5,234,404,36,270,613.5,252,0px,0px,,,0px,0px,0px,0px,center,252,0,252,0
+config,1280,False,False,,div.control-row,Auto Moves,209.5,270,404,36,306,613.5,288,1px,0px,270,,0px,0px,0px,0px,center,288.5,0.5,288.5,0.5
+config,1280,False,False,,div.control-row,Auto Queue,209.5,306,404,36,342,613.5,324,1px,0px,306,,0px,0px,0px,0px,center,324.5,0.5,324.5,0.5
+config,1280,False,False,,div.field-heading,Analysis Engine Ready,651.5,238,404,17,255,1055.5,246.5,0px,0px,,,0px,0px,0px,0px,baseline,246.5,0,,
+config,1280,False,False,,div.control-row,Auto Rating,651.5,382,404,36,418,1055.5,400,0px,0px,,,0px,0px,0px,0px,center,400,0,400,0
+config,1280,False,False,,div.field-heading,Strength Level 3200,651.5,431,404,17,448,1055.5,439.5,0px,0px,,,0px,0px,0px,0px,baseline,439.5,0,,
+config,1280,False,False,,div.field-heading,Move Timing 0.50–1.00 s,651.5,529,404,17,546,1055.5,537.5,0px,0px,,,0px,0px,0px,0px,baseline,537.5,0,,
+config,1280,False,False,,div.delay-fields,Minimum delay s – Maximum delay s,651.5,558,404,32,590,1055.5,574,0px,0px,,,0px,0px,0px,0px,center,582,8,,
+config,1280,False,False,,div.segmented,Random Immediate,651.5,598,404,32,630,1055.5,614,1px,1px,598,629,0px,0px,0px,0px,normal,614,0,614,0
+config,1280,False,False,,div.control-row,Smart Pacing,651.5,675,404,36,711,1055.5,693,0px,0px,,,0px,0px,0px,0px,center,693,0,693,0
+config,1280,False,False,,div.control-row,Evaluation Bar,209.5,420.328125,404,36,456.328125,613.5,438.328125,0px,0px,,,0px,0px,0px,0px,center,438.328125,0,438.328125,0
+config,1280,False,False,,div.control-row,Banner Not enough room (96 px minimum),209.5,456.328125,404,36,492.328125,613.5,474.328125,1px,0px,456.328125,,0px,0px,0px,0px,center,466.828125,-7.5,474.828125,0.5
+config,1280,False,False,,div.control-row,Recent Form,209.5,492.328125,404,36,528.328125,613.5,510.328125,1px,0px,492.328125,,0px,0px,0px,0px,center,510.828125,0.5,510.828125,0.5
+config,1280,False,False,,div.control-row,Theme,209.5,528.328125,404,36,564.328125,613.5,546.328125,0px,0px,,,0px,0px,0px,0px,center,546.328125,0,546.328125,0
+config,1280,False,False,,div.control-row,Clean View,209.5,642.65625,404,36,678.65625,613.5,660.65625,0px,0px,,,0px,0px,0px,0px,center,660.65625,0,660.65625,0
+config,1280,False,False,,div,Status Idle,209.5,937,411,15,952,620.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1280,False,False,,div,Time Left 00:00:00,644.5,937,411,15,952,1055.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1280,False,False,,div,Score 0 W | 0 D | 0 L,209.5,960,411,15,975,620.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1280,False,False,,div,Win Rate —,644.5,960,411,15,975,1055.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1024,False,False,,div.control-row,Bot,81.5,234,404,36,270,485.5,252,0px,0px,,,0px,0px,0px,0px,center,252,0,252,0
+config,1024,False,False,,div.control-row,Auto Moves,81.5,270,404,36,306,485.5,288,1px,0px,270,,0px,0px,0px,0px,center,288.5,0.5,288.5,0.5
+config,1024,False,False,,div.control-row,Auto Queue,81.5,306,404,36,342,485.5,324,1px,0px,306,,0px,0px,0px,0px,center,324.5,0.5,324.5,0.5
+config,1024,False,False,,div.field-heading,Analysis Engine Ready,523.5,238,404,17,255,927.5,246.5,0px,0px,,,0px,0px,0px,0px,baseline,246.5,0,,
+config,1024,False,False,,div.control-row,Auto Rating,523.5,382,404,36,418,927.5,400,0px,0px,,,0px,0px,0px,0px,center,400,0,400,0
+config,1024,False,False,,div.field-heading,Strength Level 3200,523.5,431,404,17,448,927.5,439.5,0px,0px,,,0px,0px,0px,0px,baseline,439.5,0,,
+config,1024,False,False,,div.field-heading,Move Timing 0.50–1.00 s,523.5,529,404,17,546,927.5,537.5,0px,0px,,,0px,0px,0px,0px,baseline,537.5,0,,
+config,1024,False,False,,div.delay-fields,Minimum delay s – Maximum delay s,523.5,558,404,32,590,927.5,574,0px,0px,,,0px,0px,0px,0px,center,582,8,,
+config,1024,False,False,,div.segmented,Random Immediate,523.5,598,404,32,630,927.5,614,1px,1px,598,629,0px,0px,0px,0px,normal,614,0,614,0
+config,1024,False,False,,div.control-row,Smart Pacing,523.5,675,404,36,711,927.5,693,0px,0px,,,0px,0px,0px,0px,center,693,0,693,0
+config,1024,False,False,,div.control-row,Evaluation Bar,81.5,420.328125,404,36,456.328125,485.5,438.328125,0px,0px,,,0px,0px,0px,0px,center,438.328125,0,438.328125,0
+config,1024,False,False,,div.control-row,Banner Not enough room (96 px minimum),81.5,456.328125,404,36,492.328125,485.5,474.328125,1px,0px,456.328125,,0px,0px,0px,0px,center,466.828125,-7.5,474.828125,0.5
+config,1024,False,False,,div.control-row,Recent Form,81.5,492.328125,404,36,528.328125,485.5,510.328125,1px,0px,492.328125,,0px,0px,0px,0px,center,510.828125,0.5,510.828125,0.5
+config,1024,False,False,,div.control-row,Theme,81.5,528.328125,404,36,564.328125,485.5,546.328125,0px,0px,,,0px,0px,0px,0px,center,546.328125,0,546.328125,0
+config,1024,False,False,,div.control-row,Clean View,81.5,642.65625,404,36,678.65625,485.5,660.65625,0px,0px,,,0px,0px,0px,0px,center,660.65625,0,660.65625,0
+config,1024,False,False,,div,Status Idle,81.5,937,411,15,952,492.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1024,False,False,,div,Time Left 00:00:00,516.5,937,411,15,952,927.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1024,False,False,,div,Score 0 W | 0 D | 0 L,81.5,960,411,15,975,492.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1024,False,False,,div,Win Rate —,516.5,960,411,15,975,927.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,768,False,False,,div.control-row,Bot,37,234,320.5,36,270,357.5,252,0px,0px,,,0px,0px,0px,0px,center,252,0,252,0
+config,768,False,False,,div.control-row,Auto Moves,37,270,320.5,36,306,357.5,288,1px,0px,270,,0px,0px,0px,0px,center,288.5,0.5,288.5,0.5
+config,768,False,False,,div.control-row,Auto Queue,37,306,320.5,36,342,357.5,324,1px,0px,306,,0px,0px,0px,0px,center,324.5,0.5,324.5,0.5
+config,768,False,False,,div.field-heading,Analysis Engine Ready,395.5,238,320.5,17,255,716,246.5,0px,0px,,,0px,0px,0px,0px,baseline,246.5,0,,
+config,768,False,False,,div.control-row,Auto Rating,395.5,382,320.5,36,418,716,400,0px,0px,,,0px,0px,0px,0px,center,400,0,400,0
+config,768,False,False,,div.field-heading,Strength Level 3200,395.5,431,320.5,17,448,716,439.5,0px,0px,,,0px,0px,0px,0px,baseline,439.5,0,,
+config,768,False,False,,div.field-heading,Move Timing 0.50–1.00 s,395.5,529,320.5,17,546,716,537.5,0px,0px,,,0px,0px,0px,0px,baseline,537.5,0,,
+config,768,False,False,,div.delay-fields,Minimum delay s – Maximum delay s,395.5,558,320.5,32,590,716,574,0px,0px,,,0px,0px,0px,0px,center,582,8,,
+config,768,False,False,,div.segmented,Random Immediate,395.5,598,320.5,32,630,716,614,1px,1px,598,629,0px,0px,0px,0px,normal,614,0,614,0
+config,768,False,False,,div.control-row,Smart Pacing,395.5,675,320.5,36,711,716,693,0px,0px,,,0px,0px,0px,0px,center,693,0,693,0
+config,768,False,False,,div.control-row,Evaluation Bar,37,414.65625,320.5,36,450.65625,357.5,432.65625,0px,0px,,,0px,0px,0px,0px,center,432.65625,0,432.65625,0
+config,768,False,False,,div.control-row,Banner Not enough room (96 px minimum),37,450.65625,320.5,36,486.65625,357.5,468.65625,1px,0px,450.65625,,0px,0px,0px,0px,center,461.15625,-7.5,469.15625,0.5
+config,768,False,False,,div.control-row,Recent Form,37,486.65625,320.5,36,522.65625,357.5,504.65625,1px,0px,486.65625,,0px,0px,0px,0px,center,505.15625,0.5,505.15625,0.5
+config,768,False,False,,div.control-row,Theme,37,522.65625,320.5,36,558.65625,357.5,540.65625,0px,0px,,,0px,0px,0px,0px,center,540.65625,0,540.65625,0
+config,768,False,False,,div.control-row,Clean View,37,631.328125,320.5,36,667.328125,357.5,649.328125,0px,0px,,,0px,0px,0px,0px,center,649.328125,0,649.328125,0
+config,768,False,False,,div,Status Idle,37,937,327.5,15,952,364.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,768,False,False,,div,Time Left 00:00:00,388.5,937,327.5,15,952,716,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,768,False,False,,div,Score 0 W | 0 D | 0 L,37,960,327.5,15,975,364.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,768,False,False,,div,Win Rate —,388.5,960,327.5,15,975,716,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,390,False,False,,div.control-row,Bot,25,238,325,36,274,350,256,0px,0px,,,0px,0px,0px,0px,center,256,0,256,0
+config,390,False,False,,div.control-row,Auto Moves,25,274,325,36,310,350,292,1px,0px,274,,0px,0px,0px,0px,center,292.5,0.5,292.5,0.5
+config,390,False,False,,div.control-row,Auto Queue,25,310,325,36,346,350,328,1px,0px,310,,0px,0px,0px,0px,center,328.5,0.5,328.5,0.5
+config,390,False,False,,div.field-heading,Analysis Engine Ready,25,417,325,17,434,350,425.5,0px,0px,,,0px,0px,0px,0px,baseline,425.5,0,,
+config,390,False,False,,div.control-row,Auto Rating,25,561,325,36,597,350,579,0px,0px,,,0px,0px,0px,0px,center,579,0,579,0
+config,390,False,False,,div.field-heading,Strength Level 3200,25,610,325,17,627,350,618.5,0px,0px,,,0px,0px,0px,0px,baseline,618.5,0,,
+config,390,False,False,,div.field-heading,Move Timing 0.50–1.00 s,25,708,325,17,725,350,716.5,0px,0px,,,0px,0px,0px,0px,baseline,716.5,0,,
+config,390,False,False,,div.delay-fields,Minimum delay s – Maximum delay s,25,737,325,32,769,350,753,0px,0px,,,0px,0px,0px,0px,center,761,8,,
+config,390,False,False,,div.segmented,Random Immediate,25,777,325,32,809,350,793,1px,1px,777,808,0px,0px,0px,0px,normal,793,0,793,0
+config,390,False,False,,div.control-row,Smart Pacing,25,854,325,36,890,350,872,0px,0px,,,0px,0px,0px,0px,center,872,0,872,0
+config,390,False,False,,div.control-row,Evaluation Bar,25,957,325,36,993,350,975,0px,0px,,,0px,0px,0px,0px,center,975,0,975,0
+config,390,False,False,,div.control-row,Banner Not enough room (96 px minimum),25,993,325,36,1029,350,1011,1px,0px,993,,0px,0px,0px,0px,center,1003.5,-7.5,1011.5,0.5
+config,390,False,False,,div.control-row,Recent Form,25,1029,325,36,1065,350,1047,1px,0px,1029,,0px,0px,0px,0px,center,1047.5,0.5,1047.5,0.5
+config,390,False,False,,div.control-row,Theme,25,1065,325,36,1101,350,1083,0px,0px,,,0px,0px,0px,0px,center,1083,0,1083,0
+config,390,False,False,,div.control-row,Clean View,25,1168,325,36,1204,350,1186,0px,0px,,,0px,0px,0px,0px,center,1186,0,1186,0
+config,390,False,False,,div,Status Idle,25,1570,325,15,1585,350,1577.5,0px,0px,,,0px,0px,0px,0px,normal,1577.5,0,,
+config,390,False,False,,div,Time Left 00:00:00,25,1593,325,15,1608,350,1600.5,0px,0px,,,0px,0px,0px,0px,normal,1600.5,0,,
+config,390,False,False,,div,Score 0 W | 0 D | 0 L,25,1616,325,15,1631,350,1623.5,0px,0px,,,0px,0px,0px,0px,normal,1623.5,0,,
+config,390,False,False,,div,Win Rate —,25,1639,325,15,1654,350,1646.5,0px,0px,,,0px,0px,0px,0px,normal,1646.5,0,,
+config,1440,False,True,,div.control-row,Bot,289.5,234,404,36,270,693.5,252,0px,0px,,,0px,0px,0px,0px,center,252,0,252,0
+config,1440,False,True,,div.control-row,Auto Moves,289.5,270,404,36,306,693.5,288,1px,0px,270,,0px,0px,0px,0px,center,288.5,0.5,288.5,0.5
+config,1440,False,True,,div.control-row,Auto Queue,289.5,306,404,36,342,693.5,324,1px,0px,306,,0px,0px,0px,0px,center,324.5,0.5,324.5,0.5
+config,1440,False,True,,div.field-heading,Analysis Engine Ready,731.5,238,404,17,255,1135.5,246.5,0px,0px,,,0px,0px,0px,0px,baseline,246.5,0,,
+config,1440,False,True,,div.control-row,Auto Rating,731.5,382,404,36,418,1135.5,400,0px,0px,,,0px,0px,0px,0px,center,400,0,400,0
+config,1440,False,True,,div.field-heading,Strength Level 3200,731.5,431,404,17,448,1135.5,439.5,0px,0px,,,0px,0px,0px,0px,baseline,439.5,0,,
+config,1440,False,True,,div.field-heading,Move Timing 0.50–1.00 s,731.5,529,404,17,546,1135.5,537.5,0px,0px,,,0px,0px,0px,0px,baseline,537.5,0,,
+config,1440,False,True,,div.delay-fields,Minimum delay s – Maximum delay s,731.5,558,404,32,590,1135.5,574,0px,0px,,,0px,0px,0px,0px,center,582,8,,
+config,1440,False,True,,div.segmented,Random Immediate,731.5,598,404,32,630,1135.5,614,1px,1px,598,629,0px,0px,0px,0px,normal,614,0,614,0
+config,1440,False,True,,div.control-row,Smart Pacing,731.5,675,404,36,711,1135.5,693,0px,0px,,,0px,0px,0px,0px,center,693,0,693,0
+config,1440,False,True,,div.control-row,Evaluation Bar,289.5,420.328125,404,36,456.328125,693.5,438.328125,0px,0px,,,0px,0px,0px,0px,center,438.328125,0,438.328125,0
+config,1440,False,True,,div.control-row,Banner Not enough room (96 px minimum),289.5,456.328125,404,36,492.328125,693.5,474.328125,1px,0px,456.328125,,0px,0px,0px,0px,center,466.828125,-7.5,474.828125,0.5
+config,1440,False,True,,div.control-row,Recent Form,289.5,492.328125,404,36,528.328125,693.5,510.328125,1px,0px,492.328125,,0px,0px,0px,0px,center,510.828125,0.5,510.828125,0.5
+config,1440,False,True,,div.control-row,Theme,289.5,528.328125,404,36,564.328125,693.5,546.328125,0px,0px,,,0px,0px,0px,0px,center,546.328125,0,546.328125,0
+config,1440,False,True,,div.control-row,Clean View,289.5,642.65625,404,36,678.65625,693.5,660.65625,0px,0px,,,0px,0px,0px,0px,center,660.65625,0,660.65625,0
+config,1440,False,True,,div,Status Idle,289.5,937,411,15,952,700.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1440,False,True,,div,Time Left 00:00:00,724.5,937,411,15,952,1135.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1440,False,True,,div,Score 0 W | 0 D | 0 L,289.5,960,411,15,975,700.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1440,False,True,,div,Win Rate —,724.5,960,411,15,975,1135.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1280,False,True,,div.control-row,Bot,209.5,234,404,36,270,613.5,252,0px,0px,,,0px,0px,0px,0px,center,252,0,252,0
+config,1280,False,True,,div.control-row,Auto Moves,209.5,270,404,36,306,613.5,288,1px,0px,270,,0px,0px,0px,0px,center,288.5,0.5,288.5,0.5
+config,1280,False,True,,div.control-row,Auto Queue,209.5,306,404,36,342,613.5,324,1px,0px,306,,0px,0px,0px,0px,center,324.5,0.5,324.5,0.5
+config,1280,False,True,,div.field-heading,Analysis Engine Ready,651.5,238,404,17,255,1055.5,246.5,0px,0px,,,0px,0px,0px,0px,baseline,246.5,0,,
+config,1280,False,True,,div.control-row,Auto Rating,651.5,382,404,36,418,1055.5,400,0px,0px,,,0px,0px,0px,0px,center,400,0,400,0
+config,1280,False,True,,div.field-heading,Strength Level 3200,651.5,431,404,17,448,1055.5,439.5,0px,0px,,,0px,0px,0px,0px,baseline,439.5,0,,
+config,1280,False,True,,div.field-heading,Move Timing 0.50–1.00 s,651.5,529,404,17,546,1055.5,537.5,0px,0px,,,0px,0px,0px,0px,baseline,537.5,0,,
+config,1280,False,True,,div.delay-fields,Minimum delay s – Maximum delay s,651.5,558,404,32,590,1055.5,574,0px,0px,,,0px,0px,0px,0px,center,582,8,,
+config,1280,False,True,,div.segmented,Random Immediate,651.5,598,404,32,630,1055.5,614,1px,1px,598,629,0px,0px,0px,0px,normal,614,0,614,0
+config,1280,False,True,,div.control-row,Smart Pacing,651.5,675,404,36,711,1055.5,693,0px,0px,,,0px,0px,0px,0px,center,693,0,693,0
+config,1280,False,True,,div.control-row,Evaluation Bar,209.5,420.328125,404,36,456.328125,613.5,438.328125,0px,0px,,,0px,0px,0px,0px,center,438.328125,0,438.328125,0
+config,1280,False,True,,div.control-row,Banner Not enough room (96 px minimum),209.5,456.328125,404,36,492.328125,613.5,474.328125,1px,0px,456.328125,,0px,0px,0px,0px,center,466.828125,-7.5,474.828125,0.5
+config,1280,False,True,,div.control-row,Recent Form,209.5,492.328125,404,36,528.328125,613.5,510.328125,1px,0px,492.328125,,0px,0px,0px,0px,center,510.828125,0.5,510.828125,0.5
+config,1280,False,True,,div.control-row,Theme,209.5,528.328125,404,36,564.328125,613.5,546.328125,0px,0px,,,0px,0px,0px,0px,center,546.328125,0,546.328125,0
+config,1280,False,True,,div.control-row,Clean View,209.5,642.65625,404,36,678.65625,613.5,660.65625,0px,0px,,,0px,0px,0px,0px,center,660.65625,0,660.65625,0
+config,1280,False,True,,div,Status Idle,209.5,937,411,15,952,620.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1280,False,True,,div,Time Left 00:00:00,644.5,937,411,15,952,1055.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1280,False,True,,div,Score 0 W | 0 D | 0 L,209.5,960,411,15,975,620.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1280,False,True,,div,Win Rate —,644.5,960,411,15,975,1055.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1024,False,True,,div.control-row,Bot,81.5,234,404,36,270,485.5,252,0px,0px,,,0px,0px,0px,0px,center,252,0,252,0
+config,1024,False,True,,div.control-row,Auto Moves,81.5,270,404,36,306,485.5,288,1px,0px,270,,0px,0px,0px,0px,center,288.5,0.5,288.5,0.5
+config,1024,False,True,,div.control-row,Auto Queue,81.5,306,404,36,342,485.5,324,1px,0px,306,,0px,0px,0px,0px,center,324.5,0.5,324.5,0.5
+config,1024,False,True,,div.field-heading,Analysis Engine Ready,523.5,238,404,17,255,927.5,246.5,0px,0px,,,0px,0px,0px,0px,baseline,246.5,0,,
+config,1024,False,True,,div.control-row,Auto Rating,523.5,382,404,36,418,927.5,400,0px,0px,,,0px,0px,0px,0px,center,400,0,400,0
+config,1024,False,True,,div.field-heading,Strength Level 3200,523.5,431,404,17,448,927.5,439.5,0px,0px,,,0px,0px,0px,0px,baseline,439.5,0,,
+config,1024,False,True,,div.field-heading,Move Timing 0.50–1.00 s,523.5,529,404,17,546,927.5,537.5,0px,0px,,,0px,0px,0px,0px,baseline,537.5,0,,
+config,1024,False,True,,div.delay-fields,Minimum delay s – Maximum delay s,523.5,558,404,32,590,927.5,574,0px,0px,,,0px,0px,0px,0px,center,582,8,,
+config,1024,False,True,,div.segmented,Random Immediate,523.5,598,404,32,630,927.5,614,1px,1px,598,629,0px,0px,0px,0px,normal,614,0,614,0
+config,1024,False,True,,div.control-row,Smart Pacing,523.5,675,404,36,711,927.5,693,0px,0px,,,0px,0px,0px,0px,center,693,0,693,0
+config,1024,False,True,,div.control-row,Evaluation Bar,81.5,420.328125,404,36,456.328125,485.5,438.328125,0px,0px,,,0px,0px,0px,0px,center,438.328125,0,438.328125,0
+config,1024,False,True,,div.control-row,Banner Not enough room (96 px minimum),81.5,456.328125,404,36,492.328125,485.5,474.328125,1px,0px,456.328125,,0px,0px,0px,0px,center,466.828125,-7.5,474.828125,0.5
+config,1024,False,True,,div.control-row,Recent Form,81.5,492.328125,404,36,528.328125,485.5,510.328125,1px,0px,492.328125,,0px,0px,0px,0px,center,510.828125,0.5,510.828125,0.5
+config,1024,False,True,,div.control-row,Theme,81.5,528.328125,404,36,564.328125,485.5,546.328125,0px,0px,,,0px,0px,0px,0px,center,546.328125,0,546.328125,0
+config,1024,False,True,,div.control-row,Clean View,81.5,642.65625,404,36,678.65625,485.5,660.65625,0px,0px,,,0px,0px,0px,0px,center,660.65625,0,660.65625,0
+config,1024,False,True,,div,Status Idle,81.5,937,411,15,952,492.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1024,False,True,,div,Time Left 00:00:00,516.5,937,411,15,952,927.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1024,False,True,,div,Score 0 W | 0 D | 0 L,81.5,960,411,15,975,492.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1024,False,True,,div,Win Rate —,516.5,960,411,15,975,927.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,768,False,True,,div.control-row,Bot,37,234,320.5,36,270,357.5,252,0px,0px,,,0px,0px,0px,0px,center,252,0,252,0
+config,768,False,True,,div.control-row,Auto Moves,37,270,320.5,36,306,357.5,288,1px,0px,270,,0px,0px,0px,0px,center,288.5,0.5,288.5,0.5
+config,768,False,True,,div.control-row,Auto Queue,37,306,320.5,36,342,357.5,324,1px,0px,306,,0px,0px,0px,0px,center,324.5,0.5,324.5,0.5
+config,768,False,True,,div.field-heading,Analysis Engine Ready,395.5,238,320.5,17,255,716,246.5,0px,0px,,,0px,0px,0px,0px,baseline,246.5,0,,
+config,768,False,True,,div.control-row,Auto Rating,395.5,382,320.5,36,418,716,400,0px,0px,,,0px,0px,0px,0px,center,400,0,400,0
+config,768,False,True,,div.field-heading,Strength Level 3200,395.5,431,320.5,17,448,716,439.5,0px,0px,,,0px,0px,0px,0px,baseline,439.5,0,,
+config,768,False,True,,div.field-heading,Move Timing 0.50–1.00 s,395.5,529,320.5,17,546,716,537.5,0px,0px,,,0px,0px,0px,0px,baseline,537.5,0,,
+config,768,False,True,,div.delay-fields,Minimum delay s – Maximum delay s,395.5,558,320.5,32,590,716,574,0px,0px,,,0px,0px,0px,0px,center,582,8,,
+config,768,False,True,,div.segmented,Random Immediate,395.5,598,320.5,32,630,716,614,1px,1px,598,629,0px,0px,0px,0px,normal,614,0,614,0
+config,768,False,True,,div.control-row,Smart Pacing,395.5,675,320.5,36,711,716,693,0px,0px,,,0px,0px,0px,0px,center,693,0,693,0
+config,768,False,True,,div.control-row,Evaluation Bar,37,414.65625,320.5,36,450.65625,357.5,432.65625,0px,0px,,,0px,0px,0px,0px,center,432.65625,0,432.65625,0
+config,768,False,True,,div.control-row,Banner Not enough room (96 px minimum),37,450.65625,320.5,36,486.65625,357.5,468.65625,1px,0px,450.65625,,0px,0px,0px,0px,center,461.15625,-7.5,469.15625,0.5
+config,768,False,True,,div.control-row,Recent Form,37,486.65625,320.5,36,522.65625,357.5,504.65625,1px,0px,486.65625,,0px,0px,0px,0px,center,505.15625,0.5,505.15625,0.5
+config,768,False,True,,div.control-row,Theme,37,522.65625,320.5,36,558.65625,357.5,540.65625,0px,0px,,,0px,0px,0px,0px,center,540.65625,0,540.65625,0
+config,768,False,True,,div.control-row,Clean View,37,631.328125,320.5,36,667.328125,357.5,649.328125,0px,0px,,,0px,0px,0px,0px,center,649.328125,0,649.328125,0
+config,768,False,True,,div,Status Idle,37,937,327.5,15,952,364.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,768,False,True,,div,Time Left 00:00:00,388.5,937,327.5,15,952,716,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,768,False,True,,div,Score 0 W | 0 D | 0 L,37,960,327.5,15,975,364.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,768,False,True,,div,Win Rate —,388.5,960,327.5,15,975,716,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,390,False,True,,div.control-row,Bot,25,238,325,36,274,350,256,0px,0px,,,0px,0px,0px,0px,center,256,0,256,0
+config,390,False,True,,div.control-row,Auto Moves,25,274,325,36,310,350,292,1px,0px,274,,0px,0px,0px,0px,center,292.5,0.5,292.5,0.5
+config,390,False,True,,div.control-row,Auto Queue,25,310,325,36,346,350,328,1px,0px,310,,0px,0px,0px,0px,center,328.5,0.5,328.5,0.5
+config,390,False,True,,div.field-heading,Analysis Engine Ready,25,417,325,17,434,350,425.5,0px,0px,,,0px,0px,0px,0px,baseline,425.5,0,,
+config,390,False,True,,div.control-row,Auto Rating,25,561,325,36,597,350,579,0px,0px,,,0px,0px,0px,0px,center,579,0,579,0
+config,390,False,True,,div.field-heading,Strength Level 3200,25,610,325,17,627,350,618.5,0px,0px,,,0px,0px,0px,0px,baseline,618.5,0,,
+config,390,False,True,,div.field-heading,Move Timing 0.50–1.00 s,25,708,325,17,725,350,716.5,0px,0px,,,0px,0px,0px,0px,baseline,716.5,0,,
+config,390,False,True,,div.delay-fields,Minimum delay s – Maximum delay s,25,737,325,32,769,350,753,0px,0px,,,0px,0px,0px,0px,center,761,8,,
+config,390,False,True,,div.segmented,Random Immediate,25,777,325,32,809,350,793,1px,1px,777,808,0px,0px,0px,0px,normal,793,0,793,0
+config,390,False,True,,div.control-row,Smart Pacing,25,854,325,36,890,350,872,0px,0px,,,0px,0px,0px,0px,center,872,0,872,0
+config,390,False,True,,div.control-row,Evaluation Bar,25,957,325,36,993,350,975,0px,0px,,,0px,0px,0px,0px,center,975,0,975,0
+config,390,False,True,,div.control-row,Banner Not enough room (96 px minimum),25,993,325,36,1029,350,1011,1px,0px,993,,0px,0px,0px,0px,center,1003.5,-7.5,1011.5,0.5
+config,390,False,True,,div.control-row,Recent Form,25,1029,325,36,1065,350,1047,1px,0px,1029,,0px,0px,0px,0px,center,1047.5,0.5,1047.5,0.5
+config,390,False,True,,div.control-row,Theme,25,1065,325,36,1101,350,1083,0px,0px,,,0px,0px,0px,0px,center,1083,0,1083,0
+config,390,False,True,,div.control-row,Clean View,25,1168,325,36,1204,350,1186,0px,0px,,,0px,0px,0px,0px,center,1186,0,1186,0
+config,390,False,True,,div,Status Idle,25,1570,325,15,1585,350,1577.5,0px,0px,,,0px,0px,0px,0px,normal,1577.5,0,,
+config,390,False,True,,div,Time Left 00:00:00,25,1593,325,15,1608,350,1600.5,0px,0px,,,0px,0px,0px,0px,normal,1600.5,0,,
+config,390,False,True,,div,Score 0 W | 0 D | 0 L,25,1616,325,15,1631,350,1623.5,0px,0px,,,0px,0px,0px,0px,normal,1623.5,0,,
+config,390,False,True,,div,Win Rate —,25,1639,325,15,1654,350,1646.5,0px,0px,,,0px,0px,0px,0px,normal,1646.5,0,,
+config,1440,True,False,,div.control-row,Bot,289.5,234,404,36,270,693.5,252,0px,0px,,,0px,0px,0px,0px,center,252,0,252,0
+config,1440,True,False,,div.control-row,Auto Moves,289.5,270,404,36,306,693.5,288,1px,0px,270,,0px,0px,0px,0px,center,288.5,0.5,288.5,0.5
+config,1440,True,False,,div.control-row,Auto Queue,289.5,306,404,36,342,693.5,324,1px,0px,306,,0px,0px,0px,0px,center,324.5,0.5,324.5,0.5
+config,1440,True,False,,div.field-heading,Analysis Engine Ready,731.5,238,404,17,255,1135.5,246.5,0px,0px,,,0px,0px,0px,0px,baseline,246.5,0,,
+config,1440,True,False,,div.control-row,Auto Rating,731.5,382,404,36,418,1135.5,400,0px,0px,,,0px,0px,0px,0px,center,400,0,400,0
+config,1440,True,False,,div.field-heading,Strength Level 3200,731.5,431,404,17,448,1135.5,439.5,0px,0px,,,0px,0px,0px,0px,baseline,439.5,0,,
+config,1440,True,False,,div.field-heading,Move Timing 0.50–1.00 s,731.5,529,404,17,546,1135.5,537.5,0px,0px,,,0px,0px,0px,0px,baseline,537.5,0,,
+config,1440,True,False,,div.delay-fields,Minimum delay s – Maximum delay s,731.5,558,404,32,590,1135.5,574,0px,0px,,,0px,0px,0px,0px,center,582,8,,
+config,1440,True,False,,div.segmented,Random Immediate,731.5,598,404,32,630,1135.5,614,1px,1px,598,629,0px,0px,0px,0px,normal,614,0,614,0
+config,1440,True,False,,div.control-row,Smart Pacing,731.5,675,404,36,711,1135.5,693,0px,0px,,,0px,0px,0px,0px,center,693,0,693,0
+config,1440,True,False,,div.control-row,Evaluation Bar,289.5,420.328125,404,36,456.328125,693.5,438.328125,0px,0px,,,0px,0px,0px,0px,center,438.328125,0,438.328125,0
+config,1440,True,False,,div.control-row,Banner Not enough room (96 px minimum),289.5,456.328125,404,36,492.328125,693.5,474.328125,1px,0px,456.328125,,0px,0px,0px,0px,center,466.828125,-7.5,474.828125,0.5
+config,1440,True,False,,div.control-row,Recent Form,289.5,492.328125,404,36,528.328125,693.5,510.328125,1px,0px,492.328125,,0px,0px,0px,0px,center,510.828125,0.5,510.828125,0.5
+config,1440,True,False,,div.control-row,Theme,289.5,528.328125,404,36,564.328125,693.5,546.328125,0px,0px,,,0px,0px,0px,0px,center,546.328125,0,546.328125,0
+config,1440,True,False,,div.control-row,Clean View,289.5,642.65625,404,36,678.65625,693.5,660.65625,0px,0px,,,0px,0px,0px,0px,center,660.65625,0,660.65625,0
+config,1440,True,False,,div,Status Idle,289.5,937,411,15,952,700.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1440,True,False,,div,Time Left 00:00:00,724.5,937,411,15,952,1135.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1440,True,False,,div,Score 0 W | 0 D | 0 L,289.5,960,411,15,975,700.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1440,True,False,,div,Win Rate —,724.5,960,411,15,975,1135.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1280,True,False,,div.control-row,Bot,209.5,234,404,36,270,613.5,252,0px,0px,,,0px,0px,0px,0px,center,252,0,252,0
+config,1280,True,False,,div.control-row,Auto Moves,209.5,270,404,36,306,613.5,288,1px,0px,270,,0px,0px,0px,0px,center,288.5,0.5,288.5,0.5
+config,1280,True,False,,div.control-row,Auto Queue,209.5,306,404,36,342,613.5,324,1px,0px,306,,0px,0px,0px,0px,center,324.5,0.5,324.5,0.5
+config,1280,True,False,,div.field-heading,Analysis Engine Ready,651.5,238,404,17,255,1055.5,246.5,0px,0px,,,0px,0px,0px,0px,baseline,246.5,0,,
+config,1280,True,False,,div.control-row,Auto Rating,651.5,382,404,36,418,1055.5,400,0px,0px,,,0px,0px,0px,0px,center,400,0,400,0
+config,1280,True,False,,div.field-heading,Strength Level 3200,651.5,431,404,17,448,1055.5,439.5,0px,0px,,,0px,0px,0px,0px,baseline,439.5,0,,
+config,1280,True,False,,div.field-heading,Move Timing 0.50–1.00 s,651.5,529,404,17,546,1055.5,537.5,0px,0px,,,0px,0px,0px,0px,baseline,537.5,0,,
+config,1280,True,False,,div.delay-fields,Minimum delay s – Maximum delay s,651.5,558,404,32,590,1055.5,574,0px,0px,,,0px,0px,0px,0px,center,582,8,,
+config,1280,True,False,,div.segmented,Random Immediate,651.5,598,404,32,630,1055.5,614,1px,1px,598,629,0px,0px,0px,0px,normal,614,0,614,0
+config,1280,True,False,,div.control-row,Smart Pacing,651.5,675,404,36,711,1055.5,693,0px,0px,,,0px,0px,0px,0px,center,693,0,693,0
+config,1280,True,False,,div.control-row,Evaluation Bar,209.5,420.328125,404,36,456.328125,613.5,438.328125,0px,0px,,,0px,0px,0px,0px,center,438.328125,0,438.328125,0
+config,1280,True,False,,div.control-row,Banner Not enough room (96 px minimum),209.5,456.328125,404,36,492.328125,613.5,474.328125,1px,0px,456.328125,,0px,0px,0px,0px,center,466.828125,-7.5,474.828125,0.5
+config,1280,True,False,,div.control-row,Recent Form,209.5,492.328125,404,36,528.328125,613.5,510.328125,1px,0px,492.328125,,0px,0px,0px,0px,center,510.828125,0.5,510.828125,0.5
+config,1280,True,False,,div.control-row,Theme,209.5,528.328125,404,36,564.328125,613.5,546.328125,0px,0px,,,0px,0px,0px,0px,center,546.328125,0,546.328125,0
+config,1280,True,False,,div.control-row,Clean View,209.5,642.65625,404,36,678.65625,613.5,660.65625,0px,0px,,,0px,0px,0px,0px,center,660.65625,0,660.65625,0
+config,1280,True,False,,div,Status Idle,209.5,937,411,15,952,620.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1280,True,False,,div,Time Left 00:00:00,644.5,937,411,15,952,1055.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1280,True,False,,div,Score 0 W | 0 D | 0 L,209.5,960,411,15,975,620.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1280,True,False,,div,Win Rate —,644.5,960,411,15,975,1055.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1024,True,False,,div.control-row,Bot,81.5,234,404,36,270,485.5,252,0px,0px,,,0px,0px,0px,0px,center,252,0,252,0
+config,1024,True,False,,div.control-row,Auto Moves,81.5,270,404,36,306,485.5,288,1px,0px,270,,0px,0px,0px,0px,center,288.5,0.5,288.5,0.5
+config,1024,True,False,,div.control-row,Auto Queue,81.5,306,404,36,342,485.5,324,1px,0px,306,,0px,0px,0px,0px,center,324.5,0.5,324.5,0.5
+config,1024,True,False,,div.field-heading,Analysis Engine Ready,523.5,238,404,17,255,927.5,246.5,0px,0px,,,0px,0px,0px,0px,baseline,246.5,0,,
+config,1024,True,False,,div.control-row,Auto Rating,523.5,382,404,36,418,927.5,400,0px,0px,,,0px,0px,0px,0px,center,400,0,400,0
+config,1024,True,False,,div.field-heading,Strength Level 3200,523.5,431,404,17,448,927.5,439.5,0px,0px,,,0px,0px,0px,0px,baseline,439.5,0,,
+config,1024,True,False,,div.field-heading,Move Timing 0.50–1.00 s,523.5,529,404,17,546,927.5,537.5,0px,0px,,,0px,0px,0px,0px,baseline,537.5,0,,
+config,1024,True,False,,div.delay-fields,Minimum delay s – Maximum delay s,523.5,558,404,32,590,927.5,574,0px,0px,,,0px,0px,0px,0px,center,582,8,,
+config,1024,True,False,,div.segmented,Random Immediate,523.5,598,404,32,630,927.5,614,1px,1px,598,629,0px,0px,0px,0px,normal,614,0,614,0
+config,1024,True,False,,div.control-row,Smart Pacing,523.5,675,404,36,711,927.5,693,0px,0px,,,0px,0px,0px,0px,center,693,0,693,0
+config,1024,True,False,,div.control-row,Evaluation Bar,81.5,420.328125,404,36,456.328125,485.5,438.328125,0px,0px,,,0px,0px,0px,0px,center,438.328125,0,438.328125,0
+config,1024,True,False,,div.control-row,Banner Not enough room (96 px minimum),81.5,456.328125,404,36,492.328125,485.5,474.328125,1px,0px,456.328125,,0px,0px,0px,0px,center,466.828125,-7.5,474.828125,0.5
+config,1024,True,False,,div.control-row,Recent Form,81.5,492.328125,404,36,528.328125,485.5,510.328125,1px,0px,492.328125,,0px,0px,0px,0px,center,510.828125,0.5,510.828125,0.5
+config,1024,True,False,,div.control-row,Theme,81.5,528.328125,404,36,564.328125,485.5,546.328125,0px,0px,,,0px,0px,0px,0px,center,546.328125,0,546.328125,0
+config,1024,True,False,,div.control-row,Clean View,81.5,642.65625,404,36,678.65625,485.5,660.65625,0px,0px,,,0px,0px,0px,0px,center,660.65625,0,660.65625,0
+config,1024,True,False,,div,Status Idle,81.5,937,411,15,952,492.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1024,True,False,,div,Time Left 00:00:00,516.5,937,411,15,952,927.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1024,True,False,,div,Score 0 W | 0 D | 0 L,81.5,960,411,15,975,492.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1024,True,False,,div,Win Rate —,516.5,960,411,15,975,927.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,768,True,False,,div.control-row,Bot,37,234,320.5,36,270,357.5,252,0px,0px,,,0px,0px,0px,0px,center,252,0,252,0
+config,768,True,False,,div.control-row,Auto Moves,37,270,320.5,36,306,357.5,288,1px,0px,270,,0px,0px,0px,0px,center,288.5,0.5,288.5,0.5
+config,768,True,False,,div.control-row,Auto Queue,37,306,320.5,36,342,357.5,324,1px,0px,306,,0px,0px,0px,0px,center,324.5,0.5,324.5,0.5
+config,768,True,False,,div.field-heading,Analysis Engine Ready,395.5,238,320.5,17,255,716,246.5,0px,0px,,,0px,0px,0px,0px,baseline,246.5,0,,
+config,768,True,False,,div.control-row,Auto Rating,395.5,382,320.5,36,418,716,400,0px,0px,,,0px,0px,0px,0px,center,400,0,400,0
+config,768,True,False,,div.field-heading,Strength Level 3200,395.5,431,320.5,17,448,716,439.5,0px,0px,,,0px,0px,0px,0px,baseline,439.5,0,,
+config,768,True,False,,div.field-heading,Move Timing 0.50–1.00 s,395.5,529,320.5,17,546,716,537.5,0px,0px,,,0px,0px,0px,0px,baseline,537.5,0,,
+config,768,True,False,,div.delay-fields,Minimum delay s – Maximum delay s,395.5,558,320.5,32,590,716,574,0px,0px,,,0px,0px,0px,0px,center,582,8,,
+config,768,True,False,,div.segmented,Random Immediate,395.5,598,320.5,32,630,716,614,1px,1px,598,629,0px,0px,0px,0px,normal,614,0,614,0
+config,768,True,False,,div.control-row,Smart Pacing,395.5,675,320.5,36,711,716,693,0px,0px,,,0px,0px,0px,0px,center,693,0,693,0
+config,768,True,False,,div.control-row,Evaluation Bar,37,414.65625,320.5,36,450.65625,357.5,432.65625,0px,0px,,,0px,0px,0px,0px,center,432.65625,0,432.65625,0
+config,768,True,False,,div.control-row,Banner Not enough room (96 px minimum),37,450.65625,320.5,36,486.65625,357.5,468.65625,1px,0px,450.65625,,0px,0px,0px,0px,center,461.15625,-7.5,469.15625,0.5
+config,768,True,False,,div.control-row,Recent Form,37,486.65625,320.5,36,522.65625,357.5,504.65625,1px,0px,486.65625,,0px,0px,0px,0px,center,505.15625,0.5,505.15625,0.5
+config,768,True,False,,div.control-row,Theme,37,522.65625,320.5,36,558.65625,357.5,540.65625,0px,0px,,,0px,0px,0px,0px,center,540.65625,0,540.65625,0
+config,768,True,False,,div.control-row,Clean View,37,631.328125,320.5,36,667.328125,357.5,649.328125,0px,0px,,,0px,0px,0px,0px,center,649.328125,0,649.328125,0
+config,768,True,False,,div,Status Idle,37,937,327.5,15,952,364.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,768,True,False,,div,Time Left 00:00:00,388.5,937,327.5,15,952,716,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,768,True,False,,div,Score 0 W | 0 D | 0 L,37,960,327.5,15,975,364.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,768,True,False,,div,Win Rate —,388.5,960,327.5,15,975,716,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,390,True,False,,div.control-row,Bot,25,238,325,36,274,350,256,0px,0px,,,0px,0px,0px,0px,center,256,0,256,0
+config,390,True,False,,div.control-row,Auto Moves,25,274,325,36,310,350,292,1px,0px,274,,0px,0px,0px,0px,center,292.5,0.5,292.5,0.5
+config,390,True,False,,div.control-row,Auto Queue,25,310,325,36,346,350,328,1px,0px,310,,0px,0px,0px,0px,center,328.5,0.5,328.5,0.5
+config,390,True,False,,div.field-heading,Analysis Engine Ready,25,417,325,17,434,350,425.5,0px,0px,,,0px,0px,0px,0px,baseline,425.5,0,,
+config,390,True,False,,div.control-row,Auto Rating,25,561,325,36,597,350,579,0px,0px,,,0px,0px,0px,0px,center,579,0,579,0
+config,390,True,False,,div.field-heading,Strength Level 3200,25,610,325,17,627,350,618.5,0px,0px,,,0px,0px,0px,0px,baseline,618.5,0,,
+config,390,True,False,,div.field-heading,Move Timing 0.50–1.00 s,25,708,325,17,725,350,716.5,0px,0px,,,0px,0px,0px,0px,baseline,716.5,0,,
+config,390,True,False,,div.delay-fields,Minimum delay s – Maximum delay s,25,737,325,32,769,350,753,0px,0px,,,0px,0px,0px,0px,center,761,8,,
+config,390,True,False,,div.segmented,Random Immediate,25,777,325,32,809,350,793,1px,1px,777,808,0px,0px,0px,0px,normal,793,0,793,0
+config,390,True,False,,div.control-row,Smart Pacing,25,854,325,36,890,350,872,0px,0px,,,0px,0px,0px,0px,center,872,0,872,0
+config,390,True,False,,div.control-row,Evaluation Bar,25,957,325,36,993,350,975,0px,0px,,,0px,0px,0px,0px,center,975,0,975,0
+config,390,True,False,,div.control-row,Banner Not enough room (96 px minimum),25,993,325,36,1029,350,1011,1px,0px,993,,0px,0px,0px,0px,center,1003.5,-7.5,1011.5,0.5
+config,390,True,False,,div.control-row,Recent Form,25,1029,325,36,1065,350,1047,1px,0px,1029,,0px,0px,0px,0px,center,1047.5,0.5,1047.5,0.5
+config,390,True,False,,div.control-row,Theme,25,1065,325,36,1101,350,1083,0px,0px,,,0px,0px,0px,0px,center,1083,0,1083,0
+config,390,True,False,,div.control-row,Clean View,25,1168,325,36,1204,350,1186,0px,0px,,,0px,0px,0px,0px,center,1186,0,1186,0
+config,390,True,False,,div,Status Idle,25,1570,325,15,1585,350,1577.5,0px,0px,,,0px,0px,0px,0px,normal,1577.5,0,,
+config,390,True,False,,div,Time Left 00:00:00,25,1593,325,15,1608,350,1600.5,0px,0px,,,0px,0px,0px,0px,normal,1600.5,0,,
+config,390,True,False,,div,Score 0 W | 0 D | 0 L,25,1616,325,15,1631,350,1623.5,0px,0px,,,0px,0px,0px,0px,normal,1623.5,0,,
+config,390,True,False,,div,Win Rate —,25,1639,325,15,1654,350,1646.5,0px,0px,,,0px,0px,0px,0px,normal,1646.5,0,,
+config,1440,True,True,,div.control-row,Bot,289.5,234,404,36,270,693.5,252,0px,0px,,,0px,0px,0px,0px,center,252,0,252,0
+config,1440,True,True,,div.control-row,Auto Moves,289.5,270,404,36,306,693.5,288,1px,0px,270,,0px,0px,0px,0px,center,288.5,0.5,288.5,0.5
+config,1440,True,True,,div.control-row,Auto Queue,289.5,306,404,36,342,693.5,324,1px,0px,306,,0px,0px,0px,0px,center,324.5,0.5,324.5,0.5
+config,1440,True,True,,div.field-heading,Analysis Engine Ready,731.5,238,404,17,255,1135.5,246.5,0px,0px,,,0px,0px,0px,0px,baseline,246.5,0,,
+config,1440,True,True,,div.control-row,Auto Rating,731.5,382,404,36,418,1135.5,400,0px,0px,,,0px,0px,0px,0px,center,400,0,400,0
+config,1440,True,True,,div.field-heading,Strength Level 3200,731.5,431,404,17,448,1135.5,439.5,0px,0px,,,0px,0px,0px,0px,baseline,439.5,0,,
+config,1440,True,True,,div.field-heading,Move Timing 0.50–1.00 s,731.5,529,404,17,546,1135.5,537.5,0px,0px,,,0px,0px,0px,0px,baseline,537.5,0,,
+config,1440,True,True,,div.delay-fields,Minimum delay s – Maximum delay s,731.5,558,404,32,590,1135.5,574,0px,0px,,,0px,0px,0px,0px,center,582,8,,
+config,1440,True,True,,div.segmented,Random Immediate,731.5,598,404,32,630,1135.5,614,1px,1px,598,629,0px,0px,0px,0px,normal,614,0,614,0
+config,1440,True,True,,div.control-row,Smart Pacing,731.5,675,404,36,711,1135.5,693,0px,0px,,,0px,0px,0px,0px,center,693,0,693,0
+config,1440,True,True,,div.control-row,Evaluation Bar,289.5,420.328125,404,36,456.328125,693.5,438.328125,0px,0px,,,0px,0px,0px,0px,center,438.328125,0,438.328125,0
+config,1440,True,True,,div.control-row,Banner Not enough room (96 px minimum),289.5,456.328125,404,36,492.328125,693.5,474.328125,1px,0px,456.328125,,0px,0px,0px,0px,center,466.828125,-7.5,474.828125,0.5
+config,1440,True,True,,div.control-row,Recent Form,289.5,492.328125,404,36,528.328125,693.5,510.328125,1px,0px,492.328125,,0px,0px,0px,0px,center,510.828125,0.5,510.828125,0.5
+config,1440,True,True,,div.control-row,Theme,289.5,528.328125,404,36,564.328125,693.5,546.328125,0px,0px,,,0px,0px,0px,0px,center,546.328125,0,546.328125,0
+config,1440,True,True,,div.control-row,Clean View,289.5,642.65625,404,36,678.65625,693.5,660.65625,0px,0px,,,0px,0px,0px,0px,center,660.65625,0,660.65625,0
+config,1440,True,True,,div,Status Idle,289.5,937,411,15,952,700.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1440,True,True,,div,Time Left 00:00:00,724.5,937,411,15,952,1135.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1440,True,True,,div,Score 0 W | 0 D | 0 L,289.5,960,411,15,975,700.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1440,True,True,,div,Win Rate —,724.5,960,411,15,975,1135.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1280,True,True,,div.control-row,Bot,209.5,234,404,36,270,613.5,252,0px,0px,,,0px,0px,0px,0px,center,252,0,252,0
+config,1280,True,True,,div.control-row,Auto Moves,209.5,270,404,36,306,613.5,288,1px,0px,270,,0px,0px,0px,0px,center,288.5,0.5,288.5,0.5
+config,1280,True,True,,div.control-row,Auto Queue,209.5,306,404,36,342,613.5,324,1px,0px,306,,0px,0px,0px,0px,center,324.5,0.5,324.5,0.5
+config,1280,True,True,,div.field-heading,Analysis Engine Ready,651.5,238,404,17,255,1055.5,246.5,0px,0px,,,0px,0px,0px,0px,baseline,246.5,0,,
+config,1280,True,True,,div.control-row,Auto Rating,651.5,382,404,36,418,1055.5,400,0px,0px,,,0px,0px,0px,0px,center,400,0,400,0
+config,1280,True,True,,div.field-heading,Strength Level 3200,651.5,431,404,17,448,1055.5,439.5,0px,0px,,,0px,0px,0px,0px,baseline,439.5,0,,
+config,1280,True,True,,div.field-heading,Move Timing 0.50–1.00 s,651.5,529,404,17,546,1055.5,537.5,0px,0px,,,0px,0px,0px,0px,baseline,537.5,0,,
+config,1280,True,True,,div.delay-fields,Minimum delay s – Maximum delay s,651.5,558,404,32,590,1055.5,574,0px,0px,,,0px,0px,0px,0px,center,582,8,,
+config,1280,True,True,,div.segmented,Random Immediate,651.5,598,404,32,630,1055.5,614,1px,1px,598,629,0px,0px,0px,0px,normal,614,0,614,0
+config,1280,True,True,,div.control-row,Smart Pacing,651.5,675,404,36,711,1055.5,693,0px,0px,,,0px,0px,0px,0px,center,693,0,693,0
+config,1280,True,True,,div.control-row,Evaluation Bar,209.5,420.328125,404,36,456.328125,613.5,438.328125,0px,0px,,,0px,0px,0px,0px,center,438.328125,0,438.328125,0
+config,1280,True,True,,div.control-row,Banner Not enough room (96 px minimum),209.5,456.328125,404,36,492.328125,613.5,474.328125,1px,0px,456.328125,,0px,0px,0px,0px,center,466.828125,-7.5,474.828125,0.5
+config,1280,True,True,,div.control-row,Recent Form,209.5,492.328125,404,36,528.328125,613.5,510.328125,1px,0px,492.328125,,0px,0px,0px,0px,center,510.828125,0.5,510.828125,0.5
+config,1280,True,True,,div.control-row,Theme,209.5,528.328125,404,36,564.328125,613.5,546.328125,0px,0px,,,0px,0px,0px,0px,center,546.328125,0,546.328125,0
+config,1280,True,True,,div.control-row,Clean View,209.5,642.65625,404,36,678.65625,613.5,660.65625,0px,0px,,,0px,0px,0px,0px,center,660.65625,0,660.65625,0
+config,1280,True,True,,div,Status Idle,209.5,937,411,15,952,620.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1280,True,True,,div,Time Left 00:00:00,644.5,937,411,15,952,1055.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1280,True,True,,div,Score 0 W | 0 D | 0 L,209.5,960,411,15,975,620.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1280,True,True,,div,Win Rate —,644.5,960,411,15,975,1055.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1024,True,True,,div.control-row,Bot,81.5,234,404,36,270,485.5,252,0px,0px,,,0px,0px,0px,0px,center,252,0,252,0
+config,1024,True,True,,div.control-row,Auto Moves,81.5,270,404,36,306,485.5,288,1px,0px,270,,0px,0px,0px,0px,center,288.5,0.5,288.5,0.5
+config,1024,True,True,,div.control-row,Auto Queue,81.5,306,404,36,342,485.5,324,1px,0px,306,,0px,0px,0px,0px,center,324.5,0.5,324.5,0.5
+config,1024,True,True,,div.field-heading,Analysis Engine Ready,523.5,238,404,17,255,927.5,246.5,0px,0px,,,0px,0px,0px,0px,baseline,246.5,0,,
+config,1024,True,True,,div.control-row,Auto Rating,523.5,382,404,36,418,927.5,400,0px,0px,,,0px,0px,0px,0px,center,400,0,400,0
+config,1024,True,True,,div.field-heading,Strength Level 3200,523.5,431,404,17,448,927.5,439.5,0px,0px,,,0px,0px,0px,0px,baseline,439.5,0,,
+config,1024,True,True,,div.field-heading,Move Timing 0.50–1.00 s,523.5,529,404,17,546,927.5,537.5,0px,0px,,,0px,0px,0px,0px,baseline,537.5,0,,
+config,1024,True,True,,div.delay-fields,Minimum delay s – Maximum delay s,523.5,558,404,32,590,927.5,574,0px,0px,,,0px,0px,0px,0px,center,582,8,,
+config,1024,True,True,,div.segmented,Random Immediate,523.5,598,404,32,630,927.5,614,1px,1px,598,629,0px,0px,0px,0px,normal,614,0,614,0
+config,1024,True,True,,div.control-row,Smart Pacing,523.5,675,404,36,711,927.5,693,0px,0px,,,0px,0px,0px,0px,center,693,0,693,0
+config,1024,True,True,,div.control-row,Evaluation Bar,81.5,420.328125,404,36,456.328125,485.5,438.328125,0px,0px,,,0px,0px,0px,0px,center,438.328125,0,438.328125,0
+config,1024,True,True,,div.control-row,Banner Not enough room (96 px minimum),81.5,456.328125,404,36,492.328125,485.5,474.328125,1px,0px,456.328125,,0px,0px,0px,0px,center,466.828125,-7.5,474.828125,0.5
+config,1024,True,True,,div.control-row,Recent Form,81.5,492.328125,404,36,528.328125,485.5,510.328125,1px,0px,492.328125,,0px,0px,0px,0px,center,510.828125,0.5,510.828125,0.5
+config,1024,True,True,,div.control-row,Theme,81.5,528.328125,404,36,564.328125,485.5,546.328125,0px,0px,,,0px,0px,0px,0px,center,546.328125,0,546.328125,0
+config,1024,True,True,,div.control-row,Clean View,81.5,642.65625,404,36,678.65625,485.5,660.65625,0px,0px,,,0px,0px,0px,0px,center,660.65625,0,660.65625,0
+config,1024,True,True,,div,Status Idle,81.5,937,411,15,952,492.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1024,True,True,,div,Time Left 00:00:00,516.5,937,411,15,952,927.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,1024,True,True,,div,Score 0 W | 0 D | 0 L,81.5,960,411,15,975,492.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,1024,True,True,,div,Win Rate —,516.5,960,411,15,975,927.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,768,True,True,,div.control-row,Bot,37,234,320.5,36,270,357.5,252,0px,0px,,,0px,0px,0px,0px,center,252,0,252,0
+config,768,True,True,,div.control-row,Auto Moves,37,270,320.5,36,306,357.5,288,1px,0px,270,,0px,0px,0px,0px,center,288.5,0.5,288.5,0.5
+config,768,True,True,,div.control-row,Auto Queue,37,306,320.5,36,342,357.5,324,1px,0px,306,,0px,0px,0px,0px,center,324.5,0.5,324.5,0.5
+config,768,True,True,,div.field-heading,Analysis Engine Ready,395.5,238,320.5,17,255,716,246.5,0px,0px,,,0px,0px,0px,0px,baseline,246.5,0,,
+config,768,True,True,,div.control-row,Auto Rating,395.5,382,320.5,36,418,716,400,0px,0px,,,0px,0px,0px,0px,center,400,0,400,0
+config,768,True,True,,div.field-heading,Strength Level 3200,395.5,431,320.5,17,448,716,439.5,0px,0px,,,0px,0px,0px,0px,baseline,439.5,0,,
+config,768,True,True,,div.field-heading,Move Timing 0.50–1.00 s,395.5,529,320.5,17,546,716,537.5,0px,0px,,,0px,0px,0px,0px,baseline,537.5,0,,
+config,768,True,True,,div.delay-fields,Minimum delay s – Maximum delay s,395.5,558,320.5,32,590,716,574,0px,0px,,,0px,0px,0px,0px,center,582,8,,
+config,768,True,True,,div.segmented,Random Immediate,395.5,598,320.5,32,630,716,614,1px,1px,598,629,0px,0px,0px,0px,normal,614,0,614,0
+config,768,True,True,,div.control-row,Smart Pacing,395.5,675,320.5,36,711,716,693,0px,0px,,,0px,0px,0px,0px,center,693,0,693,0
+config,768,True,True,,div.control-row,Evaluation Bar,37,414.65625,320.5,36,450.65625,357.5,432.65625,0px,0px,,,0px,0px,0px,0px,center,432.65625,0,432.65625,0
+config,768,True,True,,div.control-row,Banner Not enough room (96 px minimum),37,450.65625,320.5,36,486.65625,357.5,468.65625,1px,0px,450.65625,,0px,0px,0px,0px,center,461.15625,-7.5,469.15625,0.5
+config,768,True,True,,div.control-row,Recent Form,37,486.65625,320.5,36,522.65625,357.5,504.65625,1px,0px,486.65625,,0px,0px,0px,0px,center,505.15625,0.5,505.15625,0.5
+config,768,True,True,,div.control-row,Theme,37,522.65625,320.5,36,558.65625,357.5,540.65625,0px,0px,,,0px,0px,0px,0px,center,540.65625,0,540.65625,0
+config,768,True,True,,div.control-row,Clean View,37,631.328125,320.5,36,667.328125,357.5,649.328125,0px,0px,,,0px,0px,0px,0px,center,649.328125,0,649.328125,0
+config,768,True,True,,div,Status Idle,37,937,327.5,15,952,364.5,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,768,True,True,,div,Time Left 00:00:00,388.5,937,327.5,15,952,716,944.5,0px,0px,,,0px,0px,0px,0px,normal,944.5,0,,
+config,768,True,True,,div,Score 0 W | 0 D | 0 L,37,960,327.5,15,975,364.5,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,768,True,True,,div,Win Rate —,388.5,960,327.5,15,975,716,967.5,0px,0px,,,0px,0px,0px,0px,normal,967.5,0,,
+config,390,True,True,,div.control-row,Bot,25,238,325,36,274,350,256,0px,0px,,,0px,0px,0px,0px,center,256,0,256,0
+config,390,True,True,,div.control-row,Auto Moves,25,274,325,36,310,350,292,1px,0px,274,,0px,0px,0px,0px,center,292.5,0.5,292.5,0.5
+config,390,True,True,,div.control-row,Auto Queue,25,310,325,36,346,350,328,1px,0px,310,,0px,0px,0px,0px,center,328.5,0.5,328.5,0.5
+config,390,True,True,,div.field-heading,Analysis Engine Ready,25,417,325,17,434,350,425.5,0px,0px,,,0px,0px,0px,0px,baseline,425.5,0,,
+config,390,True,True,,div.control-row,Auto Rating,25,561,325,36,597,350,579,0px,0px,,,0px,0px,0px,0px,center,579,0,579,0
+config,390,True,True,,div.field-heading,Strength Level 3200,25,610,325,17,627,350,618.5,0px,0px,,,0px,0px,0px,0px,baseline,618.5,0,,
+config,390,True,True,,div.field-heading,Move Timing 0.50–1.00 s,25,708,325,17,725,350,716.5,0px,0px,,,0px,0px,0px,0px,baseline,716.5,0,,
+config,390,True,True,,div.delay-fields,Minimum delay s – Maximum delay s,25,737,325,32,769,350,753,0px,0px,,,0px,0px,0px,0px,center,761,8,,
+config,390,True,True,,div.segmented,Random Immediate,25,777,325,32,809,350,793,1px,1px,777,808,0px,0px,0px,0px,normal,793,0,793,0
+config,390,True,True,,div.control-row,Smart Pacing,25,854,325,36,890,350,872,0px,0px,,,0px,0px,0px,0px,center,872,0,872,0
+config,390,True,True,,div.control-row,Evaluation Bar,25,957,325,36,993,350,975,0px,0px,,,0px,0px,0px,0px,center,975,0,975,0
+config,390,True,True,,div.control-row,Banner Not enough room (96 px minimum),25,993,325,36,1029,350,1011,1px,0px,993,,0px,0px,0px,0px,center,1003.5,-7.5,1011.5,0.5
+config,390,True,True,,div.control-row,Recent Form,25,1029,325,36,1065,350,1047,1px,0px,1029,,0px,0px,0px,0px,center,1047.5,0.5,1047.5,0.5
+config,390,True,True,,div.control-row,Theme,25,1065,325,36,1101,350,1083,0px,0px,,,0px,0px,0px,0px,center,1083,0,1083,0
+config,390,True,True,,div.control-row,Clean View,25,1168,325,36,1204,350,1186,0px,0px,,,0px,0px,0px,0px,center,1186,0,1186,0
+config,390,True,True,,div,Status Idle,25,1570,325,15,1585,350,1577.5,0px,0px,,,0px,0px,0px,0px,normal,1577.5,0,,
+config,390,True,True,,div,Time Left 00:00:00,25,1593,325,15,1608,350,1600.5,0px,0px,,,0px,0px,0px,0px,normal,1600.5,0,,
+config,390,True,True,,div,Score 0 W | 0 D | 0 L,25,1616,325,15,1631,350,1623.5,0px,0px,,,0px,0px,0px,0px,normal,1623.5,0,,
+config,390,True,True,,div,Win Rate —,25,1639,325,15,1654,350,1646.5,0px,0px,,,0px,0px,0px,0px,normal,1646.5,0,,
