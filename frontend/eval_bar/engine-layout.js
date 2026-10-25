@@ -18,6 +18,7 @@
         #krypbot-container .kb-engine-timing .kb-delay-range { display:grid; grid-template-columns:round(down,calc((100% - 11px - var(--field-gap) - var(--field-gap))/2),1px) 11px minmax(0,1fr); }
         #krypbot-container .kb-engine-timing .kb-num-input { padding-left:var(--space-2); padding-right:var(--space-2); }
         #oi-wrapper { --row-h:40px; --row-height:var(--row-h); }
+        #krypbot-container .kb-section-label,#krypbot-container .kb-footer > div > span { line-height:15px !important; }
         #krypbot-container .kb-console-module .kb-section + .kb-section,
         #krypbot-container .kb-console-module.kb-visuals-module .kb-footer { border-top:0 !important; background:linear-gradient(var(--tc-console-divider),var(--tc-console-divider)) top / 100% 1px no-repeat; }
         #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-core-spacing,
@@ -29,6 +30,13 @@
         @media(min-width:1034px) and (max-width:1086px) {
           #krypbot-container .kb-engine-timing .kb-delay-range { gap:2px; grid-template-columns:round(down,calc((100% - 3px - 2px - 2px)/2),1px) 3px minmax(0,1fr); }
         }
+        #krypbot-container .kb-auto-play-module .kb-session-fields,
+        #krypbot-container .kb-auto-play-module .kb-session-actions { grid-template-columns:repeat(3,round(down,calc((100% - 24px)/4),1px)) minmax(0,1fr); }
+        #krypbot-container .kb-auto-play-module .kb-session-secondary-actions { display:contents; }
+        #krypbot-container #kb-session-stop { grid-column:3; }
+        #krypbot-container .kb-auto-play-module #kb-session-export { grid-column:4; white-space:nowrap; line-height:16px; }
+        #krypbot-container .kb-session-queue-note { font-size:11px; line-height:16px; margin:8px 0; }
+        #krypbot-container .kb-auto-play-module .kb-session-status { column-gap:24px; }
   `;
   function group({core, visuals, engine, autoRating, strength, timing, smartPacing, puzzle, autoMoves}) {
     const section = name => {

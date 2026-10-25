@@ -1,0 +1,761 @@
+[
+  {
+    "surface": "console",
+    "width": 1086,
+    "fields": {
+      "kb-session-duration": {
+        "x": 51,
+        "y": 1616,
+        "width": 163,
+        "height": 32,
+        "right": 214,
+        "bottom": 1648
+      },
+      "kb-session-min-rate": {
+        "x": 222,
+        "y": 1616,
+        "width": 163,
+        "height": 32,
+        "right": 385,
+        "bottom": 1648
+      },
+      "kb-session-max-rate": {
+        "x": 393,
+        "y": 1616,
+        "width": 163,
+        "height": 32,
+        "right": 556,
+        "bottom": 1648
+      },
+      "tc-rating-target": {
+        "x": 564,
+        "y": 1616,
+        "width": 163,
+        "height": 32,
+        "right": 727,
+        "bottom": 1648
+      },
+      "kb-session-start": {
+        "x": 51,
+        "y": 1692,
+        "width": 334,
+        "height": 32,
+        "right": 385,
+        "bottom": 1724
+      },
+      "kb-session-stop": {
+        "x": 393,
+        "y": 1692,
+        "width": 163,
+        "height": 32,
+        "right": 556,
+        "bottom": 1724
+      },
+      "kb-session-export": {
+        "x": 564,
+        "y": 1692,
+        "width": 163,
+        "height": 32,
+        "right": 727,
+        "bottom": 1724
+      }
+    },
+    "exportText": 100.359375,
+    "exportFont": "11px",
+    "exportWhiteSpace": "nowrap",
+    "exportOpacity": "1",
+    "warningFont": "11px",
+    "pageOverflow": true,
+    "overflow": false
+  },
+  {
+    "surface": "console",
+    "width": 1280,
+    "fields": {
+      "kb-session-duration": {
+        "x": 148,
+        "y": 1616,
+        "width": 163,
+        "height": 32,
+        "right": 311,
+        "bottom": 1648
+      },
+      "kb-session-min-rate": {
+        "x": 319,
+        "y": 1616,
+        "width": 163,
+        "height": 32,
+        "right": 482,
+        "bottom": 1648
+      },
+      "kb-session-max-rate": {
+        "x": 490,
+        "y": 1616,
+        "width": 163,
+        "height": 32,
+        "right": 653,
+        "bottom": 1648
+      },
+      "tc-rating-target": {
+        "x": 661,
+        "y": 1616,
+        "width": 163,
+        "height": 32,
+        "right": 824,
+        "bottom": 1648
+      },
+      "kb-session-start": {
+        "x": 148,
+        "y": 1692,
+        "width": 334,
+        "height": 32,
+        "right": 482,
+        "bottom": 1724
+      },
+      "kb-session-stop": {
+        "x": 490,
+        "y": 1692,
+        "width": 163,
+        "height": 32,
+        "right": 653,
+        "bottom": 1724
+      },
+      "kb-session-export": {
+        "x": 661,
+        "y": 1692,
+        "width": 163,
+        "height": 32,
+        "right": 824,
+        "bottom": 1724
+      }
+    },
+    "exportText": 100.359375,
+    "exportFont": "11px",
+    "exportWhiteSpace": "nowrap",
+    "exportOpacity": "1",
+    "warningFont": "11px",
+    "pageOverflow": true,
+    "overflow": false
+  },
+  {
+    "surface": "console",
+    "width": 1440,
+    "fields": {
+      "kb-session-duration": {
+        "x": 228,
+        "y": 1616,
+        "width": 163,
+        "height": 32,
+        "right": 391,
+        "bottom": 1648
+      },
+      "kb-session-min-rate": {
+        "x": 399,
+        "y": 1616,
+        "width": 163,
+        "height": 32,
+        "right": 562,
+        "bottom": 1648
+      },
+      "kb-session-max-rate": {
+        "x": 570,
+        "y": 1616,
+        "width": 163,
+        "height": 32,
+        "right": 733,
+        "bottom": 1648
+      },
+      "tc-rating-target": {
+        "x": 741,
+        "y": 1616,
+        "width": 163,
+        "height": 32,
+        "right": 904,
+        "bottom": 1648
+      },
+      "kb-session-start": {
+        "x": 228,
+        "y": 1692,
+        "width": 334,
+        "height": 32,
+        "right": 562,
+        "bottom": 1724
+      },
+      "kb-session-stop": {
+        "x": 570,
+        "y": 1692,
+        "width": 163,
+        "height": 32,
+        "right": 733,
+        "bottom": 1724
+      },
+      "kb-session-export": {
+        "x": 741,
+        "y": 1692,
+        "width": 163,
+        "height": 32,
+        "right": 904,
+        "bottom": 1724
+      }
+    },
+    "exportText": 100.359375,
+    "exportFont": "11px",
+    "exportWhiteSpace": "nowrap",
+    "exportOpacity": "1",
+    "warningFont": "11px",
+    "pageOverflow": false,
+    "overflow": false
+  },
+  {
+    "surface": "console",
+    "width": 1920,
+    "fields": {
+      "kb-session-duration": {
+        "x": 468,
+        "y": 1616,
+        "width": 163,
+        "height": 32,
+        "right": 631,
+        "bottom": 1648
+      },
+      "kb-session-min-rate": {
+        "x": 639,
+        "y": 1616,
+        "width": 163,
+        "height": 32,
+        "right": 802,
+        "bottom": 1648
+      },
+      "kb-session-max-rate": {
+        "x": 810,
+        "y": 1616,
+        "width": 163,
+        "height": 32,
+        "right": 973,
+        "bottom": 1648
+      },
+      "tc-rating-target": {
+        "x": 981,
+        "y": 1616,
+        "width": 163,
+        "height": 32,
+        "right": 1144,
+        "bottom": 1648
+      },
+      "kb-session-start": {
+        "x": 468,
+        "y": 1692,
+        "width": 334,
+        "height": 32,
+        "right": 802,
+        "bottom": 1724
+      },
+      "kb-session-stop": {
+        "x": 810,
+        "y": 1692,
+        "width": 163,
+        "height": 32,
+        "right": 973,
+        "bottom": 1724
+      },
+      "kb-session-export": {
+        "x": 981,
+        "y": 1692,
+        "width": 163,
+        "height": 32,
+        "right": 1144,
+        "bottom": 1724
+      }
+    },
+    "exportText": 100.359375,
+    "exportFont": "11px",
+    "exportWhiteSpace": "nowrap",
+    "exportOpacity": "1",
+    "warningFont": "11px",
+    "pageOverflow": false,
+    "overflow": false
+  },
+  {
+    "surface": "console",
+    "width": 1033,
+    "fields": {
+      "kb-session-duration": {
+        "x": 25,
+        "y": 2022,
+        "width": 239,
+        "height": 32,
+        "right": 264,
+        "bottom": 2054
+      },
+      "kb-session-min-rate": {
+        "x": 272,
+        "y": 2022,
+        "width": 239,
+        "height": 32,
+        "right": 511,
+        "bottom": 2054
+      },
+      "kb-session-max-rate": {
+        "x": 519,
+        "y": 2022,
+        "width": 239,
+        "height": 32,
+        "right": 758,
+        "bottom": 2054
+      },
+      "tc-rating-target": {
+        "x": 766,
+        "y": 2022,
+        "width": 242,
+        "height": 32,
+        "right": 1008,
+        "bottom": 2054
+      },
+      "kb-session-start": {
+        "x": 25,
+        "y": 2098,
+        "width": 486,
+        "height": 32,
+        "right": 511,
+        "bottom": 2130
+      },
+      "kb-session-stop": {
+        "x": 519,
+        "y": 2098,
+        "width": 239,
+        "height": 32,
+        "right": 758,
+        "bottom": 2130
+      },
+      "kb-session-export": {
+        "x": 766,
+        "y": 2098,
+        "width": 242,
+        "height": 32,
+        "right": 1008,
+        "bottom": 2130
+      }
+    },
+    "exportText": 100.359375,
+    "exportFont": "11px",
+    "exportWhiteSpace": "nowrap",
+    "exportOpacity": "1",
+    "warningFont": "11px",
+    "pageOverflow": true,
+    "overflow": false
+  },
+  {
+    "surface": "console",
+    "width": 800,
+    "fields": {
+      "kb-session-duration": {
+        "x": 25,
+        "y": 2022,
+        "width": 181,
+        "height": 32,
+        "right": 206,
+        "bottom": 2054
+      },
+      "kb-session-min-rate": {
+        "x": 214,
+        "y": 2022,
+        "width": 181,
+        "height": 32,
+        "right": 395,
+        "bottom": 2054
+      },
+      "kb-session-max-rate": {
+        "x": 403,
+        "y": 2022,
+        "width": 181,
+        "height": 32,
+        "right": 584,
+        "bottom": 2054
+      },
+      "tc-rating-target": {
+        "x": 592,
+        "y": 2022,
+        "width": 183,
+        "height": 32,
+        "right": 775,
+        "bottom": 2054
+      },
+      "kb-session-start": {
+        "x": 25,
+        "y": 2098,
+        "width": 370,
+        "height": 32,
+        "right": 395,
+        "bottom": 2130
+      },
+      "kb-session-stop": {
+        "x": 403,
+        "y": 2098,
+        "width": 181,
+        "height": 32,
+        "right": 584,
+        "bottom": 2130
+      },
+      "kb-session-export": {
+        "x": 592,
+        "y": 2098,
+        "width": 183,
+        "height": 32,
+        "right": 775,
+        "bottom": 2130
+      }
+    },
+    "exportText": 100.359375,
+    "exportFont": "11px",
+    "exportWhiteSpace": "nowrap",
+    "exportOpacity": "1",
+    "warningFont": "11px",
+    "pageOverflow": true,
+    "overflow": false
+  },
+  {
+    "surface": "config",
+    "width": 1440,
+    "fields": {
+      "kb-session-duration": {
+        "x": 290,
+        "y": 805,
+        "width": 205,
+        "height": 32,
+        "right": 495,
+        "bottom": 837
+      },
+      "kb-session-min-rate": {
+        "x": 503,
+        "y": 805,
+        "width": 205,
+        "height": 32,
+        "right": 708,
+        "bottom": 837
+      },
+      "kb-session-max-rate": {
+        "x": 716,
+        "y": 805,
+        "width": 205,
+        "height": 32,
+        "right": 921,
+        "bottom": 837
+      },
+      "tc-rating-target": {
+        "x": 929,
+        "y": 805,
+        "width": 206,
+        "height": 32,
+        "right": 1135,
+        "bottom": 837
+      },
+      "kb-session-start": {
+        "x": 290,
+        "y": 874,
+        "width": 418,
+        "height": 32,
+        "right": 708,
+        "bottom": 906
+      },
+      "kb-session-stop": {
+        "x": 716,
+        "y": 874,
+        "width": 205,
+        "height": 32,
+        "right": 921,
+        "bottom": 906
+      },
+      "kb-session-export": {
+        "x": 929,
+        "y": 874,
+        "width": 206,
+        "height": 32,
+        "right": 1135,
+        "bottom": 906
+      }
+    },
+    "exportText": 90.03125,
+    "exportFont": "11px",
+    "exportWhiteSpace": "nowrap",
+    "exportOpacity": "1",
+    "warningFont": "11px",
+    "pageOverflow": false,
+    "overflow": false
+  },
+  {
+    "surface": "config",
+    "width": 1280,
+    "fields": {
+      "kb-session-duration": {
+        "x": 210,
+        "y": 805,
+        "width": 205,
+        "height": 32,
+        "right": 415,
+        "bottom": 837
+      },
+      "kb-session-min-rate": {
+        "x": 423,
+        "y": 805,
+        "width": 205,
+        "height": 32,
+        "right": 628,
+        "bottom": 837
+      },
+      "kb-session-max-rate": {
+        "x": 636,
+        "y": 805,
+        "width": 205,
+        "height": 32,
+        "right": 841,
+        "bottom": 837
+      },
+      "tc-rating-target": {
+        "x": 849,
+        "y": 805,
+        "width": 206,
+        "height": 32,
+        "right": 1055,
+        "bottom": 837
+      },
+      "kb-session-start": {
+        "x": 210,
+        "y": 874,
+        "width": 418,
+        "height": 32,
+        "right": 628,
+        "bottom": 906
+      },
+      "kb-session-stop": {
+        "x": 636,
+        "y": 874,
+        "width": 205,
+        "height": 32,
+        "right": 841,
+        "bottom": 906
+      },
+      "kb-session-export": {
+        "x": 849,
+        "y": 874,
+        "width": 206,
+        "height": 32,
+        "right": 1055,
+        "bottom": 906
+      }
+    },
+    "exportText": 90.03125,
+    "exportFont": "11px",
+    "exportWhiteSpace": "nowrap",
+    "exportOpacity": "1",
+    "warningFont": "11px",
+    "pageOverflow": false,
+    "overflow": false
+  },
+  {
+    "surface": "config",
+    "width": 1024,
+    "fields": {
+      "kb-session-duration": {
+        "x": 82,
+        "y": 805,
+        "width": 205,
+        "height": 32,
+        "right": 287,
+        "bottom": 837
+      },
+      "kb-session-min-rate": {
+        "x": 295,
+        "y": 805,
+        "width": 205,
+        "height": 32,
+        "right": 500,
+        "bottom": 837
+      },
+      "kb-session-max-rate": {
+        "x": 508,
+        "y": 805,
+        "width": 205,
+        "height": 32,
+        "right": 713,
+        "bottom": 837
+      },
+      "tc-rating-target": {
+        "x": 721,
+        "y": 805,
+        "width": 206,
+        "height": 32,
+        "right": 927,
+        "bottom": 837
+      },
+      "kb-session-start": {
+        "x": 82,
+        "y": 874,
+        "width": 418,
+        "height": 32,
+        "right": 500,
+        "bottom": 906
+      },
+      "kb-session-stop": {
+        "x": 508,
+        "y": 874,
+        "width": 205,
+        "height": 32,
+        "right": 713,
+        "bottom": 906
+      },
+      "kb-session-export": {
+        "x": 721,
+        "y": 874,
+        "width": 206,
+        "height": 32,
+        "right": 927,
+        "bottom": 906
+      }
+    },
+    "exportText": 90.03125,
+    "exportFont": "11px",
+    "exportWhiteSpace": "nowrap",
+    "exportOpacity": "1",
+    "warningFont": "11px",
+    "pageOverflow": false,
+    "overflow": false
+  },
+  {
+    "surface": "config",
+    "width": 768,
+    "fields": {
+      "kb-session-duration": {
+        "x": 37,
+        "y": 1339,
+        "width": 163,
+        "height": 32,
+        "right": 200,
+        "bottom": 1371
+      },
+      "kb-session-min-rate": {
+        "x": 208,
+        "y": 1339,
+        "width": 163,
+        "height": 32,
+        "right": 371,
+        "bottom": 1371
+      },
+      "kb-session-max-rate": {
+        "x": 379,
+        "y": 1339,
+        "width": 163,
+        "height": 32,
+        "right": 542,
+        "bottom": 1371
+      },
+      "tc-rating-target": {
+        "x": 550,
+        "y": 1339,
+        "width": 166,
+        "height": 32,
+        "right": 716,
+        "bottom": 1371
+      },
+      "kb-session-start": {
+        "x": 37,
+        "y": 1408,
+        "width": 334,
+        "height": 32,
+        "right": 371,
+        "bottom": 1440
+      },
+      "kb-session-stop": {
+        "x": 379,
+        "y": 1408,
+        "width": 163,
+        "height": 32,
+        "right": 542,
+        "bottom": 1440
+      },
+      "kb-session-export": {
+        "x": 550,
+        "y": 1408,
+        "width": 166,
+        "height": 32,
+        "right": 716,
+        "bottom": 1440
+      }
+    },
+    "exportText": 90.03125,
+    "exportFont": "11px",
+    "exportWhiteSpace": "nowrap",
+    "exportOpacity": "1",
+    "warningFont": "11px",
+    "pageOverflow": false,
+    "overflow": false
+  },
+  {
+    "surface": "config",
+    "width": 390,
+    "fields": {
+      "kb-session-duration": {
+        "x": 25,
+        "y": 1351,
+        "width": 158,
+        "height": 32,
+        "right": 183,
+        "bottom": 1383
+      },
+      "kb-session-min-rate": {
+        "x": 191,
+        "y": 1351,
+        "width": 159,
+        "height": 32,
+        "right": 350,
+        "bottom": 1383
+      },
+      "kb-session-max-rate": {
+        "x": 25,
+        "y": 1411,
+        "width": 158,
+        "height": 32,
+        "right": 183,
+        "bottom": 1443
+      },
+      "tc-rating-target": {
+        "x": 191,
+        "y": 1411,
+        "width": 159,
+        "height": 32,
+        "right": 350,
+        "bottom": 1443
+      },
+      "kb-session-start": {
+        "x": 25,
+        "y": 1497,
+        "width": 325,
+        "height": 32,
+        "right": 350,
+        "bottom": 1529
+      },
+      "kb-session-stop": {
+        "x": 25,
+        "y": 1537,
+        "width": 158,
+        "height": 32,
+        "right": 183,
+        "bottom": 1569
+      },
+      "kb-session-export": {
+        "x": 191,
+        "y": 1537,
+        "width": 159,
+        "height": 32,
+        "right": 350,
+        "bottom": 1569
+      }
+    },
+    "exportText": 90.03125,
+    "exportFont": "11px",
+    "exportWhiteSpace": "nowrap",
+    "exportOpacity": "1",
+    "warningFont": "11px",
+    "pageOverflow": false,
+    "overflow": false
+  }
+]
