@@ -1,7 +1,9 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-23.7
+// @version      2026-10-24.2
+// @downloadURL  http://127.0.0.1:5050/thinker-chess.user.js
+// @updateURL    http://127.0.0.1:5050/thinker-chess.meta.js
 // @description  Chess Bot com Servidor Local
 // @author       You
 // @match        https://www.chess.com/*
@@ -5576,7 +5578,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     let fenAvailable = false;
     try { fenAvailable = typeof game?.getFEN?.() === "string"; } catch (_) {}
     return {
-      version: "2026-10-23.7",
+      version: globalThis.ThinkerClientVersion || "unknown",
       route: window.location.pathname,
       ui: { hidden: _ghostModeActive, mountError: thinkerUiLastFailure },
       externalConfig: { appliedRevision: _externalAppliedRevision, error: _externalConfigError },
@@ -7638,7 +7640,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     GM_xmlhttpRequest({
       method: "GET",
       url: SERVER_URL + "/config/load",
-      headers: { "X-Thinker-Client": "userscript", "X-Thinker-Applied-Revision": String(_externalAppliedRevision), "X-Thinker-Server": _externalServerId, "X-Thinker-Banner-State": bannerState },
+      headers: { "X-Thinker-Version": globalThis.ThinkerClientVersion || "", "X-Thinker-Client": "userscript", "X-Thinker-Applied-Revision": String(_externalAppliedRevision), "X-Thinker-Server": _externalServerId, "X-Thinker-Banner-State": bannerState },
       timeout: 5000,
       onerror() { _externalPollPending = false; _externalConfigError = "network"; },
       ontimeout() { _externalPollPending = false; _externalConfigError = "timeout"; },
@@ -7865,6 +7867,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
 })();
 
 /* THINKER_SESSION_CONTROL_GENERATED_START */
+globalThis.ThinkerClientVersion="2026-10-24.2";
 globalThis.ThinkerSessionControlReady=(async()=>{
 (function(root){
 "use strict";

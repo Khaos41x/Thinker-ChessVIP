@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from flask import Blueprint, jsonify, request, send_from_directory
+from flask import Blueprint, Response, jsonify, request, send_from_directory
 
 
 DEFAULT_CONFIG = {
@@ -96,6 +96,7 @@ def create_external_config_blueprint(preference_path=None):
         except (OSError, ValueError, TypeError):
             persistence_error = 'Saved settings could not be loaded. Check the local configuration file.'
             invalid_saved_configuration = True
+    userscript_version = None
     revision = 0
     last_seen = None
     applied_revision = -1
@@ -129,6 +130,24 @@ def create_external_config_blueprint(preference_path=None):
         response.headers["Cache-Control"] = "no-store"
         return response
 
+    def release_version():
+        with (assets.parents[1] / 'script.js').open(encoding='utf-8') as source:
+            metadata = source.read(4096)
+        return re.search(r'^// @version\s+(\S+)', metadata, re.M).group(1)
+
+    @panel.get('/thinker-chess.user.js')
+    @panel.get('/thinker-chess.meta.js')
+    def userscript_install():
+        if request.remote_addr not in {'127.0.0.1', '::1'}:
+            return jsonify({'error': 'Local access required'}), 403
+        source = (assets.parents[1] / 'script.js').read_text(encoding='utf-8')
+        if request.path.endswith('.meta.js'):
+            source = source[:source.index('// ==/UserScript==') + len('// ==/UserScript==')] + '\n'
+        response = Response(source, content_type='application/javascript; charset=utf-8')
+        response.headers['X-Thinker-Version'] = release_version()
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        return response
+
     @panel.get("/config")
     def page():
         response = send_from_directory(assets, "index.html")
@@ -142,9 +161,10 @@ def create_external_config_blueprint(preference_path=None):
 
     @panel.get("/config/load")
     def load():
-        nonlocal last_seen, applied_revision, banner_state
+        nonlocal last_seen, applied_revision, banner_state, userscript_version
         with lock:
             if request.headers.get("X-Thinker-Client") == "userscript":
+                userscript_version = request.headers.get("X-Thinker-Version", "")[:64] or None
                 last_seen = time.monotonic()
                 value = request.headers.get("X-Thinker-Applied-Revision", "-1")
                 applied_revision = int(value) if re.fullmatch(r"-?\d{1,12}", value) and request.headers.get("X-Thinker-Server") == server_id else -1
@@ -158,6 +178,8 @@ def create_external_config_blueprint(preference_path=None):
             expire_commands()
             connected = last_seen is not None and time.monotonic() - last_seen < 7
             return jsonify({"revision": revision, "userscriptConnected": connected,
+                            "serverVersion": release_version(), "userscriptVersion": userscript_version if connected else None,
+                            "userscriptUpdateRequired": connected and userscript_version != release_version(),
                             "applied": connected and applied_revision == revision,
                             "bannerState": banner_state if connected else "disconnected",
                             "sessionConnected": session_connected(), "sessionProjection": session['projection'] if session_connected() else None,

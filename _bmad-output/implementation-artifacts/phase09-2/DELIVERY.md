@@ -1,0 +1,9 @@
+# Runtime delivery correction
+
+The earlier completion report verified repository source and isolated browser regressions, but did not establish that the Tampermonkey-installed copy had been updated. The userscript metadata and diagnostic label still identified2026-10-23.7. The production browser heartbeat was connected but lacked the newly added release acknowledgement; production cannot be declared current from backend tests alone.
+
+Release2026-10-24.2 now has a direct loopback installer at `/thinker-chess.user.js`, metadata-only update URL at `/thinker-chess.meta.js`, unchanged script name/namespace for in-place Tampermonkey updating, no-store responses, and local-only source delivery. The deterministic builder embeds the same metadata version into the runtime. Actual userscript config polling sends its runtime version; External Config distinguishes unknown/old clients from acknowledged matching versions and exposes the install/update link. No engine execution permission changes.
+
+The current server was restarted only after backing up both observed state and the newer durable configuration; preference bytes were retained unchanged. Live installer and metadata requests return200 and version2026-10-24.2. Unit regressions cover served source, metadata, local access, missing/old/matching acknowledgements, and stale clients. Real Chromium source loading must reach the matching-version acknowledgement without injecting version headers; existing selector and configuration browser regressions are rerun.
+
+The user browser installation is a separate final delivery step. If native browser control cannot safely identify its URL, provide the concrete local update link and require the actual browser acknowledgement before claiming it is active. Do not use browser profile/database mutation or alternate automation to bypass computer-use restrictions. No remote push.

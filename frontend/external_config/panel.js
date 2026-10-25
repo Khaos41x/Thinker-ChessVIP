@@ -244,6 +244,8 @@
       document.querySelector('.connection').dataset.state = 'synced';
       byId('connection').textContent = 'Local server connected';
       byId('userscript-connection').textContent = status.userscriptConnected ? 'Chess.com: connected' : 'Chess.com: disconnected';
+      byId('client-build-state').textContent = !status.serverVersion ? 'Restart the local server to verify the installed userscript.' : !status.userscriptConnected ? `Local version ${status.serverVersion} · Reload Chess.com after updating the userscript.` : status.userscriptUpdateRequired ? `Userscript update required · local version ${status.serverVersion}, browser ${status.userscriptVersion || 'not verified'}.` : `Userscript ${status.userscriptVersion} · up to date`;
+      byId('userscript-update').textContent = status.userscriptUpdateRequired ? 'Update userscript now' : 'Install / update userscript';
       renderSession(status.sessionConnected ? status.sessionProjection : null);
       const bannerLabels = {
         visible: 'Visible on Chess.com', disabled: 'Disabled', 'ghost-mode': 'Hidden by Clean View',

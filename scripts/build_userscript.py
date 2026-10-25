@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import argparse
+import json
+import re
 from pathlib import Path
 import sys
 
@@ -106,8 +108,12 @@ def bundle_source() -> str:
     return "\n".join(lines) + "\n"
 
 
-def generated_region() -> str:
+def generated_region(version=None) -> str:
+    if version is None:
+        version = re.search(r"^// @version\s+(\S+)", TARGET.read_text(encoding="utf-8"), re.M).group(1)
     loader = (
+        "globalThis.ThinkerClientVersion=" + json.dumps(version) + ";\n"
+        +
         "globalThis.ThinkerSessionControlReady=(async()=>{\n"
         + bundle_source()
         + "return globalThis.ThinkerSessionControl;\n"
@@ -117,7 +123,7 @@ def generated_region() -> str:
 
 
 def render(current: str) -> str:
-    region = generated_region()
+    region = generated_region(re.search(r"^// @version\s+(\S+)", current, re.M).group(1))
     start_index = current.find(START)
     end_index = current.find(END)
     if start_index == -1 and end_index == -1:
