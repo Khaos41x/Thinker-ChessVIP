@@ -15,6 +15,7 @@ def main():
     source = (ROOT / "frontend/eval_bar/engine-selection.js").read_text(encoding="utf-8-sig").rstrip()
     source += "\n" + (ROOT / "frontend/eval_bar/engine-layout.js").read_text(encoding="utf-8-sig").rstrip()
     source += "\n" + (ROOT / "frontend/eval_bar/scout-finish.js").read_text(encoding="utf-8-sig").rstrip()
+    source += "\n" + (ROOT / "frontend/eval_bar/focus-finish.js").read_text(encoding="utf-8-sig").rstrip()
     region = START + "\n" + source + "\n" + END
     if START in current:
         start, end = current.index(START), current.index(END) + len(END)

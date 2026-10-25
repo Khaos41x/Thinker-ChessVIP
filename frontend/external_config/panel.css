@@ -612,3 +612,15 @@ footer > p {
 #engine .strength .range-labels { margin:0; }
 #analysis-engine-message { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 #engine .timing[hidden] { display:none; }
+
+body :is(button,input,select,a,[tabindex]):focus {
+  outline:none !important;
+  box-shadow:none !important;
+}
+body[data-focus-input=pointer] :is(button,input,select,a,[tabindex]):focus {
+  border-color:var(--tc-idle-border,var(--border)) !important;
+}
+body[data-focus-input=keyboard] :is(button,input,select,a,[tabindex]):focus-visible {
+  border:1px solid #A0A19B !important;
+  box-sizing:border-box;
+}

@@ -362,7 +362,11 @@
   byId('retry').addEventListener('click', () => { clearTimeout(timer); save(); poll(); engineError = null; refreshEngines(); });
   document.addEventListener('visibilitychange', () => { if (!document.hidden) poll(); });
   window.addEventListener('online', () => { save(); poll(); engineError = null; refreshEngines(); });
-  document.addEventListener('pointerdown', () => { document.body.dataset.focusInput = 'pointer'; }, true);
+  document.addEventListener('pointerdown', event => {
+    document.body.dataset.focusInput = 'pointer';
+    const control = event.target.closest('button,input,select,a,[tabindex]');
+    if (control && control !== document.activeElement) control.style.setProperty('--tc-idle-border', getComputedStyle(control).borderColor);
+  }, true);
   document.addEventListener('keydown', event => { if (event.key === 'Tab') document.body.dataset.focusInput = 'keyboard'; }, true);
   poll();
 })();
