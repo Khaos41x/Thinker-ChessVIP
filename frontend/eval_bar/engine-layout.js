@@ -17,8 +17,12 @@
         #krypbot-container .kb-engine-timing .kb-run-delay-controls { grid-template-columns:minmax(0,1fr) 124px; align-items:center; gap:var(--field-gap); }
         #krypbot-container .kb-engine-timing .kb-delay-range { display:grid; grid-template-columns:round(down,calc((100% - 11px - var(--field-gap) - var(--field-gap))/2),1px) 11px minmax(0,1fr); }
         #krypbot-container .kb-engine-timing .kb-num-input { padding-left:var(--space-2); padding-right:var(--space-2); }
+        #oi-wrapper { --row-h:40px; --row-height:var(--row-h); }
+        #krypbot-container .kb-console-module .kb-section + .kb-section,
+        #krypbot-container .kb-console-module.kb-visuals-module .kb-footer { border-top:0 !important; background:linear-gradient(var(--tc-console-divider),var(--tc-console-divider)) top / 100% 1px no-repeat; }
         #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-core-spacing,
-        #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-visuals-spacing { margin-top:var(--space-2) !important; }
+        #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-visuals-spacing { margin-top:6px !important; }
+        #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-engine-module { min-height:412px; }
         #krypbot-container .kb-engine-timing:has(#auto-delay-section[style*="display: none"]) { display:none; }
         #krypbot-container .kb-engine-strength .kb-slider { display:block; margin:8px 0; }
         #krypbot-container .kb-engine-strength .kb-strength-limits { margin-top:0; }
