@@ -1,0 +1,87 @@
+diff --git a/frontend/eval_bar/engine-layout.js b/frontend/eval_bar/engine-layout.js
+index 9c00a99..eb33413 100644
+--- a/frontend/eval_bar/engine-layout.js
++++ b/frontend/eval_bar/engine-layout.js
+@@ -34,6 +34,11 @@
+         #krypbot-container .kb-engine-strength .kb-strength-limits { margin-top:0; }
+         @media(min-width:1034px) and (max-width:1086px) {
+           #krypbot-container .kb-engine-timing .kb-delay-range { gap:2px; grid-template-columns:round(down,calc((100% - 3px - 2px - 2px)/2),1px) 3px minmax(0,1fr); }
++          #krypbot-container .kb-engine-timing .kb-run-delay-controls { grid-template-columns:minmax(0,1fr) 158px; gap:var(--space-1); }
++          #krypbot-container .kb-engine-timing .kb-delay-input { grid-template-columns:minmax(0,1fr) 9px; }
++          #krypbot-container .kb-engine-timing .kb-delay-unit { width:9px; padding:0 2px 0 0; }
++          #krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) { grid-template-columns:round(down,50%,1px) minmax(0,1fr); }
++          #krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) label { padding:0 12px; }
+         }
+         #krypbot-container .kb-auto-play-module .kb-session-fields,
+         #krypbot-container .kb-auto-play-module .kb-session-actions { grid-template-columns:repeat(3,round(down,calc((100% - 24px)/4),1px)) minmax(0,1fr); }
+diff --git a/script.js b/script.js
+index b10c2ce..6b1de93 100644
+--- a/script.js
++++ b/script.js
+@@ -288,6 +288,11 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+         #krypbot-container .kb-engine-strength .kb-strength-limits { margin-top:0; }
+         @media(min-width:1034px) and (max-width:1086px) {
+           #krypbot-container .kb-engine-timing .kb-delay-range { gap:2px; grid-template-columns:round(down,calc((100% - 3px - 2px - 2px)/2),1px) 3px minmax(0,1fr); }
++          #krypbot-container .kb-engine-timing .kb-run-delay-controls { grid-template-columns:minmax(0,1fr) 158px; gap:var(--space-1); }
++          #krypbot-container .kb-engine-timing .kb-delay-input { grid-template-columns:minmax(0,1fr) 9px; }
++          #krypbot-container .kb-engine-timing .kb-delay-unit { width:9px; padding:0 2px 0 0; }
++          #krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) { grid-template-columns:round(down,50%,1px) minmax(0,1fr); }
++          #krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) label { padding:0 12px; }
+         }
+         #krypbot-container .kb-auto-play-module .kb-session-fields,
+         #krypbot-container .kb-auto-play-module .kb-session-actions { grid-template-columns:repeat(3,round(down,calc((100% - 24px)/4),1px)) minmax(0,1fr); }
+diff --git a/tests/browser/test_timing_fit.mjs b/tests/browser/test_timing_fit.mjs
+new file mode 100644
+index 0000000..45268d5
+--- /dev/null
++++ b/tests/browser/test_timing_fit.mjs
+@@ -0,0 +1,49 @@
++import assert from 'node:assert/strict';
++import {spawn} from 'node:child_process';
++import {mkdtemp,mkdir,writeFile,readFile,rm} from 'node:fs/promises';
++import {tmpdir} from 'node:os';
++import {resolve,join} from 'node:path';
++import {createServer} from 'node:net';
++const root=resolve(import.meta.dirname,'../..');
++const before=process.argv.includes('--before');
++const configOnly=process.argv.includes('--config-only');
++const output=join(root,'_bmad-output/implementation-artifacts/connectivity-finish','block-5');
++await mkdir(output,{recursive:true});
++const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
++const port=()=>new Promise(resolve=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>resolve(p));});});
++const serverPort=await port(),debug=await port(),base=`http://127.0.0.1:${serverPort}`;
++const profile=await mkdtemp(join(tmpdir(),'thinker-phase091-capture-'));
++const backend=spawn('python',['-c',before?"import importlib.util,sys;from pathlib import Path;from flask import Response,send_from_directory;baseline=Path('.definitive-finish-baseline');spec=importlib.util.spec_from_file_location('core.external_config',baseline/'core/external_config.py');old=importlib.util.module_from_spec(spec);sys.modules['core.external_config']=old;spec.loader.exec_module(old);spec=importlib.util.spec_from_file_location('visual','tests/phase091_visual_fixture.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.app.view_functions['userscript']=lambda:Response((baseline/'script.js').read_text(encoding='utf8'),content_type='application/javascript');m.app.view_functions['external_config.asset']=lambda filename:send_from_directory(baseline/'frontend/external_config' if (baseline/'frontend/external_config'/filename).exists() else Path.cwd()/'frontend/external_config',filename);m.app.run(host='127.0.0.1',port=int(sys.argv[1]),threaded=True,use_reloader=False)":"import importlib.util,sys;spec=importlib.util.spec_from_file_location('visual','tests/phase091_visual_fixture.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.app.run(host='127.0.0.1',port=int(sys.argv[1]),threaded=True,use_reloader=False)",String(serverPort)],{cwd:root,stdio:'ignore',windowsHide:true});
++const browser=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--disable-gpu','--no-first-run','--disable-background-timer-throttling','--disable-renderer-backgrounding',`--remote-debugging-port=${debug}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
++const clients=[];
++async function waitFor(test){for(let i=0;i<180;i++){try{if(await test())return;}catch{}await delay(100);}throw new Error('Timed out');}
++async function connect(url){const socket=new WebSocket(url);let id=0;const pending=new Map();const handlers=new Map();socket.addEventListener('message',event=>{const data=JSON.parse(event.data);if(data.method)handlers.get(data.method)?.(data.params);const p=pending.get(data.id);if(p){pending.delete(data.id);data.error?p.reject(new Error(data.error.message)):p.resolve(data.result);}});await new Promise((resolve,reject)=>{socket.addEventListener('open',resolve,{once:true});socket.addEventListener('error',reject,{once:true});});const c={socket,on:(method,handler)=>handlers.set(method,handler),send:(method,params={})=>new Promise((resolve,reject)=>{pending.set(++id,{resolve,reject});socket.send(JSON.stringify({id,method,params}));})};clients.push(c);return c;}
++async function tab(url){const t=await(await fetch(`http://127.0.0.1:${debug}/json/new?${encodeURIComponent(url)}`,{method:'PUT'})).json();const c=await connect(t.webSocketDebuggerUrl);await c.send('Page.enable');return c;}
++async function value(c,expression){const r=await c.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw new Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;}
++try{
++ await waitFor(async()=> (await fetch(base+'/config/load')).ok);
++ await waitFor(async()=> (await fetch(`http://127.0.0.1:${debug}/json/version`)).ok);
++ const panel=await tab(base+'/config');
++ await waitFor(()=>value(panel,"Boolean(document.querySelector('[data-key=hint]') && !document.querySelector('[data-key=hint]').disabled)"));
++ const embedded=await tab(base+'/tests/fixtures/userscript_bootstrap.html?delay=50');
++ await embedded.send('Runtime.enable');embedded.on('Runtime.exceptionThrown',event=>console.log('Browser exception',event.exceptionDetails.exception?.description||event.exceptionDetails.text));
++ await embedded.send('Network.enable');embedded.on('Network.responseReceived',event=>{if(event.response.url.includes('/engines/preference'))console.log('Preference response',event.response.status);});
++ await waitFor(()=>value(embedded,"Boolean(document.querySelector('#kb-session-duration'))"));
++ await value(embedded, `window.ThinkerRatingTracker.start({window:new Proxy(window,{get(target,key){if(key==='location')return {hostname:'www.chess.com',href:location.href};const item=Reflect.get(target,key,target);return typeof item==='function'&&!['MutationObserver'].includes(key)?item.bind(target):item;}}),baseUrl:location.origin,gmRequest:window.GM_xmlhttpRequest});void 0`);
++ await waitFor(()=>value(embedded,"Boolean(document.querySelector('#tc-rating-target'))"));
++ await embedded.send('Page.bringToFront');
++ await delay(2500);
++
++
++
++ const proposal=process.argv.includes('--proposal');
++ const results=[];
++ const measure=()=>{const range=n=>{const r=document.createRange();r.selectNodeContents(n);const b=r.getBoundingClientRect();return{width:b.width,y:b.y}};const box=n=>{const b=n.getBoundingClientRect();return{x:b.x,y:b.y,width:b.width,height:b.height}};return{width:innerWidth,engine:document.querySelector('.kb-engine-module').getBoundingClientRect().height,inputs:[...document.querySelectorAll('#minDelayInput,#maxDelayInput')].map(n=>({...box(n),padding:getComputedStyle(n).padding})),segmented:box(document.querySelector('.kb-timing-mode')),options:[...document.querySelectorAll('.kb-timing-mode label')].map(n=>({text:n.textContent,...box(n),textWidth:range(n).width,paddingLeft:getComputedStyle(n).paddingLeft,paddingRight:getComputedStyle(n).paddingRight})),units:[...document.querySelectorAll('.kb-delay-unit')].map(n=>({...box(n),textWidth:range(n).width,padding:getComputedStyle(n).padding}))}};
++ await embedded.send('Page.bringToFront');
++ for(const width of [1086,1280,1440,1920]){await embedded.send('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:false});await delay(350);results.push({before:await value(embedded,'('+measure.toString()+')()')})}
++ if(proposal) await value(embedded,`(()=>{const style=document.createElement('style');style.textContent='@media(min-width:1034px) and (max-width:1086px){#krypbot-container .kb-engine-timing .kb-run-delay-controls{grid-template-columns:minmax(0,1fr) 158px;gap:4px}#krypbot-container .kb-engine-timing .kb-delay-input{grid-template-columns:minmax(0,1fr) 9px}#krypbot-container .kb-engine-timing .kb-delay-unit{width:9px;padding:0 2px 0 0}#krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name=delayMode]){grid-template-columns:round(down,50%,1px) minmax(0,1fr)}#krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name=delayMode]) label{padding:0 12px}}';document.head.append(style)})()`);
++ for(let i=0;i<results.length;i++){const width=results[i].before.width;await embedded.send('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:false});await delay(350);const after=await value(embedded,'('+measure.toString()+')()');results[i].after=after;assert.equal(after.engine,results[i].before.engine);if(width===1086){assert(after.inputs.every(n=>n.width>=64));assert(after.options.every(n=>parseFloat(n.paddingLeft)>=12&&parseFloat(n.paddingRight)>=12&&n.textWidth+24<=n.width));assert(after.units.every(n=>n.textWidth+2<=n.width))}else assert.deepEqual(after,results[i].before)}
++ const frozen=JSON.parse(await readFile(join(output,'before-and-proposal.json'),'utf8'));for(const row of results.filter(r=>r.after.width>=1280))assert.deepEqual(row.after,frozen.find(old=>old.before.width===row.after.width).before,'Wider Timing changed');
++ await embedded.send('Emulation.setDeviceMetricsOverride',{width:1086,height:900,deviceScaleFactor:1,mobile:false});await delay(350);const screenshot=await embedded.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true});await writeFile(join(output,'timing-1086.png'),Buffer.from(screenshot.data,'base64'));
++ await writeFile(join(output,proposal?'proposal.json':'actual.json'),JSON.stringify(results,null,2));console.log(JSON.stringify(results));
++}finally{for(const c of clients)c.socket.close();browser.kill();backend.kill();await delay(500);await rm(profile,{recursive:true,force:true,maxRetries:5,retryDelay:150});}

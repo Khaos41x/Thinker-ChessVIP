@@ -14,6 +14,8 @@ Comparação read-only de sete checkpoints desde e1e705d, incluindo3a503f6, b962
 
 Não foi identificado commit que introduziu a recusa de conexão; ela foi medida no socket do processo, e a inicialização prematura antecede o engine selector (61f2029). A comparação de código não é falsamente chamada de bisect executado em Chess.com autenticado. A linha Retry sem reserva foi introduzida em b9624eb e explica o crescimento de altura tratado no Bloco2. A margem entre controles aparece no agrupamento c8ba23f e nos6px de2898896, corrigidos no Bloco3.
 
+Também foi executada a mesma prova HTTP/browser em seis versões históricas do controller (3a503f6 até 1985a33), sem checkout destrutivo: todas descobriram três opções com servidor disponível, mostraram erro sob transporte bloqueado e recuperaram. Veja controller-history/matrix.json. Isso isola a conexão; não constitui bisect completo da aplicação autenticada.
+
 ## Cadeia real de recomendação
 
 /getmove continua usando Komodo, independente do seletor de análise. O teste integrado executa request_move real e a rota Flask real com Komodo:256 combinações de Bot/Auto Moves/Eval Bar/Banner/Recent Form/Smart Pacing, lado e orientação, além de turno oposto, troca de posição e reload. Uma resposta válida desenha a seta no ramo de recomendação. Bot desligado ou turno não autorizado não fazem pedido; Auto Moves ligado remove a seta e segue o agendamento existente. O teste registra o agendamento sem mover peças. No print recebido, Bot está desligado e o Scout espera adversário; não se deve inventar um melhor lance nesse estado.

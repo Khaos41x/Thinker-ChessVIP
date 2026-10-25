@@ -127,25 +127,25 @@
         "x": 718,
         "y": 196,
         "width": 430,
-        "height": 546,
+        "height": 508,
         "right": 1148,
-        "bottom": 742
+        "bottom": 704
       },
       "row": {
         "x": 731,
-        "y": 303,
+        "y": 302,
         "width": 404,
         "height": 40,
         "right": 1135,
-        "bottom": 343
+        "bottom": 342
       },
       "select": {
         "x": 731,
-        "y": 271,
+        "y": 270,
         "width": 404,
         "height": 32,
         "right": 1135,
-        "bottom": 303,
+        "bottom": 302,
         "disabled": false,
         "options": 3
       },
@@ -166,35 +166,35 @@
         "x": 718,
         "y": 196,
         "width": 430,
-        "height": 546,
+        "height": 508,
         "right": 1148,
-        "bottom": 742
+        "bottom": 704
       },
       "row": {
         "x": 731,
-        "y": 303,
+        "y": 302,
         "width": 404,
         "height": 40,
         "right": 1135,
-        "bottom": 343
+        "bottom": 342
       },
       "select": {
         "x": 731,
-        "y": 271,
+        "y": 270,
         "width": 404,
         "height": 32,
         "right": 1135,
-        "bottom": 303,
+        "bottom": 302,
         "disabled": true,
         "options": 3
       },
       "retry": {
         "x": 1081.84375,
-        "y": 307,
+        "y": 306,
         "width": 53.15625,
         "height": 32,
         "right": 1135,
-        "bottom": 339,
+        "bottom": 338,
         "hidden": false,
         "disabled": false
       }
@@ -205,35 +205,35 @@
         "x": 718,
         "y": 196,
         "width": 430,
-        "height": 546,
+        "height": 508,
         "right": 1148,
-        "bottom": 742
+        "bottom": 704
       },
       "row": {
         "x": 731,
-        "y": 303,
+        "y": 302,
         "width": 404,
         "height": 40,
         "right": 1135,
-        "bottom": 343
+        "bottom": 342
       },
       "select": {
         "x": 731,
-        "y": 271,
+        "y": 270,
         "width": 404,
         "height": 32,
         "right": 1135,
-        "bottom": 303,
+        "bottom": 302,
         "disabled": true,
         "options": 3
       },
       "retry": {
         "x": 1081.84375,
-        "y": 307,
+        "y": 306,
         "width": 53.15625,
         "height": 32,
         "right": 1135,
-        "bottom": 339,
+        "bottom": 338,
         "hidden": false,
         "disabled": true
       }

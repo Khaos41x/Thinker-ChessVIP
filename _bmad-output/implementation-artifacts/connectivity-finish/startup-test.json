@@ -1,6 +1,6 @@
 {
-  "port": 33813,
-  "readyToHttpMs": 223.85349997784942,
+  "port": 9805,
+  "readyToHttpMs": 111.38829996343702,
   "health": {
     "cache": 0,
     "engineGeneration": "komodo-14.1:1",
@@ -18,17 +18,17 @@
     "[fixture capability redacted]\n",
     "Token carregado de THINKER_CAPABILITY_TOKEN\n",
     "========================================================================\n",
-    "\u001b[96m[12:28:00.926] \u001b[92m[ENGINE]  \u001b[0mIniciando Komodo 14.1...\n",
-    "\u001b[96m[12:28:00.926] \u001b[92m[ENGINE]  \u001b[0mWarmup da engine...\n",
-    "\u001b[96m[12:28:01.149] \u001b[92m[SUCCESS] \u001b[0mKomodo ONLINE! \u001b[93m[Threads=1 | Hash=128MB | Skill=20]\u001b[0m\n",
-    "\u001b[96m[12:28:01.149] \u001b[92m[SUCCESS] \u001b[0mWarmup completo!\n",
+    "\u001b[96m[13:35:44.335] \u001b[92m[ENGINE]  \u001b[0mIniciando Komodo 14.1...\n",
+    "\u001b[96m[13:35:44.335] \u001b[92m[ENGINE]  \u001b[0mWarmup da engine...\n",
+    "\u001b[96m[13:35:44.551] \u001b[92m[SUCCESS] \u001b[0mKomodo ONLINE! \u001b[93m[Threads=1 | Hash=128MB | Skill=20]\u001b[0m\n",
+    "\u001b[96m[13:35:44.551] \u001b[92m[SUCCESS] \u001b[0mWarmup completo!\n",
     "\n",
     "\u001b[96m\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n",
     "\u2551  \u001b[1mThinker Chess VIP\u001b[0m\u001b[96m  v2.2                       \u2551\n",
     "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563\n",
-    "\u2551  Inicio: \u001b[93m2026-10-25 12:28:01\u001b[0m\u001b[96m  Modo: \u001b[92mLOCAL\u001b[0m\u001b[96m         \u2551\n",
+    "\u2551  Inicio: \u001b[93m2026-10-25 13:35:44\u001b[0m\u001b[96m  Modo: \u001b[92mLOCAL\u001b[0m\u001b[96m         \u2551\n",
     "\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\u001b[0m\n",
     "\n",
-    "\u001b[96m[12:28:01.149] \u001b[92m[SUCCESS] \u001b[0mRodando em http://127.0.0.1:33813\n"
+    "\u001b[96m[13:35:44.551] \u001b[92m[SUCCESS] \u001b[0mRodando em http://127.0.0.1:9805\n"
   ]
 }

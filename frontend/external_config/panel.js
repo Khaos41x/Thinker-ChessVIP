@@ -61,6 +61,7 @@
     byId('analysis-engine-state').textContent = state;
     byId('analysis-engine-message').textContent = engineError || (engineSwitching ? 'Saving engine preference…' : selected?.initializationError || (active ? 'Running in an authorized analysis context.' : selected ? `${selected.description || 'Preference saved.'} Analysis starts only in an authorized context.` : 'Checking installed engines…'));
     byId('analysis-engine-message').dataset.error = String(Boolean(engineError || selected?.initializationError));
+    byId('analysis-engine-message').title = byId('analysis-engine-message').textContent;
     byId('engine-retry').hidden = !engineError && !selected?.initializationError;
     byId('engine-retry').disabled = engineRefreshing || engineSwitching;
     byId('analysis-engine-details').textContent = selected ? JSON.stringify(selected, null, 2) : '';

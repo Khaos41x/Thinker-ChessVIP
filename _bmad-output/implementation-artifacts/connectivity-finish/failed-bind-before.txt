@@ -1,14 +1,14 @@
 Occupied port reproduction; alive after startup failure: True
-[96m[12:22:41.959] [92m[ENGINE]  [0mIniciando Komodo 14.1...
-[96m[12:22:41.959] [92m[ENGINE]  [0mWarmup da engine...
-[96m[12:22:42.208] [92m[SUCCESS] [0mKomodo ONLINE! [93m[Threads=1 | Hash=128MB | Skill=20][0m
-[96m[12:22:42.208] [92m[SUCCESS] [0mWarmup completo!
-Rodando em http://127.0.0.1:54756
+[96m[13:52:17.664] [92m[ENGINE]  [0mIniciando Komodo 14.1...
+[96m[13:52:17.664] [92m[ENGINE]  [0mWarmup da engine...
+[96m[13:52:17.889] [92m[SUCCESS] [0mKomodo ONLINE! [93m[Threads=1 | Hash=128MB | Skill=20][0m
+[96m[13:52:17.889] [92m[SUCCESS] [0mWarmup completo!
+Rodando em http://127.0.0.1:27438
  * Serving Flask app 'app'
  * Debug mode: off
-Foi feita uma tentativa de acesso a um soquete de uma maneira que � proibida pelas permiss�es de acesso
+Foi feita uma tentativa de acesso a um soquete de uma maneira que é proibida pelas permissões de acesso
 Timeout (0:00:04)!
-Thread 0x00006a68 (most recent call first):
+Thread 0x000013e4 (most recent call first):
   File "C:\Program Files\Python312\Lib\asyncio\windows_events.py", line 774 in _poll
   File "C:\Program Files\Python312\Lib\asyncio\windows_events.py", line 445 in select
   File "C:\Program Files\Python312\Lib\asyncio\base_events.py", line 1948 in _run_once
@@ -22,5 +22,5 @@ Thread 0x00006a68 (most recent call first):
   File "C:\Program Files\Python312\Lib\threading.py", line 1075 in _bootstrap_inner
   File "C:\Program Files\Python312\Lib\threading.py", line 1032 in _bootstrap
 
-Thread 0x00005c5c (most recent call first):
+Thread 0x00002958 (most recent call first):
   File "C:\Program Files\Python312\Lib\threading.py", line 1624 in _shutdown

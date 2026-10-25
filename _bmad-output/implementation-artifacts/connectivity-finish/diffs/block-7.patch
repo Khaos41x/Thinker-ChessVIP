@@ -1,0 +1,445 @@
+diff --git a/frontend/eval_bar/engine-selection.js b/frontend/eval_bar/engine-selection.js
+index b301f81..8d22747 100644
+--- a/frontend/eval_bar/engine-selection.js
++++ b/frontend/eval_bar/engine-selection.js
+@@ -82,7 +82,12 @@
+         const status = doc.createElement('span'); status.className = 'tc-analysis-status'; status.setAttribute('role', 'status');
+         const select = doc.createElement('select'); select.id = 'tc-analysis-engine'; select.setAttribute('aria-describedby', 'tc-analysis-message');
+         const message = doc.createElement('p'); message.id = 'tc-analysis-message'; message.setAttribute('role', 'status');
+-        const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry'; retry.addEventListener('click', () => attemptedEngineId ? selectPreference(attemptedEngineId) : refresh(true));
++        const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry';
++        retry.addEventListener('click', () => {
++          if (attemptedEngineId && state?.engines?.find(engine => engine.id === attemptedEngineId)?.installed) return selectPreference(attemptedEngineId);
++          attemptedEngineId = null;
++          refresh(true);
++        });
+         select.addEventListener('change', () => selectPreference(select.value));
+         const stateLine = doc.createElement('span'); stateLine.className = 'tc-analysis-state';
+         const feedback = doc.createElement('span'); feedback.className = 'tc-analysis-feedback'; feedback.setAttribute('aria-live', 'polite');
+@@ -97,6 +102,10 @@
+       if (state?.engines && select.options.length !== state.engines.length) {
+         select.replaceChildren(...state.engines.map(engine => { const option = host.ownerDocument.createElement('option'); option.value = engine.id; option.textContent = engine.name; option.disabled = !engine.installed; return option; }));
+       }
++      for (const option of select.options) {
++        const engine = state?.engines?.find(item => item.id === option.value);
++        option.disabled = engine ? !engine.installed : false;
++      }
+       if (!selecting && state) select.value = state.selectedEngineId;
+       select.disabled = selecting || Boolean(error) || !state;
+       mounted.querySelector('.tc-analysis-status').textContent = selecting ? 'Switching' : pending && (!state || error) ? 'Initializing' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing';
+diff --git a/frontend/external_config/panel.css b/frontend/external_config/panel.css
+index 02d8dea..0135ba7 100644
+--- a/frontend/external_config/panel.css
++++ b/frontend/external_config/panel.css
+@@ -11,6 +11,7 @@
+   --radius:8px;
+   --row-h:40px;
+   --control-h:32px;
++  --control-radius:5px;
+   font-family:
+     -apple-system,
+     BlinkMacSystemFont,
+@@ -643,3 +644,15 @@ body[data-focus-input=keyboard] :is(button,input,select,a,[tabindex]):not([aria-
+ .analysis-engine-notice { display:flex; align-items:center; gap:8px; height:var(--row-h); }
+ .analysis-engine-notice #analysis-engine-message { flex:1; min-width:0; margin:0; line-height:16px; }
+ .analysis-engine-notice #engine-retry { flex:0 0 auto; height:var(--control-h); min-height:var(--control-h); margin:0; }
++.analysis-engine select,.session-field input,.tc-rating-target input,.delay-fields label,.segmented,.session-actions button,.compact-button,#retry { border-radius:var(--control-radius); }
++.session-field input,.tc-rating-target input { font-size:12px; }
++.analysis-engine .field-heading { font-size:12px; }
++#timing-fields { grid-template-columns:minmax(0,1fr) 158px; align-items:center; gap:4px; }
++.delay-fields { grid-template-columns:round(down,calc((100% - 7px)/2),1px) 3px minmax(0,1fr); gap:2px; }
++.delay-fields label { display:grid; grid-template-columns:minmax(0,1fr) 9px; gap:0; padding:0; }
++.delay-fields input { height:30px; padding:0 10px; font-size:12px; }
++.delay-fields label > span:last-child { width:9px; padding:0 2px 0 0; font-size:11px; line-height:16px; }
++.segmented { grid-template-columns:round(down,50%,1px) minmax(0,1fr); }
++.segmented button { padding:0 12px; }
++#timing-hint { margin:8px 0 0; line-height:16px; }
++#retry { font-size:11px; }
+diff --git a/frontend/external_config/panel.js b/frontend/external_config/panel.js
+index 5123188..add8ea9 100644
+--- a/frontend/external_config/panel.js
++++ b/frontend/external_config/panel.js
+@@ -61,6 +61,7 @@
+     byId('analysis-engine-state').textContent = state;
+     byId('analysis-engine-message').textContent = engineError || (engineSwitching ? 'Saving engine preference…' : selected?.initializationError || (active ? 'Running in an authorized analysis context.' : selected ? `${selected.description || 'Preference saved.'} Analysis starts only in an authorized context.` : 'Checking installed engines…'));
+     byId('analysis-engine-message').dataset.error = String(Boolean(engineError || selected?.initializationError));
++    byId('analysis-engine-message').title = byId('analysis-engine-message').textContent;
+     byId('engine-retry').hidden = !engineError && !selected?.initializationError;
+     byId('engine-retry').disabled = engineRefreshing || engineSwitching;
+     byId('analysis-engine-details').textContent = selected ? JSON.stringify(selected, null, 2) : '';
+diff --git a/script.js b/script.js
+index 6b1de93..efce88e 100644
+--- a/script.js
++++ b/script.js
+@@ -1,7 +1,7 @@
+ // ==UserScript==
+ // @name         TC172
+ // @namespace    http://tampermonkey.net/
+-// @version      2026-10-25.1
++// @version      2026-10-25.2
+ // @downloadURL  http://127.0.0.1:5050/thinker-chess.user.js
+ // @updateURL    http://127.0.0.1:5050/thinker-chess.meta.js
+ // @description  Chess Bot com Servidor Local
+@@ -217,7 +217,12 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+         const status = doc.createElement('span'); status.className = 'tc-analysis-status'; status.setAttribute('role', 'status');
+         const select = doc.createElement('select'); select.id = 'tc-analysis-engine'; select.setAttribute('aria-describedby', 'tc-analysis-message');
+         const message = doc.createElement('p'); message.id = 'tc-analysis-message'; message.setAttribute('role', 'status');
+-        const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry'; retry.addEventListener('click', () => attemptedEngineId ? selectPreference(attemptedEngineId) : refresh(true));
++        const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry';
++        retry.addEventListener('click', () => {
++          if (attemptedEngineId && state?.engines?.find(engine => engine.id === attemptedEngineId)?.installed) return selectPreference(attemptedEngineId);
++          attemptedEngineId = null;
++          refresh(true);
++        });
+         select.addEventListener('change', () => selectPreference(select.value));
+         const stateLine = doc.createElement('span'); stateLine.className = 'tc-analysis-state';
+         const feedback = doc.createElement('span'); feedback.className = 'tc-analysis-feedback'; feedback.setAttribute('aria-live', 'polite');
+@@ -232,6 +237,10 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+       if (state?.engines && select.options.length !== state.engines.length) {
+         select.replaceChildren(...state.engines.map(engine => { const option = host.ownerDocument.createElement('option'); option.value = engine.id; option.textContent = engine.name; option.disabled = !engine.installed; return option; }));
+       }
++      for (const option of select.options) {
++        const engine = state?.engines?.find(item => item.id === option.value);
++        option.disabled = engine ? !engine.installed : false;
++      }
+       if (!selecting && state) select.value = state.selectedEngineId;
+       select.disabled = selecting || Boolean(error) || !state;
+       mounted.querySelector('.tc-analysis-status').textContent = selecting ? 'Switching' : pending && (!state || error) ? 'Initializing' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing';
+@@ -8046,7 +8055,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+ })();
+ 
+ /* THINKER_SESSION_CONTROL_GENERATED_START */
+-globalThis.ThinkerClientVersion="2026-10-25.1";
++globalThis.ThinkerClientVersion="2026-10-25.2";
+ globalThis.ThinkerSessionControlReady=(async()=>{
+ (function(root){
+ "use strict";
+diff --git a/tests/browser/audit_definitive_finish.mjs b/tests/browser/audit_definitive_finish.mjs
+index 1bfbe5e..6f7c362 100644
+--- a/tests/browser/audit_definitive_finish.mjs
++++ b/tests/browser/audit_definitive_finish.mjs
+@@ -7,13 +7,14 @@ import {createServer} from 'node:net';
+ const root=resolve(import.meta.dirname,'../..');
+ const before=process.argv.includes('--before');
+ const configOnly=process.argv.includes('--config-only');
+-const output=join(root,'_bmad-output/implementation-artifacts/definitive-finish',before?'before':(configOnly?'block-h':'after'));
++const connectivity=process.argv.includes('--connectivity');
++const output=join(root,'_bmad-output/implementation-artifacts',connectivity?'connectivity-finish':'definitive-finish',before?'before':(configOnly?'block-h':'after'));
+ await mkdir(output,{recursive:true});
+ const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+ const port=()=>new Promise(resolve=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>resolve(p));});});
+ const serverPort=await port(),debug=await port(),base=`http://127.0.0.1:${serverPort}`;
+ const profile=await mkdtemp(join(tmpdir(),'thinker-phase091-capture-'));
+-const backend=spawn('python',['-c',before?"import importlib.util,sys;from pathlib import Path;from flask import Response,send_from_directory;baseline=Path('.definitive-finish-baseline');spec=importlib.util.spec_from_file_location('core.external_config',baseline/'core/external_config.py');old=importlib.util.module_from_spec(spec);sys.modules['core.external_config']=old;spec.loader.exec_module(old);spec=importlib.util.spec_from_file_location('visual','tests/phase091_visual_fixture.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.app.view_functions['userscript']=lambda:Response((baseline/'script.js').read_text(encoding='utf8'),content_type='application/javascript');m.app.view_functions['external_config.asset']=lambda filename:send_from_directory(baseline/'frontend/external_config' if (baseline/'frontend/external_config'/filename).exists() else Path.cwd()/'frontend/external_config',filename);m.app.run(host='127.0.0.1',port=int(sys.argv[1]),threaded=True,use_reloader=False)":"import importlib.util,sys;spec=importlib.util.spec_from_file_location('visual','tests/phase091_visual_fixture.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.app.run(host='127.0.0.1',port=int(sys.argv[1]),threaded=True,use_reloader=False)",String(serverPort)],{cwd:root,stdio:'ignore',windowsHide:true});
++const backend=spawn('python',['-c',(before?"import importlib.util,sys;from pathlib import Path;from flask import Response,send_from_directory;baseline=Path('.definitive-finish-baseline');spec=importlib.util.spec_from_file_location('core.external_config',baseline/'core/external_config.py');old=importlib.util.module_from_spec(spec);sys.modules['core.external_config']=old;spec.loader.exec_module(old);spec=importlib.util.spec_from_file_location('visual','tests/phase091_visual_fixture.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.app.view_functions['userscript']=lambda:Response((baseline/'script.js').read_text(encoding='utf8'),content_type='application/javascript');m.app.view_functions['external_config.asset']=lambda filename:send_from_directory(baseline/'frontend/external_config' if (baseline/'frontend/external_config'/filename).exists() else Path.cwd()/'frontend/external_config',filename);m.app.run(host='127.0.0.1',port=int(sys.argv[1]),threaded=True,use_reloader=False)":"import importlib.util,sys;spec=importlib.util.spec_from_file_location('visual','tests/phase091_visual_fixture.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.app.run(host='127.0.0.1',port=int(sys.argv[1]),threaded=True,use_reloader=False)").replaceAll('.definitive-finish-baseline',connectivity?'.connectivity-finish-baseline':'.definitive-finish-baseline'),String(serverPort)],{cwd:root,stdio:'ignore',windowsHide:true});
+ const browser=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--disable-gpu','--no-first-run','--disable-background-timer-throttling','--disable-renderer-backgrounding',`--remote-debugging-port=${debug}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
+ const clients=[];
+ async function waitFor(test){for(let i=0;i<180;i++){try{if(await test())return;}catch{}await delay(100);}throw new Error('Timed out');}
+diff --git a/tests/browser/test_autoplay_finish.mjs b/tests/browser/test_autoplay_finish.mjs
+index 222bc62..c9a1cdb 100644
+--- a/tests/browser/test_autoplay_finish.mjs
++++ b/tests/browser/test_autoplay_finish.mjs
+@@ -7,7 +7,7 @@ import {createServer} from 'node:net';
+ const root=resolve(import.meta.dirname,'../..');
+ const before=process.argv.includes('--before');
+ const configOnly=process.argv.includes('--config-only');
+-const output=join(root,'_bmad-output/implementation-artifacts/definitive-finish','block-g');
++const output=join(root,'_bmad-output/implementation-artifacts',process.argv.includes('--connectivity')?'connectivity-finish':'definitive-finish',process.argv.includes('--connectivity')?'block-7/autoplay':'block-g');
+ await mkdir(output,{recursive:true});
+ const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+ const port=()=>new Promise(resolve=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>resolve(p));});});
+diff --git a/tests/browser/test_config_connections.mjs b/tests/browser/test_config_connections.mjs
+new file mode 100644
+index 0000000..082d9f5
+--- /dev/null
++++ b/tests/browser/test_config_connections.mjs
+@@ -0,0 +1,52 @@
++import assert from 'node:assert/strict';
++import {spawn} from 'node:child_process';
++import {mkdtemp,mkdir,writeFile,rm} from 'node:fs/promises';
++import {tmpdir} from 'node:os';
++import {resolve,join} from 'node:path';
++import {createServer} from 'node:net';
++const root=resolve(import.meta.dirname,'../..');
++const before=process.argv.includes('--before');
++const configOnly=process.argv.includes('--config-only');
++const output=join(root,'_bmad-output/implementation-artifacts/connectivity-finish','block-7');
++await mkdir(output,{recursive:true});
++const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
++const port=()=>new Promise(resolve=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>resolve(p));});});
++const serverPort=await port(),debug=await port(),base=`http://127.0.0.1:${serverPort}`;
++const profile=await mkdtemp(join(tmpdir(),'thinker-phase091-capture-'));
++const backend=spawn('python',['-c',before?"import importlib.util,sys;from pathlib import Path;from flask import Response,send_from_directory;baseline=Path('.definitive-finish-baseline');spec=importlib.util.spec_from_file_location('core.external_config',baseline/'core/external_config.py');old=importlib.util.module_from_spec(spec);sys.modules['core.external_config']=old;spec.loader.exec_module(old);spec=importlib.util.spec_from_file_location('visual','tests/phase091_visual_fixture.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.app.view_functions['userscript']=lambda:Response((baseline/'script.js').read_text(encoding='utf8'),content_type='application/javascript');m.app.view_functions['external_config.asset']=lambda filename:send_from_directory(baseline/'frontend/external_config' if (baseline/'frontend/external_config'/filename).exists() else Path.cwd()/'frontend/external_config',filename);m.app.run(host='127.0.0.1',port=int(sys.argv[1]),threaded=True,use_reloader=False)":"import importlib.util,sys;spec=importlib.util.spec_from_file_location('visual','tests/phase091_visual_fixture.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.app.add_url_rule('/qa/close-runtime','qa_close',lambda:(m.registry.close() or {'ok':True}),methods=['POST']);m.app.run(host='127.0.0.1',port=int(sys.argv[1]),threaded=True,use_reloader=False)",String(serverPort)],{cwd:root,stdio:'ignore',windowsHide:true});
++const browser=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--disable-gpu','--no-first-run','--disable-background-timer-throttling','--disable-renderer-backgrounding',`--remote-debugging-port=${debug}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
++const clients=[];
++async function waitFor(test){for(let i=0;i<180;i++){try{if(await test())return;}catch{}await delay(100);}throw new Error('Timed out');}
++async function connect(url){const socket=new WebSocket(url);let id=0;const pending=new Map();const handlers=new Map();socket.addEventListener('message',event=>{const data=JSON.parse(event.data);if(data.method)handlers.get(data.method)?.(data.params);const p=pending.get(data.id);if(p){pending.delete(data.id);data.error?p.reject(new Error(data.error.message)):p.resolve(data.result);}});await new Promise((resolve,reject)=>{socket.addEventListener('open',resolve,{once:true});socket.addEventListener('error',reject,{once:true});});const c={socket,on:(method,handler)=>handlers.set(method,handler),send:(method,params={})=>new Promise((resolve,reject)=>{pending.set(++id,{resolve,reject});socket.send(JSON.stringify({id,method,params}));})};clients.push(c);return c;}
++async function tab(url){const t=await(await fetch(`http://127.0.0.1:${debug}/json/new?${encodeURIComponent(url)}`,{method:'PUT'})).json();const c=await connect(t.webSocketDebuggerUrl);await c.send('Page.enable');return c;}
++async function value(c,expression){const r=await c.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw new Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;}
++try{
++ await waitFor(async()=> (await fetch(base+'/config/load')).ok);
++ await waitFor(async()=> (await fetch(`http://127.0.0.1:${debug}/json/version`)).ok);
++ const panel=await tab(base+'/config');
++ await waitFor(()=>value(panel,"Boolean(document.querySelector('[data-key=hint]') && !document.querySelector('[data-key=hint]').disabled)"));
++ const embedded=await tab(base+'/tests/fixtures/userscript_bootstrap.html?delay=50');
++ await embedded.send('Runtime.enable');embedded.on('Runtime.exceptionThrown',event=>console.log('Browser exception',event.exceptionDetails.exception?.description||event.exceptionDetails.text));
++ await embedded.send('Network.enable');embedded.on('Network.responseReceived',event=>{if(event.response.url.includes('/engines/preference'))console.log('Preference response',event.response.status);});
++ await waitFor(()=>value(embedded,"Boolean(document.querySelector('#kb-session-duration'))"));
++ await value(embedded, `window.ThinkerRatingTracker.start({window:new Proxy(window,{get(target,key){if(key==='location')return {hostname:'www.chess.com',href:location.href};const item=Reflect.get(target,key,target);return typeof item==='function'&&!['MutationObserver'].includes(key)?item.bind(target):item;}}),baseUrl:location.origin,gmRequest:window.GM_xmlhttpRequest});void 0`);
++ await waitFor(()=>value(embedded,"Boolean(document.querySelector('#tc-rating-target'))"));
++ await embedded.send('Page.bringToFront');
++ await delay(2500);
++
++
++
++ const report={};
++ await panel.send('Page.bringToFront');await panel.send('Network.enable');await panel.send('Emulation.setDeviceMetricsOverride',{width:390,height:900,deviceScaleFactor:1,mobile:false});
++ await waitFor(()=>value(panel,"document.querySelector('#connection').textContent==='Local server connected'"));
++ const read=()=>{const b=n=>{const r=n.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,right:r.right}};return{connection:document.querySelector('#connection').textContent,userscript:document.querySelector('#userscript-connection').textContent,state:document.querySelector('#analysis-engine-state').textContent,selectDisabled:document.querySelector('#analysis-engine').disabled,timingHidden:document.querySelector('.timing').hidden,fieldset:b(document.querySelector('#timing-fields')),inputs:[...document.querySelectorAll('#minDelay,#maxDelay')].map(b),segmented:b(document.querySelector('.segmented')),overflow:document.documentElement.scrollWidth>innerWidth,evalBar:document.querySelector('[data-key=evalBar]').getAttribute('aria-checked')}};
++ report.connected=await value(panel,'('+read.toString()+')()');assert(!report.connected.overflow);assert(report.connected.inputs.every(n=>n.width>=64));assert.equal(report.connected.fieldset.height,32);assert.equal(report.connected.inputs[0].y,report.connected.segmented.y+1);
++ await panel.send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:-1,uploadThroughput:-1});await waitFor(()=>value(panel,"document.querySelector('#connection').textContent==='Local server offline'"));await waitFor(()=>value(panel,"document.querySelector('#analysis-engine').disabled"));report.offline=await value(panel,'('+read.toString()+')()');let shot=await panel.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true});await writeFile(join(output,'config-offline-390.png'),Buffer.from(shot.data,'base64'));
++ await panel.send('Network.emulateNetworkConditions',{offline:false,latency:0,downloadThroughput:-1,uploadThroughput:-1});await value(panel,"document.querySelector('#retry').click()");await waitFor(()=>value(panel,"document.querySelector('#analysis-engine-state').textContent==='Ready'&&!document.querySelector('#analysis-engine').disabled"));
++ const headers={'Content-Type':'application/json','Authorization':'Bearer phase091-visual-isolated-capability'};
++ let response=await fetch(base+'/eval-bar/engines/select',{method:'POST',headers,body:JSON.stringify({engineId:'stockfish-19-1mb',context:'analysis',initializeOnly:true})});assert(response.ok);response=await fetch(base+'/eval-bar/engines?context=analysis',{headers});const active=await response.json();assert(active.engines[0].runtimeReady);assert(active.engines[0].identity.proof.depth>0);report.runtimeProof=active.engines[0].identity.proof;const pid=active.engines[0].resources.pid;
++ await waitFor(()=>value(panel,"document.querySelector('#analysis-engine-state').textContent==='Active'"));report.active=await value(panel,'('+read.toString()+')()');assert.equal(report.active.evalBar,'false');shot=await panel.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true});await writeFile(join(output,'config-active-390.png'),Buffer.from(shot.data,'base64'));
++ await fetch(base+'/eval-bar/engines?context=active-game',{headers});await waitFor(()=>value(panel,"document.querySelector('#analysis-engine-state').textContent==='Ready'"));const retained=await(await fetch(base+'/config/engines')).json();assert.equal(retained.engines[0].resources.pid,pid);
++ const info=await embedded.send('Target.getTargetInfo');await embedded.send('Target.closeTarget',{targetId:info.targetInfo.targetId});await waitFor(()=>value(panel,"document.querySelector('#userscript-connection').textContent==='Chess.com: disconnected'"));report.userscriptDisconnected=await value(panel,'('+read.toString()+')()');assert.equal(report.userscriptDisconnected.connection,'Local server connected');assert(!report.userscriptDisconnected.selectDisabled);
++ await writeFile(join(output,'connections.json'),JSON.stringify(report,null,2));console.log('PASS Config 390px inline Timing, real disconnect/reconnect, genuine runtime Active/Ready, retained engine process, genuine userscript heartbeat expiry');
++}finally{try{await fetch(base+'/qa/close-runtime',{method:'POST'})}catch{}for(const c of clients)c.socket.close();browser.kill();backend.kill();await delay(500);await rm(profile,{recursive:true,force:true,maxRetries:5,retryDelay:150});}
+diff --git a/tests/browser/test_focus_finish.mjs b/tests/browser/test_focus_finish.mjs
+index 14dfa49..6403d89 100644
+--- a/tests/browser/test_focus_finish.mjs
++++ b/tests/browser/test_focus_finish.mjs
+@@ -7,7 +7,7 @@ import {createServer} from 'node:net';
+ const root=resolve(import.meta.dirname,'../..');
+ const before=process.argv.includes('--before');
+ const configOnly=process.argv.includes('--config-only');
+-const output=join(root,'_bmad-output/implementation-artifacts/definitive-finish','block-e');
++const output=join(root,'_bmad-output/implementation-artifacts',process.argv.includes('--connectivity')?'connectivity-finish':'definitive-finish',process.argv.includes('--connectivity')?'block-7/focus':'block-e');
+ await mkdir(output,{recursive:true});
+ const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+ const port=()=>new Promise(resolve=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>resolve(p));});});
+diff --git a/tests/browser/test_live_engine_preferences.mjs b/tests/browser/test_live_engine_preferences.mjs
+index 985e0b2..15af8dd 100644
+--- a/tests/browser/test_live_engine_preferences.mjs
++++ b/tests/browser/test_live_engine_preferences.mjs
+@@ -6,7 +6,7 @@ import {resolve,join} from 'node:path';
+ import {createServer} from 'node:net';
+ 
+ const root=resolve(import.meta.dirname,'../..');
+-const base='http://127.0.0.1:5050',output=join(root,'_bmad-output/implementation-artifacts/definitive-finish/live');await mkdir(output,{recursive:true});
++const base='http://127.0.0.1:5050',output=join(root,'_bmad-output/implementation-artifacts',process.argv.includes('--connectivity')?'connectivity-finish':'definitive-finish',process.argv.includes('--connectivity')?'block-7/live':'live');await mkdir(output,{recursive:true});
+ const delay=ms=>new Promise(r=>setTimeout(r,ms));const port=()=>new Promise(r=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>r(p))})});
+ const initial=await(await fetch(base+'/config/engines')).json(),settings=await(await fetch(base+'/config/load')).json();assert(!initial.analysisContextAuthorized);const original=initial.selectedEngineId;
+ const debug=await port(),clients=[],profile=await mkdtemp(join(tmpdir(),'thinker-live-preferences-'));
+diff --git a/tests/browser/test_missing_engine_recovery.mjs b/tests/browser/test_missing_engine_recovery.mjs
+new file mode 100644
+index 0000000..d219977
+--- /dev/null
++++ b/tests/browser/test_missing_engine_recovery.mjs
+@@ -0,0 +1,47 @@
++import assert from 'node:assert/strict';
++import {spawn} from 'node:child_process';
++import {mkdtemp,mkdir,writeFile,rm} from 'node:fs/promises';
++import {tmpdir} from 'node:os';
++import {resolve,join} from 'node:path';
++import {createServer} from 'node:net';
++const root=resolve(import.meta.dirname,'../..');
++const before=process.argv.includes('--before');
++const configOnly=process.argv.includes('--config-only');
++const output=join(root,'_bmad-output/implementation-artifacts/connectivity-finish','block-7/recovery');
++await mkdir(output,{recursive:true});
++const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
++const port=()=>new Promise(resolve=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>resolve(p));});});
++const serverPort=await port(),debug=await port(),base=`http://127.0.0.1:${serverPort}`;
++const profile=await mkdtemp(join(tmpdir(),'thinker-phase091-capture-'));
++const backend=spawn('python',['-c',before?"import importlib.util,sys;from pathlib import Path;from flask import Response,send_from_directory;baseline=Path('.definitive-finish-baseline');spec=importlib.util.spec_from_file_location('core.external_config',baseline/'core/external_config.py');old=importlib.util.module_from_spec(spec);sys.modules['core.external_config']=old;spec.loader.exec_module(old);spec=importlib.util.spec_from_file_location('visual','tests/phase091_visual_fixture.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.app.view_functions['userscript']=lambda:Response((baseline/'script.js').read_text(encoding='utf8'),content_type='application/javascript');m.app.view_functions['external_config.asset']=lambda filename:send_from_directory(baseline/'frontend/external_config' if (baseline/'frontend/external_config'/filename).exists() else Path.cwd()/'frontend/external_config',filename);m.app.run(host='127.0.0.1',port=int(sys.argv[1]),threaded=True,use_reloader=False)":"import importlib.util,sys;spec=importlib.util.spec_from_file_location('visual','tests/phase091_visual_fixture.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.original_installed=m.registry._installed;m.app.add_url_rule('/qa/missing','qa_missing',lambda:(setattr(m.registry,'_installed',lambda engine_id:engine_id!='stockfish-19-94mb' and m.original_installed(engine_id)) or {'ok':True}),methods=['POST']);m.app.run(host='127.0.0.1',port=int(sys.argv[1]),threaded=True,use_reloader=False)",String(serverPort)],{cwd:root,stdio:'ignore',windowsHide:true});
++const browser=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--disable-gpu','--no-first-run','--disable-background-timer-throttling','--disable-renderer-backgrounding',`--remote-debugging-port=${debug}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
++const clients=[];
++async function waitFor(test){for(let i=0;i<180;i++){try{if(await test())return;}catch{}await delay(100);}throw new Error('Timed out');}
++async function connect(url){const socket=new WebSocket(url);let id=0;const pending=new Map();const handlers=new Map();socket.addEventListener('message',event=>{const data=JSON.parse(event.data);if(data.method)handlers.get(data.method)?.(data.params);const p=pending.get(data.id);if(p){pending.delete(data.id);data.error?p.reject(new Error(data.error.message)):p.resolve(data.result);}});await new Promise((resolve,reject)=>{socket.addEventListener('open',resolve,{once:true});socket.addEventListener('error',reject,{once:true});});const c={socket,on:(method,handler)=>handlers.set(method,handler),send:(method,params={})=>new Promise((resolve,reject)=>{pending.set(++id,{resolve,reject});socket.send(JSON.stringify({id,method,params}));})};clients.push(c);return c;}
++async function tab(url){const t=await(await fetch(`http://127.0.0.1:${debug}/json/new?${encodeURIComponent(url)}`,{method:'PUT'})).json();const c=await connect(t.webSocketDebuggerUrl);await c.send('Page.enable');return c;}
++async function value(c,expression){const r=await c.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw new Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;}
++try{
++ await waitFor(async()=> (await fetch(base+'/config/load')).ok);
++ await waitFor(async()=> (await fetch(`http://127.0.0.1:${debug}/json/version`)).ok);
++ const panel=await tab(base+'/config');
++ await waitFor(()=>value(panel,"Boolean(document.querySelector('[data-key=hint]') && !document.querySelector('[data-key=hint]').disabled)"));
++ const embedded=await tab(base+'/tests/fixtures/userscript_bootstrap.html?delay=50');
++ await embedded.send('Runtime.enable');embedded.on('Runtime.exceptionThrown',event=>console.log('Browser exception',event.exceptionDetails.exception?.description||event.exceptionDetails.text));
++ await embedded.send('Network.enable');embedded.on('Network.responseReceived',event=>{if(event.response.url.includes('/engines/preference'))console.log('Preference response',event.response.status);});
++ await waitFor(()=>value(embedded,"Boolean(document.querySelector('#kb-session-duration'))"));
++ await value(embedded, `window.ThinkerRatingTracker.start({window:new Proxy(window,{get(target,key){if(key==='location')return {hostname:'www.chess.com',href:location.href};const item=Reflect.get(target,key,target);return typeof item==='function'&&!['MutationObserver'].includes(key)?item.bind(target):item;}}),baseUrl:location.origin,gmRequest:window.GM_xmlhttpRequest});void 0`);
++ await waitFor(()=>value(embedded,"Boolean(document.querySelector('#tc-rating-target'))"));
++ await embedded.send('Page.bringToFront');
++ await delay(2500);
++
++
++
++ await embedded.send('Page.bringToFront');await waitFor(()=>value(embedded,"document.querySelector('.tc-analysis-status')?.textContent==='Ready'"));assert.equal((await(await fetch(base+'/config/engines')).json()).engines[1].installed,true);
++ await fetch(base+'/qa/missing',{method:'POST'});
++ await value(embedded,"(()=>{const n=document.querySelector('#tc-analysis-engine');n.value='stockfish-19-94mb';n.dispatchEvent(new Event('change',{bubbles:true}))})()");
++ await waitFor(()=>value(embedded,"document.querySelector('.tc-analysis-status')?.textContent==='Error'"));assert(await value(embedded,"document.querySelector('#tc-analysis-engine').disabled"));
++ await value(embedded,"document.querySelector('.tc-analysis-notice button').click()");await waitFor(()=>value(embedded,"document.querySelector('.tc-analysis-status')?.textContent==='Ready'&&!document.querySelector('#tc-analysis-engine').disabled"));assert.equal(await value(embedded,"document.querySelector('#tc-analysis-engine').value"),'stockfish-19-1mb');
++ assert(await value(embedded,"document.querySelector('#tc-analysis-engine option[value=stockfish-19-94mb]').disabled"));
++ await value(embedded,"(()=>{const n=document.querySelector('#tc-analysis-engine');n.value='komodo-14.1';n.dispatchEvent(new Event('change',{bubbles:true}))})()");await waitFor(()=>value(embedded,"document.querySelector('#tc-analysis-engine').value==='komodo-14.1'&&document.querySelector('.tc-analysis-status').textContent==='Ready'"));const result=await(await fetch(base+'/config/engines')).json();assert.equal(result.selectedEngineId,'komodo-14.1');assert.equal(result.activeEngineId,null);
++ await writeFile(join(output,'missing-assets.json'),JSON.stringify({failedChoice:'stockfish-19-94mb',retryRestoredLastSaved:true,anotherInstalledEngineSelectable:true,noRuntimeInitialized:true},null,2));console.log('PASS real registry 503 asset-discovery failure: Retry recovers previous preference and another installed engine remains selectable');
++}finally{for(const c of clients)c.socket.close();browser.kill();backend.kill();await delay(500);await rm(profile,{recursive:true,force:true,maxRetries:5,retryDelay:150});}
+diff --git a/tests/browser/test_scout_finish.mjs b/tests/browser/test_scout_finish.mjs
+index bfd5bef..3273778 100644
+--- a/tests/browser/test_scout_finish.mjs
++++ b/tests/browser/test_scout_finish.mjs
+@@ -6,7 +6,7 @@ import {resolve,join} from 'node:path';
+ import {createServer} from 'node:net';
+ const root=resolve(import.meta.dirname,'../..');
+ const integrated=!process.argv.includes('--before');
+-const output=join(root,'_bmad-output/implementation-artifacts/definitive-finish/block-f');
++const output=join(root,'_bmad-output/implementation-artifacts',process.argv.includes('--connectivity')?'connectivity-finish':'definitive-finish',process.argv.includes('--connectivity')?'block-7/scout':'block-f');
+ await mkdir(output,{recursive:true});
+ const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+ const port=()=>new Promise(resolve=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>resolve(p));});});
+diff --git a/tests/browser/test_selector_history.mjs b/tests/browser/test_selector_history.mjs
+new file mode 100644
+index 0000000..dd1dae6
+--- /dev/null
++++ b/tests/browser/test_selector_history.mjs
+@@ -0,0 +1,49 @@
++import assert from 'node:assert/strict';
++import {spawn,execFileSync} from 'node:child_process';
++import {mkdtemp,mkdir,writeFile,rm} from 'node:fs/promises';
++import {tmpdir} from 'node:os';
++import {resolve,join} from 'node:path';
++import {createServer} from 'node:net';
++const root=resolve(import.meta.dirname,'../..');
++const before=process.argv.includes('--before');
++const configOnly=process.argv.includes('--config-only');
++const output=join(root,'_bmad-output/implementation-artifacts/connectivity-finish','block-1/controller-history');
++await mkdir(output,{recursive:true});
++const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
++const port=()=>new Promise(resolve=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>resolve(p));});});
++const serverPort=await port(),debug=await port(),base=`http://127.0.0.1:${serverPort}`;
++const profile=await mkdtemp(join(tmpdir(),'thinker-phase091-capture-'));
++const backend=spawn('python',['-c',before?"import importlib.util,sys;from pathlib import Path;from flask import Response,send_from_directory;baseline=Path('.definitive-finish-baseline');spec=importlib.util.spec_from_file_location('core.external_config',baseline/'core/external_config.py');old=importlib.util.module_from_spec(spec);sys.modules['core.external_config']=old;spec.loader.exec_module(old);spec=importlib.util.spec_from_file_location('visual','tests/phase091_visual_fixture.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.app.view_functions['userscript']=lambda:Response((baseline/'script.js').read_text(encoding='utf8'),content_type='application/javascript');m.app.view_functions['external_config.asset']=lambda filename:send_from_directory(baseline/'frontend/external_config' if (baseline/'frontend/external_config'/filename).exists() else Path.cwd()/'frontend/external_config',filename);m.app.run(host='127.0.0.1',port=int(sys.argv[1]),threaded=True,use_reloader=False)":"import importlib.util,sys;spec=importlib.util.spec_from_file_location('visual','tests/phase091_visual_fixture.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.app.run(host='127.0.0.1',port=int(sys.argv[1]),threaded=True,use_reloader=False)",String(serverPort)],{cwd:root,stdio:'ignore',windowsHide:true});
++const browser=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--disable-gpu','--no-first-run','--disable-background-timer-throttling','--disable-renderer-backgrounding',`--remote-debugging-port=${debug}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
++const clients=[];
++async function waitFor(test){for(let i=0;i<180;i++){try{if(await test())return;}catch{}await delay(100);}throw new Error('Timed out');}
++async function connect(url){const socket=new WebSocket(url);let id=0;const pending=new Map();const handlers=new Map();socket.addEventListener('message',event=>{const data=JSON.parse(event.data);if(data.method)handlers.get(data.method)?.(data.params);const p=pending.get(data.id);if(p){pending.delete(data.id);data.error?p.reject(new Error(data.error.message)):p.resolve(data.result);}});await new Promise((resolve,reject)=>{socket.addEventListener('open',resolve,{once:true});socket.addEventListener('error',reject,{once:true});});const c={socket,on:(method,handler)=>handlers.set(method,handler),send:(method,params={})=>new Promise((resolve,reject)=>{pending.set(++id,{resolve,reject});socket.send(JSON.stringify({id,method,params}));})};clients.push(c);return c;}
++async function tab(url){const t=await(await fetch(`http://127.0.0.1:${debug}/json/new?${encodeURIComponent(url)}`,{method:'PUT'})).json();const c=await connect(t.webSocketDebuggerUrl);await c.send('Page.enable');return c;}
++async function value(c,expression){const r=await c.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw new Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;}
++try{
++ await waitFor(async()=> (await fetch(base+'/config/load')).ok);
++ await waitFor(async()=> (await fetch(`http://127.0.0.1:${debug}/json/version`)).ok);
++ const panel=await tab(base+'/config');
++ await waitFor(()=>value(panel,"Boolean(document.querySelector('[data-key=hint]') && !document.querySelector('[data-key=hint]').disabled)"));
++ const embedded=await tab(base+'/tests/fixtures/userscript_bootstrap.html?delay=50');
++ await embedded.send('Runtime.enable');embedded.on('Runtime.exceptionThrown',event=>console.log('Browser exception',event.exceptionDetails.exception?.description||event.exceptionDetails.text));
++ await embedded.send('Network.enable');embedded.on('Network.responseReceived',event=>{if(event.response.url.includes('/engines/preference'))console.log('Preference response',event.response.status);});
++ await waitFor(()=>value(embedded,"Boolean(document.querySelector('#kb-session-duration'))"));
++ await value(embedded, `window.ThinkerRatingTracker.start({window:new Proxy(window,{get(target,key){if(key==='location')return {hostname:'www.chess.com',href:location.href};const item=Reflect.get(target,key,target);return typeof item==='function'&&!['MutationObserver'].includes(key)?item.bind(target):item;}}),baseUrl:location.origin,gmRequest:window.GM_xmlhttpRequest});void 0`);
++ await waitFor(()=>value(embedded,"Boolean(document.querySelector('#tc-rating-target'))"));
++ await embedded.send('Page.bringToFront');
++ await delay(2500);
++
++
++
++ const results=[];
++ for(const commit of ['3a503f6','b9624eb','1926bde','c8ba23f','37b878f','1985a33']){
++  const source=execFileSync('git',['show',commit+':frontend/eval_bar/engine-selection.js'],{cwd:root,encoding:'utf8'});
++  await value(embedded,source);
++  await value(embedded,`(()=>{document.querySelector('#history-host')?.remove();const host=document.createElement('section');host.id='history-host';document.body.append(host);window.historySelector=ThinkerAnalysisEngine.create({serverUrl:location.origin,authorize:()=> 'analysis',headers:()=>({Authorization:'Bearer phase091-visual-isolated-capability'}),storage:sessionStorage,getHost:()=>host,request(options){const controller=new AbortController();fetch(options.url,{method:options.method,headers:options.headers,body:options.data,signal:controller.signal}).then(async response=>options.onload({status:response.status,responseText:await response.text()})).catch(error=>options.onerror({error:String(error)}));return{abort:()=>controller.abort()}}});})()`);
++  await value(embedded,'historySelector.refresh(true)');const healthy=await value(embedded,'historySelector.snapshot()');assert.equal(healthy.error,null);assert.equal(healthy.state.engines.length,3);
++  await embedded.send('Network.enable');await embedded.send('Network.setBlockedURLs',{urls:[base+'/eval-bar/engines*']});await value(embedded,'historySelector.refresh(true)');const failed=await value(embedded,'historySelector.snapshot()');assert.equal(failed.error,'Cannot reach analysis engine');
++  await embedded.send('Network.setBlockedURLs',{urls:[]});await value(embedded,'historySelector.refresh(true)');const recovered=await value(embedded,'historySelector.snapshot()');assert.equal(recovered.error,null);assert.equal(recovered.state.engines.length,3);results.push({commit,availableServer:'three engines / no error',failedTransport:failed.error,recovered:true});
++ }
++ await writeFile(join(output,'matrix.json'),JSON.stringify(results,null,2));console.log('PASS historical controllers against real registry HTTP: 6 checkpoints healthy, transport Error and recovery; no authenticated whole-app bisect claimed');
++}finally{for(const c of clients)c.socket.close();browser.kill();backend.kill();await delay(500);await rm(profile,{recursive:true,force:true,maxRetries:5,retryDelay:150});}
+diff --git a/tests/test_server_startup.py b/tests/test_server_startup.py
+index 588a451..dbc14c5 100644
+--- a/tests/test_server_startup.py
++++ b/tests/test_server_startup.py
+@@ -96,6 +96,26 @@ class StartupTests(unittest.TestCase):
+         with socket.create_connection(('127.0.0.1', port), timeout=1):
+             pass
+ 
++    def test_immediate_restart_after_real_http_requests(self):
++        import urllib.request
++        first = self.launch(0)
++        port, _, _ = self.ready(first)
++        for path in ['/config', '/health', '/config/engines']:
++            with urllib.request.urlopen(f'http://127.0.0.1:{port}' + path, timeout=5) as response:
++                response.read()
++        children = psutil.Process(first.pid).children(recursive=True)
++        first.terminate()
++        first.wait(5)
++        for child in children:
++            try:
++                child.terminate()
++                child.wait(5)
++            except psutil.NoSuchProcess:
++                pass
++        second = self.launch(port)
++        second_port, _, _ = self.ready(second)
++        self.assertEqual(second_port, port)
++
+ 
+ if __name__ == '__main__':
+     unittest.main(verbosity=2)
+diff --git a/tests/test_userscript_delivery.py b/tests/test_userscript_delivery.py
+index 297066a..4574c58 100644
+--- a/tests/test_userscript_delivery.py
++++ b/tests/test_userscript_delivery.py
+@@ -11,13 +11,14 @@ class DeliveryTests(unittest.TestCase):
+         app = Flask(__name__)
+         app.register_blueprint(create_external_config_blueprint())
+         self.client = app.test_client()
++        self.version = self.client.get("/config/status").json["serverVersion"]
+ 
+     def test_real_userscript_and_metadata_delivery(self):
+         source = self.client.get('/thinker-chess.user.js')
+         self.assertEqual(source.status_code, 200)
+         self.assertIn('no-store', source.headers['Cache-Control'])
+-        self.assertIn(b'@version      2026-10-24.2', source.data)
+-        self.assertIn(b'globalThis.ThinkerClientVersion="2026-10-24.2";', source.data)
++        self.assertIn(('@version      ' + self.version).encode(), source.data)
++        self.assertIn(('globalThis.ThinkerClientVersion="' + self.version + '";').encode(), source.data)
+         self.assertIn(b'X-Thinker-Version', source.data)
+         metadata = self.client.get('/thinker-chess.meta.js')
+         self.assertEqual(metadata.status_code, 200)
+@@ -33,7 +34,7 @@ class DeliveryTests(unittest.TestCase):
+         self.assertTrue(self.client.get('/config/status').json['userscriptUpdateRequired'])
+         self.client.get('/config/load', headers={'X-Thinker-Client': 'userscript', 'X-Thinker-Version': '2026-10-23.7'})
+         self.assertTrue(self.client.get('/config/status').json['userscriptUpdateRequired'])
+-        self.client.get('/config/load', headers={'X-Thinker-Client': 'userscript', 'X-Thinker-Version': '2026-10-24.2'})
++        self.client.get('/config/load', headers={'X-Thinker-Client': 'userscript', 'X-Thinker-Version': self.version})
+         status = self.client.get('/config/status').json
+         self.assertEqual(status['userscriptVersion'], status['serverVersion'])
+         self.assertFalse(status['userscriptUpdateRequired'])
+diff --git a/tests/validate_finish_audit.py b/tests/validate_finish_audit.py
+index 2956331..328ea1e 100644
+--- a/tests/validate_finish_audit.py
++++ b/tests/validate_finish_audit.py
+@@ -1,10 +1,11 @@
+ import csv
+ import json
++import sys
+ from pathlib import Path
+ 
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+-OUTPUT = ROOT / '_bmad-output/implementation-artifacts/definitive-finish'
++OUTPUT = ROOT / '_bmad-output/implementation-artifacts' / ('connectivity-finish' if '--connectivity' in sys.argv else 'definitive-finish')
+ before = json.loads((OUTPUT / 'before/audit.json').read_text(encoding='utf8'))
+ after = json.loads((OUTPUT / 'after/audit.json').read_text(encoding='utf8'))
+ assert len(after) == 68
+@@ -28,6 +29,11 @@ for state in after:
+         if not exempt:
+             assert panel['tail'] == 12, (state['surface'], state['width'], name, panel['tail'])
+     if state['surface'] == 'console':
++        if '--connectivity' in sys.argv:
++            for names in [('Bot', 'Auto Moves', 'Auto Queue'), ('Evaluation Bar', 'Banner', 'Recent Form', 'Arrow Color'), ('Auto Rating', 'Smart Pacing')]:
++                controls = [next(row for row in state['rows'] if row['text'].startswith(name)) for name in names]
++                for previous, current in zip(controls, controls[1:]):
++                    assert current['y'] - previous['y'] == 40, (names, state['width'], previous, current)
+         for section in state['sections']:
+             sections.append({'width': state['width'], **state['state'], **section})
+         if state['mode'] == 'desktop':

@@ -6,7 +6,7 @@ import {resolve,join} from 'node:path';
 import {createServer} from 'node:net';
 const root=resolve(import.meta.dirname,'../..');
 const integrated=!process.argv.includes('--before');
-const output=join(root,'_bmad-output/implementation-artifacts/definitive-finish/block-f');
+const output=join(root,'_bmad-output/implementation-artifacts',process.argv.includes('--connectivity')?'connectivity-finish':'definitive-finish',process.argv.includes('--connectivity')?'block-7/scout':'block-f');
 await mkdir(output,{recursive:true});
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const port=()=>new Promise(resolve=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>resolve(p));});});

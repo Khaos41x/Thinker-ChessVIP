@@ -1,0 +1,168 @@
+{
+  "connected": {
+    "connection": "Local server connected",
+    "userscript": "Chess.com: connected",
+    "state": "Ready",
+    "selectDisabled": false,
+    "timingHidden": false,
+    "fieldset": {
+      "x": 25,
+      "y": 725,
+      "width": 325,
+      "height": 32,
+      "right": 350
+    },
+    "inputs": [
+      {
+        "x": 26,
+        "y": 726,
+        "width": 67,
+        "height": 30,
+        "right": 93
+      },
+      {
+        "x": 111,
+        "y": 726,
+        "width": 67,
+        "height": 30,
+        "right": 178
+      }
+    ],
+    "segmented": {
+      "x": 192,
+      "y": 725,
+      "width": 158,
+      "height": 32,
+      "right": 350
+    },
+    "overflow": false,
+    "evalBar": "false"
+  },
+  "offline": {
+    "connection": "Local server offline",
+    "userscript": "Chess.com: connection unknown",
+    "state": "Connection Lost",
+    "selectDisabled": true,
+    "timingHidden": false,
+    "fieldset": {
+      "x": 25,
+      "y": 725,
+      "width": 325,
+      "height": 32,
+      "right": 350
+    },
+    "inputs": [
+      {
+        "x": 26,
+        "y": 726,
+        "width": 67,
+        "height": 30,
+        "right": 93
+      },
+      {
+        "x": 111,
+        "y": 726,
+        "width": 67,
+        "height": 30,
+        "right": 178
+      }
+    ],
+    "segmented": {
+      "x": 192,
+      "y": 725,
+      "width": 158,
+      "height": 32,
+      "right": 350
+    },
+    "overflow": false,
+    "evalBar": "false"
+  },
+  "runtimeProof": {
+    "bound": "lowerbound",
+    "cp": 28,
+    "depth": 12,
+    "mate": null,
+    "nodes": 47138,
+    "nps": 589225,
+    "seldepth": 19,
+    "time": 80
+  },
+  "active": {
+    "connection": "Local server connected",
+    "userscript": "Chess.com: connected",
+    "state": "Active",
+    "selectDisabled": false,
+    "timingHidden": false,
+    "fieldset": {
+      "x": 25,
+      "y": 725,
+      "width": 325,
+      "height": 32,
+      "right": 350
+    },
+    "inputs": [
+      {
+        "x": 26,
+        "y": 726,
+        "width": 67,
+        "height": 30,
+        "right": 93
+      },
+      {
+        "x": 111,
+        "y": 726,
+        "width": 67,
+        "height": 30,
+        "right": 178
+      }
+    ],
+    "segmented": {
+      "x": 192,
+      "y": 725,
+      "width": 158,
+      "height": 32,
+      "right": 350
+    },
+    "overflow": false,
+    "evalBar": "false"
+  },
+  "userscriptDisconnected": {
+    "connection": "Local server connected",
+    "userscript": "Chess.com: disconnected",
+    "state": "Ready",
+    "selectDisabled": false,
+    "timingHidden": false,
+    "fieldset": {
+      "x": 25,
+      "y": 742,
+      "width": 325,
+      "height": 32,
+      "right": 350
+    },
+    "inputs": [
+      {
+        "x": 26,
+        "y": 743,
+        "width": 67,
+        "height": 30,
+        "right": 93
+      },
+      {
+        "x": 111,
+        "y": 743,
+        "width": 67,
+        "height": 30,
+        "right": 178
+      }
+    ],
+    "segmented": {
+      "x": 192,
+      "y": 742,
+      "width": 158,
+      "height": 32,
+      "right": 350
+    },
+    "overflow": false,
+    "evalBar": "false"
+  }
+}

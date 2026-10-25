@@ -96,6 +96,26 @@ class StartupTests(unittest.TestCase):
         with socket.create_connection(('127.0.0.1', port), timeout=1):
             pass
 
+    def test_immediate_restart_after_real_http_requests(self):
+        import urllib.request
+        first = self.launch(0)
+        port, _, _ = self.ready(first)
+        for path in ['/config', '/health', '/config/engines']:
+            with urllib.request.urlopen(f'http://127.0.0.1:{port}' + path, timeout=5) as response:
+                response.read()
+        children = psutil.Process(first.pid).children(recursive=True)
+        first.terminate()
+        first.wait(5)
+        for child in children:
+            try:
+                child.terminate()
+                child.wait(5)
+            except psutil.NoSuchProcess:
+                pass
+        second = self.launch(port)
+        second_port, _, _ = self.ready(second)
+        self.assertEqual(second_port, port)
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

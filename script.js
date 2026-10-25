@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-25.1
+// @version      2026-10-25.2
 // @downloadURL  http://127.0.0.1:5050/thinker-chess.user.js
 // @updateURL    http://127.0.0.1:5050/thinker-chess.meta.js
 // @description  Chess Bot com Servidor Local
@@ -217,7 +217,12 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         const status = doc.createElement('span'); status.className = 'tc-analysis-status'; status.setAttribute('role', 'status');
         const select = doc.createElement('select'); select.id = 'tc-analysis-engine'; select.setAttribute('aria-describedby', 'tc-analysis-message');
         const message = doc.createElement('p'); message.id = 'tc-analysis-message'; message.setAttribute('role', 'status');
-        const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry'; retry.addEventListener('click', () => attemptedEngineId ? selectPreference(attemptedEngineId) : refresh(true));
+        const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry';
+        retry.addEventListener('click', () => {
+          if (attemptedEngineId && state?.engines?.find(engine => engine.id === attemptedEngineId)?.installed) return selectPreference(attemptedEngineId);
+          attemptedEngineId = null;
+          refresh(true);
+        });
         select.addEventListener('change', () => selectPreference(select.value));
         const stateLine = doc.createElement('span'); stateLine.className = 'tc-analysis-state';
         const feedback = doc.createElement('span'); feedback.className = 'tc-analysis-feedback'; feedback.setAttribute('aria-live', 'polite');
@@ -231,6 +236,10 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       const selected = state?.engines?.find(engine => engine.id === state.selectedEngineId);
       if (state?.engines && select.options.length !== state.engines.length) {
         select.replaceChildren(...state.engines.map(engine => { const option = host.ownerDocument.createElement('option'); option.value = engine.id; option.textContent = engine.name; option.disabled = !engine.installed; return option; }));
+      }
+      for (const option of select.options) {
+        const engine = state?.engines?.find(item => item.id === option.value);
+        option.disabled = engine ? !engine.installed : false;
       }
       if (!selecting && state) select.value = state.selectedEngineId;
       select.disabled = selecting || Boolean(error) || !state;
@@ -8046,7 +8055,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
 })();
 
 /* THINKER_SESSION_CONTROL_GENERATED_START */
-globalThis.ThinkerClientVersion="2026-10-25.1";
+globalThis.ThinkerClientVersion="2026-10-25.2";
 globalThis.ThinkerSessionControlReady=(async()=>{
 (function(root){
 "use strict";

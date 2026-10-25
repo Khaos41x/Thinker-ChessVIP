@@ -1,0 +1,38 @@
+[
+  {
+    "commit": "3a503f6",
+    "availableServer": "three engines / no error",
+    "failedTransport": "Cannot reach analysis engine",
+    "recovered": true
+  },
+  {
+    "commit": "b9624eb",
+    "availableServer": "three engines / no error",
+    "failedTransport": "Cannot reach analysis engine",
+    "recovered": true
+  },
+  {
+    "commit": "1926bde",
+    "availableServer": "three engines / no error",
+    "failedTransport": "Cannot reach analysis engine",
+    "recovered": true
+  },
+  {
+    "commit": "c8ba23f",
+    "availableServer": "three engines / no error",
+    "failedTransport": "Cannot reach analysis engine",
+    "recovered": true
+  },
+  {
+    "commit": "37b878f",
+    "availableServer": "three engines / no error",
+    "failedTransport": "Cannot reach analysis engine",
+    "recovered": true
+  },
+  {
+    "commit": "1985a33",
+    "availableServer": "three engines / no error",
+    "failedTransport": "Cannot reach analysis engine",
+    "recovered": true
+  }
+]

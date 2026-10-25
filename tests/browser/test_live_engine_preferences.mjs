@@ -6,7 +6,7 @@ import {resolve,join} from 'node:path';
 import {createServer} from 'node:net';
 
 const root=resolve(import.meta.dirname,'../..');
-const base='http://127.0.0.1:5050',output=join(root,'_bmad-output/implementation-artifacts/definitive-finish/live');await mkdir(output,{recursive:true});
+const base='http://127.0.0.1:5050',output=join(root,'_bmad-output/implementation-artifacts',process.argv.includes('--connectivity')?'connectivity-finish':'definitive-finish',process.argv.includes('--connectivity')?'block-7/live':'live');await mkdir(output,{recursive:true});
 const delay=ms=>new Promise(r=>setTimeout(r,ms));const port=()=>new Promise(r=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>r(p))})});
 const initial=await(await fetch(base+'/config/engines')).json(),settings=await(await fetch(base+'/config/load')).json();assert(!initial.analysisContextAuthorized);const original=initial.selectedEngineId;
 const debug=await port(),clients=[],profile=await mkdtemp(join(tmpdir(),'thinker-live-preferences-'));

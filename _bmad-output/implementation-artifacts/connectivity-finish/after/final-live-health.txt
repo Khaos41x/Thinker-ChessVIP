@@ -1,0 +1,15 @@
+
+LocalAddress LocalPort RemoteAddress RemotePort State  AppliedSetting OwningProcess
+------------ --------- ------------- ---------- -----  -------------- -------------
+127.0.0.1    5050      0.0.0.0       0          Listen                16452
+
+HTTP/1.1 200 OK
+Server: Werkzeug/3.1.8 Python/3.12.7
+Date: Sun, 25 Oct 2026 16:58:26 GMT
+Content-Type: application/json
+Content-Length: 74
+Access-Control-Allow-Origin: *
+Connection: close
+
+{"cache":0,"engineGeneration":"komodo-14.1:1","ready":true,"status":"ok"}
+config HTTP 200

@@ -82,7 +82,12 @@
         const status = doc.createElement('span'); status.className = 'tc-analysis-status'; status.setAttribute('role', 'status');
         const select = doc.createElement('select'); select.id = 'tc-analysis-engine'; select.setAttribute('aria-describedby', 'tc-analysis-message');
         const message = doc.createElement('p'); message.id = 'tc-analysis-message'; message.setAttribute('role', 'status');
-        const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry'; retry.addEventListener('click', () => attemptedEngineId ? selectPreference(attemptedEngineId) : refresh(true));
+        const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry';
+        retry.addEventListener('click', () => {
+          if (attemptedEngineId && state?.engines?.find(engine => engine.id === attemptedEngineId)?.installed) return selectPreference(attemptedEngineId);
+          attemptedEngineId = null;
+          refresh(true);
+        });
         select.addEventListener('change', () => selectPreference(select.value));
         const stateLine = doc.createElement('span'); stateLine.className = 'tc-analysis-state';
         const feedback = doc.createElement('span'); feedback.className = 'tc-analysis-feedback'; feedback.setAttribute('aria-live', 'polite');
@@ -96,6 +101,10 @@
       const selected = state?.engines?.find(engine => engine.id === state.selectedEngineId);
       if (state?.engines && select.options.length !== state.engines.length) {
         select.replaceChildren(...state.engines.map(engine => { const option = host.ownerDocument.createElement('option'); option.value = engine.id; option.textContent = engine.name; option.disabled = !engine.installed; return option; }));
+      }
+      for (const option of select.options) {
+        const engine = state?.engines?.find(item => item.id === option.value);
+        option.disabled = engine ? !engine.installed : false;
       }
       if (!selecting && state) select.value = state.selectedEngineId;
       select.disabled = selecting || Boolean(error) || !state;

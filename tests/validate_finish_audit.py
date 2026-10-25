@@ -1,10 +1,11 @@
 import csv
 import json
+import sys
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / '_bmad-output/implementation-artifacts/definitive-finish'
+OUTPUT = ROOT / '_bmad-output/implementation-artifacts' / ('connectivity-finish' if '--connectivity' in sys.argv else 'definitive-finish')
 before = json.loads((OUTPUT / 'before/audit.json').read_text(encoding='utf8'))
 after = json.loads((OUTPUT / 'after/audit.json').read_text(encoding='utf8'))
 assert len(after) == 68
@@ -28,6 +29,11 @@ for state in after:
         if not exempt:
             assert panel['tail'] == 12, (state['surface'], state['width'], name, panel['tail'])
     if state['surface'] == 'console':
+        if '--connectivity' in sys.argv:
+            for names in [('Bot', 'Auto Moves', 'Auto Queue'), ('Evaluation Bar', 'Banner', 'Recent Form', 'Arrow Color'), ('Auto Rating', 'Smart Pacing')]:
+                controls = [next(row for row in state['rows'] if row['text'].startswith(name)) for name in names]
+                for previous, current in zip(controls, controls[1:]):
+                    assert current['y'] - previous['y'] == 40, (names, state['width'], previous, current)
         for section in state['sections']:
             sections.append({'width': state['width'], **state['state'], **section})
         if state['mode'] == 'desktop':

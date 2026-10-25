@@ -11,13 +11,14 @@ class DeliveryTests(unittest.TestCase):
         app = Flask(__name__)
         app.register_blueprint(create_external_config_blueprint())
         self.client = app.test_client()
+        self.version = self.client.get("/config/status").json["serverVersion"]
 
     def test_real_userscript_and_metadata_delivery(self):
         source = self.client.get('/thinker-chess.user.js')
         self.assertEqual(source.status_code, 200)
         self.assertIn('no-store', source.headers['Cache-Control'])
-        self.assertIn(b'@version      2026-10-24.2', source.data)
-        self.assertIn(b'globalThis.ThinkerClientVersion="2026-10-24.2";', source.data)
+        self.assertIn(('@version      ' + self.version).encode(), source.data)
+        self.assertIn(('globalThis.ThinkerClientVersion="' + self.version + '";').encode(), source.data)
         self.assertIn(b'X-Thinker-Version', source.data)
         metadata = self.client.get('/thinker-chess.meta.js')
         self.assertEqual(metadata.status_code, 200)
@@ -33,7 +34,7 @@ class DeliveryTests(unittest.TestCase):
         self.assertTrue(self.client.get('/config/status').json['userscriptUpdateRequired'])
         self.client.get('/config/load', headers={'X-Thinker-Client': 'userscript', 'X-Thinker-Version': '2026-10-23.7'})
         self.assertTrue(self.client.get('/config/status').json['userscriptUpdateRequired'])
-        self.client.get('/config/load', headers={'X-Thinker-Client': 'userscript', 'X-Thinker-Version': '2026-10-24.2'})
+        self.client.get('/config/load', headers={'X-Thinker-Client': 'userscript', 'X-Thinker-Version': self.version})
         status = self.client.get('/config/status').json
         self.assertEqual(status['userscriptVersion'], status['serverVersion'])
         self.assertFalse(status['userscriptUpdateRequired'])

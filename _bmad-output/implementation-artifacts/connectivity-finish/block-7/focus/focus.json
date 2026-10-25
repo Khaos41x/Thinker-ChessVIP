@@ -1,0 +1,178 @@
+[
+  {
+    "surface": "console",
+    "pointer": {
+      "selector": "#tc-analysis-engine",
+      "active": "tc-analysis-engine",
+      "outline": "none",
+      "shadow": "none",
+      "border": "rgb(58, 58, 54)"
+    }
+  },
+  {
+    "surface": "console",
+    "pointer": {
+      "selector": "#minDelayInput",
+      "active": "minDelayInput",
+      "outline": "none",
+      "shadow": "none",
+      "border": "rgb(232, 232, 228)"
+    }
+  },
+  {
+    "surface": "console",
+    "pointer": {
+      "selector": "#kb-session-duration",
+      "active": "kb-session-duration",
+      "outline": "none",
+      "shadow": "none",
+      "border": "rgb(58, 58, 54)"
+    }
+  },
+  {
+    "surface": "console",
+    "pointer": {
+      "selector": "#kb-color-picker",
+      "active": "kb-color-picker",
+      "outline": "none",
+      "shadow": "none",
+      "border": "rgb(85, 86, 80)"
+    }
+  },
+  {
+    "surface": "console",
+    "pointer": {
+      "selector": "#kb-session-start",
+      "active": "",
+      "outline": "none",
+      "shadow": "none",
+      "border": "rgb(86, 87, 82)"
+    }
+  },
+  {
+    "surface": "console",
+    "pointer": {
+      "selector": ".kb-timing-mode label",
+      "active": "dm-rand",
+      "outline": "none",
+      "shadow": "none",
+      "border": "rgb(222, 222, 217)"
+    }
+  },
+  {
+    "surface": "console",
+    "pointer": {
+      "selector": ".kb-radio-group",
+      "active": "",
+      "outline": "none",
+      "shadow": "none",
+      "border": "rgb(68, 68, 63)"
+    }
+  },
+  {
+    "surface": "console",
+    "keyboard": {
+      "id": "tc-analysis-engine",
+      "visible": true,
+      "border": "rgb(160, 161, 155)",
+      "outline": "none",
+      "shadow": "none"
+    }
+  },
+  {
+    "surface": "config",
+    "pointer": {
+      "selector": "#analysis-engine",
+      "active": "analysis-engine",
+      "outline": "none",
+      "shadow": "none",
+      "border": "rgb(58, 58, 54)"
+    }
+  },
+  {
+    "surface": "config",
+    "pointer": {
+      "selector": "#minDelay",
+      "active": "minDelay",
+      "outline": "none",
+      "shadow": "none",
+      "border": "rgb(242, 242, 238)"
+    }
+  },
+  {
+    "surface": "config",
+    "pointer": {
+      "selector": "#kb-session-duration",
+      "active": "kb-session-duration",
+      "outline": "none",
+      "shadow": "none",
+      "border": "rgb(58, 58, 54)"
+    }
+  },
+  {
+    "surface": "config",
+    "pointer": {
+      "selector": "#color",
+      "active": "color",
+      "outline": "none",
+      "shadow": "none",
+      "border": "rgb(58, 58, 54)"
+    }
+  },
+  {
+    "surface": "config",
+    "pointer": {
+      "selector": "#kb-session-start",
+      "active": "",
+      "outline": "none",
+      "shadow": "none",
+      "border": "rgb(58, 58, 54)"
+    }
+  },
+  {
+    "surface": "config",
+    "pointer": {
+      "selector": "[data-mode=random]",
+      "active": "",
+      "outline": "none",
+      "shadow": "none",
+      "border": "rgb(242, 242, 238)"
+    }
+  },
+  {
+    "surface": "config",
+    "pointer": {
+      "selector": "[data-key=hint]",
+      "active": "",
+      "outline": "none",
+      "shadow": "none",
+      "border": "rgb(58, 58, 54)"
+    }
+  },
+  {
+    "surface": "config",
+    "transition": {
+      "state": "true",
+      "focused": "rgb(34, 211, 107)",
+      "idle": "rgb(34, 211, 107)"
+    }
+  },
+  {
+    "surface": "config",
+    "transition": {
+      "state": "false",
+      "focused": "rgb(58, 58, 54)",
+      "idle": "rgb(58, 58, 54)"
+    }
+  },
+  {
+    "surface": "config",
+    "keyboard": {
+      "id": "analysis-engine",
+      "visible": true,
+      "border": "rgb(160, 161, 155)",
+      "outline": "none",
+      "shadow": "none"
+    }
+  }
+]
