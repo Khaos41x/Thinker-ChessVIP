@@ -603,3 +603,12 @@ footer > p {
   }
 }
 
+
+#engine .engine-group { margin:0; padding:8px 0 0; border:0; }
+#engine .engine-group + .engine-group { margin-top:8px; padding-top:8px; border-top:1px solid var(--border); }
+#engine .engine-toggles .control-row { background:none; }
+#engine [data-controls=pacing] .control-row { background:linear-gradient(var(--border),var(--border)) top / 100% 1px no-repeat; }
+#engine .strength input[type=range] { display:block; margin:8px 0; }
+#engine .strength .range-labels { margin:0; }
+#analysis-engine-message { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#engine .timing[hidden] { display:none; }

@@ -9,6 +9,8 @@
     let mounted = null;
     let selectionEpoch = 0;
     let attemptedEngineId = null;
+    let savedUntil = 0;
+    let feedbackTimer = null;
     const allowed = () => ['analysis', 'post-game'].includes(options.authorize());
     function send(path, payload) {
       return new Promise((resolve, reject) => {
@@ -51,12 +53,17 @@
     async function selectPreference(engineId) {
       if (selecting || !state) return;
       attemptedEngineId = engineId;
+      savedUntil = 0;
+      if (feedbackTimer !== null) { clearTimeout(feedbackTimer); feedbackTimer = null; }
       selecting = true; selectionEpoch++; error = null; render();
       try {
         const result = await send('/eval-bar/engines/preference', { engineId, expectedRevision: state.preferenceRevision });
         if (!result.ok || result.selectedEngineId !== engineId) throw new Error('Preference was not acknowledged');
         state = result;
         attemptedEngineId = null;
+        savedUntil = performance.now() + 1500;
+        if (feedbackTimer !== null) clearTimeout(feedbackTimer);
+        feedbackTimer = setTimeout(() => { savedUntil = 0; feedbackTimer = null; render(); }, 1500);
       } catch (cause) {
         if (cause.data?.engines) state = cause.data;
         error = String(cause.message || cause);
@@ -65,7 +72,8 @@
     function render() {
       const host = options.getHost?.();
       if (!host) return;
-      if (!mounted || mounted.parentNode !== host) {
+      const parent = host.querySelector('.kb-engine-analysis') || host;
+      if (!mounted || mounted.parentNode !== parent) {
         const doc = host.ownerDocument;
         mounted = doc.createElement('div'); mounted.className = 'tc-analysis-selector';
         const heading = doc.createElement('div'); heading.className = 'tc-analysis-heading';
@@ -75,9 +83,11 @@
         const message = doc.createElement('p'); message.id = 'tc-analysis-message'; message.setAttribute('role', 'status');
         const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry'; retry.addEventListener('click', () => attemptedEngineId ? selectPreference(attemptedEngineId) : refresh(true));
         select.addEventListener('change', () => selectPreference(select.value));
-        heading.append(label, status); mounted.append(heading, select, message, retry);
-        const caption = host.querySelector('.kb-console-caption');
-        if (caption) caption.after(mounted); else host.prepend(mounted);
+        const stateLine = doc.createElement('span'); stateLine.className = 'tc-analysis-state';
+        const feedback = doc.createElement('span'); feedback.className = 'tc-analysis-feedback'; feedback.setAttribute('aria-live', 'polite');
+        stateLine.append(status, feedback); heading.append(label, stateLine); mounted.append(heading, select, message, retry);
+        const caption = parent.querySelector('.kb-console-caption');
+        if (caption) caption.after(mounted); else parent.prepend(mounted);
       }
       const select = mounted.querySelector('select');
       const selected = state?.engines?.find(engine => engine.id === state.selectedEngineId);
@@ -87,7 +97,10 @@
       if (!selecting && state) select.value = state.selectedEngineId;
       select.disabled = selecting || !state;
       mounted.querySelector('.tc-analysis-status').textContent = selecting ? 'Switching' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing';
-      mounted.querySelector('p').textContent = error || selected?.initializationError || (state ? [selected?.description, 'Preference saved. Analysis follows the existing authorization.'].filter(Boolean).join(' ') : 'Checking installed engines…');
+      const hint = error || selected?.initializationError || (selected ? [selected.description?.split(' · ')[0], selected.name].filter(Boolean).join(' · ') : 'Checking installed engines…');
+      mounted.querySelector('p').textContent = hint;
+      mounted.querySelector('p').title = hint;
+      mounted.querySelector('.tc-analysis-feedback').textContent = performance.now() < savedUntil ? 'Preference saved.' : '';
       mounted.querySelector('button').hidden = !error;
     }
     return Object.freeze({

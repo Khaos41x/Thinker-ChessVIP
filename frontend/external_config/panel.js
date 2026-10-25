@@ -176,6 +176,7 @@
       else node.value = node.dataset.key.endsWith('Delay') ? Number(value).toFixed(2) : value;
     });
     byId('timing-fields').disabled = config.smartPacing;
+    byId('timing-fields').closest('.timing').hidden = config.smartPacing;
     const immediate = config.delayMode === 'max';
     ['minDelay', 'maxDelay'].forEach(id => {
       byId(id).disabled = immediate || config.smartPacing;
@@ -185,7 +186,7 @@
     byId('elo-value').textContent = config.elo;
     byId('elo').style.setProperty('--range-fill', `calc(${(config.elo - 800) / 2400} * (100% - 16px) + 8px)`);
     byId('timing-value').textContent = immediate ? 'Immediate' : `${Number(config.minDelay).toFixed(2)}–${Number(config.maxDelay).toFixed(2)} s`;
-    byId('timing-hint').textContent = config.smartPacing ? 'Smart Pacing controls move timing. Manual settings are retained.' : 'Timing applies when Auto Moves is enabled.';
+    byId('timing-hint').textContent = config.smartPacing ? 'Smart Pacing controls move timing. Manual settings are retained.' : 'Enable Auto Moves to apply this timing.';
     renderSession(sessionProjection);
   }
 

@@ -21,7 +21,7 @@
     <div id="panels" class="panels" aria-busy="true">
       <section class="panel" id="core"><h2>Core</h2><div data-controls="core"></div></section>
       <section class="panel" id="engine"><h2>Engine Control</h2>
-        <div class="analysis-engine">
+        <div class="analysis-engine engine-group">
           <div class="field-heading"><label for="analysis-engine">Analysis Engine</label><span id="analysis-engine-state" role="status">Initializing</span></div>
           <select id="analysis-engine" aria-describedby="analysis-engine-message" disabled>
             <option value="stockfish-19-1mb">Stockfish 19 · 1MB</option>
@@ -32,19 +32,18 @@
           <button id="engine-retry" class="compact-button" type="button" hidden>Retry</button>
           <details class="engine-details"><summary>Technical details</summary><pre id="analysis-engine-details"></pre></details>
         </div>
-        <div data-controls="engine"></div>
-        <div class="strength"><div class="field-heading"><label for="elo">Strength Level</label><output id="elo-value" for="elo">3200</output></div>
+        <div class="strength engine-group"><div class="field-heading"><label for="elo">Strength Level</label><output id="elo-value" for="elo">3200</output></div>
           <input type="range" id="elo" data-key="elo" min="800" max="3200" step="100" value="3200" disabled>
           <div class="range-labels"><span>Min 800</span><span>Max 3200</span></div>
         </div>
-        <div class="timing"><div class="field-heading"><span>Move Timing</span><output id="timing-value">0.50–1.00 s</output></div>
+        <div class="timing engine-group"><div class="field-heading"><span>Move Timing</span><output id="timing-value">0.50–1.00 s</output></div>
           <fieldset id="timing-fields" disabled><legend class="sr-only">Move timing in seconds</legend>
             <div class="delay-fields"><label><span class="sr-only">Minimum delay</span><input id="minDelay" type="text" inputmode="decimal" data-key="minDelay" value="0.50"><span>s</span></label><span>–</span><label><span class="sr-only">Maximum delay</span><input id="maxDelay" type="text" inputmode="decimal" data-key="maxDelay" value="1.00"><span>s</span></label></div>
             <div class="segmented" role="group" aria-label="Move timing mode"><button type="button" data-mode="random" aria-pressed="true">Random</button><button type="button" data-mode="max" aria-pressed="false">Immediate</button></div>
           </fieldset>
-          <p id="timing-hint" class="hint">Timing applies when Auto Moves is enabled.</p>
+          <p id="timing-hint" class="hint">Enable Auto Moves to apply this timing.</p>
         </div>
-        <div data-controls="pacing"></div>
+        <div class="engine-group engine-toggles"><div data-controls="engine"></div><div data-controls="pacing"></div></div>
       </section>
       <section class="panel" id="visuals"><h2>Visuals</h2><div data-controls="visuals"></div>
         <div class="control-row"><label for="color">Arrow Color</label><input id="color" data-key="color" type="color" value="#10b981" disabled></div>
