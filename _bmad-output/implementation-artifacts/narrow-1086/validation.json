@@ -1,0 +1,42 @@
+{
+  "states": 96,
+  "unchangedWidths": [
+    1085,
+    1087,
+    1280,
+    1440,
+    1920,
+    1033,
+    800
+  ],
+  "scoutStates": [
+    "empty",
+    "four",
+    "full"
+  ],
+  "colorChanges": 0,
+  "desktopEngineHeightsByScout": {
+    "empty": 394,
+    "four": 394,
+    "full": 409
+  },
+  "autoPlayFields": [
+    167,
+    167,
+    166,
+    166
+  ],
+  "autoPlayButtons": [
+    342,
+    166,
+    166
+  ],
+  "numericInputs": [
+    64,
+    65
+  ],
+  "glyphClearances": [
+    6.75,
+    6.75
+  ]
+}

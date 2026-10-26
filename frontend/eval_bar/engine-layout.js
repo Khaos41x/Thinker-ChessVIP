@@ -40,6 +40,13 @@
           #krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) { grid-template-columns:round(down,50%,1px) minmax(0,1fr); }
           #krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) label { padding:0 12px; }
         }
+        @media(width:1086px) {
+          #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-console-grid { grid-template-columns:345px 359px 282px; }
+          #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-engine-timing .kb-delay-range { grid-template-columns:round(down,calc((100% - 20px)/2),1px) 8px minmax(0,1fr); gap:6px; }
+          #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-engine-timing .kb-delay-separator { width:8px; line-height:16px; text-align:center; }
+          #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-auto-play-module .kb-session-fields,
+          #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-auto-play-module .kb-session-actions { grid-template-columns:repeat(2,round(up,calc((100% - 24px)/4),1px)) repeat(2,round(down,calc((100% - 24px)/4),1px)); }
+        }
         #krypbot-container .kb-auto-play-module .kb-session-fields,
         #krypbot-container .kb-auto-play-module .kb-session-actions { grid-template-columns:repeat(3,round(down,calc((100% - 24px)/4),1px)) minmax(0,1fr); }
         #krypbot-container .kb-auto-play-module .kb-session-secondary-actions { display:contents; }

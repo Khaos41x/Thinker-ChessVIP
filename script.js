@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-26.1
+// @version      2026-10-26.2
 // @downloadURL  http://127.0.0.1:5050/thinker-chess.user.js
 // @updateURL    http://127.0.0.1:5050/thinker-chess.meta.js
 // @description  Chess Bot com Servidor Local
@@ -302,6 +302,13 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
           #krypbot-container .kb-engine-timing .kb-delay-unit { width:9px; padding:0 2px 0 0; }
           #krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) { grid-template-columns:round(down,50%,1px) minmax(0,1fr); }
           #krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) label { padding:0 12px; }
+        }
+        @media(width:1086px) {
+          #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-console-grid { grid-template-columns:345px 359px 282px; }
+          #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-engine-timing .kb-delay-range { grid-template-columns:round(down,calc((100% - 20px)/2),1px) 8px minmax(0,1fr); gap:6px; }
+          #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-engine-timing .kb-delay-separator { width:8px; line-height:16px; text-align:center; }
+          #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-auto-play-module .kb-session-fields,
+          #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-auto-play-module .kb-session-actions { grid-template-columns:repeat(2,round(up,calc((100% - 24px)/4),1px)) repeat(2,round(down,calc((100% - 24px)/4),1px)); }
         }
         #krypbot-container .kb-auto-play-module .kb-session-fields,
         #krypbot-container .kb-auto-play-module .kb-session-actions { grid-template-columns:repeat(3,round(down,calc((100% - 24px)/4),1px)) minmax(0,1fr); }
@@ -8058,7 +8065,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
 })();
 
 /* THINKER_SESSION_CONTROL_GENERATED_START */
-globalThis.ThinkerClientVersion="2026-10-26.1";
+globalThis.ThinkerClientVersion="2026-10-26.2";
 globalThis.ThinkerSessionControlReady=(async()=>{
 (function(root){
 "use strict";
