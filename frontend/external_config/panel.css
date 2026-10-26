@@ -198,10 +198,10 @@ label,
   height: 24px;
   flex: 0 0 40px;
   border: 1px solid var(--border);
-  padding: 0 2px;
+  padding: 0 1px;
   border-radius: 12px;
   background: #393a36;
-  transition: background-color .12s;
+  transition: background-color .14s ease, border-color .14s ease;
 }
 .switch::before {
   content: "";
@@ -211,14 +211,14 @@ label,
   border-radius: 50%;
   background: #f2f2ee;
   transform: translateX(0);
-  transition: transform .12s;
+  transition: transform .14s ease;
 }
 .switch[aria-checked=true] {
   background: var(--accent);
   border-color: var(--accent);
 }
 .switch[aria-checked=true]::before {
-  transform: translateX(16px);
+  transform: translateX(18px);
 }
 button:focus,
 input:focus {
