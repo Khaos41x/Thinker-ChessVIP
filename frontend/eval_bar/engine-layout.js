@@ -3,7 +3,7 @@
   const css = `
         #krypbot-container .kb-engine-section { margin:0; padding:0; border:0; }
         #krypbot-container .kb-engine-analysis { padding-top:var(--space-2); }
-        #krypbot-container .kb-engine-section + .kb-engine-section { margin-top:0; padding-top:var(--space-1); border-top:1px solid var(--tc-console-divider); }
+        #krypbot-container .kb-engine-section + .kb-engine-section { margin-top:calc(var(--space-1) / 2); padding-top:calc(var(--space-1) / 2); border-top:1px solid var(--tc-console-divider); }
         #krypbot-container .kb-engine-section .kb-strength-card,
         #krypbot-container .kb-engine-section .kb-run-delay-card { margin:0 !important; padding:0 !important; border:0 !important; }
         #krypbot-container .kb-engine-section .kb-run-delay-card + .kb-section { border-top:0 !important; }
