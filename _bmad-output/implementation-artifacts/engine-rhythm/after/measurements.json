@@ -1,5 +1,15 @@
 [
   {
+    "safeBoundary": 900,
+    "consoleTop": 912,
+    "banner": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "bottom": 0,
+      "right": 0
+    },
     "width": 1086,
     "mode": "Random",
     "smartPacing": false,
@@ -7,10 +17,10 @@
       {
         "name": "analysis",
         "x": 408,
-        "y": 1062,
+        "y": 950,
         "width": 319,
         "height": 104,
-        "bottom": 1166,
+        "bottom": 1054,
         "right": 727,
         "visible": true,
         "css": {
@@ -27,17 +37,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1070,
-          "end": 1166
+          "start": 958,
+          "end": 1054
         }
       },
       {
         "name": "strength",
         "x": 408,
-        "y": 1168,
+        "y": 1056,
         "width": 319,
         "height": 66,
-        "bottom": 1234,
+        "bottom": 1122,
         "right": 727,
         "visible": true,
         "css": {
@@ -54,17 +64,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1171,
-          "end": 1234
+          "start": 1059,
+          "end": 1122
         }
       },
       {
         "name": "timing",
         "x": 408,
-        "y": 1236,
+        "y": 1124,
         "width": 319,
         "height": 84,
-        "bottom": 1320,
+        "bottom": 1208,
         "right": 727,
         "visible": true,
         "css": {
@@ -81,17 +91,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1239,
-          "end": 1320
+          "start": 1127,
+          "end": 1208
         }
       },
       {
         "name": "toggles",
         "x": 408,
-        "y": 1322,
+        "y": 1210,
         "width": 319,
         "height": 83,
-        "bottom": 1405,
+        "bottom": 1293,
         "right": 727,
         "visible": true,
         "css": {
@@ -108,8 +118,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1325,
-          "end": 1405
+          "start": 1213,
+          "end": 1293
         }
       }
     ],
@@ -117,10 +127,10 @@
       {
         "text": "Random",
         "x": 570,
-        "y": 1265,
+        "y": 1153,
         "width": 78,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 648,
         "css": {
           "marginTop": "0px",
@@ -141,10 +151,10 @@
       {
         "text": "Immediate",
         "x": 648,
-        "y": 1265,
+        "y": 1153,
         "width": 78,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 726,
         "css": {
           "marginTop": "0px",
@@ -166,46 +176,46 @@
     "panels": {
       "kb-console-module kb-core-module": {
         "x": 38,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 171,
-        "bottom": 1195,
+        "bottom": 1083,
         "right": 383,
         "tail": 12
       },
       "kb-console-module kb-visuals-module": {
         "x": 38,
-        "y": 1207,
+        "y": 1095,
         "width": 345,
         "height": 211,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 383,
         "tail": 12
       },
       "kb-console-module kb-engine-module": {
         "x": 395,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 394,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 740,
         "tail": 12
       },
       "kb-session-panel": {
         "x": 38,
-        "y": 1430,
+        "y": 1318,
         "width": 702,
         "height": 252,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 740,
         "tail": 12
       },
       "oi-zone2": {
         "x": 752,
-        "y": 1024,
+        "y": 912,
         "width": 296,
         "height": 658,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1048,
         "tail": 555
       }
@@ -216,10 +226,10 @@
         "id": "oi-wrapper",
         "class": "",
         "x": 26,
-        "y": 1012,
+        "y": 900,
         "width": 1034,
         "height": 682,
-        "bottom": 1694,
+        "bottom": 1582,
         "right": 1060,
         "css": {
           "marginTop": "0px",
@@ -288,10 +298,10 @@
       {
         "id": "minDelayInput",
         "x": 409,
-        "y": 1265,
+        "y": 1153,
         "width": 64,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 473,
         "css": {
           "marginTop": "0px",
@@ -310,10 +320,10 @@
       {
         "id": "maxDelayInput",
         "x": 491,
-        "y": 1265,
+        "y": 1153,
         "width": 64,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 555,
         "css": {
           "marginTop": "0px",
@@ -334,136 +344,136 @@
       {
         "id": "kb-color-picker",
         "x": 346,
-        "y": 1373,
+        "y": 1261,
         "width": 24,
         "height": 24,
-        "bottom": 1397,
+        "bottom": 1285,
         "right": 370
       },
       {
         "id": "tc-analysis-engine",
         "x": 408,
-        "y": 1094,
+        "y": 982,
         "width": 319,
         "height": 32,
-        "bottom": 1126,
+        "bottom": 1014,
         "right": 727
       },
       {
         "id": "kb-elo-slider",
         "x": 408,
-        "y": 1196,
+        "y": 1084,
         "width": 319,
         "height": 16,
-        "bottom": 1212,
+        "bottom": 1100,
         "right": 727
       },
       {
         "id": "minDelayInput",
         "x": 409,
-        "y": 1265,
+        "y": 1153,
         "width": 64,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 473
       },
       {
         "id": "maxDelayInput",
         "x": 491,
-        "y": 1265,
+        "y": 1153,
         "width": 64,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 555
       },
       {
         "id": "dm-rand",
         "x": 575,
-        "y": 1268,
+        "y": 1156,
         "width": 1,
         "height": 1,
-        "bottom": 1269,
+        "bottom": 1157,
         "right": 576
       },
       {
         "id": "dm-rand",
         "x": 570,
-        "y": 1265,
+        "y": 1153,
         "width": 78,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 648
       },
       {
         "id": "dm-max",
         "x": 575,
-        "y": 1268,
+        "y": 1156,
         "width": 1,
         "height": 1,
-        "bottom": 1269,
+        "bottom": 1157,
         "right": 576
       },
       {
         "id": "dm-max",
         "x": 648,
-        "y": 1265,
+        "y": 1153,
         "width": 78,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 726
       },
       {
         "id": "kb-session-duration",
         "x": 51,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 214
       },
       {
         "id": "kb-session-min-rate",
         "x": 222,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 385
       },
       {
         "id": "kb-session-max-rate",
         "x": 393,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 556
       },
       {
         "id": "kb-session-start",
         "x": 51,
-        "y": 1574,
+        "y": 1462,
         "width": 334,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 385
       },
       {
         "id": "kb-session-stop",
         "x": 393,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 556
       },
       {
         "id": "kb-session-export",
         "x": 564,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 727
       }
     ],
@@ -504,6 +514,16 @@
     "overflow": true
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 912,
+    "banner": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "bottom": 0,
+      "right": 0
+    },
     "width": 1086,
     "mode": "Immediate",
     "smartPacing": false,
@@ -511,10 +531,10 @@
       {
         "name": "analysis",
         "x": 408,
-        "y": 1062,
+        "y": 950,
         "width": 319,
         "height": 104,
-        "bottom": 1166,
+        "bottom": 1054,
         "right": 727,
         "visible": true,
         "css": {
@@ -531,17 +551,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1070,
-          "end": 1166
+          "start": 958,
+          "end": 1054
         }
       },
       {
         "name": "strength",
         "x": 408,
-        "y": 1168,
+        "y": 1056,
         "width": 319,
         "height": 66,
-        "bottom": 1234,
+        "bottom": 1122,
         "right": 727,
         "visible": true,
         "css": {
@@ -558,17 +578,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1171,
-          "end": 1234
+          "start": 1059,
+          "end": 1122
         }
       },
       {
         "name": "timing",
         "x": 408,
-        "y": 1236,
+        "y": 1124,
         "width": 319,
         "height": 84,
-        "bottom": 1320,
+        "bottom": 1208,
         "right": 727,
         "visible": true,
         "css": {
@@ -585,17 +605,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1239,
-          "end": 1320
+          "start": 1127,
+          "end": 1208
         }
       },
       {
         "name": "toggles",
         "x": 408,
-        "y": 1322,
+        "y": 1210,
         "width": 319,
         "height": 83,
-        "bottom": 1405,
+        "bottom": 1293,
         "right": 727,
         "visible": true,
         "css": {
@@ -612,8 +632,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1325,
-          "end": 1405
+          "start": 1213,
+          "end": 1293
         }
       }
     ],
@@ -621,10 +641,10 @@
       {
         "text": "Random",
         "x": 570,
-        "y": 1265,
+        "y": 1153,
         "width": 78,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 648,
         "css": {
           "marginTop": "0px",
@@ -645,10 +665,10 @@
       {
         "text": "Immediate",
         "x": 648,
-        "y": 1265,
+        "y": 1153,
         "width": 78,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 726,
         "css": {
           "marginTop": "0px",
@@ -670,46 +690,46 @@
     "panels": {
       "kb-console-module kb-core-module": {
         "x": 38,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 171,
-        "bottom": 1195,
+        "bottom": 1083,
         "right": 383,
         "tail": 12
       },
       "kb-console-module kb-visuals-module": {
         "x": 38,
-        "y": 1207,
+        "y": 1095,
         "width": 345,
         "height": 211,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 383,
         "tail": 12
       },
       "kb-console-module kb-engine-module": {
         "x": 395,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 394,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 740,
         "tail": 12
       },
       "kb-session-panel": {
         "x": 38,
-        "y": 1430,
+        "y": 1318,
         "width": 702,
         "height": 252,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 740,
         "tail": 12
       },
       "oi-zone2": {
         "x": 752,
-        "y": 1024,
+        "y": 912,
         "width": 296,
         "height": 658,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1048,
         "tail": 555
       }
@@ -720,10 +740,10 @@
         "id": "oi-wrapper",
         "class": "",
         "x": 26,
-        "y": 1012,
+        "y": 900,
         "width": 1034,
         "height": 682,
-        "bottom": 1694,
+        "bottom": 1582,
         "right": 1060,
         "css": {
           "marginTop": "0px",
@@ -792,10 +812,10 @@
       {
         "id": "minDelayInput",
         "x": 409,
-        "y": 1265,
+        "y": 1153,
         "width": 64,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 473,
         "css": {
           "marginTop": "0px",
@@ -814,10 +834,10 @@
       {
         "id": "maxDelayInput",
         "x": 491,
-        "y": 1265,
+        "y": 1153,
         "width": 64,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 555,
         "css": {
           "marginTop": "0px",
@@ -838,136 +858,136 @@
       {
         "id": "kb-color-picker",
         "x": 346,
-        "y": 1373,
+        "y": 1261,
         "width": 24,
         "height": 24,
-        "bottom": 1397,
+        "bottom": 1285,
         "right": 370
       },
       {
         "id": "tc-analysis-engine",
         "x": 408,
-        "y": 1094,
+        "y": 982,
         "width": 319,
         "height": 32,
-        "bottom": 1126,
+        "bottom": 1014,
         "right": 727
       },
       {
         "id": "kb-elo-slider",
         "x": 408,
-        "y": 1196,
+        "y": 1084,
         "width": 319,
         "height": 16,
-        "bottom": 1212,
+        "bottom": 1100,
         "right": 727
       },
       {
         "id": "minDelayInput",
         "x": 409,
-        "y": 1265,
+        "y": 1153,
         "width": 64,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 473
       },
       {
         "id": "maxDelayInput",
         "x": 491,
-        "y": 1265,
+        "y": 1153,
         "width": 64,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 555
       },
       {
         "id": "dm-rand",
         "x": 575,
-        "y": 1268,
+        "y": 1156,
         "width": 1,
         "height": 1,
-        "bottom": 1269,
+        "bottom": 1157,
         "right": 576
       },
       {
         "id": "dm-rand",
         "x": 570,
-        "y": 1265,
+        "y": 1153,
         "width": 78,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 648
       },
       {
         "id": "dm-max",
         "x": 575,
-        "y": 1268,
+        "y": 1156,
         "width": 1,
         "height": 1,
-        "bottom": 1269,
+        "bottom": 1157,
         "right": 576
       },
       {
         "id": "dm-max",
         "x": 648,
-        "y": 1265,
+        "y": 1153,
         "width": 78,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 726
       },
       {
         "id": "kb-session-duration",
         "x": 51,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 214
       },
       {
         "id": "kb-session-min-rate",
         "x": 222,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 385
       },
       {
         "id": "kb-session-max-rate",
         "x": 393,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 556
       },
       {
         "id": "kb-session-start",
         "x": 51,
-        "y": 1574,
+        "y": 1462,
         "width": 334,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 385
       },
       {
         "id": "kb-session-stop",
         "x": 393,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 556
       },
       {
         "id": "kb-session-export",
         "x": 564,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 727
       }
     ],
@@ -1008,6 +1028,16 @@
     "overflow": true
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 912,
+    "banner": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "bottom": 0,
+      "right": 0
+    },
     "width": 1086,
     "mode": "Random",
     "smartPacing": true,
@@ -1015,10 +1045,10 @@
       {
         "name": "analysis",
         "x": 408,
-        "y": 1062,
+        "y": 950,
         "width": 319,
         "height": 104,
-        "bottom": 1166,
+        "bottom": 1054,
         "right": 727,
         "visible": true,
         "css": {
@@ -1035,17 +1065,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1070,
-          "end": 1166
+          "start": 958,
+          "end": 1054
         }
       },
       {
         "name": "strength",
         "x": 408,
-        "y": 1168,
+        "y": 1056,
         "width": 319,
         "height": 66,
-        "bottom": 1234,
+        "bottom": 1122,
         "right": 727,
         "visible": true,
         "css": {
@@ -1062,8 +1092,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1171,
-          "end": 1234
+          "start": 1059,
+          "end": 1122
         }
       },
       {
@@ -1093,10 +1123,10 @@
       {
         "name": "toggles",
         "x": 408,
-        "y": 1236,
+        "y": 1124,
         "width": 319,
         "height": 83,
-        "bottom": 1319,
+        "bottom": 1207,
         "right": 727,
         "visible": true,
         "css": {
@@ -1113,8 +1143,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1239,
-          "end": 1319
+          "start": 1127,
+          "end": 1207
         }
       }
     ],
@@ -1171,46 +1201,46 @@
     "panels": {
       "kb-console-module kb-core-module": {
         "x": 38,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 171,
-        "bottom": 1195,
+        "bottom": 1083,
         "right": 383,
         "tail": 12
       },
       "kb-console-module kb-visuals-module": {
         "x": 38,
-        "y": 1207,
+        "y": 1095,
         "width": 345,
         "height": 211,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 383,
         "tail": 12
       },
       "kb-console-module kb-engine-module": {
         "x": 395,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 394,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 740,
         "tail": 98
       },
       "kb-session-panel": {
         "x": 38,
-        "y": 1430,
+        "y": 1318,
         "width": 702,
         "height": 252,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 740,
         "tail": 12
       },
       "oi-zone2": {
         "x": 752,
-        "y": 1024,
+        "y": 912,
         "width": 296,
         "height": 658,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1048,
         "tail": 555
       }
@@ -1221,10 +1251,10 @@
         "id": "oi-wrapper",
         "class": "",
         "x": 26,
-        "y": 1012,
+        "y": 900,
         "width": 1034,
         "height": 682,
-        "bottom": 1694,
+        "bottom": 1582,
         "right": 1060,
         "css": {
           "marginTop": "0px",
@@ -1339,82 +1369,82 @@
       {
         "id": "kb-color-picker",
         "x": 346,
-        "y": 1373,
+        "y": 1261,
         "width": 24,
         "height": 24,
-        "bottom": 1397,
+        "bottom": 1285,
         "right": 370
       },
       {
         "id": "tc-analysis-engine",
         "x": 408,
-        "y": 1094,
+        "y": 982,
         "width": 319,
         "height": 32,
-        "bottom": 1126,
+        "bottom": 1014,
         "right": 727
       },
       {
         "id": "kb-elo-slider",
         "x": 408,
-        "y": 1196,
+        "y": 1084,
         "width": 319,
         "height": 16,
-        "bottom": 1212,
+        "bottom": 1100,
         "right": 727
       },
       {
         "id": "kb-session-duration",
         "x": 51,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 214
       },
       {
         "id": "kb-session-min-rate",
         "x": 222,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 385
       },
       {
         "id": "kb-session-max-rate",
         "x": 393,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 556
       },
       {
         "id": "kb-session-start",
         "x": 51,
-        "y": 1574,
+        "y": 1462,
         "width": 334,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 385
       },
       {
         "id": "kb-session-stop",
         "x": 393,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 556
       },
       {
         "id": "kb-session-export",
         "x": 564,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 727
       }
     ],
@@ -1455,6 +1485,16 @@
     "overflow": true
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 912,
+    "banner": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "bottom": 0,
+      "right": 0
+    },
     "width": 1086,
     "mode": "Immediate",
     "smartPacing": true,
@@ -1462,10 +1502,10 @@
       {
         "name": "analysis",
         "x": 408,
-        "y": 1062,
+        "y": 950,
         "width": 319,
         "height": 104,
-        "bottom": 1166,
+        "bottom": 1054,
         "right": 727,
         "visible": true,
         "css": {
@@ -1482,17 +1522,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1070,
-          "end": 1166
+          "start": 958,
+          "end": 1054
         }
       },
       {
         "name": "strength",
         "x": 408,
-        "y": 1168,
+        "y": 1056,
         "width": 319,
         "height": 66,
-        "bottom": 1234,
+        "bottom": 1122,
         "right": 727,
         "visible": true,
         "css": {
@@ -1509,8 +1549,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1171,
-          "end": 1234
+          "start": 1059,
+          "end": 1122
         }
       },
       {
@@ -1540,10 +1580,10 @@
       {
         "name": "toggles",
         "x": 408,
-        "y": 1236,
+        "y": 1124,
         "width": 319,
         "height": 83,
-        "bottom": 1319,
+        "bottom": 1207,
         "right": 727,
         "visible": true,
         "css": {
@@ -1560,8 +1600,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1239,
-          "end": 1319
+          "start": 1127,
+          "end": 1207
         }
       }
     ],
@@ -1618,46 +1658,46 @@
     "panels": {
       "kb-console-module kb-core-module": {
         "x": 38,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 171,
-        "bottom": 1195,
+        "bottom": 1083,
         "right": 383,
         "tail": 12
       },
       "kb-console-module kb-visuals-module": {
         "x": 38,
-        "y": 1207,
+        "y": 1095,
         "width": 345,
         "height": 211,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 383,
         "tail": 12
       },
       "kb-console-module kb-engine-module": {
         "x": 395,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 394,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 740,
         "tail": 98
       },
       "kb-session-panel": {
         "x": 38,
-        "y": 1430,
+        "y": 1318,
         "width": 702,
         "height": 252,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 740,
         "tail": 12
       },
       "oi-zone2": {
         "x": 752,
-        "y": 1024,
+        "y": 912,
         "width": 296,
         "height": 658,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1048,
         "tail": 555
       }
@@ -1668,10 +1708,10 @@
         "id": "oi-wrapper",
         "class": "",
         "x": 26,
-        "y": 1012,
+        "y": 900,
         "width": 1034,
         "height": 682,
-        "bottom": 1694,
+        "bottom": 1582,
         "right": 1060,
         "css": {
           "marginTop": "0px",
@@ -1786,82 +1826,82 @@
       {
         "id": "kb-color-picker",
         "x": 346,
-        "y": 1373,
+        "y": 1261,
         "width": 24,
         "height": 24,
-        "bottom": 1397,
+        "bottom": 1285,
         "right": 370
       },
       {
         "id": "tc-analysis-engine",
         "x": 408,
-        "y": 1094,
+        "y": 982,
         "width": 319,
         "height": 32,
-        "bottom": 1126,
+        "bottom": 1014,
         "right": 727
       },
       {
         "id": "kb-elo-slider",
         "x": 408,
-        "y": 1196,
+        "y": 1084,
         "width": 319,
         "height": 16,
-        "bottom": 1212,
+        "bottom": 1100,
         "right": 727
       },
       {
         "id": "kb-session-duration",
         "x": 51,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 214
       },
       {
         "id": "kb-session-min-rate",
         "x": 222,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 385
       },
       {
         "id": "kb-session-max-rate",
         "x": 393,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 556
       },
       {
         "id": "kb-session-start",
         "x": 51,
-        "y": 1574,
+        "y": 1462,
         "width": 334,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 385
       },
       {
         "id": "kb-session-stop",
         "x": 393,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 556
       },
       {
         "id": "kb-session-export",
         "x": 564,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 727
       }
     ],
@@ -1902,6 +1942,16 @@
     "overflow": true
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 912,
+    "banner": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "bottom": 0,
+      "right": 0
+    },
     "width": 1280,
     "mode": "Random",
     "smartPacing": false,
@@ -1909,10 +1959,10 @@
       {
         "name": "analysis",
         "x": 505,
-        "y": 1062,
+        "y": 950,
         "width": 319,
         "height": 104,
-        "bottom": 1166,
+        "bottom": 1054,
         "right": 824,
         "visible": true,
         "css": {
@@ -1929,17 +1979,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1070,
-          "end": 1166
+          "start": 958,
+          "end": 1054
         }
       },
       {
         "name": "strength",
         "x": 505,
-        "y": 1168,
+        "y": 1056,
         "width": 319,
         "height": 66,
-        "bottom": 1234,
+        "bottom": 1122,
         "right": 824,
         "visible": true,
         "css": {
@@ -1956,17 +2006,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1171,
-          "end": 1234
+          "start": 1059,
+          "end": 1122
         }
       },
       {
         "name": "timing",
         "x": 505,
-        "y": 1236,
+        "y": 1124,
         "width": 319,
         "height": 84,
-        "bottom": 1320,
+        "bottom": 1208,
         "right": 824,
         "visible": true,
         "css": {
@@ -1983,17 +2033,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1239,
-          "end": 1320
+          "start": 1127,
+          "end": 1208
         }
       },
       {
         "name": "toggles",
         "x": 505,
-        "y": 1322,
+        "y": 1210,
         "width": 319,
         "height": 83,
-        "bottom": 1405,
+        "bottom": 1293,
         "right": 824,
         "visible": true,
         "css": {
@@ -2010,8 +2060,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1325,
-          "end": 1405
+          "start": 1213,
+          "end": 1293
         }
       }
     ],
@@ -2019,10 +2069,10 @@
       {
         "text": "Random",
         "x": 701,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 762,
         "css": {
           "marginTop": "0px",
@@ -2043,10 +2093,10 @@
       {
         "text": "Immediate",
         "x": 762,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 823,
         "css": {
           "marginTop": "0px",
@@ -2068,46 +2118,46 @@
     "panels": {
       "kb-console-module kb-core-module": {
         "x": 135,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 171,
-        "bottom": 1195,
+        "bottom": 1083,
         "right": 480,
         "tail": 12
       },
       "kb-console-module kb-visuals-module": {
         "x": 135,
-        "y": 1207,
+        "y": 1095,
         "width": 345,
         "height": 211,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 480,
         "tail": 12
       },
       "kb-console-module kb-engine-module": {
         "x": 492,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 394,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 837,
         "tail": 12
       },
       "kb-session-panel": {
         "x": 135,
-        "y": 1430,
+        "y": 1318,
         "width": 702,
         "height": 252,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 837,
         "tail": 12
       },
       "oi-zone2": {
         "x": 849,
-        "y": 1024,
+        "y": 912,
         "width": 296,
         "height": 658,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1145,
         "tail": 555
       }
@@ -2118,10 +2168,10 @@
         "id": "oi-wrapper",
         "class": "",
         "x": 123,
-        "y": 1012,
+        "y": 900,
         "width": 1034,
         "height": 682,
-        "bottom": 1694,
+        "bottom": 1582,
         "right": 1157,
         "css": {
           "marginTop": "0px",
@@ -2190,10 +2240,10 @@
       {
         "id": "minDelayInput",
         "x": 506,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 560,
         "css": {
           "marginTop": "0px",
@@ -2212,10 +2262,10 @@
       {
         "id": "maxDelayInput",
         "x": 613,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 667,
         "css": {
           "marginTop": "0px",
@@ -2236,136 +2286,136 @@
       {
         "id": "kb-color-picker",
         "x": 443,
-        "y": 1373,
+        "y": 1261,
         "width": 24,
         "height": 24,
-        "bottom": 1397,
+        "bottom": 1285,
         "right": 467
       },
       {
         "id": "tc-analysis-engine",
         "x": 505,
-        "y": 1094,
+        "y": 982,
         "width": 319,
         "height": 32,
-        "bottom": 1126,
+        "bottom": 1014,
         "right": 824
       },
       {
         "id": "kb-elo-slider",
         "x": 505,
-        "y": 1196,
+        "y": 1084,
         "width": 319,
         "height": 16,
-        "bottom": 1212,
+        "bottom": 1100,
         "right": 824
       },
       {
         "id": "minDelayInput",
         "x": 506,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 560
       },
       {
         "id": "maxDelayInput",
         "x": 613,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 667
       },
       {
         "id": "dm-rand",
         "x": 706,
-        "y": 1268,
+        "y": 1156,
         "width": 1,
         "height": 1,
-        "bottom": 1269,
+        "bottom": 1157,
         "right": 707
       },
       {
         "id": "dm-rand",
         "x": 701,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 762
       },
       {
         "id": "dm-max",
         "x": 706,
-        "y": 1268,
+        "y": 1156,
         "width": 1,
         "height": 1,
-        "bottom": 1269,
+        "bottom": 1157,
         "right": 707
       },
       {
         "id": "dm-max",
         "x": 762,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 823
       },
       {
         "id": "kb-session-duration",
         "x": 148,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 311
       },
       {
         "id": "kb-session-min-rate",
         "x": 319,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 482
       },
       {
         "id": "kb-session-max-rate",
         "x": 490,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 653
       },
       {
         "id": "kb-session-start",
         "x": 148,
-        "y": 1574,
+        "y": 1462,
         "width": 334,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 482
       },
       {
         "id": "kb-session-stop",
         "x": 490,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 653
       },
       {
         "id": "kb-session-export",
         "x": 661,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 824
       }
     ],
@@ -2406,6 +2456,16 @@
     "overflow": true
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 912,
+    "banner": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "bottom": 0,
+      "right": 0
+    },
     "width": 1280,
     "mode": "Immediate",
     "smartPacing": false,
@@ -2413,10 +2473,10 @@
       {
         "name": "analysis",
         "x": 505,
-        "y": 1062,
+        "y": 950,
         "width": 319,
         "height": 104,
-        "bottom": 1166,
+        "bottom": 1054,
         "right": 824,
         "visible": true,
         "css": {
@@ -2433,17 +2493,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1070,
-          "end": 1166
+          "start": 958,
+          "end": 1054
         }
       },
       {
         "name": "strength",
         "x": 505,
-        "y": 1168,
+        "y": 1056,
         "width": 319,
         "height": 66,
-        "bottom": 1234,
+        "bottom": 1122,
         "right": 824,
         "visible": true,
         "css": {
@@ -2460,17 +2520,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1171,
-          "end": 1234
+          "start": 1059,
+          "end": 1122
         }
       },
       {
         "name": "timing",
         "x": 505,
-        "y": 1236,
+        "y": 1124,
         "width": 319,
         "height": 84,
-        "bottom": 1320,
+        "bottom": 1208,
         "right": 824,
         "visible": true,
         "css": {
@@ -2487,17 +2547,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1239,
-          "end": 1320
+          "start": 1127,
+          "end": 1208
         }
       },
       {
         "name": "toggles",
         "x": 505,
-        "y": 1322,
+        "y": 1210,
         "width": 319,
         "height": 83,
-        "bottom": 1405,
+        "bottom": 1293,
         "right": 824,
         "visible": true,
         "css": {
@@ -2514,8 +2574,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1325,
-          "end": 1405
+          "start": 1213,
+          "end": 1293
         }
       }
     ],
@@ -2523,10 +2583,10 @@
       {
         "text": "Random",
         "x": 701,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 762,
         "css": {
           "marginTop": "0px",
@@ -2547,10 +2607,10 @@
       {
         "text": "Immediate",
         "x": 762,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 823,
         "css": {
           "marginTop": "0px",
@@ -2572,46 +2632,46 @@
     "panels": {
       "kb-console-module kb-core-module": {
         "x": 135,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 171,
-        "bottom": 1195,
+        "bottom": 1083,
         "right": 480,
         "tail": 12
       },
       "kb-console-module kb-visuals-module": {
         "x": 135,
-        "y": 1207,
+        "y": 1095,
         "width": 345,
         "height": 211,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 480,
         "tail": 12
       },
       "kb-console-module kb-engine-module": {
         "x": 492,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 394,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 837,
         "tail": 12
       },
       "kb-session-panel": {
         "x": 135,
-        "y": 1430,
+        "y": 1318,
         "width": 702,
         "height": 252,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 837,
         "tail": 12
       },
       "oi-zone2": {
         "x": 849,
-        "y": 1024,
+        "y": 912,
         "width": 296,
         "height": 658,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1145,
         "tail": 555
       }
@@ -2622,10 +2682,10 @@
         "id": "oi-wrapper",
         "class": "",
         "x": 123,
-        "y": 1012,
+        "y": 900,
         "width": 1034,
         "height": 682,
-        "bottom": 1694,
+        "bottom": 1582,
         "right": 1157,
         "css": {
           "marginTop": "0px",
@@ -2694,10 +2754,10 @@
       {
         "id": "minDelayInput",
         "x": 506,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 560,
         "css": {
           "marginTop": "0px",
@@ -2716,10 +2776,10 @@
       {
         "id": "maxDelayInput",
         "x": 613,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 667,
         "css": {
           "marginTop": "0px",
@@ -2740,136 +2800,136 @@
       {
         "id": "kb-color-picker",
         "x": 443,
-        "y": 1373,
+        "y": 1261,
         "width": 24,
         "height": 24,
-        "bottom": 1397,
+        "bottom": 1285,
         "right": 467
       },
       {
         "id": "tc-analysis-engine",
         "x": 505,
-        "y": 1094,
+        "y": 982,
         "width": 319,
         "height": 32,
-        "bottom": 1126,
+        "bottom": 1014,
         "right": 824
       },
       {
         "id": "kb-elo-slider",
         "x": 505,
-        "y": 1196,
+        "y": 1084,
         "width": 319,
         "height": 16,
-        "bottom": 1212,
+        "bottom": 1100,
         "right": 824
       },
       {
         "id": "minDelayInput",
         "x": 506,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 560
       },
       {
         "id": "maxDelayInput",
         "x": 613,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 667
       },
       {
         "id": "dm-rand",
         "x": 706,
-        "y": 1268,
+        "y": 1156,
         "width": 1,
         "height": 1,
-        "bottom": 1269,
+        "bottom": 1157,
         "right": 707
       },
       {
         "id": "dm-rand",
         "x": 701,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 762
       },
       {
         "id": "dm-max",
         "x": 706,
-        "y": 1268,
+        "y": 1156,
         "width": 1,
         "height": 1,
-        "bottom": 1269,
+        "bottom": 1157,
         "right": 707
       },
       {
         "id": "dm-max",
         "x": 762,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 823
       },
       {
         "id": "kb-session-duration",
         "x": 148,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 311
       },
       {
         "id": "kb-session-min-rate",
         "x": 319,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 482
       },
       {
         "id": "kb-session-max-rate",
         "x": 490,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 653
       },
       {
         "id": "kb-session-start",
         "x": 148,
-        "y": 1574,
+        "y": 1462,
         "width": 334,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 482
       },
       {
         "id": "kb-session-stop",
         "x": 490,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 653
       },
       {
         "id": "kb-session-export",
         "x": 661,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 824
       }
     ],
@@ -2910,6 +2970,16 @@
     "overflow": true
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 912,
+    "banner": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "bottom": 0,
+      "right": 0
+    },
     "width": 1280,
     "mode": "Random",
     "smartPacing": true,
@@ -2917,10 +2987,10 @@
       {
         "name": "analysis",
         "x": 505,
-        "y": 1062,
+        "y": 950,
         "width": 319,
         "height": 104,
-        "bottom": 1166,
+        "bottom": 1054,
         "right": 824,
         "visible": true,
         "css": {
@@ -2937,17 +3007,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1070,
-          "end": 1166
+          "start": 958,
+          "end": 1054
         }
       },
       {
         "name": "strength",
         "x": 505,
-        "y": 1168,
+        "y": 1056,
         "width": 319,
         "height": 66,
-        "bottom": 1234,
+        "bottom": 1122,
         "right": 824,
         "visible": true,
         "css": {
@@ -2964,8 +3034,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1171,
-          "end": 1234
+          "start": 1059,
+          "end": 1122
         }
       },
       {
@@ -2995,10 +3065,10 @@
       {
         "name": "toggles",
         "x": 505,
-        "y": 1236,
+        "y": 1124,
         "width": 319,
         "height": 83,
-        "bottom": 1319,
+        "bottom": 1207,
         "right": 824,
         "visible": true,
         "css": {
@@ -3015,8 +3085,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1239,
-          "end": 1319
+          "start": 1127,
+          "end": 1207
         }
       }
     ],
@@ -3073,46 +3143,46 @@
     "panels": {
       "kb-console-module kb-core-module": {
         "x": 135,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 171,
-        "bottom": 1195,
+        "bottom": 1083,
         "right": 480,
         "tail": 12
       },
       "kb-console-module kb-visuals-module": {
         "x": 135,
-        "y": 1207,
+        "y": 1095,
         "width": 345,
         "height": 211,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 480,
         "tail": 12
       },
       "kb-console-module kb-engine-module": {
         "x": 492,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 394,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 837,
         "tail": 98
       },
       "kb-session-panel": {
         "x": 135,
-        "y": 1430,
+        "y": 1318,
         "width": 702,
         "height": 252,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 837,
         "tail": 12
       },
       "oi-zone2": {
         "x": 849,
-        "y": 1024,
+        "y": 912,
         "width": 296,
         "height": 658,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1145,
         "tail": 555
       }
@@ -3123,10 +3193,10 @@
         "id": "oi-wrapper",
         "class": "",
         "x": 123,
-        "y": 1012,
+        "y": 900,
         "width": 1034,
         "height": 682,
-        "bottom": 1694,
+        "bottom": 1582,
         "right": 1157,
         "css": {
           "marginTop": "0px",
@@ -3241,82 +3311,82 @@
       {
         "id": "kb-color-picker",
         "x": 443,
-        "y": 1373,
+        "y": 1261,
         "width": 24,
         "height": 24,
-        "bottom": 1397,
+        "bottom": 1285,
         "right": 467
       },
       {
         "id": "tc-analysis-engine",
         "x": 505,
-        "y": 1094,
+        "y": 982,
         "width": 319,
         "height": 32,
-        "bottom": 1126,
+        "bottom": 1014,
         "right": 824
       },
       {
         "id": "kb-elo-slider",
         "x": 505,
-        "y": 1196,
+        "y": 1084,
         "width": 319,
         "height": 16,
-        "bottom": 1212,
+        "bottom": 1100,
         "right": 824
       },
       {
         "id": "kb-session-duration",
         "x": 148,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 311
       },
       {
         "id": "kb-session-min-rate",
         "x": 319,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 482
       },
       {
         "id": "kb-session-max-rate",
         "x": 490,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 653
       },
       {
         "id": "kb-session-start",
         "x": 148,
-        "y": 1574,
+        "y": 1462,
         "width": 334,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 482
       },
       {
         "id": "kb-session-stop",
         "x": 490,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 653
       },
       {
         "id": "kb-session-export",
         "x": 661,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 824
       }
     ],
@@ -3357,6 +3427,16 @@
     "overflow": true
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 912,
+    "banner": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "bottom": 0,
+      "right": 0
+    },
     "width": 1280,
     "mode": "Immediate",
     "smartPacing": true,
@@ -3364,10 +3444,10 @@
       {
         "name": "analysis",
         "x": 505,
-        "y": 1062,
+        "y": 950,
         "width": 319,
         "height": 104,
-        "bottom": 1166,
+        "bottom": 1054,
         "right": 824,
         "visible": true,
         "css": {
@@ -3384,17 +3464,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1070,
-          "end": 1166
+          "start": 958,
+          "end": 1054
         }
       },
       {
         "name": "strength",
         "x": 505,
-        "y": 1168,
+        "y": 1056,
         "width": 319,
         "height": 66,
-        "bottom": 1234,
+        "bottom": 1122,
         "right": 824,
         "visible": true,
         "css": {
@@ -3411,8 +3491,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1171,
-          "end": 1234
+          "start": 1059,
+          "end": 1122
         }
       },
       {
@@ -3442,10 +3522,10 @@
       {
         "name": "toggles",
         "x": 505,
-        "y": 1236,
+        "y": 1124,
         "width": 319,
         "height": 83,
-        "bottom": 1319,
+        "bottom": 1207,
         "right": 824,
         "visible": true,
         "css": {
@@ -3462,8 +3542,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1239,
-          "end": 1319
+          "start": 1127,
+          "end": 1207
         }
       }
     ],
@@ -3520,46 +3600,46 @@
     "panels": {
       "kb-console-module kb-core-module": {
         "x": 135,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 171,
-        "bottom": 1195,
+        "bottom": 1083,
         "right": 480,
         "tail": 12
       },
       "kb-console-module kb-visuals-module": {
         "x": 135,
-        "y": 1207,
+        "y": 1095,
         "width": 345,
         "height": 211,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 480,
         "tail": 12
       },
       "kb-console-module kb-engine-module": {
         "x": 492,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 394,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 837,
         "tail": 98
       },
       "kb-session-panel": {
         "x": 135,
-        "y": 1430,
+        "y": 1318,
         "width": 702,
         "height": 252,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 837,
         "tail": 12
       },
       "oi-zone2": {
         "x": 849,
-        "y": 1024,
+        "y": 912,
         "width": 296,
         "height": 658,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1145,
         "tail": 555
       }
@@ -3570,10 +3650,10 @@
         "id": "oi-wrapper",
         "class": "",
         "x": 123,
-        "y": 1012,
+        "y": 900,
         "width": 1034,
         "height": 682,
-        "bottom": 1694,
+        "bottom": 1582,
         "right": 1157,
         "css": {
           "marginTop": "0px",
@@ -3688,82 +3768,82 @@
       {
         "id": "kb-color-picker",
         "x": 443,
-        "y": 1373,
+        "y": 1261,
         "width": 24,
         "height": 24,
-        "bottom": 1397,
+        "bottom": 1285,
         "right": 467
       },
       {
         "id": "tc-analysis-engine",
         "x": 505,
-        "y": 1094,
+        "y": 982,
         "width": 319,
         "height": 32,
-        "bottom": 1126,
+        "bottom": 1014,
         "right": 824
       },
       {
         "id": "kb-elo-slider",
         "x": 505,
-        "y": 1196,
+        "y": 1084,
         "width": 319,
         "height": 16,
-        "bottom": 1212,
+        "bottom": 1100,
         "right": 824
       },
       {
         "id": "kb-session-duration",
         "x": 148,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 311
       },
       {
         "id": "kb-session-min-rate",
         "x": 319,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 482
       },
       {
         "id": "kb-session-max-rate",
         "x": 490,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 653
       },
       {
         "id": "kb-session-start",
         "x": 148,
-        "y": 1574,
+        "y": 1462,
         "width": 334,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 482
       },
       {
         "id": "kb-session-stop",
         "x": 490,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 653
       },
       {
         "id": "kb-session-export",
         "x": 661,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 824
       }
     ],
@@ -3804,6 +3884,16 @@
     "overflow": true
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 912,
+    "banner": {
+      "x": 1263,
+      "y": 137,
+      "width": 170,
+      "height": 742,
+      "bottom": 879,
+      "right": 1433
+    },
     "width": 1440,
     "mode": "Random",
     "smartPacing": false,
@@ -3811,10 +3901,10 @@
       {
         "name": "analysis",
         "x": 585,
-        "y": 1062,
+        "y": 950,
         "width": 319,
         "height": 104,
-        "bottom": 1166,
+        "bottom": 1054,
         "right": 904,
         "visible": true,
         "css": {
@@ -3831,17 +3921,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1070,
-          "end": 1166
+          "start": 958,
+          "end": 1054
         }
       },
       {
         "name": "strength",
         "x": 585,
-        "y": 1168,
+        "y": 1056,
         "width": 319,
         "height": 66,
-        "bottom": 1234,
+        "bottom": 1122,
         "right": 904,
         "visible": true,
         "css": {
@@ -3858,17 +3948,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1171,
-          "end": 1234
+          "start": 1059,
+          "end": 1122
         }
       },
       {
         "name": "timing",
         "x": 585,
-        "y": 1236,
+        "y": 1124,
         "width": 319,
         "height": 84,
-        "bottom": 1320,
+        "bottom": 1208,
         "right": 904,
         "visible": true,
         "css": {
@@ -3885,17 +3975,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1239,
-          "end": 1320
+          "start": 1127,
+          "end": 1208
         }
       },
       {
         "name": "toggles",
         "x": 585,
-        "y": 1322,
+        "y": 1210,
         "width": 319,
         "height": 83,
-        "bottom": 1405,
+        "bottom": 1293,
         "right": 904,
         "visible": true,
         "css": {
@@ -3912,8 +4002,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1325,
-          "end": 1405
+          "start": 1213,
+          "end": 1293
         }
       }
     ],
@@ -3921,10 +4011,10 @@
       {
         "text": "Random",
         "x": 781,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 842,
         "css": {
           "marginTop": "0px",
@@ -3945,10 +4035,10 @@
       {
         "text": "Immediate",
         "x": 842,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 903,
         "css": {
           "marginTop": "0px",
@@ -3970,46 +4060,46 @@
     "panels": {
       "kb-console-module kb-core-module": {
         "x": 215,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 171,
-        "bottom": 1195,
+        "bottom": 1083,
         "right": 560,
         "tail": 12
       },
       "kb-console-module kb-visuals-module": {
         "x": 215,
-        "y": 1207,
+        "y": 1095,
         "width": 345,
         "height": 211,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 560,
         "tail": 12
       },
       "kb-console-module kb-engine-module": {
         "x": 572,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 394,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 917,
         "tail": 12
       },
       "kb-session-panel": {
         "x": 215,
-        "y": 1430,
+        "y": 1318,
         "width": 702,
         "height": 252,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 917,
         "tail": 12
       },
       "oi-zone2": {
         "x": 929,
-        "y": 1024,
+        "y": 912,
         "width": 296,
         "height": 658,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1225,
         "tail": 555
       }
@@ -4020,10 +4110,10 @@
         "id": "oi-wrapper",
         "class": "",
         "x": 203,
-        "y": 1012,
+        "y": 900,
         "width": 1034,
         "height": 682,
-        "bottom": 1694,
+        "bottom": 1582,
         "right": 1237,
         "css": {
           "marginTop": "0px",
@@ -4092,10 +4182,10 @@
       {
         "id": "minDelayInput",
         "x": 586,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 640,
         "css": {
           "marginTop": "0px",
@@ -4114,10 +4204,10 @@
       {
         "id": "maxDelayInput",
         "x": 693,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 747,
         "css": {
           "marginTop": "0px",
@@ -4138,136 +4228,136 @@
       {
         "id": "kb-color-picker",
         "x": 523,
-        "y": 1373,
+        "y": 1261,
         "width": 24,
         "height": 24,
-        "bottom": 1397,
+        "bottom": 1285,
         "right": 547
       },
       {
         "id": "tc-analysis-engine",
         "x": 585,
-        "y": 1094,
+        "y": 982,
         "width": 319,
         "height": 32,
-        "bottom": 1126,
+        "bottom": 1014,
         "right": 904
       },
       {
         "id": "kb-elo-slider",
         "x": 585,
-        "y": 1196,
+        "y": 1084,
         "width": 319,
         "height": 16,
-        "bottom": 1212,
+        "bottom": 1100,
         "right": 904
       },
       {
         "id": "minDelayInput",
         "x": 586,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 640
       },
       {
         "id": "maxDelayInput",
         "x": 693,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 747
       },
       {
         "id": "dm-rand",
         "x": 786,
-        "y": 1268,
+        "y": 1156,
         "width": 1,
         "height": 1,
-        "bottom": 1269,
+        "bottom": 1157,
         "right": 787
       },
       {
         "id": "dm-rand",
         "x": 781,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 842
       },
       {
         "id": "dm-max",
         "x": 786,
-        "y": 1268,
+        "y": 1156,
         "width": 1,
         "height": 1,
-        "bottom": 1269,
+        "bottom": 1157,
         "right": 787
       },
       {
         "id": "dm-max",
         "x": 842,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 903
       },
       {
         "id": "kb-session-duration",
         "x": 228,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 391
       },
       {
         "id": "kb-session-min-rate",
         "x": 399,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 562
       },
       {
         "id": "kb-session-max-rate",
         "x": 570,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 733
       },
       {
         "id": "kb-session-start",
         "x": 228,
-        "y": 1574,
+        "y": 1462,
         "width": 334,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 562
       },
       {
         "id": "kb-session-stop",
         "x": 570,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 733
       },
       {
         "id": "kb-session-export",
         "x": 741,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 904
       }
     ],
@@ -4308,6 +4398,16 @@
     "overflow": false
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 912,
+    "banner": {
+      "x": 1263,
+      "y": 137,
+      "width": 170,
+      "height": 742,
+      "bottom": 879,
+      "right": 1433
+    },
     "width": 1440,
     "mode": "Immediate",
     "smartPacing": false,
@@ -4315,10 +4415,10 @@
       {
         "name": "analysis",
         "x": 585,
-        "y": 1062,
+        "y": 950,
         "width": 319,
         "height": 104,
-        "bottom": 1166,
+        "bottom": 1054,
         "right": 904,
         "visible": true,
         "css": {
@@ -4335,17 +4435,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1070,
-          "end": 1166
+          "start": 958,
+          "end": 1054
         }
       },
       {
         "name": "strength",
         "x": 585,
-        "y": 1168,
+        "y": 1056,
         "width": 319,
         "height": 66,
-        "bottom": 1234,
+        "bottom": 1122,
         "right": 904,
         "visible": true,
         "css": {
@@ -4362,17 +4462,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1171,
-          "end": 1234
+          "start": 1059,
+          "end": 1122
         }
       },
       {
         "name": "timing",
         "x": 585,
-        "y": 1236,
+        "y": 1124,
         "width": 319,
         "height": 84,
-        "bottom": 1320,
+        "bottom": 1208,
         "right": 904,
         "visible": true,
         "css": {
@@ -4389,17 +4489,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1239,
-          "end": 1320
+          "start": 1127,
+          "end": 1208
         }
       },
       {
         "name": "toggles",
         "x": 585,
-        "y": 1322,
+        "y": 1210,
         "width": 319,
         "height": 83,
-        "bottom": 1405,
+        "bottom": 1293,
         "right": 904,
         "visible": true,
         "css": {
@@ -4416,8 +4516,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1325,
-          "end": 1405
+          "start": 1213,
+          "end": 1293
         }
       }
     ],
@@ -4425,10 +4525,10 @@
       {
         "text": "Random",
         "x": 781,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 842,
         "css": {
           "marginTop": "0px",
@@ -4449,10 +4549,10 @@
       {
         "text": "Immediate",
         "x": 842,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 903,
         "css": {
           "marginTop": "0px",
@@ -4474,46 +4574,46 @@
     "panels": {
       "kb-console-module kb-core-module": {
         "x": 215,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 171,
-        "bottom": 1195,
+        "bottom": 1083,
         "right": 560,
         "tail": 12
       },
       "kb-console-module kb-visuals-module": {
         "x": 215,
-        "y": 1207,
+        "y": 1095,
         "width": 345,
         "height": 211,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 560,
         "tail": 12
       },
       "kb-console-module kb-engine-module": {
         "x": 572,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 394,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 917,
         "tail": 12
       },
       "kb-session-panel": {
         "x": 215,
-        "y": 1430,
+        "y": 1318,
         "width": 702,
         "height": 252,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 917,
         "tail": 12
       },
       "oi-zone2": {
         "x": 929,
-        "y": 1024,
+        "y": 912,
         "width": 296,
         "height": 658,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1225,
         "tail": 555
       }
@@ -4524,10 +4624,10 @@
         "id": "oi-wrapper",
         "class": "",
         "x": 203,
-        "y": 1012,
+        "y": 900,
         "width": 1034,
         "height": 682,
-        "bottom": 1694,
+        "bottom": 1582,
         "right": 1237,
         "css": {
           "marginTop": "0px",
@@ -4596,10 +4696,10 @@
       {
         "id": "minDelayInput",
         "x": 586,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 640,
         "css": {
           "marginTop": "0px",
@@ -4618,10 +4718,10 @@
       {
         "id": "maxDelayInput",
         "x": 693,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 747,
         "css": {
           "marginTop": "0px",
@@ -4642,136 +4742,136 @@
       {
         "id": "kb-color-picker",
         "x": 523,
-        "y": 1373,
+        "y": 1261,
         "width": 24,
         "height": 24,
-        "bottom": 1397,
+        "bottom": 1285,
         "right": 547
       },
       {
         "id": "tc-analysis-engine",
         "x": 585,
-        "y": 1094,
+        "y": 982,
         "width": 319,
         "height": 32,
-        "bottom": 1126,
+        "bottom": 1014,
         "right": 904
       },
       {
         "id": "kb-elo-slider",
         "x": 585,
-        "y": 1196,
+        "y": 1084,
         "width": 319,
         "height": 16,
-        "bottom": 1212,
+        "bottom": 1100,
         "right": 904
       },
       {
         "id": "minDelayInput",
         "x": 586,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 640
       },
       {
         "id": "maxDelayInput",
         "x": 693,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 747
       },
       {
         "id": "dm-rand",
         "x": 786,
-        "y": 1268,
+        "y": 1156,
         "width": 1,
         "height": 1,
-        "bottom": 1269,
+        "bottom": 1157,
         "right": 787
       },
       {
         "id": "dm-rand",
         "x": 781,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 842
       },
       {
         "id": "dm-max",
         "x": 786,
-        "y": 1268,
+        "y": 1156,
         "width": 1,
         "height": 1,
-        "bottom": 1269,
+        "bottom": 1157,
         "right": 787
       },
       {
         "id": "dm-max",
         "x": 842,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 903
       },
       {
         "id": "kb-session-duration",
         "x": 228,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 391
       },
       {
         "id": "kb-session-min-rate",
         "x": 399,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 562
       },
       {
         "id": "kb-session-max-rate",
         "x": 570,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 733
       },
       {
         "id": "kb-session-start",
         "x": 228,
-        "y": 1574,
+        "y": 1462,
         "width": 334,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 562
       },
       {
         "id": "kb-session-stop",
         "x": 570,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 733
       },
       {
         "id": "kb-session-export",
         "x": 741,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 904
       }
     ],
@@ -4812,6 +4912,16 @@
     "overflow": false
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 912,
+    "banner": {
+      "x": 1263,
+      "y": 137,
+      "width": 170,
+      "height": 742,
+      "bottom": 879,
+      "right": 1433
+    },
     "width": 1440,
     "mode": "Random",
     "smartPacing": true,
@@ -4819,10 +4929,10 @@
       {
         "name": "analysis",
         "x": 585,
-        "y": 1062,
+        "y": 950,
         "width": 319,
         "height": 104,
-        "bottom": 1166,
+        "bottom": 1054,
         "right": 904,
         "visible": true,
         "css": {
@@ -4839,17 +4949,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1070,
-          "end": 1166
+          "start": 958,
+          "end": 1054
         }
       },
       {
         "name": "strength",
         "x": 585,
-        "y": 1168,
+        "y": 1056,
         "width": 319,
         "height": 66,
-        "bottom": 1234,
+        "bottom": 1122,
         "right": 904,
         "visible": true,
         "css": {
@@ -4866,8 +4976,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1171,
-          "end": 1234
+          "start": 1059,
+          "end": 1122
         }
       },
       {
@@ -4897,10 +5007,10 @@
       {
         "name": "toggles",
         "x": 585,
-        "y": 1236,
+        "y": 1124,
         "width": 319,
         "height": 83,
-        "bottom": 1319,
+        "bottom": 1207,
         "right": 904,
         "visible": true,
         "css": {
@@ -4917,8 +5027,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1239,
-          "end": 1319
+          "start": 1127,
+          "end": 1207
         }
       }
     ],
@@ -4975,46 +5085,46 @@
     "panels": {
       "kb-console-module kb-core-module": {
         "x": 215,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 171,
-        "bottom": 1195,
+        "bottom": 1083,
         "right": 560,
         "tail": 12
       },
       "kb-console-module kb-visuals-module": {
         "x": 215,
-        "y": 1207,
+        "y": 1095,
         "width": 345,
         "height": 211,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 560,
         "tail": 12
       },
       "kb-console-module kb-engine-module": {
         "x": 572,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 394,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 917,
         "tail": 98
       },
       "kb-session-panel": {
         "x": 215,
-        "y": 1430,
+        "y": 1318,
         "width": 702,
         "height": 252,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 917,
         "tail": 12
       },
       "oi-zone2": {
         "x": 929,
-        "y": 1024,
+        "y": 912,
         "width": 296,
         "height": 658,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1225,
         "tail": 555
       }
@@ -5025,10 +5135,10 @@
         "id": "oi-wrapper",
         "class": "",
         "x": 203,
-        "y": 1012,
+        "y": 900,
         "width": 1034,
         "height": 682,
-        "bottom": 1694,
+        "bottom": 1582,
         "right": 1237,
         "css": {
           "marginTop": "0px",
@@ -5143,82 +5253,82 @@
       {
         "id": "kb-color-picker",
         "x": 523,
-        "y": 1373,
+        "y": 1261,
         "width": 24,
         "height": 24,
-        "bottom": 1397,
+        "bottom": 1285,
         "right": 547
       },
       {
         "id": "tc-analysis-engine",
         "x": 585,
-        "y": 1094,
+        "y": 982,
         "width": 319,
         "height": 32,
-        "bottom": 1126,
+        "bottom": 1014,
         "right": 904
       },
       {
         "id": "kb-elo-slider",
         "x": 585,
-        "y": 1196,
+        "y": 1084,
         "width": 319,
         "height": 16,
-        "bottom": 1212,
+        "bottom": 1100,
         "right": 904
       },
       {
         "id": "kb-session-duration",
         "x": 228,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 391
       },
       {
         "id": "kb-session-min-rate",
         "x": 399,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 562
       },
       {
         "id": "kb-session-max-rate",
         "x": 570,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 733
       },
       {
         "id": "kb-session-start",
         "x": 228,
-        "y": 1574,
+        "y": 1462,
         "width": 334,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 562
       },
       {
         "id": "kb-session-stop",
         "x": 570,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 733
       },
       {
         "id": "kb-session-export",
         "x": 741,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 904
       }
     ],
@@ -5259,6 +5369,16 @@
     "overflow": false
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 912,
+    "banner": {
+      "x": 1263,
+      "y": 137,
+      "width": 170,
+      "height": 742,
+      "bottom": 879,
+      "right": 1433
+    },
     "width": 1440,
     "mode": "Immediate",
     "smartPacing": true,
@@ -5266,10 +5386,10 @@
       {
         "name": "analysis",
         "x": 585,
-        "y": 1062,
+        "y": 950,
         "width": 319,
         "height": 104,
-        "bottom": 1166,
+        "bottom": 1054,
         "right": 904,
         "visible": true,
         "css": {
@@ -5286,17 +5406,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1070,
-          "end": 1166
+          "start": 958,
+          "end": 1054
         }
       },
       {
         "name": "strength",
         "x": 585,
-        "y": 1168,
+        "y": 1056,
         "width": 319,
         "height": 66,
-        "bottom": 1234,
+        "bottom": 1122,
         "right": 904,
         "visible": true,
         "css": {
@@ -5313,8 +5433,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1171,
-          "end": 1234
+          "start": 1059,
+          "end": 1122
         }
       },
       {
@@ -5344,10 +5464,10 @@
       {
         "name": "toggles",
         "x": 585,
-        "y": 1236,
+        "y": 1124,
         "width": 319,
         "height": 83,
-        "bottom": 1319,
+        "bottom": 1207,
         "right": 904,
         "visible": true,
         "css": {
@@ -5364,8 +5484,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1239,
-          "end": 1319
+          "start": 1127,
+          "end": 1207
         }
       }
     ],
@@ -5422,46 +5542,46 @@
     "panels": {
       "kb-console-module kb-core-module": {
         "x": 215,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 171,
-        "bottom": 1195,
+        "bottom": 1083,
         "right": 560,
         "tail": 12
       },
       "kb-console-module kb-visuals-module": {
         "x": 215,
-        "y": 1207,
+        "y": 1095,
         "width": 345,
         "height": 211,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 560,
         "tail": 12
       },
       "kb-console-module kb-engine-module": {
         "x": 572,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 394,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 917,
         "tail": 98
       },
       "kb-session-panel": {
         "x": 215,
-        "y": 1430,
+        "y": 1318,
         "width": 702,
         "height": 252,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 917,
         "tail": 12
       },
       "oi-zone2": {
         "x": 929,
-        "y": 1024,
+        "y": 912,
         "width": 296,
         "height": 658,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1225,
         "tail": 555
       }
@@ -5472,10 +5592,10 @@
         "id": "oi-wrapper",
         "class": "",
         "x": 203,
-        "y": 1012,
+        "y": 900,
         "width": 1034,
         "height": 682,
-        "bottom": 1694,
+        "bottom": 1582,
         "right": 1237,
         "css": {
           "marginTop": "0px",
@@ -5590,82 +5710,82 @@
       {
         "id": "kb-color-picker",
         "x": 523,
-        "y": 1373,
+        "y": 1261,
         "width": 24,
         "height": 24,
-        "bottom": 1397,
+        "bottom": 1285,
         "right": 547
       },
       {
         "id": "tc-analysis-engine",
         "x": 585,
-        "y": 1094,
+        "y": 982,
         "width": 319,
         "height": 32,
-        "bottom": 1126,
+        "bottom": 1014,
         "right": 904
       },
       {
         "id": "kb-elo-slider",
         "x": 585,
-        "y": 1196,
+        "y": 1084,
         "width": 319,
         "height": 16,
-        "bottom": 1212,
+        "bottom": 1100,
         "right": 904
       },
       {
         "id": "kb-session-duration",
         "x": 228,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 391
       },
       {
         "id": "kb-session-min-rate",
         "x": 399,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 562
       },
       {
         "id": "kb-session-max-rate",
         "x": 570,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 733
       },
       {
         "id": "kb-session-start",
         "x": 228,
-        "y": 1574,
+        "y": 1462,
         "width": 334,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 562
       },
       {
         "id": "kb-session-stop",
         "x": 570,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 733
       },
       {
         "id": "kb-session-export",
         "x": 741,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 904
       }
     ],
@@ -5706,6 +5826,16 @@
     "overflow": false
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 912,
+    "banner": {
+      "x": 1263,
+      "y": 137,
+      "width": 170,
+      "height": 742,
+      "bottom": 879,
+      "right": 1433
+    },
     "width": 1920,
     "mode": "Random",
     "smartPacing": false,
@@ -5713,10 +5843,10 @@
       {
         "name": "analysis",
         "x": 825,
-        "y": 1062,
+        "y": 950,
         "width": 319,
         "height": 104,
-        "bottom": 1166,
+        "bottom": 1054,
         "right": 1144,
         "visible": true,
         "css": {
@@ -5733,17 +5863,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1070,
-          "end": 1166
+          "start": 958,
+          "end": 1054
         }
       },
       {
         "name": "strength",
         "x": 825,
-        "y": 1168,
+        "y": 1056,
         "width": 319,
         "height": 66,
-        "bottom": 1234,
+        "bottom": 1122,
         "right": 1144,
         "visible": true,
         "css": {
@@ -5760,17 +5890,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1171,
-          "end": 1234
+          "start": 1059,
+          "end": 1122
         }
       },
       {
         "name": "timing",
         "x": 825,
-        "y": 1236,
+        "y": 1124,
         "width": 319,
         "height": 84,
-        "bottom": 1320,
+        "bottom": 1208,
         "right": 1144,
         "visible": true,
         "css": {
@@ -5787,17 +5917,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1239,
-          "end": 1320
+          "start": 1127,
+          "end": 1208
         }
       },
       {
         "name": "toggles",
         "x": 825,
-        "y": 1322,
+        "y": 1210,
         "width": 319,
         "height": 83,
-        "bottom": 1405,
+        "bottom": 1293,
         "right": 1144,
         "visible": true,
         "css": {
@@ -5814,8 +5944,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1325,
-          "end": 1405
+          "start": 1213,
+          "end": 1293
         }
       }
     ],
@@ -5823,10 +5953,10 @@
       {
         "text": "Random",
         "x": 1021,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 1082,
         "css": {
           "marginTop": "0px",
@@ -5847,10 +5977,10 @@
       {
         "text": "Immediate",
         "x": 1082,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 1143,
         "css": {
           "marginTop": "0px",
@@ -5872,46 +6002,46 @@
     "panels": {
       "kb-console-module kb-core-module": {
         "x": 455,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 171,
-        "bottom": 1195,
+        "bottom": 1083,
         "right": 800,
         "tail": 12
       },
       "kb-console-module kb-visuals-module": {
         "x": 455,
-        "y": 1207,
+        "y": 1095,
         "width": 345,
         "height": 211,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 800,
         "tail": 12
       },
       "kb-console-module kb-engine-module": {
         "x": 812,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 394,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 1157,
         "tail": 12
       },
       "kb-session-panel": {
         "x": 455,
-        "y": 1430,
+        "y": 1318,
         "width": 702,
         "height": 252,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1157,
         "tail": 12
       },
       "oi-zone2": {
         "x": 1169,
-        "y": 1024,
+        "y": 912,
         "width": 296,
         "height": 658,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1465,
         "tail": 555
       }
@@ -5922,10 +6052,10 @@
         "id": "oi-wrapper",
         "class": "",
         "x": 443,
-        "y": 1012,
+        "y": 900,
         "width": 1034,
         "height": 682,
-        "bottom": 1694,
+        "bottom": 1582,
         "right": 1477,
         "css": {
           "marginTop": "0px",
@@ -5994,10 +6124,10 @@
       {
         "id": "minDelayInput",
         "x": 826,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 880,
         "css": {
           "marginTop": "0px",
@@ -6016,10 +6146,10 @@
       {
         "id": "maxDelayInput",
         "x": 933,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 987,
         "css": {
           "marginTop": "0px",
@@ -6040,136 +6170,136 @@
       {
         "id": "kb-color-picker",
         "x": 763,
-        "y": 1373,
+        "y": 1261,
         "width": 24,
         "height": 24,
-        "bottom": 1397,
+        "bottom": 1285,
         "right": 787
       },
       {
         "id": "tc-analysis-engine",
         "x": 825,
-        "y": 1094,
+        "y": 982,
         "width": 319,
         "height": 32,
-        "bottom": 1126,
+        "bottom": 1014,
         "right": 1144
       },
       {
         "id": "kb-elo-slider",
         "x": 825,
-        "y": 1196,
+        "y": 1084,
         "width": 319,
         "height": 16,
-        "bottom": 1212,
+        "bottom": 1100,
         "right": 1144
       },
       {
         "id": "minDelayInput",
         "x": 826,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 880
       },
       {
         "id": "maxDelayInput",
         "x": 933,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 987
       },
       {
         "id": "dm-rand",
         "x": 1026,
-        "y": 1268,
+        "y": 1156,
         "width": 1,
         "height": 1,
-        "bottom": 1269,
+        "bottom": 1157,
         "right": 1027
       },
       {
         "id": "dm-rand",
         "x": 1021,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 1082
       },
       {
         "id": "dm-max",
         "x": 1026,
-        "y": 1268,
+        "y": 1156,
         "width": 1,
         "height": 1,
-        "bottom": 1269,
+        "bottom": 1157,
         "right": 1027
       },
       {
         "id": "dm-max",
         "x": 1082,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 1143
       },
       {
         "id": "kb-session-duration",
         "x": 468,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 631
       },
       {
         "id": "kb-session-min-rate",
         "x": 639,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 802
       },
       {
         "id": "kb-session-max-rate",
         "x": 810,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 973
       },
       {
         "id": "kb-session-start",
         "x": 468,
-        "y": 1574,
+        "y": 1462,
         "width": 334,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 802
       },
       {
         "id": "kb-session-stop",
         "x": 810,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 973
       },
       {
         "id": "kb-session-export",
         "x": 981,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 1144
       }
     ],
@@ -6210,6 +6340,16 @@
     "overflow": false
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 912,
+    "banner": {
+      "x": 1263,
+      "y": 137,
+      "width": 170,
+      "height": 742,
+      "bottom": 879,
+      "right": 1433
+    },
     "width": 1920,
     "mode": "Immediate",
     "smartPacing": false,
@@ -6217,10 +6357,10 @@
       {
         "name": "analysis",
         "x": 825,
-        "y": 1062,
+        "y": 950,
         "width": 319,
         "height": 104,
-        "bottom": 1166,
+        "bottom": 1054,
         "right": 1144,
         "visible": true,
         "css": {
@@ -6237,17 +6377,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1070,
-          "end": 1166
+          "start": 958,
+          "end": 1054
         }
       },
       {
         "name": "strength",
         "x": 825,
-        "y": 1168,
+        "y": 1056,
         "width": 319,
         "height": 66,
-        "bottom": 1234,
+        "bottom": 1122,
         "right": 1144,
         "visible": true,
         "css": {
@@ -6264,17 +6404,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1171,
-          "end": 1234
+          "start": 1059,
+          "end": 1122
         }
       },
       {
         "name": "timing",
         "x": 825,
-        "y": 1236,
+        "y": 1124,
         "width": 319,
         "height": 84,
-        "bottom": 1320,
+        "bottom": 1208,
         "right": 1144,
         "visible": true,
         "css": {
@@ -6291,17 +6431,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1239,
-          "end": 1320
+          "start": 1127,
+          "end": 1208
         }
       },
       {
         "name": "toggles",
         "x": 825,
-        "y": 1322,
+        "y": 1210,
         "width": 319,
         "height": 83,
-        "bottom": 1405,
+        "bottom": 1293,
         "right": 1144,
         "visible": true,
         "css": {
@@ -6318,8 +6458,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1325,
-          "end": 1405
+          "start": 1213,
+          "end": 1293
         }
       }
     ],
@@ -6327,10 +6467,10 @@
       {
         "text": "Random",
         "x": 1021,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 1082,
         "css": {
           "marginTop": "0px",
@@ -6351,10 +6491,10 @@
       {
         "text": "Immediate",
         "x": 1082,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 1143,
         "css": {
           "marginTop": "0px",
@@ -6376,46 +6516,46 @@
     "panels": {
       "kb-console-module kb-core-module": {
         "x": 455,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 171,
-        "bottom": 1195,
+        "bottom": 1083,
         "right": 800,
         "tail": 12
       },
       "kb-console-module kb-visuals-module": {
         "x": 455,
-        "y": 1207,
+        "y": 1095,
         "width": 345,
         "height": 211,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 800,
         "tail": 12
       },
       "kb-console-module kb-engine-module": {
         "x": 812,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 394,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 1157,
         "tail": 12
       },
       "kb-session-panel": {
         "x": 455,
-        "y": 1430,
+        "y": 1318,
         "width": 702,
         "height": 252,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1157,
         "tail": 12
       },
       "oi-zone2": {
         "x": 1169,
-        "y": 1024,
+        "y": 912,
         "width": 296,
         "height": 658,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1465,
         "tail": 555
       }
@@ -6426,10 +6566,10 @@
         "id": "oi-wrapper",
         "class": "",
         "x": 443,
-        "y": 1012,
+        "y": 900,
         "width": 1034,
         "height": 682,
-        "bottom": 1694,
+        "bottom": 1582,
         "right": 1477,
         "css": {
           "marginTop": "0px",
@@ -6498,10 +6638,10 @@
       {
         "id": "minDelayInput",
         "x": 826,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 880,
         "css": {
           "marginTop": "0px",
@@ -6520,10 +6660,10 @@
       {
         "id": "maxDelayInput",
         "x": 933,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 987,
         "css": {
           "marginTop": "0px",
@@ -6544,136 +6684,136 @@
       {
         "id": "kb-color-picker",
         "x": 763,
-        "y": 1373,
+        "y": 1261,
         "width": 24,
         "height": 24,
-        "bottom": 1397,
+        "bottom": 1285,
         "right": 787
       },
       {
         "id": "tc-analysis-engine",
         "x": 825,
-        "y": 1094,
+        "y": 982,
         "width": 319,
         "height": 32,
-        "bottom": 1126,
+        "bottom": 1014,
         "right": 1144
       },
       {
         "id": "kb-elo-slider",
         "x": 825,
-        "y": 1196,
+        "y": 1084,
         "width": 319,
         "height": 16,
-        "bottom": 1212,
+        "bottom": 1100,
         "right": 1144
       },
       {
         "id": "minDelayInput",
         "x": 826,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 880
       },
       {
         "id": "maxDelayInput",
         "x": 933,
-        "y": 1265,
+        "y": 1153,
         "width": 54,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 987
       },
       {
         "id": "dm-rand",
         "x": 1026,
-        "y": 1268,
+        "y": 1156,
         "width": 1,
         "height": 1,
-        "bottom": 1269,
+        "bottom": 1157,
         "right": 1027
       },
       {
         "id": "dm-rand",
         "x": 1021,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 1082
       },
       {
         "id": "dm-max",
         "x": 1026,
-        "y": 1268,
+        "y": 1156,
         "width": 1,
         "height": 1,
-        "bottom": 1269,
+        "bottom": 1157,
         "right": 1027
       },
       {
         "id": "dm-max",
         "x": 1082,
-        "y": 1265,
+        "y": 1153,
         "width": 61,
         "height": 30,
-        "bottom": 1295,
+        "bottom": 1183,
         "right": 1143
       },
       {
         "id": "kb-session-duration",
         "x": 468,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 631
       },
       {
         "id": "kb-session-min-rate",
         "x": 639,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 802
       },
       {
         "id": "kb-session-max-rate",
         "x": 810,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 973
       },
       {
         "id": "kb-session-start",
         "x": 468,
-        "y": 1574,
+        "y": 1462,
         "width": 334,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 802
       },
       {
         "id": "kb-session-stop",
         "x": 810,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 973
       },
       {
         "id": "kb-session-export",
         "x": 981,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 1144
       }
     ],
@@ -6714,6 +6854,16 @@
     "overflow": false
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 912,
+    "banner": {
+      "x": 1263,
+      "y": 137,
+      "width": 170,
+      "height": 742,
+      "bottom": 879,
+      "right": 1433
+    },
     "width": 1920,
     "mode": "Random",
     "smartPacing": true,
@@ -6721,10 +6871,10 @@
       {
         "name": "analysis",
         "x": 825,
-        "y": 1062,
+        "y": 950,
         "width": 319,
         "height": 104,
-        "bottom": 1166,
+        "bottom": 1054,
         "right": 1144,
         "visible": true,
         "css": {
@@ -6741,17 +6891,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1070,
-          "end": 1166
+          "start": 958,
+          "end": 1054
         }
       },
       {
         "name": "strength",
         "x": 825,
-        "y": 1168,
+        "y": 1056,
         "width": 319,
         "height": 66,
-        "bottom": 1234,
+        "bottom": 1122,
         "right": 1144,
         "visible": true,
         "css": {
@@ -6768,8 +6918,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1171,
-          "end": 1234
+          "start": 1059,
+          "end": 1122
         }
       },
       {
@@ -6799,10 +6949,10 @@
       {
         "name": "toggles",
         "x": 825,
-        "y": 1236,
+        "y": 1124,
         "width": 319,
         "height": 83,
-        "bottom": 1319,
+        "bottom": 1207,
         "right": 1144,
         "visible": true,
         "css": {
@@ -6819,8 +6969,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1239,
-          "end": 1319
+          "start": 1127,
+          "end": 1207
         }
       }
     ],
@@ -6877,46 +7027,46 @@
     "panels": {
       "kb-console-module kb-core-module": {
         "x": 455,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 171,
-        "bottom": 1195,
+        "bottom": 1083,
         "right": 800,
         "tail": 12
       },
       "kb-console-module kb-visuals-module": {
         "x": 455,
-        "y": 1207,
+        "y": 1095,
         "width": 345,
         "height": 211,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 800,
         "tail": 12
       },
       "kb-console-module kb-engine-module": {
         "x": 812,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 394,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 1157,
         "tail": 98
       },
       "kb-session-panel": {
         "x": 455,
-        "y": 1430,
+        "y": 1318,
         "width": 702,
         "height": 252,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1157,
         "tail": 12
       },
       "oi-zone2": {
         "x": 1169,
-        "y": 1024,
+        "y": 912,
         "width": 296,
         "height": 658,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1465,
         "tail": 555
       }
@@ -6927,10 +7077,10 @@
         "id": "oi-wrapper",
         "class": "",
         "x": 443,
-        "y": 1012,
+        "y": 900,
         "width": 1034,
         "height": 682,
-        "bottom": 1694,
+        "bottom": 1582,
         "right": 1477,
         "css": {
           "marginTop": "0px",
@@ -7045,82 +7195,82 @@
       {
         "id": "kb-color-picker",
         "x": 763,
-        "y": 1373,
+        "y": 1261,
         "width": 24,
         "height": 24,
-        "bottom": 1397,
+        "bottom": 1285,
         "right": 787
       },
       {
         "id": "tc-analysis-engine",
         "x": 825,
-        "y": 1094,
+        "y": 982,
         "width": 319,
         "height": 32,
-        "bottom": 1126,
+        "bottom": 1014,
         "right": 1144
       },
       {
         "id": "kb-elo-slider",
         "x": 825,
-        "y": 1196,
+        "y": 1084,
         "width": 319,
         "height": 16,
-        "bottom": 1212,
+        "bottom": 1100,
         "right": 1144
       },
       {
         "id": "kb-session-duration",
         "x": 468,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 631
       },
       {
         "id": "kb-session-min-rate",
         "x": 639,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 802
       },
       {
         "id": "kb-session-max-rate",
         "x": 810,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 973
       },
       {
         "id": "kb-session-start",
         "x": 468,
-        "y": 1574,
+        "y": 1462,
         "width": 334,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 802
       },
       {
         "id": "kb-session-stop",
         "x": 810,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 973
       },
       {
         "id": "kb-session-export",
         "x": 981,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 1144
       }
     ],
@@ -7161,6 +7311,16 @@
     "overflow": false
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 912,
+    "banner": {
+      "x": 1263,
+      "y": 137,
+      "width": 170,
+      "height": 742,
+      "bottom": 879,
+      "right": 1433
+    },
     "width": 1920,
     "mode": "Immediate",
     "smartPacing": true,
@@ -7168,10 +7328,10 @@
       {
         "name": "analysis",
         "x": 825,
-        "y": 1062,
+        "y": 950,
         "width": 319,
         "height": 104,
-        "bottom": 1166,
+        "bottom": 1054,
         "right": 1144,
         "visible": true,
         "css": {
@@ -7188,17 +7348,17 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1070,
-          "end": 1166
+          "start": 958,
+          "end": 1054
         }
       },
       {
         "name": "strength",
         "x": 825,
-        "y": 1168,
+        "y": 1056,
         "width": 319,
         "height": 66,
-        "bottom": 1234,
+        "bottom": 1122,
         "right": 1144,
         "visible": true,
         "css": {
@@ -7215,8 +7375,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1171,
-          "end": 1234
+          "start": 1059,
+          "end": 1122
         }
       },
       {
@@ -7246,10 +7406,10 @@
       {
         "name": "toggles",
         "x": 825,
-        "y": 1236,
+        "y": 1124,
         "width": 319,
         "height": 83,
-        "bottom": 1319,
+        "bottom": 1207,
         "right": 1144,
         "visible": true,
         "css": {
@@ -7266,8 +7426,8 @@
           "paddingRight": "0px"
         },
         "content": {
-          "start": 1239,
-          "end": 1319
+          "start": 1127,
+          "end": 1207
         }
       }
     ],
@@ -7324,46 +7484,46 @@
     "panels": {
       "kb-console-module kb-core-module": {
         "x": 455,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 171,
-        "bottom": 1195,
+        "bottom": 1083,
         "right": 800,
         "tail": 12
       },
       "kb-console-module kb-visuals-module": {
         "x": 455,
-        "y": 1207,
+        "y": 1095,
         "width": 345,
         "height": 211,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 800,
         "tail": 12
       },
       "kb-console-module kb-engine-module": {
         "x": 812,
-        "y": 1024,
+        "y": 912,
         "width": 345,
         "height": 394,
-        "bottom": 1418,
+        "bottom": 1306,
         "right": 1157,
         "tail": 98
       },
       "kb-session-panel": {
         "x": 455,
-        "y": 1430,
+        "y": 1318,
         "width": 702,
         "height": 252,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1157,
         "tail": 12
       },
       "oi-zone2": {
         "x": 1169,
-        "y": 1024,
+        "y": 912,
         "width": 296,
         "height": 658,
-        "bottom": 1682,
+        "bottom": 1570,
         "right": 1465,
         "tail": 555
       }
@@ -7374,10 +7534,10 @@
         "id": "oi-wrapper",
         "class": "",
         "x": 443,
-        "y": 1012,
+        "y": 900,
         "width": 1034,
         "height": 682,
-        "bottom": 1694,
+        "bottom": 1582,
         "right": 1477,
         "css": {
           "marginTop": "0px",
@@ -7492,82 +7652,82 @@
       {
         "id": "kb-color-picker",
         "x": 763,
-        "y": 1373,
+        "y": 1261,
         "width": 24,
         "height": 24,
-        "bottom": 1397,
+        "bottom": 1285,
         "right": 787
       },
       {
         "id": "tc-analysis-engine",
         "x": 825,
-        "y": 1094,
+        "y": 982,
         "width": 319,
         "height": 32,
-        "bottom": 1126,
+        "bottom": 1014,
         "right": 1144
       },
       {
         "id": "kb-elo-slider",
         "x": 825,
-        "y": 1196,
+        "y": 1084,
         "width": 319,
         "height": 16,
-        "bottom": 1212,
+        "bottom": 1100,
         "right": 1144
       },
       {
         "id": "kb-session-duration",
         "x": 468,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 631
       },
       {
         "id": "kb-session-min-rate",
         "x": 639,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 802
       },
       {
         "id": "kb-session-max-rate",
         "x": 810,
-        "y": 1498,
+        "y": 1386,
         "width": 163,
         "height": 32,
-        "bottom": 1530,
+        "bottom": 1418,
         "right": 973
       },
       {
         "id": "kb-session-start",
         "x": 468,
-        "y": 1574,
+        "y": 1462,
         "width": 334,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 802
       },
       {
         "id": "kb-session-stop",
         "x": 810,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 973
       },
       {
         "id": "kb-session-export",
         "x": 981,
-        "y": 1574,
+        "y": 1462,
         "width": 163,
         "height": 32,
-        "bottom": 1606,
+        "bottom": 1494,
         "right": 1144
       }
     ],
@@ -7608,6 +7768,16 @@
     "overflow": false
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 1024,
+    "banner": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "bottom": 0,
+      "right": 0
+    },
     "width": 1033,
     "mode": "Random",
     "smartPacing": false,
@@ -8112,6 +8282,16 @@
     "overflow": true
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 1024,
+    "banner": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "bottom": 0,
+      "right": 0
+    },
     "width": 1033,
     "mode": "Immediate",
     "smartPacing": false,
@@ -8616,6 +8796,16 @@
     "overflow": true
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 1024,
+    "banner": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "bottom": 0,
+      "right": 0
+    },
     "width": 1033,
     "mode": "Random",
     "smartPacing": true,
@@ -9063,6 +9253,16 @@
     "overflow": true
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 1024,
+    "banner": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "bottom": 0,
+      "right": 0
+    },
     "width": 1033,
     "mode": "Immediate",
     "smartPacing": true,
@@ -9510,6 +9710,16 @@
     "overflow": true
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 1024,
+    "banner": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "bottom": 0,
+      "right": 0
+    },
     "width": 800,
     "mode": "Random",
     "smartPacing": false,
@@ -10014,6 +10224,16 @@
     "overflow": true
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 1024,
+    "banner": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "bottom": 0,
+      "right": 0
+    },
     "width": 800,
     "mode": "Immediate",
     "smartPacing": false,
@@ -10518,6 +10738,16 @@
     "overflow": true
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 1024,
+    "banner": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "bottom": 0,
+      "right": 0
+    },
     "width": 800,
     "mode": "Random",
     "smartPacing": true,
@@ -10965,6 +11195,16 @@
     "overflow": true
   },
   {
+    "safeBoundary": 900,
+    "consoleTop": 1024,
+    "banner": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "bottom": 0,
+      "right": 0
+    },
     "width": 800,
     "mode": "Immediate",
     "smartPacing": true,

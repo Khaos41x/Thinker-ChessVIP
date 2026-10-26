@@ -1,0 +1,422 @@
+[
+  {
+    "screenshot": "console-1086-rand-pacing0.png",
+    "section": "strength",
+    "dividerPixel": [
+      392,
+      156
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1086-rand-pacing0.png",
+    "section": "timing",
+    "dividerPixel": [
+      392,
+      224
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1086-rand-pacing0.png",
+    "section": "toggles",
+    "dividerPixel": [
+      392,
+      310
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1086-max-pacing0.png",
+    "section": "strength",
+    "dividerPixel": [
+      392,
+      156
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1086-max-pacing0.png",
+    "section": "timing",
+    "dividerPixel": [
+      392,
+      224
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1086-max-pacing0.png",
+    "section": "toggles",
+    "dividerPixel": [
+      392,
+      310
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1086-rand-pacing1.png",
+    "section": "strength",
+    "dividerPixel": [
+      392,
+      156
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1086-rand-pacing1.png",
+    "section": "toggles",
+    "dividerPixel": [
+      392,
+      224
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1086-max-pacing1.png",
+    "section": "strength",
+    "dividerPixel": [
+      392,
+      156
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1086-max-pacing1.png",
+    "section": "toggles",
+    "dividerPixel": [
+      392,
+      224
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1440-rand-pacing0.png",
+    "section": "strength",
+    "dividerPixel": [
+      392,
+      156
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1440-rand-pacing0.png",
+    "section": "timing",
+    "dividerPixel": [
+      392,
+      224
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1440-rand-pacing0.png",
+    "section": "toggles",
+    "dividerPixel": [
+      392,
+      310
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1440-max-pacing0.png",
+    "section": "strength",
+    "dividerPixel": [
+      392,
+      156
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1440-max-pacing0.png",
+    "section": "timing",
+    "dividerPixel": [
+      392,
+      224
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1440-max-pacing0.png",
+    "section": "toggles",
+    "dividerPixel": [
+      392,
+      310
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1440-rand-pacing1.png",
+    "section": "strength",
+    "dividerPixel": [
+      392,
+      156
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1440-rand-pacing1.png",
+    "section": "toggles",
+    "dividerPixel": [
+      392,
+      224
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1440-max-pacing1.png",
+    "section": "strength",
+    "dividerPixel": [
+      392,
+      156
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-1440-max-pacing1.png",
+    "section": "toggles",
+    "dividerPixel": [
+      392,
+      224
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-800-rand-pacing0.png",
+    "section": "strength",
+    "dividerPixel": [
+      35,
+      562
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-800-rand-pacing0.png",
+    "section": "timing",
+    "dividerPixel": [
+      35,
+      630
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-800-rand-pacing0.png",
+    "section": "toggles",
+    "dividerPixel": [
+      35,
+      716
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-800-max-pacing0.png",
+    "section": "strength",
+    "dividerPixel": [
+      35,
+      562
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-800-max-pacing0.png",
+    "section": "timing",
+    "dividerPixel": [
+      35,
+      630
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-800-max-pacing0.png",
+    "section": "toggles",
+    "dividerPixel": [
+      35,
+      716
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-800-rand-pacing1.png",
+    "section": "strength",
+    "dividerPixel": [
+      35,
+      562
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-800-rand-pacing1.png",
+    "section": "toggles",
+    "dividerPixel": [
+      35,
+      630
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-800-max-pacing1.png",
+    "section": "strength",
+    "dividerPixel": [
+      35,
+      562
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  },
+  {
+    "screenshot": "console-800-max-pacing1.png",
+    "section": "toggles",
+    "dividerPixel": [
+      35,
+      630
+    ],
+    "rgb": [
+      50,
+      50,
+      47
+    ],
+    "thickness": 1
+  }
+]

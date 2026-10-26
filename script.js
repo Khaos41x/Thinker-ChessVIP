@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-25.2
+// @version      2026-10-25.3
 // @downloadURL  http://127.0.0.1:5050/thinker-chess.user.js
 // @updateURL    http://127.0.0.1:5050/thinker-chess.meta.js
 // @description  Chess Bot com Servidor Local
@@ -7133,11 +7133,12 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
             boardRect?.bottom || 0,
             getThinkerRect(sidebar)?.bottom || 0,
           ) + window.scrollY;
-          const safeTop = Math.max(window.innerHeight + THINKER_WORKSPACE_GAP_PX, gameplayDocumentBottom + THINKER_WORKSPACE_GAP_PX);
           const wrapperWidth = Math.min(1034, Math.max(0, window.innerWidth));
           wrapper.style.setProperty("width", wrapperWidth + "px", "important");
           const measuredWrapperWidth = Math.round(wrapper.getBoundingClientRect().width);
           wrapper.dataset.layoutMode = measuredWrapperWidth >= 1034 ? "desktop" : "stacked";
+          const workspaceGap = wrapper.dataset.layoutMode === "desktop" ? 0 : THINKER_WORKSPACE_GAP_PX;
+          const safeTop = Math.max(window.innerHeight, gameplayDocumentBottom) + workspaceGap;
           syncTimingModeGeometry(thinkerMenuNode);
           const safeLeft = Math.round(window.scrollX + Math.max(0, (window.innerWidth - measuredWrapperWidth) / 2));
           wrapper.style.setProperty("top", Math.ceil(safeTop) + "px", "important");
@@ -8055,7 +8056,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
 })();
 
 /* THINKER_SESSION_CONTROL_GENERATED_START */
-globalThis.ThinkerClientVersion="2026-10-25.2";
+globalThis.ThinkerClientVersion="2026-10-25.3";
 globalThis.ThinkerSessionControlReady=(async()=>{
 (function(root){
 "use strict";

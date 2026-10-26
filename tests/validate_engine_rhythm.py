@@ -2,6 +2,14 @@ from pathlib import Path
 import json,csv
 root=Path('_bmad-output/implementation-artifacts/engine-rhythm');before=json.loads((root/'before/measurements.json').read_text(encoding='utf8'));after=json.loads((root/'after/measurements.json').read_text(encoding='utf8'))
 for old,new in zip(before,after):
+ if 'safeBoundary' in new:
+  if new['layout']=='desktop':
+   assert new['consoleTop']-new['safeBoundary']==12
+   assert new['ancestors'][0]['y']==old['ancestors'][0]['y']-112
+  else:
+   assert new['ancestors'][0]==old['ancestors'][0]
+ for a,b in zip(old['labels'],new['labels']):assert a['css']==b['css']
+ assert old['warning']==new['warning']
  assert (old['width'],old['mode'],old['smartPacing'])==(new['width'],new['mode'],new['smartPacing'])
  prev=None
  for s in new['sections']:
@@ -30,3 +38,20 @@ with (root/'after/sections.csv').open('w',encoding='utf8',newline='') as f:
    prev=s
 print('PASS24 states: 2px/1px/2px all junctions; unchanged heights/tails, integer controls, exact edges')
 
+
+from PIL import Image
+pixels=[]
+for r in after:
+ if r['width'] not in [1440,1086,800]:continue
+ mode='rand' if r['mode']=='Random' else 'max'
+ path=root/'after'/f"console-{r['width']}-{mode}-pacing{int(r['smartPacing'])}.png"
+ im=Image.open(path).convert('RGB');host=r['ancestors'][0]
+ for section in r['sections']:
+  if not section['visible'] or section['css']['borderTop']!='1px':continue
+  x=int(section['x']-host['x']+10);y=int(section['y']-host['y'])
+  assert im.getpixel((x,y))==(50,50,47),(path,section['name'],im.getpixel((x,y)))
+  assert im.getpixel((x,y-1))==(37,37,35)
+  assert im.getpixel((x,y+1))==(37,37,35)
+  pixels.append({'screenshot':path.name,'section':section['name'],'dividerPixel':[x,y],'rgb':[50,50,47],'thickness':1})
+(root/'after/painted-dividers.json').write_text(json.dumps(pixels,indent=2),encoding='utf8')
+print('PASS painted1px dividers, desktop inset12px, stacked placement and colors unchanged')

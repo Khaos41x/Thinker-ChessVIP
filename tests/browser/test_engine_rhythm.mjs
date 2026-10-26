@@ -38,7 +38,8 @@ try{
   const wrapper=document.querySelector('#oi-wrapper');const ancestors=[];for(let n=wrapper;n;n=n.parentElement)ancestors.push({tag:n.tagName,id:n.id,class:n.className,...rect(n),css:style(n)});
   const controls=[...document.querySelectorAll('#krypbot-container input,#krypbot-container select,#krypbot-container button,.kb-timing-mode label')].filter(visible).map(n=>({id:n.id||n.htmlFor,...rect(n)}));
   const warning=document.querySelector('#kb-session-target-help'),hint=document.querySelector('#kb-run-delay-hint');
-  return{width:innerWidth,mode:document.querySelector('#dm-rand').checked?'Random':'Immediate',smartPacing:document.querySelector('#sp-on').checked,sections,labels,panels,ancestors,inputs:[...document.querySelectorAll('.kb-delay-input input')].map(n=>({id:n.id,...rect(n),css:style(n)})),controls,heading:document.querySelector('#autoDelayDisplay').textContent,warning:{text:warning.textContent,css:style(warning)},hint:{text:hint.textContent,css:style(hint)},layout:wrapper.dataset.layoutMode,overflow:document.documentElement.scrollWidth>innerWidth};
+  const board=document.querySelector('wc-chess-board'),sidebar=document.querySelector('.play-controller-component');const safeBoundary=Math.max(innerHeight,board.getBoundingClientRect().bottom+scrollY,sidebar.getBoundingClientRect().bottom+scrollY);const banner=document.querySelector('#thinker-chess-banner');
+  return{safeBoundary,consoleTop:rect(document.querySelector('#krypbot-container')).y+scrollY,banner:banner?rect(banner):null,width:innerWidth,mode:document.querySelector('#dm-rand').checked?'Random':'Immediate',smartPacing:document.querySelector('#sp-on').checked,sections,labels,panels,ancestors,inputs:[...document.querySelectorAll('.kb-delay-input input')].map(n=>({id:n.id,...rect(n),css:style(n)})),controls,heading:document.querySelector('#autoDelayDisplay').textContent,warning:{text:warning.textContent,css:style(warning)},hint:{text:hint.textContent,css:style(hint)},layout:wrapper.dataset.layoutMode,overflow:document.documentElement.scrollWidth>innerWidth};
  };
  const results=[];
  for(const width of [1086,1280,1440,1920,1033,800])for(const smart of [false,true])for(const mode of ['rand','max']){
@@ -46,9 +47,9 @@ try{
   const saved=await fetch(base+'/config/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({smartPacing:smart,delayMode:mode==='rand'?'random':'max'})});assert(saved.ok);
   await waitFor(()=>value(embedded,`document.querySelector('#sp-on').checked===${smart}&&document.querySelector('#dm-${mode}').checked`));await delay(350);
   const item=await value(embedded,'('+measure.toString()+')()');results.push(item);
-  if([1440,1086,800].includes(width)){const shot=await embedded.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true});await writeFile(join(output,`console-${width}-${mode}-pacing${Number(smart)}.png`),Buffer.from(shot.data,'base64'));}
+  if([1440,1086,800].includes(width)){const host=item.ancestors[0];const shot=await embedded.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:{x:host.x,y:host.y,width:host.width,height:host.height,scale:1}});await writeFile(join(output,`console-${width}-${mode}-pacing${Number(smart)}.png`),Buffer.from(shot.data,'base64'));}
  }
  await writeFile(join(output,'measurements.json'),JSON.stringify(results,null,2));
- console.log(JSON.stringify(results.filter(r=>r.width===1440&&!r.smartPacing).map(r=>({width:r.width,mode:r.mode,sections:r.sections,inputs:r.inputs,labels:r.labels,ancestors:r.ancestors})),null,2));
+ console.log(JSON.stringify({states:results.length,positions:results.filter(r=>r.width===1440).map(r=>({mode:r.mode,pacing:r.smartPacing,consoleTop:r.consoleTop,safeBoundary:r.safeBoundary,sections:r.sections.map(s=>({name:s.name,y:s.y,bottom:s.bottom}))}))},null,2));
 }finally{for(const c of clients)c.socket.close();browser.kill();backend.kill();await delay(500);await rm(profile,{recursive:true,force:true,maxRetries:5,retryDelay:150});}
 
