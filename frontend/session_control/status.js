@@ -10,7 +10,7 @@ function validateRollout(input) {
 }
 
 function percentage(value) {
-  return Math.round(value * 10000) / 100;
+  return value === null ? null : Math.round(value * 10000) / 100;
 }
 
 function buildStatusView(snapshot, options) {

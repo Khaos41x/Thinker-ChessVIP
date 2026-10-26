@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict');
+const api=require('../frontend/session_control');
+const entries=new Map([['sessionDurationMinutes','120'],['sessionMinimumPercent','53'],['sessionMaximumPercent','61'],['kb_color','#Ab1234']]);
+const storage={getItem:k=>entries.get(k)??null,setItem:(k,v)=>entries.set(k,v),removeItem:k=>entries.delete(k)};
+assert(api.migrateSessionFields(storage));assert.equal(entries.get('kb_color'),'#Ab1234');assert.equal(entries.has('sessionDurationMinutes'),false);
+entries.set('sessionDurationMinutes','90');assert.equal(api.migrateSessionFields(storage),false);assert.equal(entries.get('sessionDurationMinutes'),'90');
+assert.deepEqual(api.validateSessionDraft({durationMinutes:'',minimumPercent:'',maximumPercent:''}),{durationMinutes:null,minimumPercent:null,maximumPercent:null});
+assert.throws(()=>api.validateSessionDraft({durationMinutes:'NaN',minimumPercent:'',maximumPercent:''}));
+assert.throws(()=>api.sessionConfigFromDraft({durationMinutes:'',minimumPercent:'',maximumPercent:''}),e=>e.code==='SESSION_CONFIG_INVALID');
+const config=api.sessionConfigFromDraft({durationMinutes:'30',minimumPercent:'',maximumPercent:''});assert.equal(config.durationMs,1800000);assert.equal(config.minWinRate,null);assert.equal(config.maxWinRate,null);assert.equal(config.boostOffsetElo,0);assert.equal(config.correctionOffsetElo,0);
+for(const counts of [{wins:1000,draws:0,losses:0,terminalGames:1000},{wins:0,draws:0,losses:1000,terminalGames:1000}])assert.equal(api.nextControllerMode('BOOST',counts,config).mode,'BOOST');
+assert.throws(()=>api.sessionConfigFromDraft({durationMinutes:'30',minimumPercent:'53',maximumPercent:''}),e=>e.code==='SESSION_TARGETS_UNSET');
+assert.throws(()=>api.validateSessionDraft({durationMinutes:'30',minimumPercent:'61',maximumPercent:'53'}));
+console.log('PASS empty drafts, one-time browser migration, preserved custom values, safe start validation and optional win-rate targets');

@@ -25,6 +25,7 @@ function wilsonInterval(wins, terminalGames, z = WILSON_Z_95) {
 function nextControllerMode(mode, counts, config) {
   if (!MODES.includes(mode)) throw new TypeError("controller mode is invalid");
   const posteriorWinRate = posteriorMean(counts);
+  if (config.minWinRate === null && config.maxWinRate === null) return Object.freeze({ mode, posteriorWinRate });
   if (counts.terminalGames < config.minCompletedGames) return Object.freeze({ mode, posteriorWinRate });
   if (mode === "BOOST" && posteriorWinRate > config.maxWinRate) return Object.freeze({ mode: "CORRECT", posteriorWinRate });
   if (mode === "CORRECT" && posteriorWinRate < config.minWinRate) return Object.freeze({ mode: "BOOST", posteriorWinRate });

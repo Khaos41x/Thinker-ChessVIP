@@ -17,7 +17,7 @@ DEFAULT_CONFIG = {
     "banner": True, "recentForm": True, "elo": 3200,
     "delayMode": "random", "minDelay": 0.5, "maxDelay": 1.0,
     "color": "#3B82F6", "ghostMode": False,
-    "sessionDurationMinutes": 120, "sessionMinimumPercent": None, "sessionMaximumPercent": None,
+    "sessionDurationMinutes": None, "sessionMinimumPercent": None, "sessionMaximumPercent": None,
 }
 
 
@@ -59,7 +59,7 @@ def configuration_error(data):
         elif key == "elo":
             valid = type(value) is int and 800 <= value <= 3200
         elif key == 'sessionDurationMinutes':
-            valid = type(value) is int and 1 <= value <= 1440
+            valid = value is None or type(value) is int and 1 <= value <= 1440
         elif key in ('sessionMinimumPercent', 'sessionMaximumPercent'):
             valid = value is None or type(value) in (int, float) and 0 < value < 100 and math.isfinite(value)
         elif key in ("minDelay", "maxDelay"):
@@ -92,12 +92,17 @@ def create_external_config_blueprint(preference_path=None):
             if not isinstance(stored, dict) or stored.get('version') != 1 or configuration_error(stored.get('config')):
                 raise ValueError('Invalid saved configuration')
             config.update(stored['config'])
-            if config['color'].upper() == '#10B981' and stored.get('arrowColorVersion') != 1:
+            arrow_migration = config['color'].upper() == '#10B981' and stored.get('arrowColorVersion') != 1
+            session_migration = stored.get('sessionFieldsVersion') != 1
+            if arrow_migration:
                 config['color'] = '#3B82F6'
+            if session_migration:
+                config.update({key: None for key in ('sessionDurationMinutes', 'sessionMinimumPercent', 'sessionMaximumPercent')})
+            if arrow_migration or session_migration:
                 temporary = preference_path.with_name(preference_path.name + '.' + uuid.uuid4().hex + '.tmp')
                 try:
                     with temporary.open('w', encoding='utf-8', newline='\n') as stream:
-                        json.dump({'version': 1, 'arrowColorVersion': 1, 'config': config}, stream, ensure_ascii=False)
+                        json.dump({'version': 1, 'arrowColorVersion': 1, 'sessionFieldsVersion': 1, 'config': config}, stream, ensure_ascii=False)
                         stream.flush()
                         os.fsync(stream.fileno())
                     os.replace(temporary, preference_path)
@@ -239,6 +244,8 @@ def create_external_config_blueprint(preference_path=None):
             if not session_connected():
                 return jsonify({'error': 'Open Chess.com with the userscript to use session actions.'}), 409
             projection = session['projection']
+            if data['action'] == 'start' and config['sessionDurationMinutes'] is None:
+                return jsonify({'error': 'Use 1–1440 minutes and win rates with 0 < minimum < maximum < 100.'}), 409
             blocker = projection['availability'].get(data['action'], 'STATUS_UNAVAILABLE')
             if blocker:
                 return jsonify({'error': str(blocker)}), 409
@@ -310,7 +317,7 @@ def create_external_config_blueprint(preference_path=None):
                     try:
                         preference_path.parent.mkdir(parents=True, exist_ok=True)
                         with temporary.open('w', encoding='utf-8', newline='\n') as stream:
-                            json.dump({'version': 1, 'arrowColorVersion': 1, 'config': updated}, stream, ensure_ascii=False)
+                            json.dump({'version': 1, 'arrowColorVersion': 1, 'sessionFieldsVersion': 1, 'config': updated}, stream, ensure_ascii=False)
                             stream.flush()
                             os.fsync(stream.fileno())
                         if invalid_saved_configuration and preference_path.exists():

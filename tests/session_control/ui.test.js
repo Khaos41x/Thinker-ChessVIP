@@ -394,7 +394,7 @@ async function run() {
   const workspaceLayout = sourceBlock(source, "        function updateWorkspaceLayout() {", "        scheduleThinkerWorkspaceLayout = () => {");
   assert(workspaceLayout.includes("document.body.appendChild(wrapper)"));
   assert(source.includes("THINKER_WORKSPACE_GAP_PX = 112"), "workspace gap is not centralized");
-  assert(workspaceLayout.includes("window.innerHeight + THINKER_WORKSPACE_GAP_PX") && workspaceLayout.includes("gameplayDocumentBottom + THINKER_WORKSPACE_GAP_PX"), "runtime layout does not preserve the requested board gap");
+  assert(workspaceLayout.includes('wrapper.dataset.layoutMode === "desktop" ? 0 : THINKER_WORKSPACE_GAP_PX') && workspaceLayout.includes("Math.max(window.innerHeight, gameplayDocumentBottom) + workspaceGap"), "runtime layout does not preserve desktop12px and stacked clearance");
   assert(workspaceLayout.includes("setProperty(\"top\""));
   assert(workspaceLayout.includes("setProperty(\"left\""));
   assert(/document\.body\.appendChild\(wrapper\);\r?\n\s+if \(!document\.getElementById\("krypbot-container"\)\) wrapper\.insertAdjacentHTML/.test(source));

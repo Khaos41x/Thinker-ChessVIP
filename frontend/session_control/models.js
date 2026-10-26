@@ -92,9 +92,11 @@ function validateSessionConfig(input) {
   exactKeys(input, required, [], "config");
   if (input.schemaVersion !== SCHEMA_VERSION) fail("config.schemaVersion is unsupported");
   integer(input.durationMs, 60000, 86400000, "config.durationMs");
-  finiteRate(input.minWinRate, "config.minWinRate");
-  finiteRate(input.maxWinRate, "config.maxWinRate");
-  if (!(input.minWinRate > 0 && input.minWinRate < input.maxWinRate && input.maxWinRate < 1)) fail("config win-rate bounds are invalid");
+  if (input.minWinRate !== null || input.maxWinRate !== null) {
+    finiteRate(input.minWinRate, "config.minWinRate");
+    finiteRate(input.maxWinRate, "config.maxWinRate");
+    if (!(input.minWinRate > 0 && input.minWinRate < input.maxWinRate && input.maxWinRate < 1)) fail("config win-rate bounds are invalid");
+  }
   integer(input.boostOffsetElo, -1000, 1000, "config.boostOffsetElo");
   integer(input.correctionOffsetElo, -1000, 1000, "config.correctionOffsetElo");
   integer(input.minCompletedGames, 1, 100, "config.minCompletedGames");

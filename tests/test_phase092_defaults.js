@@ -5,7 +5,7 @@ const api = require('../frontend/session_control');
 const empty = {durationMinutes:'120',minimumPercent:'',maximumPercent:''};
 assert.deepEqual(api.draftPatch(empty),{sessionDurationMinutes:120,sessionMinimumPercent:null,sessionMaximumPercent:null});
 assert.deepEqual(api.draftFromConfig({sessionDurationMinutes:120,sessionMinimumPercent:null,sessionMaximumPercent:null}),empty);
-assert.throws(()=>api.sessionConfigFromDraft(empty),error=>error.code==='SESSION_TARGETS_UNSET');
+assert.equal(api.sessionConfigFromDraft(empty).minWinRate,null);
 assert.equal(api.warningLabel('SESSION_TARGETS_UNSET'),'Configure both win-rate targets before starting a session.');
 for (const minimumPercent of ['0','-1','100','Infinity','invalid']) assert.throws(()=>api.validateSessionDraft({...empty,minimumPercent}));
 assert.deepEqual(api.draftPatch({...empty,minimumPercent:'75.25',maximumPercent:'82.5'}),{sessionDurationMinutes:120,sessionMinimumPercent:75.25,sessionMaximumPercent:82.5});

@@ -18,6 +18,8 @@
   let sessionBusy = false;
   let sessionError = null;
   const sessionApi = globalThis.ThinkerSessionControl;
+  sessionApi.migrateSessionFields(localStorage);
+  sessionApi.migrateSessionFields(sessionStorage);
   let pending = {};
   let saving = false;
   let polling = false;
@@ -131,7 +133,11 @@
       for (const action of ['start', 'stop', 'export']) {
         const node = panel.querySelector(`[data-action="${action}"]`);
         const reason = projection.availability[action];
-        node.disabled = sessionBusy || Boolean(reason);
+        let invalidDraft = false;
+        if (action === 'start') {
+          try { sessionApi.sessionConfigFromDraft({ durationMinutes: byId('kb-session-duration').value, minimumPercent: byId('kb-session-min-rate').value, maximumPercent: byId('kb-session-max-rate').value }); } catch { invalidDraft = true; }
+        }
+        node.disabled = sessionBusy || Boolean(reason) || invalidDraft;
         node.setAttribute('aria-disabled', String(node.disabled));
         node.title = reason ? sessionReasons[reason] || reason : '';
       }
@@ -360,7 +366,7 @@
     }
   }
   document.querySelectorAll('#kb-session-panel [data-key]').forEach(node => {
-    node.addEventListener('input', () => { drafts.add(node.id); message('Unsaved session edit · press Enter or leave the field to apply'); });
+    node.addEventListener('input', () => { drafts.add(node.id); renderSession(sessionProjection); message('Unsaved session edit · press Enter or leave the field to apply'); });
     node.addEventListener('blur', commitSessionDraft);
     node.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); commitSessionDraft(); node.blur(); } });
   });

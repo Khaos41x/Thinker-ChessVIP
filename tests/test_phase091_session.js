@@ -55,7 +55,7 @@ const freePort = () => new Promise(resolve => { const server = createServer(); s
       setTimeout: () => 0, clearTimeout() {},
     });
     await bridge.start();
-    assert.equal(appliedDraft.durationMinutes, '120');
+    assert.equal(appliedDraft.durationMinutes, '');
     bridge.draftChanged(draft);
     await bridge.start();
     let config = await request('/config/load');

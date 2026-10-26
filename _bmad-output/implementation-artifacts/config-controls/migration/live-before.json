@@ -1,0 +1,8 @@
+{
+  "clearedFieldsBefore": {
+    "sessionDurationMinutes": 120,
+    "sessionMinimumPercent": 53,
+    "sessionMaximumPercent": 61
+  },
+  "hadMigrationMarker": null
+}

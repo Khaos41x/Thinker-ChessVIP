@@ -1,0 +1,70 @@
+{
+  "initial": {
+    "config": {
+      "fields": [
+        {
+          "id": "kb-session-duration",
+          "value": "",
+          "placeholder": "Not set"
+        },
+        {
+          "id": "kb-session-min-rate",
+          "value": "",
+          "placeholder": "Not set"
+        },
+        {
+          "id": "kb-session-max-rate",
+          "value": "",
+          "placeholder": "Not set"
+        },
+        {
+          "id": "tc-rating-target",
+          "value": "",
+          "placeholder": "Not set"
+        }
+      ],
+      "disabled": true,
+      "marker": "1"
+    },
+    "console": {
+      "fields": [
+        {
+          "id": "kb-session-duration",
+          "value": "",
+          "placeholder": "Not set"
+        },
+        {
+          "id": "kb-session-min-rate",
+          "value": "",
+          "placeholder": "Not set"
+        },
+        {
+          "id": "kb-session-max-rate",
+          "value": "",
+          "placeholder": "Not set"
+        },
+        {
+          "id": "tc-rating-target",
+          "value": "",
+          "placeholder": "Not set"
+        }
+      ],
+      "disabled": true,
+      "marker": "1"
+    }
+  },
+  "serverMigration": {
+    "cleared": [
+      "sessionDurationMinutes",
+      "sessionMinimumPercent",
+      "sessionMaximumPercent"
+    ],
+    "version": 1,
+    "unrelatedColorPreserved": true
+  },
+  "pageErrors": [],
+  "seededLocalAndSessionStorageClearedOnce": true,
+  "bidirectionalAndReload": true,
+  "restartPreserved95": true,
+  "migrationDidNotRepeat": true
+}

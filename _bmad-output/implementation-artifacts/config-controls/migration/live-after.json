@@ -1,0 +1,10 @@
+{
+  "clearedFields": {
+    "sessionDurationMinutes": null,
+    "sessionMinimumPercent": null,
+    "sessionMaximumPercent": null
+  },
+  "sessionFieldsVersion": 1,
+  "unrelatedSettingsPreserved": true,
+  "configHTTP": 200
+}

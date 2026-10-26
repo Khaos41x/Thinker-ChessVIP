@@ -225,6 +225,7 @@ function createSessionControlPresenter(options) {
           dirtyFields.add(field);
           emit("draft", { field });
           if (typeof options.onDraftChange === "function") options.onDraftChange(readDraft(), field);
+          update();
           return;
         }
       }
