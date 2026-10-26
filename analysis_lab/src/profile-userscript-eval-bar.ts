@@ -217,11 +217,46 @@ async function runUserscriptEvalBarBrowserTest() {
 
   history.replaceState({}, '', '/play/online');
   await waitFrames(2);
-  const mountedBlockedWhenUnauthorized = document.getElementById('thinker-eval-v2-rail')?.dataset.state === 'blocked'
-    && document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent === '—';
-  const requestsBeforeUnauthorizedPoll = requests.length;
+  const activePlayAuthorized = document.getElementById('thinker-eval-v2-rail') !== null
+    && document.getElementById('thinker-eval-v2-rail')?.dataset.state !== 'blocked';
+  fen = 'fen-online';
+  const requestsBeforeActivePlayPoll = requests.length;
   adapter.pollNow();
-  const noRequestWhenUnauthorized = requests.length === requestsBeforeUnauthorizedPoll;
+  const activePlayDispatches = requests.length > requestsBeforeActivePlayPoll;
+  fen = 'fen-b';
+
+  adapter.setEnabled(false);
+  const requestsBeforeBlockedShell = requests.length;
+  const blockedInstance = createUserscriptEvalBar({
+    window,
+    document,
+    getFen: () => fen,
+    getBoard: () => board,
+    getOrientation: () => orientation,
+    getCacheContext: () => cacheContext,
+    authorize: () => null,
+    shouldDisplay: () => (/^\/(?:analysis|play)(?:\/|$)/).test(window.location.pathname),
+    requestEvaluation: request => {
+      requests.push(request);
+      return { abort: () => { abortCount += 1; } };
+    },
+    addStyle: css => {
+      const style = document.createElement('style');
+      style.textContent = css;
+      document.head.append(style);
+      return style;
+    },
+    pollIntervalMs: 60000,
+    refreshIntervalMs: 100,
+    now: () => now,
+  });
+  blockedInstance.start(true);
+  const blockedShellMounted = document.getElementById('thinker-eval-v2-rail')?.dataset.state === 'blocked'
+    && document.querySelector<HTMLElement>('.thinker-eval-v2-score')?.textContent === '—';
+  blockedInstance.pollNow();
+  const noRequestWhenUnauthorized = requests.length === requestsBeforeBlockedShell;
+  blockedInstance.destroy();
+  adapter.setEnabled(true);
   history.replaceState({}, '', '/analysis/fixture');
   await waitFrames(2);
   const remountedAfterSpaRoute = Boolean(document.getElementById('thinker-eval-v2-rail'));
@@ -277,8 +312,10 @@ async function runUserscriptEvalBarBrowserTest() {
     hiddenWhenBoardHidden,
     visibleAfterBoardReturns,
     abortCount,
-    mountedBlockedWhenUnauthorized,
+    mountedBlockedWhenUnauthorized: blockedShellMounted,
     noRequestWhenUnauthorized,
+    activePlayAuthorized,
+    activePlayDispatches,
     remountedAfterSpaRoute,
     rootsAfterDestroy,
     styleMarkers,

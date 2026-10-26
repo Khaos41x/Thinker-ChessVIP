@@ -66,13 +66,22 @@ class StockfishEvalBarEndpointTests(unittest.TestCase):
         komodo_eval.assert_not_called()
         komodo_play.assert_not_called()
 
-    def test_endpoint_rejects_unauthorized_context_and_terminal_position(self):
-        live = self.client.post(
+    def test_endpoint_accepts_declared_contexts_and_rejects_terminal_position(self):
+        result = {"cp": 0, "mate": None, "depth": 1}
+        with patch.object(app.stockfish_eval_bar, "evaluate", return_value=result):
+            live = self.client.post(
+                "/eval-bar",
+                json={"fen": chess.STARTING_FEN, "context": "active-game", "requestId": "live-game"},
+                headers=AUTH_HEADERS,
+            )
+        self.assertEqual(live.status_code, 200)
+        self.assertEqual(live.get_json()["cp"], 0)
+        anonymous = self.client.post(
             "/eval-bar",
-            json={"fen": chess.STARTING_FEN, "context": "live-game", "requestId": "live"},
+            json={"fen": chess.STARTING_FEN, "requestId": "no-context"},
             headers=AUTH_HEADERS,
         )
-        self.assertEqual(live.status_code, 403)
+        self.assertEqual(anonymous.status_code, 200)
         terminal = self.client.post(
             "/eval-bar",
             json={"fen": "7k/5Q2/6K1/8/8/8/8/8 b - - 0 1", "context": "analysis"},

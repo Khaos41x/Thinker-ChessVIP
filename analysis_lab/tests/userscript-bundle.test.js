@@ -23,7 +23,8 @@ describe('Eval Bar V2 userscript artifact', () => {
     expect(userscript).toContain('// @grant        GM_addStyle');
     expect(userscript).toContain('// @grant        unsafeWindow');
     expect(userscript).toContain('localStorage.getItem("evalBarV2") !== "false"');
-    expect(userscript).toContain('if (!evalBarAuthorization()) return null;');
+    expect(userscript).toContain('context: evalBarAuthorization()');
+    expect(userscript).not.toContain('if (!evalBarAuthorization()) return null;');
     expect(userscript).toContain('globalThis.krypbotSetEvalBarV2');
     expect(userscript).toContain('globalThis.krypbotEvalBarDiagnostics');
     expect(userscript).toContain('evalBarPageWindow.krypbotEvalBarDiagnostics');
@@ -35,7 +36,7 @@ describe('Eval Bar V2 userscript artifact', () => {
     expect(userscript).not.toContain('container.style.display = "flex"');
   });
 
-  it('routes Eval Bar V2 exclusively to the versioned Smallnet service', () => {
+  it('routes Eval Bar V2 through the analysis engine registry transport', () => {
     expect(userscript).toContain('SERVER_URL + "/eval-bar/stream"');
     expect(userscript).toContain('responseType: "stream"');
     expect(userscript).toContain('onloadstart: function (resp)');
@@ -43,9 +44,9 @@ describe('Eval Bar V2 userscript artifact', () => {
     expect(userscript).toContain('new TextDecoder()');
     expect(userscript).toContain('SERVER_URL + "/eval-bar/cancel"');
     expect(userscript).toContain('onProgress(item)');
-    expect(userscript).toContain('@lichess-org/stockfish-web@0.5.0');
-    expect(userscript).toContain('sf_19_smallnet');
-    expect(userscript).toContain('nn-61e7af4bb97d.nnue:61e7af4bb97d');
+    expect(userscript).toContain('analysisEngineSelection.cacheContext()');
+    expect(userscript).toContain('analysisEngineSelection.requestIdentity()');
+    expect(userscript).toContain('...engineIdentity })');
     expect(userscript).toContain('cacheNamespace: "stockfish-19-smallnet-local-white-v1"');
     expect(userscript).toContain('const evalBarClientId = globalThis.crypto?.randomUUID?.()');
     expect(userscript).toContain('`eval-v2:${evalBarClientId}:${requestId}`');

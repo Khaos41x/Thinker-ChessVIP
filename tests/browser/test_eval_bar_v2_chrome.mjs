@@ -392,6 +392,7 @@ try {
     || !behavior.missingFenWaiting || !behavior.backendFailureVisible || !behavior.recoveredAfterBackendFailure
     || !behavior.hiddenWhenBoardHidden || !behavior.visibleAfterBoardReturns
     || !behavior.mountedBlockedWhenUnauthorized || !behavior.noRequestWhenUnauthorized
+    || !behavior.activePlayAuthorized || !behavior.activePlayDispatches
     || !behavior.remountedAfterSpaRoute
     || behavior.rootsAfterDestroy !== 0
     || behavior.styleMarkers !== 1 || behavior.maximumPendingFramesDuringBurst > 1

@@ -24,13 +24,6 @@ function visibleNode(textContent = '', gameOver = false) {
   };
 }
 
-function hiddenNode(textContent = 'Game Review') {
-  return {
-    ...visibleNode(textContent),
-    getAttribute: (name: string) => name === 'aria-hidden' ? 'true' : null,
-  };
-}
-
 describe('userscript Eval Bar authorization', () => {
   it('allows analysis and review routes', () => {
     expect(resolveChessComEvalAuthorization({ pathname: '/analysis/game/abc' } as Location, documentWith())).toBe('analysis');
@@ -41,24 +34,27 @@ describe('userscript Eval Bar authorization', () => {
     expect(resolveChessComEvalAuthorization({ pathname: '/game/live/abc/review' } as Location, documentWith())).toBe('analysis');
   });
 
-  it('allows a completed game only with visible terminal evidence', () => {
-    expect(resolveChessComEvalAuthorization({ pathname: '/game/live/abc' } as Location, documentWith())).toBeNull();
+  it('authorizes active online and rated games', () => {
+    expect(resolveChessComEvalAuthorization({ pathname: '/game/live/abc' } as Location, documentWith())).toBe('active-game');
+    expect(resolveChessComEvalAuthorization({ pathname: '/game/12345678' } as Location, documentWith())).toBe('active-game');
+    expect(resolveChessComEvalAuthorization({ pathname: '/play/online' } as Location, documentWith())).toBe('active-game');
+  });
+
+  it('classifies completed games with terminal board evidence as post-game', () => {
     expect(resolveChessComEvalAuthorization(
       { pathname: '/game/live/abc' } as Location,
       documentWith([visibleNode('Game Review', true)]),
     )).toBe('post-game');
+    expect(resolveChessComEvalAuthorization(
+      { pathname: '/play/online' } as Location,
+      documentWith([visibleNode('Game Review', true)]),
+    )).toBe('post-game');
   });
 
-  it('fails closed on play, home and malformed routes', () => {
-    for (const pathname of ['/play/online', '/', '/game/live/', '/puzzles', '/clubs/review/archive']) {
-      expect(resolveChessComEvalAuthorization({ pathname } as Location, documentWith())).toBeNull();
-    }
-  });
-
-  it('presents the legacy live/game replay without authorizing an active game', () => {
+  it('presents the legacy live/game replay and authorizes the surface', () => {
     const location = { pathname: '/live/game/18582739876', search: '?move=0' } as Location;
     expect(resolveChessComEvalPresentation(location)).toBe(true);
-    expect(resolveChessComEvalAuthorization(location, documentWith([visibleNode('Game Review')]))).toBeNull();
+    expect(resolveChessComEvalAuthorization(location, documentWith([visibleNode('Game Review')]))).toBe('active-game');
     expect(resolveChessComEvalAuthorization(location, documentWith([visibleNode('Game Review', true)]))).toBe('post-game');
     for (const pathname of ['/live/game/', '/live/game/abc/unknown', '/live/other/abc']) {
       expect(resolveChessComEvalPresentation({ pathname } as Location)).toBe(false);
@@ -66,27 +62,14 @@ describe('userscript Eval Bar authorization', () => {
     }
   });
 
-  it('mounts UI on board routes but only authorizes online play after visible terminal evidence', () => {
+  it('authorizes board training routes and stays null off board routes', () => {
     expect(resolveChessComEvalPresentation({ pathname: '/play/online' } as Location)).toBe(true);
-    expect(resolveChessComEvalAuthorization(
-      { pathname: '/play/online' } as Location,
-      documentWith([visibleNode('Game Review', true)]),
-    )).toBe('post-game');
-    expect(resolveChessComEvalPresentation({ pathname: '/settings' } as Location)).toBe(false);
-  });
-
-  it('rejects hidden post-game evidence', () => {
-    expect(resolveChessComEvalAuthorization(
-      { pathname: '/game/live/abc' } as Location,
-      documentWith([hiddenNode()]),
-    )).toBeNull();
-  });
-
-  it('rejects stale review evidence when the selected board is still active', () => {
-    expect(resolveChessComEvalAuthorization(
-      { pathname: '/play/online' } as Location,
-      documentWith([visibleNode('Game Review')]),
-    )).toBeNull();
+    expect(resolveChessComEvalAuthorization({ pathname: '/puzzles' } as Location, documentWith())).toBe('analysis');
+    expect(resolveChessComEvalAuthorization({ pathname: '/practice' } as Location, documentWith())).toBe('analysis');
+    for (const pathname of ['/', '/settings', '/clubs/review/archive']) {
+      expect(resolveChessComEvalPresentation({ pathname } as Location)).toBe(false);
+      expect(resolveChessComEvalAuthorization({ pathname } as Location, documentWith())).toBeNull();
+    }
   });
 });
 

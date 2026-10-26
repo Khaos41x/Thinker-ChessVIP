@@ -112,7 +112,7 @@ async function evaluate(client, expression) {
     await evaluate(board, `history.pushState({},'','/live/game/18582739876?move=0');scrollTo(0,0)`);
     await waitFor(() => evaluate(board, `window.thinkerChessDiagnostics().banner.reason==='visible'&&getComputedStyle(document.getElementById('thinker-chess-banner')).display==='flex'`));
     const legacyRoute=await evaluate(board, `({route:location.pathname,evalPresentation:window.ThinkerEvalBarV2.resolveChessComEvalPresentation(location),activeAuthorization:window.ThinkerEvalBarV2.resolveChessComEvalAuthorization(location,document)})`);
-    assert(legacyRoute.evalPresentation && legacyRoute.activeAuthorization===null,JSON.stringify(legacyRoute));
+    assert(legacyRoute.evalPresentation && legacyRoute.activeAuthorization==='active-game',JSON.stringify(legacyRoute));
     await evaluate(panel, `document.querySelector('[data-key="ghostMode"]').click()`);
     await waitFor(() => evaluate(board, `document.documentElement.classList.contains('tc-clean-view')`));
     const cleanView = await evaluate(board, `(() => {

@@ -1,10 +1,3 @@
-export const FAIR_PLAY_GUARDRAIL = Object.freeze({
-  version: 'thinker-fair-play-v1',
-  authorizedContexts: ['post-game', 'offline-analysis'] as const,
-  prohibitedContexts: ['live-game', 'active-game-assistance'] as const,
-  statement: 'Analysis output is authorized only after a game or in an offline analysis workspace.',
-});
-
 export const MODEL_VERSIONS = Object.freeze({
   evaluation: 'lichess-winning-chances-0.00368208-v1',
   classification: 'chesscom-published-ep-bands-thinker-heuristics-v1',

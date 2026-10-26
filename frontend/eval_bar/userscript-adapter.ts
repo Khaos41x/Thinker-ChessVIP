@@ -4,7 +4,7 @@ import { EvalBarController } from '../../analysis_lab/src/ui/eval-bar';
 
 declare const __THINKER_EVAL_BAR_CSS__: string | undefined;
 
-export type EvalAuthorization = 'analysis' | 'post-game' | null;
+export type EvalAuthorization = 'analysis' | 'post-game' | 'active-game' | null;
 
 export type EvalTransportResult = Readonly<{
   type?: 'started' | 'info' | 'result' | 'cancelled' | 'error';
@@ -133,15 +133,6 @@ const historyHooks = new WeakMap<Window, { references: number; pushState: Histor
 const ANALYSIS_ROUTE = /^\/analysis(?:\/|$)/;
 const GAME_REVIEW_ROUTE = /^\/game\/(?:live\/|daily\/)?[^/]+\/review(?:\/|$)/;
 const BOARD_ROUTE = /^(?:\/(?:analysis|game|play|puzzles?|practice|lessons?)(?:\/|$)|\/live\/game\/[^/]+\/?$)/;
-const POST_GAME_TEXT = /(game review|an[aá]lise da partida|revis[aã]o da partida)/i;
-const TERMINAL_SELECTORS = [
-  '[data-cy="game-over-modal"]',
-  '[data-test-element="game-over-modal"]',
-  '[data-cy="game-over-dialog"]',
-  '.game-over-modal',
-  '[class*="game-over-modal"]',
-  '[class*="modal-game-over"]',
-].join(',');
 
 function isGameRoute(path: string): boolean {
   if (/^\/live\/game\/[^/]+\/?$/.test(path)) return true;
@@ -168,17 +159,11 @@ function isVisible(node: Element): boolean {
   return rect.bottom > 0 && rect.right > 0 && rect.top < view.innerHeight && rect.left < view.innerWidth;
 }
 
-export function resolveChessComEvalAuthorization(
-  location: Pick<Location, 'pathname'>,
-  document: Pick<Document, 'querySelectorAll'>,
-): EvalAuthorization {
-  const path = String(location.pathname || '').toLowerCase();
-  if (ANALYSIS_ROUTE.test(path) || GAME_REVIEW_ROUTE.test(path)) return 'analysis';
-  if (!isGameRoute(path)) return null;
+function boardTerminalEvidence(document: Pick<Document, 'querySelectorAll'>): boolean {
   const board = findChessComBoard(document);
   const runtimeBoard = board as (HTMLElement & Record<string, unknown>) | null;
   const games = [runtimeBoard?.game, (runtimeBoard?.gameManager as { game?: unknown } | undefined)?.game];
-  const terminalBoard = Boolean(board && (
+  return Boolean(board && (
     board.getAttribute('data-game-over') === 'true' ||
     board.getAttribute('game-over') === 'true' ||
     games.some(game => {
@@ -190,14 +175,19 @@ export function resolveChessComEvalAuthorization(
       return /(?:finished|complete|checkmate|resigned|timeout|draw|aborted)/i.test(String(candidate.status || ''));
     })
   ));
-  if (!terminalBoard) return null;
-  if (Array.from(document.querySelectorAll(TERMINAL_SELECTORS)).some(isVisible)) return 'post-game';
-  const reviewNodes = document.querySelectorAll(
-    '[data-cy*="review"], [data-test-element*="review"], [class*="game-review"], [class*="post-game"]',
-  );
-  return Array.from(reviewNodes).some(node => isVisible(node) && POST_GAME_TEXT.test(node.textContent || ''))
-    ? 'post-game'
-    : null;
+}
+
+export function resolveChessComEvalAuthorization(
+  location: Pick<Location, 'pathname'>,
+  document: Pick<Document, 'querySelectorAll'>,
+): EvalAuthorization {
+  const path = String(location.pathname || '').toLowerCase();
+  if (ANALYSIS_ROUTE.test(path) || GAME_REVIEW_ROUTE.test(path)) return 'analysis';
+  if (isGameRoute(path)) {
+    return boardTerminalEvidence(document) ? 'post-game' : 'active-game';
+  }
+  if (BOARD_ROUTE.test(path)) return 'analysis';
+  return null;
 }
 
 const BOARD_SELECTORS = [

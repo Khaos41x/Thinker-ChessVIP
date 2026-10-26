@@ -1060,9 +1060,6 @@ def evaluate_eval_bar():
     request_id = str(data.get("requestId") or f"eval-bar:{time.monotonic_ns()}")
     correlation = {"requestId": request_id}
     correlation.update({key: data[key] for key in ("generation", "cacheContext") if key in data})
-    context = data.get("context")
-    if context not in {"analysis", "post-game"}:
-        return jsonify({"error": "eval_bar_context_not_authorized", **correlation}), 403
     fen = data.get("fen")
     if not isinstance(fen, str) or not fen.strip():
         return jsonify({"error": "fen is required", **correlation}), 400
@@ -1105,9 +1102,6 @@ def stream_eval_bar():
     request_id = str(data.get("requestId") or f"eval-bar:{time.monotonic_ns()}")
     correlation = {"requestId": request_id}
     correlation.update({key: data[key] for key in ("generation", "cacheContext") if key in data})
-    context = data.get("context")
-    if context not in {"analysis", "post-game"}:
-        return jsonify({"error": "eval_bar_context_not_authorized", **correlation}), 403
     fen = data.get("fen")
     if not isinstance(fen, str) or not fen.strip():
         return jsonify({"error": "fen is required", **correlation}), 400

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { gameAccuracy, moveAccuracy, powerMean } from '../src/analysis/accuracy';
 import { classifyCandidate } from '../src/analysis/classification';
-import { FAIR_PLAY_GUARDRAIL, MODEL_PROVENANCE, type CandidateEvaluation, type EngineScore } from '../src/analysis/contracts';
+import { MODEL_PROVENANCE, type CandidateEvaluation, type EngineScore } from '../src/analysis/contracts';
 import {
   engineScoreFromUci,
   normalizeEvaluation,
@@ -25,9 +25,7 @@ const candidate = (fen: string, moveUci: string, score: EngineScore): CandidateE
 });
 
 describe('model contracts and provenance', () => {
-  it('restricts analysis to post-game and offline contexts', () => {
-    expect(FAIR_PLAY_GUARDRAIL.authorizedContexts).toEqual(['post-game', 'offline-analysis']);
-    expect(FAIR_PLAY_GUARDRAIL.prohibitedContexts).toContain('live-game');
+  it('keeps published model provenance', () => {
     expect(MODEL_PROVENANCE.evaluation).toMatch(/Lichess/);
     expect(MODEL_PROVENANCE.classification).toMatch(/Thinker/);
   });

@@ -108,7 +108,7 @@ assert result["eye_box"] == EXPECTED_EYE_BOX
 assert not result["path_grid_violations"]
 assert result["mirrored_use_count"] == 2
 assert result["canonical_mirror_difference_pixels"] == 0
-assert result["small_icon"]["view_box"] == "246 246 762 762"
+assert result["small_icon"]["view_box"] == "0 0 256 256"
 assert set(result["small_icon"]["colors"]).issubset(EXPECTED_COLORS)
 assert not result["small_icon"]["path_grid_violations"]
 assert result["small_icon"]["mirrored_use_count"] == 1

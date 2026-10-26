@@ -20,12 +20,14 @@ function createTransport(gmRequest, diagnosticEvents = []) {
       handleEngineUnauthorized,
       reportEvalBarDiagnostic,
       setEvalBarTransportDiagnostic,
+      analysisEngineSelection,
     } = dependencies;
     ${transportSource}
     return requestEvalBarV2;
   `)({
     SERVER_URL: 'http://127.0.0.1:5000',
     GM_xmlhttpRequest: gmRequest,
+    analysisEngineSelection: { requestIdentity: () => ({}), cacheContext: () => '' },
     engineRequestHeaders: () => ({ Authorization: 'Bearer secret', 'Content-Type': 'application/json' }),
     evalBarAuthorization: () => 'analysis',
     evalBarClientId: 'client',
