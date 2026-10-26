@@ -14,7 +14,7 @@ function fixture() {
     sessionControlBridge:{moveSelectionElo:e=>e,isActive:()=>false,effectiveAutoMove:a=>a},
     smartPacingEnabled:false,smartPacingV2Enabled:false,smartPacingV2ShadowEnabled:false,autoDelayMode:'random',
     getSmartPacerClockValues:()=>({}),computeDelayValue:()=>.5,requestEval:()=>{},log:()=>{},cleanCache:()=>{},SERVER_URL:'http://fixture',
-    create_div:()=>state.arrows++, auto_move_piece:()=>++state.moves, $:()=>({remove(){}}),
+    lastRecommendation:null, create_div:()=>state.arrows++, auto_move_piece:()=>++state.moves, $:()=>({remove(){},hasClass(){return false;},attr(){return null;}}),
     engineRequestHeaders:()=>{if(state.throwAuth)throw Error('SERVER_AUTH_REQUIRED');return {};},
     handleEngineUnauthorized:r=>r.status===401, GM_xmlhttpRequest:r=>state.requests.push(r),
   };

@@ -1,0 +1,9 @@
+{
+  "baselineExpectedFailure": true,
+  "cases": 256,
+  "recoveries": 2,
+  "guards": 4,
+  "consoleErrors": 0,
+  "realEngineReady": true,
+  "authenticatedChessComTested": false
+}

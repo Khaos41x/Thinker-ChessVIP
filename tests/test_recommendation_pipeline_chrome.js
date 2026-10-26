@@ -5,8 +5,9 @@ const os = require('node:os');
 const {spawn,spawnSync} = require('node:child_process');
 const {createServer} = require('node:net');
 const root = path.resolve(__dirname, '..');
-const source = fs.readFileSync(path.join(root, 'script.js'), 'utf8');
-const out = path.join(root, '_bmad-output/implementation-artifacts/definitive-finish/block-a/pipeline');
+const baseline = process.argv.includes('--baseline');
+const source = baseline ? spawnSync('git',['show','9709e22:script.js'],{cwd:root,encoding:'utf8'}).stdout : fs.readFileSync(path.join(root, 'script.js'), 'utf8');
+const out = path.join(root, '_bmad-output/implementation-artifacts/arrow-recovery',baseline?'before':'after');
 fs.mkdirSync(out, {recursive:true});
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const port = () => new Promise(resolve => { const server=createServer();server.listen(0,'127.0.0.1',()=>{const value=server.address().port;server.close(()=>resolve(value));}); });
@@ -39,7 +40,7 @@ async function connect(url) {
   const bootstrap=`
    document.body.style='margin:0;background:#252523;color:#deded9;font:13px Arial';
    document.body.innerHTML='<input id="kb-color-picker" type="color" value="#3B82F6"><chess-board style="position:relative;display:block;width:640px;height:640px;background:repeating-conic-gradient(#e9edcc 0 25%,#779556 0 50%) 0 0/160px 160px"></chess-board>';
-   const board=document.querySelector('chess-board');let cached_board=board;
+   let board=document.querySelector('chess-board');let cached_board=board;
    ${colors}
    let current_color=ARROW_COLOR;
    const state=window.pipelineState={master:true,fen:'',side:'w',turn:'w',requests:[],draws:0,scheduled:0,errors:[],done:false,logs:[]};
@@ -60,6 +61,8 @@ async function connect(url) {
    const GM_setValue=(key,value)=>sessionStorage.setItem(key,value),pushToServer=()=>{state.savedColor=current_color;};
    ${swatch}
    window.runCase=options=>{state.master=options.master;state.side=options.side;state.turn=options.waiting?options.side==='w'?'b':'w':options.side;state.fen='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR '+state.turn+' KQkq - 0 '+options.index;if(options.fen)state.fen=options.fen;state.done=false;state.scheduled=0;state.requests=[];state.logs=[];auto_move=options.autoMove;evalBarEnabled=options.evalBar;thinkerBannerEnabled=options.banner;recentFormEnabled=options.recentForm;smartPacingEnabled=options.smartPacing;checkfen='';can_interval=true;moveRetryAfter=0;moveCache.clear();board.classList.toggle('flipped',options.flipped);document.querySelectorAll('.myarrow,.myhigh').forEach(n=>n.remove());request_move();if(!options.master||options.waiting)state.done=true;};
+   window.recoverRecommendation=replace=>{if(replace){const next=board.cloneNode(false);next.game=game;board.replaceWith(next);board=next;cached_board=next;}else board.querySelectorAll('.myarrow').forEach(node=>node.remove());request_move();};
+   window.refreshRecommendation=options=>{if(options.master!==undefined)state.master=options.master;if(options.autoMove!==undefined)auto_move=options.autoMove;if(options.opponentTurn){state.turn=state.side==='w'?'b':'w';state.fen=state.fen.replace(' '+state.side+' ',' '+state.turn+' ');}if(options.route)history.replaceState({},'',options.route);if(options.flip)board.classList.toggle('flipped');if(options.remove)board.querySelectorAll('.myarrow').forEach(node=>node.remove());request_move();};
    window.applyExternalColor=color=>{const s={color};${external}};
    window.pipelineSnapshot=()=>{const svg=board.querySelector('.myarrow'),p=svg?.querySelector('path'),r=svg?.getBoundingClientRect(),b=board.getBoundingClientRect(),s=svg?getComputedStyle(svg):null;return{stage:thinkerMoveDiagnostic.stage,scheduled:state.scheduled,requests:state.requests.length,errors:state.errors,logs:state.logs,arrow:svg?{rect:{x:r.x,y:r.y,width:r.width,height:r.height},board:{x:b.x,y:b.y,width:b.width,height:b.height},fill:p.getAttribute('fill'),opacity:p.getAttribute('fill-opacity'),display:s.display,visibility:s.visibility,zIndex:s.zIndex,pointerEvents:s.pointerEvents,parent:svg.parentElement.tagName,path:p.getAttribute('d')}:null};};
   `;
@@ -88,6 +91,32 @@ async function connect(url) {
   }
   await client.send('Page.reload');await waitFor(()=>evaluate("document.readyState==='complete'"));await evaluate(`(()=>{${bootstrap}})()`);
   await evaluate(`runCase(${JSON.stringify({side:'w',flipped:false,index:index++,master:true,autoMove:false})})`);await waitFor(()=>evaluate('pipelineState.done'));const afterReload=await evaluate('pipelineSnapshot()');assert(afterReload.arrow);assert.equal(afterReload.stage,'recommendation');
+  const recoveryCases=[];
+  for(const replace of [false,true]){
+   await evaluate('recoverRecommendation('+replace+')');
+   const result=await evaluate('pipelineSnapshot()');
+   fs.writeFileSync(path.join(out,'recovery-'+replace+'.json'),JSON.stringify(result,null,2));
+   assert(result.arrow,'A valid recommendation must survive overlay removal or board replacement at unchanged FEN');
+   assert.equal(result.requests,1,'Recovery must use the cached recommendation, without another engine search');
+   assert.deepEqual(result.arrow.rect,result.arrow.board);assert.equal(Number(result.arrow.opacity),.8);
+   recoveryCases.push({replace,result});
+  }
+  const pathBeforeFlip=await evaluate('pipelineSnapshot().arrow.path');
+  await evaluate('refreshRecommendation({flip:true})');
+  const flippedRecovery=await evaluate('pipelineSnapshot()');
+  assert(flippedRecovery.arrow);assert.notEqual(flippedRecovery.arrow.path,pathBeforeFlip);assert.equal(flippedRecovery.requests,1);
+  await evaluate('window.stableRecommendationArrow=document.querySelector(".myarrow");for(let i=0;i<10;i++)refreshRecommendation({});');
+  assert.equal(await evaluate('window.stableRecommendationArrow===document.querySelector(".myarrow")'),true,'Healthy arrows must not be rebuilt every tick');
+  const guardCases=[];
+  for(const options of [{master:false},{autoMove:true},{opponentTurn:true},{route:'/different-route'}]){
+   await client.send('Page.reload');await waitFor(()=>evaluate("document.readyState==='complete'"));await evaluate(`(()=>{${bootstrap}})()`);
+   await evaluate(`runCase(${JSON.stringify({side:'w',flipped:false,index:index++,master:true,autoMove:false})})`);await waitFor(()=>evaluate('pipelineState.done'));
+   await evaluate(`refreshRecommendation(${JSON.stringify({...options,remove:true})})`);
+   const result=await evaluate('pipelineSnapshot()');assert.equal(result.arrow,null,'Recovery must preserve master/automatic/turn/route guards');
+   assert.equal(result.requests,1);guardCases.push({options,result});
+  }
+  await client.send('Page.reload');await waitFor(()=>evaluate("document.readyState==='complete'"));await evaluate(`(()=>{${bootstrap}})()`);
+  await evaluate(`runCase(${JSON.stringify({side:'w',flipped:false,index:index++,master:true,autoMove:false})})`);await waitFor(()=>evaluate('pipelineState.done'));
   const colorSupported=source.includes('normalizeArrowColor');
   let colorTests=null;
   if(colorSupported){
@@ -96,6 +125,6 @@ async function connect(url) {
    await evaluate("applyExternalColor('#F59E0B')");result=await evaluate('pipelineSnapshot()');assert.equal(result.arrow.fill.toUpperCase(),'#F59E0B');assert.equal(Number(result.arrow.opacity),.8);assert.equal((await evaluate("localStorage.getItem('kb_color')")).toUpperCase(),'#F59E0B');colorTests={actualSwatchEvent:true,actualExternalAcceptedColorHook:true};
   }
   const engine=await(await fetch(base+'/evidence')).json();assert.equal(engine.engineReady,true);assert(engine.requests.some(r=>r.status===200&&r.result?.length===1));assert.equal(client.errors.length,0);
-  const report={scope:'Isolated Chromium; actual extracted request_move and arrow renderer; actual Flask /getmove with owned real Komodo; synthetic local game adapter; no authenticated Chess.com or real game manipulation',caseCount:cases.length,cases,transitionCases,afterReload,engine,colorTests,consoleErrors:client.errors};fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));console.log(`PASS actual recommendation pipeline: ${cases.length} flag/side/orientation cases, own-turn guards, real Komodo /getmove, actual DOM arrows${colorTests?', actual swatch and External Config color hooks':''}`);
+  const report={scope:'Isolated Chromium; actual extracted request_move and arrow renderer; actual Flask /getmove with owned real Komodo; synthetic local game adapter; no authenticated Chess.com or real game manipulation',caseCount:cases.length,cases,transitionCases,afterReload,recoveryCases,flippedRecovery,guardCases,engine,colorTests,consoleErrors:client.errors};fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));console.log(`PASS actual recommendation pipeline: ${cases.length} flag/side/orientation cases, overlay/board/orientation recovery, stable DOM, four recovery guards, real Komodo /getmove, actual DOM arrows${colorTests?', actual swatch and External Config color hooks':''}`);
  }finally{if(client){try{await client.send('Browser.close');}catch{}client.socket.close();}if(browser.exitCode===null)spawnSync('taskkill',['/PID',String(browser.pid),'/T','/F'],{windowsHide:true,stdio:'ignore'});backend.stdin.write('stop\n');backend.stdin.end();await new Promise(resolve=>{backend.once('exit',resolve);setTimeout(resolve,5000)});if(backend.exitCode===null)backend.kill();await sleep(1000);if(!profile.startsWith(path.join(os.tmpdir(),'thinker-recommendation-pipeline-')))throw Error('Unsafe profile path');try{fs.rmSync(profile,{recursive:true,force:true,maxRetries:10,retryDelay:100});}catch(error){console.error('Owned browser profile cleanup pending:',error.code);}}
 })().catch(error=>{console.error(error);process.exitCode=1;});

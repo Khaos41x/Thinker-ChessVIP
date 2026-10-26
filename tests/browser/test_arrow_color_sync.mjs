@@ -44,6 +44,16 @@ try{
  const initial=await value(embedded,'('+arrow.toString()+')()');
  const initialColors=await value(embedded,'('+colors.toString()+')()');
  assert.equal(initial.fill.toUpperCase(),'#3B82F6');
+ const saveCleanView=async ghostMode=>{
+   const current=await(await fetch(base+'/config/load')).json();
+   const response=await fetch(base+'/config/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ghostMode,_expectedRevision:current._revision,_serverId:current._serverId})});
+   assert.equal(response.status,200);
+   await waitFor(()=>value(embedded,`document.documentElement.classList.contains('tc-clean-view')===${ghostMode}`));
+ };
+ await saveCleanView(true);
+ assert.equal((await value(embedded,'('+arrow.toString()+')()')).display,'none','Clean View intentionally hides recommendation arrows');
+ await saveCleanView(false);
+ assert.notEqual((await value(embedded,'('+arrow.toString()+')()')).display,'none','Disabling Clean View must reveal the existing recommendation');
  const evidence=[];
  for(const orientation of ['white','black','flipped']){
    await value(embedded,`{const b=document.querySelector('wc-chess-board');b.setAttribute('orientation',${JSON.stringify(orientation==='black'?'black':'white')});b.classList.toggle('flipped',${orientation==='flipped'});}`);

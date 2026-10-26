@@ -1,0 +1,23 @@
+{
+  "before": {
+    "ghostMode": false,
+    "hint": true,
+    "autoMove": false,
+    "evalBar": false
+  },
+  "after": {
+    "ghostMode": false,
+    "hint": true,
+    "autoMove": false,
+    "evalBar": false
+  },
+  "changedKeys": [],
+  "saveAcknowledged": true,
+  "revision": 7,
+  "connection": {
+    "userscriptConnected": true,
+    "userscriptVersion": "2026-10-26.2",
+    "serverVersion": "2026-10-26.3",
+    "applied": true
+  }
+}

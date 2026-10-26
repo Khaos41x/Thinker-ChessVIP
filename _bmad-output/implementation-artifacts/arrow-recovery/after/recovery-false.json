@@ -1,0 +1,33 @@
+{
+  "stage": "recommendation",
+  "scheduled": 0,
+  "requests": 1,
+  "errors": [],
+  "logs": [
+    "Modo: play | Delay: 0.02s | Elo: 3200",
+    "Enviando request para http://127.0.0.1:28765/getmove",
+    "Lance: e2e4"
+  ],
+  "arrow": {
+    "rect": {
+      "x": 0,
+      "y": 27,
+      "width": 640,
+      "height": 640
+    },
+    "board": {
+      "x": 0,
+      "y": 27,
+      "width": 640,
+      "height": 640
+    },
+    "fill": "#3B82F6",
+    "opacity": "0.8",
+    "display": "block",
+    "visibility": "visible",
+    "zIndex": "11",
+    "pointerEvents": "none",
+    "parent": "CHESS-BOARD",
+    "path": "M4.3875,6.14 L4.3875,4.859999999999999 L4.2375,4.859999999999999 L4.5,4.5 L4.7625,4.859999999999999 L4.6125,4.859999999999999 L4.6125,6.14 Z"
+  }
+}

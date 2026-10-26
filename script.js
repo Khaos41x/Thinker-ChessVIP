@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-26.2
+// @version      2026-10-26.3
 // @downloadURL  http://127.0.0.1:5050/thinker-chess.user.js
 // @updateURL    http://127.0.0.1:5050/thinker-chess.meta.js
 // @description  Chess Bot com Servidor Local
@@ -5119,6 +5119,8 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     $(board).append(elm);
   };
 
+  let lastRecommendation = null;
+
   const create_div = (str1) => {
     try {
       const target =
@@ -5166,6 +5168,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
           <path d="${path}" fill="${normalizeArrowColor(current_color)}" fill-opacity="${OPACITY}" />
         </svg>
       `);
+      lastRecommendation = { move: str1, fen, mode: gameMode, route: window.location.href.split(/[?#]/)[0], board: target, flipped: isFlipped };
     } catch (e) {
       log("Erro: " + e);
     }
@@ -5268,7 +5271,16 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         requestPlayingSide = authority.side;
       }
 
-      if (fen === checkfen) return;
+      if (fen === checkfen) {
+        const automatic = isPuzzleMode ? puzzleAutoMove : sessionControlBridge.effectiveAutoMove(auto_move);
+        const flipped = $(board).hasClass("flipped") || $(board).attr("orientation") === "black";
+        if (!automatic && lastRecommendation?.fen === requestFen && lastRecommendation.mode === requestMode &&
+            lastRecommendation.route === requestRoute && (lastRecommendation.board !== board ||
+            lastRecommendation.flipped !== flipped || !board.querySelector(".myarrow path"))) {
+          create_div(lastRecommendation.move);
+        }
+        return;
+      }
 
       const puzzleElo = 3200;
       if (!isPuzzleMode && isLegacyAutoAdjustEffective()) {
@@ -8057,7 +8069,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
 })();
 
 /* THINKER_SESSION_CONTROL_GENERATED_START */
-globalThis.ThinkerClientVersion="2026-10-26.2";
+globalThis.ThinkerClientVersion="2026-10-26.3";
 globalThis.ThinkerSessionControlReady=(async()=>{
 (function(root){
 "use strict";

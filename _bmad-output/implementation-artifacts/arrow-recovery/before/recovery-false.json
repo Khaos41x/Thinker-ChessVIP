@@ -1,0 +1,12 @@
+{
+  "stage": "recommendation",
+  "scheduled": 0,
+  "requests": 1,
+  "errors": [],
+  "logs": [
+    "Modo: play | Delay: 0.02s | Elo: 3200",
+    "Enviando request para http://127.0.0.1:8566/getmove",
+    "Lance: e2e4"
+  ],
+  "arrow": null
+}
