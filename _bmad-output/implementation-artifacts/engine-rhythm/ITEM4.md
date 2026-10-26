@@ -1,0 +1,5 @@
+# Item4 — Move Timing header is intentional
+
+The existing syncDelayPresentation function explicitly computes immediate = autoDelayMode === "max" and chooses the literal Immediate instead of the stored numeric range. It also displays0.00 in the disabled inputs while retaining the saved Random values. This branch is in script.js around7312–7315 in the baseline.
+
+It was introduced in commit1cf0af3 (refactor: align console layout system),2026-10-21 at23:52:48 UTC−03. Current local browser measurements confirm Random shows0.50–1.00 s and Immediate showsImmediate, with identical section geometry. Smart Pacing hiding Timing does not change its saved mode. No copy, branch or saved configuration was changed. Changing the header requires user approval.
