@@ -44,18 +44,18 @@ try{
   return{surface,width:innerWidth,toggles,delayInfo,fields,panels,hint:hint?{...rect(hint),style:style(hint),text:hint.textContent,above:rect(hint).y-rect(actions).bottom,below:rect(summary).y-rect(hint).bottom}:null};
  };
  const results=[];
- for(const bot of (process.argv.includes('--toggle-only')?[false]:[false,true]))for(const rating of [false,true])for(const pacing of (process.argv.includes('--toggle-only')?[false]:[false,true])){
+ for(const bot of ((process.argv.includes('--toggle-only')||process.argv.includes('--delay-only'))?[false]:[false,true]))for(const rating of (process.argv.includes('--delay-only')?[false]:[false,true]))for(const pacing of ((process.argv.includes('--toggle-only')||process.argv.includes('--delay-only'))?[false]:[false,true])){
   const response=await fetch(base+'/config/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hint:bot,autoAdjust:rating,smartPacing:pacing,delayMode:'random'})});assert(response.ok);
   await waitFor(()=>value(panel,`document.querySelector('[data-key=autoAdjust]').getAttribute('aria-checked')==='${rating}'&&document.querySelector('[data-key=smartPacing]').getAttribute('aria-checked')==='${pacing}'`));
   await waitFor(()=>value(embedded,`document.querySelector('#sp-on').checked===${pacing}&&document.querySelector('#aa-on').checked===${rating}`));await delay(180);
-  for(const [surface,c,widths] of [['config',panel,process.argv.includes('--toggle-only')?[1440]:[1440,1280,1024,768,390]],['console',embedded,process.argv.includes('--toggle-only')?[]:[1086,1280,1440,1920]]])for(const width of widths){
+  for(const [surface,c,widths] of [['config',panel,process.argv.includes('--toggle-only')?[1440]:process.argv.includes('--delay-only')?[1440,390]:[1440,1280,1024,768,390]],['console',embedded,process.argv.includes('--toggle-only')?[]:process.argv.includes('--delay-only')?[1086,1440]:[1086,1280,1440,1920]]])for(const width of widths){
    await c.send('Page.bringToFront');await c.send('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});await delay(250);
    const r=await value(c,'('+measure.toString()+')('+JSON.stringify(surface)+')');r.state={bot,rating,pacing};results.push(r);
    if(!process.argv.includes('--toggle-only')&&!bot&&!rating&&!pacing&&[1440,1086,390].includes(width)){const b=surface==='console'?await value(c,'(()=>{const r=document.querySelector("#oi-wrapper").getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height}})()'):{x:0,y:0,width,height:await value(c,'document.documentElement.scrollHeight')};const shot=await c.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:{...b,scale:1}});await writeFile(join(output,`${surface}-${width}.png`),Buffer.from(shot.data,'base64'));}
    if(surface==='config'&&width===1440&&!bot&&!pacing){const t=r.toggles.find(t=>t.key==='autoAdjust');const shot=await c.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:{x:t.x-16,y:t.y-8,width:t.width+32,height:t.height+16,scale:3}});await writeFile(join(output,`toggle-${rating?'on':'off'}-300.png`),Buffer.from(shot.data,'base64'));}
   }
  }
- await writeFile(join(output,process.argv.includes('--toggle-only')?'toggle-measurements.json':'measurements.json'),JSON.stringify(results,null,2));console.log('PASS captured '+results.length+' states');
+ await writeFile(join(output,process.argv.includes('--toggle-only')?'toggle-measurements.json':process.argv.includes('--delay-only')?'delay-measurements.json':'measurements.json'),JSON.stringify(results,null,2));console.log('PASS captured '+results.length+' states');
 }finally{for(const c of clients)c.socket.close();browser.kill();backend.kill();await delay(500);await rm(profile,{recursive:true,force:true,maxRetries:5,retryDelay:150});}
 
 

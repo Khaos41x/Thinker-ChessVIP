@@ -648,7 +648,8 @@ body[data-focus-input=keyboard] :is(button,input,select,a,[tabindex]):not([aria-
 .session-field input,.tc-rating-target input { font-size:12px; }
 .analysis-engine .field-heading { font-size:12px; }
 #timing-fields { grid-template-columns:minmax(0,1fr) 158px; align-items:center; gap:4px; }
-.delay-fields { grid-template-columns:round(down,calc((100% - 7px)/2),1px) 3px minmax(0,1fr); gap:2px; }
+.delay-fields { grid-template-columns:round(down,calc((100% - 20px)/2),1px) 8px minmax(0,1fr); gap:6px; }
+.delay-fields > span { width:8px; line-height:16px; text-align:center; }
 .delay-fields label { display:grid; grid-template-columns:minmax(0,1fr) 9px; gap:0; padding:0; }
 .delay-fields input { height:30px; padding:0 10px; font-size:12px; }
 .delay-fields label > span:last-child { width:9px; padding:0 2px 0 0; font-size:11px; line-height:16px; }
