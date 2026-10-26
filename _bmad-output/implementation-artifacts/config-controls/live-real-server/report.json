@@ -1,0 +1,60 @@
+{
+  "results": [
+    {
+      "width": 1440,
+      "fields": [
+        {
+          "id": "kb-session-duration",
+          "value": "",
+          "placeholder": "Not set"
+        },
+        {
+          "id": "kb-session-min-rate",
+          "value": "",
+          "placeholder": "Not set"
+        },
+        {
+          "id": "kb-session-max-rate",
+          "value": "",
+          "placeholder": "Not set"
+        },
+        {
+          "id": "tc-rating-target",
+          "value": "",
+          "placeholder": "Not set"
+        }
+      ],
+      "startDisabled": true,
+      "engine": "Ready"
+    },
+    {
+      "width": 390,
+      "fields": [
+        {
+          "id": "kb-session-duration",
+          "value": "",
+          "placeholder": "Not set"
+        },
+        {
+          "id": "kb-session-min-rate",
+          "value": "",
+          "placeholder": "Not set"
+        },
+        {
+          "id": "kb-session-max-rate",
+          "value": "",
+          "placeholder": "Not set"
+        },
+        {
+          "id": "tc-rating-target",
+          "value": "",
+          "placeholder": "Not set"
+        }
+      ],
+      "startDisabled": true,
+      "engine": "Ready"
+    }
+  ],
+  "configurationUnchanged": true,
+  "realServer": "http://127.0.0.1:5050"
+}

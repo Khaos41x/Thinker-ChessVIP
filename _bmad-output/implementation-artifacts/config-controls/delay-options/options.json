@@ -1,0 +1,107 @@
+[
+  {
+    "name": "current",
+    "engine": {
+      "x": 395,
+      "y": 1012,
+      "width": 345,
+      "height": 394
+    },
+    "inputs": [
+      {
+        "x": 409,
+        "y": 1253,
+        "width": 64,
+        "height": 30
+      },
+      {
+        "x": 491,
+        "y": 1253,
+        "width": 64,
+        "height": 30
+      }
+    ],
+    "separator": {
+      "x": 485,
+      "y": 1260,
+      "width": 3,
+      "height": 16
+    },
+    "console": {
+      "x": 26,
+      "y": 1000,
+      "width": 1034,
+      "height": 682
+    }
+  },
+  {
+    "name": "spacing6-inputs-too-small",
+    "engine": {
+      "x": 395,
+      "y": 1012,
+      "width": 345,
+      "height": 394
+    },
+    "inputs": [
+      {
+        "x": 409,
+        "y": 1253,
+        "width": 57,
+        "height": 30
+      },
+      {
+        "x": 497,
+        "y": 1253,
+        "width": 58,
+        "height": 30
+      }
+    ],
+    "separator": {
+      "x": 482,
+      "y": 1260,
+      "width": 8,
+      "height": 16
+    },
+    "console": {
+      "x": 26,
+      "y": 1000,
+      "width": 1034,
+      "height": 682
+    }
+  },
+  {
+    "name": "preview-engine-plus14-scout-minus14",
+    "engine": {
+      "x": 395,
+      "y": 1012,
+      "width": 359,
+      "height": 394
+    },
+    "inputs": [
+      {
+        "x": 409,
+        "y": 1253,
+        "width": 64,
+        "height": 30
+      },
+      {
+        "x": 504,
+        "y": 1253,
+        "width": 65,
+        "height": 30
+      }
+    ],
+    "separator": {
+      "x": 489,
+      "y": 1260,
+      "width": 8,
+      "height": 16
+    },
+    "console": {
+      "x": 26,
+      "y": 1000,
+      "width": 1034,
+      "height": 682
+    }
+  }
+]

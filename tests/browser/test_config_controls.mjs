@@ -1,19 +1,21 @@
 import assert from 'node:assert/strict';
-import {spawn} from 'node:child_process';
-import {mkdtemp,mkdir,writeFile,rm} from 'node:fs/promises';
+import {spawn,execFileSync} from 'node:child_process';
+import {mkdtemp,mkdir,writeFile,rm,access} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {resolve,join} from 'node:path';
 import {createServer} from 'node:net';
 const root=resolve(import.meta.dirname,'../..');
 const before=process.argv.includes('--before');
 const configOnly=process.argv.includes('--config-only');
-const output=join(root,'_bmad-output/implementation-artifacts/config-controls',process.argv.includes('--after')?'after':'before');
+const output=join(root,'_bmad-output/implementation-artifacts/config-controls',before?'before':'after');
 await mkdir(output,{recursive:true});
+if(before){for(const name of ['script.js','core/external_config.py','frontend/external_config/index.html','frontend/external_config/panel.css','frontend/external_config/panel.js','frontend/external_config/session-control.js','frontend/external_config/rating-tracker.js']){const path=join(root,'.config-controls-baseline',name);try{await access(path)}catch{await mkdir(join(path,'..'),{recursive:true});await writeFile(path,execFileSync('git',['show','f65387f:'+name],{cwd:root}));}}}
+
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const port=()=>new Promise(resolve=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>resolve(p));});});
 const serverPort=await port(),debug=await port(),base=`http://127.0.0.1:${serverPort}`;
 const profile=await mkdtemp(join(tmpdir(),'thinker-phase091-capture-'));
-const backend=spawn('python',['-c',before?"import importlib.util,sys;from pathlib import Path;from flask import Response,send_from_directory;baseline=Path('.definitive-finish-baseline');spec=importlib.util.spec_from_file_location('core.external_config',baseline/'core/external_config.py');old=importlib.util.module_from_spec(spec);sys.modules['core.external_config']=old;spec.loader.exec_module(old);spec=importlib.util.spec_from_file_location('visual','tests/phase091_visual_fixture.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.app.view_functions['userscript']=lambda:Response((baseline/'script.js').read_text(encoding='utf8'),content_type='application/javascript');m.app.view_functions['external_config.asset']=lambda filename:send_from_directory(baseline/'frontend/external_config' if (baseline/'frontend/external_config'/filename).exists() else Path.cwd()/'frontend/external_config',filename);m.app.run(host='127.0.0.1',port=int(sys.argv[1]),threaded=True,use_reloader=False)":"import importlib.util,sys;spec=importlib.util.spec_from_file_location('visual','tests/phase091_visual_fixture.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.app.run(host='127.0.0.1',port=int(sys.argv[1]),threaded=True,use_reloader=False)",String(serverPort)],{cwd:root,stdio:'ignore',windowsHide:true});
+const backend=spawn('python',['-c',before?"import importlib.util,sys;from pathlib import Path;from flask import Response,send_from_directory;baseline=Path('.config-controls-baseline');spec=importlib.util.spec_from_file_location('core.external_config',baseline/'core/external_config.py');old=importlib.util.module_from_spec(spec);sys.modules['core.external_config']=old;spec.loader.exec_module(old);spec=importlib.util.spec_from_file_location('visual','tests/phase091_visual_fixture.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.app.view_functions['userscript']=lambda:Response((baseline/'script.js').read_text(encoding='utf8'),content_type='application/javascript');m.app.view_functions['external_config.asset']=lambda filename:send_from_directory(baseline/'frontend/external_config' if (baseline/'frontend/external_config'/filename).exists() else Path.cwd()/'frontend/external_config',filename);m.app.run(host='127.0.0.1',port=int(sys.argv[1]),threaded=True,use_reloader=False)":"import importlib.util,sys;spec=importlib.util.spec_from_file_location('visual','tests/phase091_visual_fixture.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.app.run(host='127.0.0.1',port=int(sys.argv[1]),threaded=True,use_reloader=False)",String(serverPort)],{cwd:root,stdio:'ignore',windowsHide:true});
 const browser=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--disable-gpu','--no-first-run','--disable-background-timer-throttling','--disable-renderer-backgrounding',`--remote-debugging-port=${debug}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
 const clients=[];
 async function waitFor(test){for(let i=0;i<180;i++){try{if(await test())return;}catch{}await delay(250);}throw new Error('Timed out');}
@@ -24,9 +26,11 @@ try{
  await waitFor(async()=> (await fetch(base+'/config/load')).ok);await waitFor(async()=> (await fetch(`http://127.0.0.1:${debug}/json/version`)).ok);
  const panel=await tab(base+'/config'),embedded=await tab(base+'/tests/fixtures/userscript_bootstrap.html?delay=50');
  await waitFor(()=>value(panel,"Boolean(document.querySelector('.switch:not(:disabled)'))"));await waitFor(()=>value(embedded,"Boolean(document.querySelector('#sp-on'))"));
+ await value(embedded,`window.ThinkerRatingTracker.start({window:new Proxy(window,{get(target,key){if(key==='location')return {hostname:'www.chess.com',href:location.href};const item=Reflect.get(target,key,target);return typeof item==='function'&&!['MutationObserver'].includes(key)?item.bind(target):item;}}),baseUrl:location.origin,gmRequest:window.GM_xmlhttpRequest});void 0`);
+ await waitFor(()=>value(embedded,"Boolean(document.querySelector('#tc-rating-target'))"));
  const measure=surface=>{
   const rect=n=>{const r=n.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,right:r.right,bottom:r.bottom}};
-  const visible=n=>n.getBoundingClientRect().height>0;
+  const visible=n=>n.getBoundingClientRect().height>0&&getComputedStyle(n).opacity!=='0'&&getComputedStyle(n).visibility!=='hidden';
   const style=n=>{const s=getComputedStyle(n);return{background:s.backgroundColor,border:s.borderColor,borderWidth:s.borderWidth,radius:s.borderRadius,transition:s.transition,color:s.color,fontSize:s.fontSize,padding:s.padding,align:s.alignItems,display:s.display}};
   const text=n=>{const r=document.createRange();r.selectNodeContents(n);const b=r.getBoundingClientRect();return{x:b.x,y:b.y,width:b.width,height:b.height,right:b.right,bottom:b.bottom}};
   const host=surface==='console'?document.querySelector('#krypbot-container'):document.querySelector('main');
@@ -38,10 +42,14 @@ try{
   });
   const range=host.querySelector(surface==='console'?'.kb-delay-range':'.delay-fields');let delayInfo=null;
   if(visible(range)){const labels=[...range.querySelectorAll('label')];const separator=surface==='console'?range.querySelector('.kb-delay-separator'):range.querySelector(':scope > span');const dash=text(separator);const units=labels.map(n=>text(n.querySelector('span:last-child')));delayInfo={boxes:labels.map(rect),inputs:labels.map(n=>rect(n.querySelector('input'))),units,dash,column:rect(separator),style:style(separator),gapLeft:dash.x-rect(labels[0]).right,gapRight:rect(labels[1]).x-dash.right,sToDash:dash.x-units[0].right};}
-  const fields=[...host.querySelectorAll('#kb-session-duration,#kb-session-min-rate,#kb-session-max-rate,#tc-rating-target')].map(n=>({id:n.id,value:n.value,placeholder:n.placeholder}));
+  const fields=[...host.querySelectorAll('#kb-session-duration,#kb-session-min-rate,#kb-session-max-rate,#tc-rating-target')].map(n=>({id:n.id,value:n.value,placeholder:n.placeholder,...rect(n),style:style(n)}));
   const hint=surface==='config'?host.querySelector('#session-availability'):null,actions=surface==='config'?host.querySelector('.session-actions'):null,summary=surface==='config'?host.querySelector('.session-summary'):null;
   const panels=[...host.querySelectorAll(surface==='config'?'.panel':'.kb-console-module,#oi-zone2')].filter(visible).map(n=>({id:n.id||n.className,...rect(n)}));
-  return{surface,width:innerWidth,toggles,delayInfo,fields,panels,hint:hint?{...rect(hint),style:style(hint),text:hint.textContent,above:rect(hint).y-rect(actions).bottom,below:rect(summary).y-rect(hint).bottom}:null};
+  const allColors=[...host.querySelectorAll('*')].filter(visible).map((n,i)=>({selector:n.id||n.dataset.key||n.tagName+'.'+n.className,index:i,color:getComputedStyle(n).color,background:getComputedStyle(n).backgroundColor,border:getComputedStyle(n).borderColor}));
+  const smallText=[...host.querySelectorAll('*')].filter(visible).filter(n=>[...n.childNodes].some(c=>c.nodeType===3&&c.textContent.trim())&&parseFloat(getComputedStyle(n).fontSize)<11&&getComputedStyle(n).color!=='rgba(0, 0, 0, 0)').map(n=>({id:n.id,class:n.className,font:getComputedStyle(n).fontSize}));
+  const controls=[...host.querySelectorAll('input,select,button,.kb-radio-group')].filter(visible).map(n=>({id:n.id,...rect(n)}));
+  const header=host.querySelector(surface==='config'?'#timing-value':'#autoDelayDisplay');
+  return{allColors,smallText,controls,timingHeader:header&&visible(header)?rect(header):null,host:rect(host),surface,width:innerWidth,toggles,delayInfo,fields,panels,hint:hint?{...rect(hint),style:style(hint),text:hint.textContent,above:rect(hint).y-rect(actions).bottom,below:rect(summary).y-rect(hint).bottom}:null};
  };
  const results=[];
  for(const bot of ((process.argv.includes('--toggle-only')||process.argv.includes('--delay-only'))?[false]:[false,true]))for(const rating of (process.argv.includes('--delay-only')?[false]:[false,true]))for(const pacing of ((process.argv.includes('--toggle-only')||process.argv.includes('--delay-only'))?[false]:[false,true])){

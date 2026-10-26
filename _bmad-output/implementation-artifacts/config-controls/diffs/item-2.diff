@@ -1,0 +1,21 @@
+diff --git a/frontend/external_config/panel.css b/frontend/external_config/panel.css
+index a956960..b97cea6 100644
+--- a/frontend/external_config/panel.css
++++ b/frontend/external_config/panel.css
+@@ -651 +651,2 @@ body[data-focus-input=keyboard] :is(button,input,select,a,[tabindex]):not([aria-
+-.delay-fields { grid-template-columns:round(down,calc((100% - 7px)/2),1px) 3px minmax(0,1fr); gap:2px; }
++.delay-fields { grid-template-columns:round(down,calc((100% - 20px)/2),1px) 8px minmax(0,1fr); gap:6px; }
++.delay-fields > span { width:8px; line-height:16px; text-align:center; }
+diff --git a/tests/browser/test_config_controls.mjs b/tests/browser/test_config_controls.mjs
+index 2afb101..2b29f5a 100644
+--- a/tests/browser/test_config_controls.mjs
++++ b/tests/browser/test_config_controls.mjs
+@@ -47 +47 @@ try{
+- for(const bot of (process.argv.includes('--toggle-only')?[false]:[false,true]))for(const rating of [false,true])for(const pacing of (process.argv.includes('--toggle-only')?[false]:[false,true])){
++ for(const bot of ((process.argv.includes('--toggle-only')||process.argv.includes('--delay-only'))?[false]:[false,true]))for(const rating of (process.argv.includes('--delay-only')?[false]:[false,true]))for(const pacing of ((process.argv.includes('--toggle-only')||process.argv.includes('--delay-only'))?[false]:[false,true])){
+@@ -51 +51 @@ try{
+-  for(const [surface,c,widths] of [['config',panel,process.argv.includes('--toggle-only')?[1440]:[1440,1280,1024,768,390]],['console',embedded,process.argv.includes('--toggle-only')?[]:[1086,1280,1440,1920]]])for(const width of widths){
++  for(const [surface,c,widths] of [['config',panel,process.argv.includes('--toggle-only')?[1440]:process.argv.includes('--delay-only')?[1440,390]:[1440,1280,1024,768,390]],['console',embedded,process.argv.includes('--toggle-only')?[]:process.argv.includes('--delay-only')?[1086,1440]:[1086,1280,1440,1920]]])for(const width of widths){
+@@ -58 +58 @@ try{
+- await writeFile(join(output,process.argv.includes('--toggle-only')?'toggle-measurements.json':'measurements.json'),JSON.stringify(results,null,2));console.log('PASS captured '+results.length+' states');
++ await writeFile(join(output,process.argv.includes('--toggle-only')?'toggle-measurements.json':process.argv.includes('--delay-only')?'delay-measurements.json':'measurements.json'),JSON.stringify(results,null,2));console.log('PASS captured '+results.length+' states');

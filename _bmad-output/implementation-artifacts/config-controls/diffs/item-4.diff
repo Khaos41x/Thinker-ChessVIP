@@ -1,0 +1,7 @@
+diff --git a/frontend/external_config/panel.css b/frontend/external_config/panel.css
+index b97cea6..87e5d10 100644
+--- a/frontend/external_config/panel.css
++++ b/frontend/external_config/panel.css
+@@ -659,0 +660,2 @@ body[data-focus-input=keyboard] :is(button,input,select,a,[tabindex]):not([aria-
++
++#session-availability { margin:8px 0; }

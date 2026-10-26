@@ -657,3 +657,5 @@ body[data-focus-input=keyboard] :is(button,input,select,a,[tabindex]):not([aria-
 .segmented button { padding:0 12px; }
 #timing-hint { margin:8px 0 0; line-height:16px; }
 #retry { font-size:11px; }
+
+#session-availability { margin:8px 0; }
