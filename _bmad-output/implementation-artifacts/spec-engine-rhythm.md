@@ -2,7 +2,7 @@
 title: Engine section rhythm and console inset
 type: bugfix
 created: 2026-10-25
-status: in-progress
+status: done
 baseline_commit: f6705ba
 review_loop_iteration: 0
 context: []
@@ -42,15 +42,26 @@ Never change copy, automation behavior, analysis authorization, component colors
 
 ## Tasks & Acceptance
 
-- [ ] Measure16 required desktop states plus stacked sentinels before editing.
-- [ ] Correct section separators only if the natural height budget fits.
-- [ ] Fit equal segmented options on the same line with12px padding and unchanged colors.
-- [ ] Document intentional Immediate header and unchanged warning.
-- [ ] Remove desktop-only console clearance while preserving gameplay clearance and stacked geometry.
-- [ ] Verify before/after tables, screenshots and protected geometry; commit each item separately.
+- [x] Measure16 required desktop states plus stacked sentinels before editing.
+- [x] Correct section separators only if the natural height budget fits.
+- [x] Measure equal segmented options and report wider-layout constraints without unauthorized compaction.
+- [x] Document intentional Immediate header and unchanged warning.
+- [x] Remove desktop-only console clearance while preserving gameplay clearance and stacked geometry.
+- [x] Verify before/after tables, screenshots and protected geometry; commit each item separately.
 
 Given each mode/pacing state, after layout then boundaries and controls are integer and panel edges match. Given a layout that cannot meet the constraints, report measured options without applying an unauthorized compromise. Given desktop placement, the console begins12px after the existing safe viewport/gameplay boundary; stacked positioning and banner remain unchanged.
 
 ## Verification
 
 Run the browser measurement matrix before and after, with visible control equality and gap assertions. Run analysis/userscript deterministic build checks. Compare source changes against the captured dirty baseline and stage only owned hunks. Use read-only independent review of the final diff. Record the limits of native browser access.
+
+## Suggested Review Order
+
+- Symmetric separator spacing, unchanged total height.
+  [engine-layout.js:6](../../frontend/eval_bar/engine-layout.js#L6)
+- Desktop-only placement clearance, unchanged stacked112px policy.
+  [script.js:7135](../../script.js#L7135)
+- Pixel and geometry regression checks.
+  [validate_engine_rhythm.py:1](../../tests/validate_engine_rhythm.py#L1)
+- Scope limits, tables and screenshots.
+  [REPORT.md](engine-rhythm/REPORT.md)

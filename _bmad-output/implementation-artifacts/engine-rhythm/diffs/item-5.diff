@@ -1,0 +1,60 @@
+diff --git a/script.js b/script.js
+index 51d282e..c8acbf4 100644
+--- a/script.js
++++ b/script.js
+@@ -4 +4 @@
+-// @version      2026-10-25.2
++// @version      2026-10-25.3
+@@ -7136 +7135,0 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+-          const safeTop = Math.max(window.innerHeight + THINKER_WORKSPACE_GAP_PX, gameplayDocumentBottom + THINKER_WORKSPACE_GAP_PX);
+@@ -7140,0 +7140,2 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
++          const workspaceGap = wrapper.dataset.layoutMode === "desktop" ? 0 : THINKER_WORKSPACE_GAP_PX;
++          const safeTop = Math.max(window.innerHeight, gameplayDocumentBottom) + workspaceGap;
+@@ -8058 +8059 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+-globalThis.ThinkerClientVersion="2026-10-25.2";
++globalThis.ThinkerClientVersion="2026-10-25.3";
+diff --git a/tests/browser/test_engine_rhythm.mjs b/tests/browser/test_engine_rhythm.mjs
+index 7a37ac9..905e05a 100644
+--- a/tests/browser/test_engine_rhythm.mjs
++++ b/tests/browser/test_engine_rhythm.mjs
+@@ -41 +41,2 @@ try{
+-  return{width:innerWidth,mode:document.querySelector('#dm-rand').checked?'Random':'Immediate',smartPacing:document.querySelector('#sp-on').checked,sections,labels,panels,ancestors,inputs:[...document.querySelectorAll('.kb-delay-input input')].map(n=>({id:n.id,...rect(n),css:style(n)})),controls,heading:document.querySelector('#autoDelayDisplay').textContent,warning:{text:warning.textContent,css:style(warning)},hint:{text:hint.textContent,css:style(hint)},layout:wrapper.dataset.layoutMode,overflow:document.documentElement.scrollWidth>innerWidth};
++  const board=document.querySelector('wc-chess-board'),sidebar=document.querySelector('.play-controller-component');const safeBoundary=Math.max(innerHeight,board.getBoundingClientRect().bottom+scrollY,sidebar.getBoundingClientRect().bottom+scrollY);const banner=document.querySelector('#thinker-chess-banner');
++  return{safeBoundary,consoleTop:rect(document.querySelector('#krypbot-container')).y+scrollY,banner:banner?rect(banner):null,width:innerWidth,mode:document.querySelector('#dm-rand').checked?'Random':'Immediate',smartPacing:document.querySelector('#sp-on').checked,sections,labels,panels,ancestors,inputs:[...document.querySelectorAll('.kb-delay-input input')].map(n=>({id:n.id,...rect(n),css:style(n)})),controls,heading:document.querySelector('#autoDelayDisplay').textContent,warning:{text:warning.textContent,css:style(warning)},hint:{text:hint.textContent,css:style(hint)},layout:wrapper.dataset.layoutMode,overflow:document.documentElement.scrollWidth>innerWidth};
+@@ -49 +50 @@ try{
+-  if([1440,1086,800].includes(width)){const shot=await embedded.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true});await writeFile(join(output,`console-${width}-${mode}-pacing${Number(smart)}.png`),Buffer.from(shot.data,'base64'));}
++  if([1440,1086,800].includes(width)){const host=item.ancestors[0];const shot=await embedded.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:{x:host.x,y:host.y,width:host.width,height:host.height,scale:1}});await writeFile(join(output,`console-${width}-${mode}-pacing${Number(smart)}.png`),Buffer.from(shot.data,'base64'));}
+@@ -52 +53 @@ try{
+- console.log(JSON.stringify(results.filter(r=>r.width===1440&&!r.smartPacing).map(r=>({width:r.width,mode:r.mode,sections:r.sections,inputs:r.inputs,labels:r.labels,ancestors:r.ancestors})),null,2));
++ console.log(JSON.stringify({states:results.length,positions:results.filter(r=>r.width===1440).map(r=>({mode:r.mode,pacing:r.smartPacing,consoleTop:r.consoleTop,safeBoundary:r.safeBoundary,sections:r.sections.map(s=>({name:s.name,y:s.y,bottom:s.bottom}))}))},null,2));
+diff --git a/tests/validate_engine_rhythm.py b/tests/validate_engine_rhythm.py
+index 9b5bc9a..9f55669 100644
+--- a/tests/validate_engine_rhythm.py
++++ b/tests/validate_engine_rhythm.py
+@@ -4,0 +5,8 @@ for old,new in zip(before,after):
++ if 'safeBoundary' in new:
++  if new['layout']=='desktop':
++   assert new['consoleTop']-new['safeBoundary']==12
++   assert new['ancestors'][0]['y']==old['ancestors'][0]['y']-112
++  else:
++   assert new['ancestors'][0]==old['ancestors'][0]
++ for a,b in zip(old['labels'],new['labels']):assert a['css']==b['css']
++ assert old['warning']==new['warning']
+@@ -32,0 +41,17 @@ print('PASS24 states: 2px/1px/2px all junctions; unchanged heights/tails, intege
++
++from PIL import Image
++pixels=[]
++for r in after:
++ if r['width'] not in [1440,1086,800]:continue
++ mode='rand' if r['mode']=='Random' else 'max'
++ path=root/'after'/f"console-{r['width']}-{mode}-pacing{int(r['smartPacing'])}.png"
++ im=Image.open(path).convert('RGB');host=r['ancestors'][0]
++ for section in r['sections']:
++  if not section['visible'] or section['css']['borderTop']!='1px':continue
++  x=int(section['x']-host['x']+10);y=int(section['y']-host['y'])
++  assert im.getpixel((x,y))==(50,50,47),(path,section['name'],im.getpixel((x,y)))
++  assert im.getpixel((x,y-1))==(37,37,35)
++  assert im.getpixel((x,y+1))==(37,37,35)
++  pixels.append({'screenshot':path.name,'section':section['name'],'dividerPixel':[x,y],'rgb':[50,50,47],'thickness':1})
++(root/'after/painted-dividers.json').write_text(json.dumps(pixels,indent=2),encoding='utf8')
++print('PASS painted1px dividers, desktop inset12px, stacked placement and colors unchanged')
