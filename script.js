@@ -264,6 +264,10 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
 (function(root){
   'use strict';
   const css = `
+        #krypbot-container .kb-core-module .kb-console-caption { display:flex; align-items:center; justify-content:space-between; }
+        #krypbot-container .kb-config-shortcut { display:flex; align-items:center; justify-content:flex-end; flex:0 0 24px; width:24px; height:24px; padding:0; margin:0; border:1px solid transparent; border-radius:var(--radius-control); color:var(--tc-console-muted); background:none; text-decoration:none; box-sizing:border-box; }
+        #krypbot-container .kb-config-shortcut svg { flex:0 0 16px; width:16px; height:16px; margin-right:-1px; }
+        #krypbot-container .kb-config-shortcut:hover,#krypbot-container .kb-config-shortcut:focus-visible { color:var(--tc-console-text); }
         #krypbot-container .kb-engine-section { margin:0; padding:0; border:0; }
         #krypbot-container .kb-engine-analysis { padding-top:var(--space-2); }
         #krypbot-container .kb-engine-section + .kb-engine-section { margin-top:calc(var(--space-1) / 2); padding-top:calc(var(--space-1) / 2); border-top:1px solid var(--tc-console-divider); }
@@ -318,7 +322,17 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         #krypbot-container .kb-session-queue-note { font-size:11px; line-height:16px; margin:8px 0; }
         #krypbot-container .kb-auto-play-module .kb-session-status { column-gap:24px; }
   `;
-  function group({core, visuals, engine, autoRating, strength, timing, smartPacing, puzzle, autoMoves}) {
+  function group({core, visuals, engine, autoRating, strength, timing, smartPacing, puzzle, autoMoves, serverUrl}) {
+    const shortcut = core.ownerDocument.createElement('a');
+    shortcut.className = 'kb-config-shortcut';
+    shortcut.href = serverUrl + '/config';
+    shortcut.target = '_blank';
+    shortcut.rel = 'noopener noreferrer';
+    shortcut.title = 'Open External Config';
+    shortcut.setAttribute('aria-label', shortcut.title);
+    shortcut.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3h7v7M21 3l-9 9M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"/></svg>';
+    shortcut.addEventListener('keydown', event => { if (event.key === ' ') { event.preventDefault(); shortcut.click(); } });
+    core.querySelector('.kb-console-caption').appendChild(shortcut);
     const section = name => {
       const node = engine.ownerDocument.createElement('div');
       node.className = 'kb-engine-section kb-engine-' + name;
@@ -7058,7 +7072,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
           timing.insertBefore(timingHeading, timingToggle.nextSibling);
         }
       }
-      globalThis.ThinkerEngineLayout.group({ core, visuals, engine, autoRating, strength, timing, smartPacing, puzzle, autoMoves });
+      globalThis.ThinkerEngineLayout.group({ core, visuals, engine, autoRating, strength, timing, smartPacing, puzzle, autoMoves, serverUrl: SERVER_URL });
       if (autoPlay) {
         autoPlay.classList.add("kb-console-module");
         const autoPlayTitle = autoPlay.querySelector("#kb-auto-play-title");
