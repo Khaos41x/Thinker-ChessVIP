@@ -94,15 +94,16 @@ def create_external_config_blueprint(preference_path=None):
             config.update(stored['config'])
             arrow_migration = config['color'].upper() == '#10B981' and stored.get('arrowColorVersion') != 1
             session_migration = stored.get('sessionFieldsVersion') != 1
+            autoplay_migration = stored.get('autoPlayFieldsVersion') != 2
             if arrow_migration:
                 config['color'] = '#3B82F6'
-            if session_migration:
+            if session_migration or autoplay_migration:
                 config.update({key: None for key in ('sessionDurationMinutes', 'sessionMinimumPercent', 'sessionMaximumPercent')})
-            if arrow_migration or session_migration:
+            if arrow_migration or session_migration or autoplay_migration:
                 temporary = preference_path.with_name(preference_path.name + '.' + uuid.uuid4().hex + '.tmp')
                 try:
                     with temporary.open('w', encoding='utf-8', newline='\n') as stream:
-                        json.dump({'version': 1, 'arrowColorVersion': 1, 'sessionFieldsVersion': 1, 'config': config}, stream, ensure_ascii=False)
+                        json.dump({'version': 1, 'arrowColorVersion': 1, 'sessionFieldsVersion': 1, 'autoPlayFieldsVersion': 2, 'config': config}, stream, ensure_ascii=False)
                         stream.flush()
                         os.fsync(stream.fileno())
                     os.replace(temporary, preference_path)
@@ -317,7 +318,7 @@ def create_external_config_blueprint(preference_path=None):
                     try:
                         preference_path.parent.mkdir(parents=True, exist_ok=True)
                         with temporary.open('w', encoding='utf-8', newline='\n') as stream:
-                            json.dump({'version': 1, 'arrowColorVersion': 1, 'sessionFieldsVersion': 1, 'config': updated}, stream, ensure_ascii=False)
+                            json.dump({'version': 1, 'arrowColorVersion': 1, 'sessionFieldsVersion': 1, 'autoPlayFieldsVersion': 2, 'config': updated}, stream, ensure_ascii=False)
                             stream.flush()
                             os.fsync(stream.fileno())
                         if invalid_saved_configuration and preference_path.exists():

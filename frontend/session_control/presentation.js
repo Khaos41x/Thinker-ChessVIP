@@ -42,9 +42,10 @@ function draftPatch(draft) {
 }
 
 function migrateSessionFields(storage) {
-  const key = "thinker.sessionFields.v1";
+  const key = "thinker.autoPlayFields.v2";
   if (storage.getItem(key) === "1") return false;
   for (const field of Object.values(SESSION_FIELDS)) storage.removeItem(field);
+  storage.setItem("thinker.sessionFields.v1", "1");
   storage.setItem(key, "1");
   return true;
 }

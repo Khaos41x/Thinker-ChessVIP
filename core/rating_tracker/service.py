@@ -19,6 +19,13 @@ class RatingTrackerService:
     def __init__(self, database_path, client=None, clock=None):
         self.clock = clock or (lambda: int(time.time() * 1000))
         self.repository = Repository(database_path)
+        migration = self.repository.rows("SELECT value FROM metadata WHERE key='autoPlayFieldsVersion'")
+        if not migration or migration[0]['value'] != '2':
+            with self.repository.transaction() as db:
+                marker = db.execute("SELECT value FROM metadata WHERE key='autoPlayFieldsVersion'").fetchone()
+                if marker is None or marker[0] != '2':
+                    db.execute("INSERT INTO metadata(key,value) VALUES('ratingTarget','null') ON CONFLICT(key) DO UPDATE SET value='null'")
+                    db.execute("INSERT INTO metadata(key,value) VALUES('autoPlayFieldsVersion','2') ON CONFLICT(key) DO UPDATE SET value='2'")
         self.client = client or PublicDataClient(self.repository, self.clock)
         self.stopping = threading.Event()
         self.wake = threading.Event()
