@@ -1,0 +1,11 @@
+phase,surface,window,channel,count,requestsPerMinute
+before,config,healthy-minute,presentation,90,90.0
+before,config,outage-30s-scaled,presentation,42,84.0
+before,console,healthy-minute,presentation,178,178.0
+after,config,healthy-minute,presentation,90,90.0
+after,config,outage-30s-scaled,presentation,6,12.0
+after,console,healthy-minute,presentation,30,30.0
+after,console,healthy-minute,session-relay,118,118.0
+after,console,healthy-minute,workspace-sync,30,30.0
+after,console,outage-30s-scaled,presentation,2,4.0
+after,console,outage-30s-scaled,session-relay,2,4.0

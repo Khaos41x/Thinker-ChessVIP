@@ -1,0 +1,49 @@
+phase,surface,90sWindow,selector,mutationCallbacks,actualValueChanges,recreated,CLS
+before,config,stable,#analysis-engine-message,90,0,0,0
+before,config,stable,#analysis-engine-state,90,0,0,0
+before,config,stable,#client-build-state,45,1,0,0
+before,config,stable,#connection,45,0,0,0
+before,config,stable,#engine-retry,90,0,0,0
+before,config,stable,#execution-state,90,0,0,0
+before,config,stable,#save-state,45,1,0,0
+before,config,stable,#userscript-connection,45,1,0,0
+before,config,outage,#analysis-engine-message,180,4,0,0
+before,config,outage,#analysis-engine-state,180,94,0,0
+before,config,outage,#client-build-state,44,2,0,0
+before,config,outage,#connection,90,4,0,0
+before,config,outage,#engine-retry,180,0,0,0
+before,config,outage,#execution-state,180,4,0,0
+before,config,outage,#save-state,90,4,0,0
+before,config,outage,#userscript-connection,90,4,0,0
+before,console,stable,#tc-analysis-message,88,0,0,0
+before,console,stable,.tc-analysis-notice button,88,0,0,0
+before,console,stable,.tc-analysis-status,88,0,0,0
+before,console,outage,#tc-analysis-message,6,2,0,0
+before,console,outage,.tc-analysis-notice button,4,0,0,0
+before,console,outage,.tc-analysis-status,6,2,0,0
+after,config,stable,#analysis-engine-message,0,0,0,0
+after,config,stable,#analysis-engine-picker,0,0,0,0
+after,config,stable,#analysis-engine-state,0,0,0,0
+after,config,stable,#client-build-state,0,0,0,0
+after,config,stable,#connection,0,0,0,0
+after,config,stable,#engine-retry,0,0,0,0
+after,config,stable,#execution-state,0,0,0,0
+after,config,stable,#save-state,0,0,0,0
+after,config,stable,#userscript-connection,0,0,0,0
+after,config,outage,#analysis-engine-message,2,2,0,0
+after,config,outage,#analysis-engine-picker,3,0,0,0
+after,config,outage,#analysis-engine-state,2,2,0,0
+after,config,outage,#client-build-state,0,0,0,0
+after,config,outage,#connection,2,2,0,0
+after,config,outage,#engine-retry,2,0,0,0
+after,config,outage,#execution-state,2,2,0,0
+after,config,outage,#save-state,2,2,0,0
+after,config,outage,#userscript-connection,2,2,0,0
+after,console,stable,#tc-analysis-engine-picker,0,0,0,0
+after,console,stable,#tc-analysis-message,0,0,0,0
+after,console,stable,.tc-analysis-notice button,0,0,0,0
+after,console,stable,.tc-analysis-status,0,0,0,0
+after,console,outage,#tc-analysis-engine-picker,3,0,0,0
+after,console,outage,#tc-analysis-message,2,2,0,0
+after,console,outage,.tc-analysis-notice button,2,0,0,0
+after,console,outage,.tc-analysis-status,2,2,0,0

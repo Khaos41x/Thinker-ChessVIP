@@ -129,6 +129,7 @@
       text(mounted.querySelector('.tc-analysis-feedback'), performance.now() < savedUntil ? 'Preference saved.' : '');
       prop(mounted.querySelector('button'), 'hidden', !error);
       prop(mounted.querySelector('button'), 'disabled', interactive || selecting);
+      root.ThinkerEnginePicker?.enhance(select);
     }
     document?.addEventListener('visibilitychange', () => { clearTimeout(reconnectTimer); if (!document.hidden) { connection.reset(); refresh(); } });
     return Object.freeze({

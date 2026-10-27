@@ -1,0 +1,23 @@
+{
+  "health": {
+    "status": "ok",
+    "ready": true
+  },
+  "version": "2026-10-26.6",
+  "userscriptConnected": false,
+  "engines": [
+    {
+      "id": "stockfish-19-1mb",
+      "installed": true
+    },
+    {
+      "id": "stockfish-19-94mb",
+      "installed": true
+    },
+    {
+      "id": "komodo-14.1",
+      "installed": true
+    }
+  ],
+  "configHTTP": 200
+}

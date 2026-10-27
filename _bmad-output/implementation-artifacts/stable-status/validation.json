@@ -1,0 +1,11 @@
+{
+  "configCases": 60,
+  "consoleCases": 12,
+  "existingPanelRectangleDifferences": 0,
+  "existingConsoleColorDifferences": 0,
+  "rows40Centered": true,
+  "configHorizontalOverflow": false,
+  "minimumVisibleFont": 11.0,
+  "nativeAuthenticatedTampermonkey": false,
+  "configBottomGapAlreadyPresent": 81
+}

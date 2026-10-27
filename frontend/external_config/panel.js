@@ -97,6 +97,7 @@
     prop(byId('engine-retry'), 'disabled', engineInteractive || engineSwitching);
     if (byId('analysis-engine-details')) setText(byId('analysis-engine-details'), selected ? JSON.stringify(selected, null, 2) : '');
     setText(byId('execution-state'), `Analysis: ${!engineOnline ? 'unavailable' : engineRegistry?.analysisRunning ? 'running' : 'inactive'}`);
+    globalThis.ThinkerEnginePicker.enhance(select);
   }
 
   function registryFailure(error) {

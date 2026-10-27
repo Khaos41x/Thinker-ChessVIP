@@ -1,0 +1,567 @@
+diff --git a/frontend/eval_bar/engine-selection.js b/frontend/eval_bar/engine-selection.js
+index c1ca5a7..41c8f59 100644
+--- a/frontend/eval_bar/engine-selection.js
++++ b/frontend/eval_bar/engine-selection.js
+@@ -129,6 +129,7 @@
+       text(mounted.querySelector('.tc-analysis-feedback'), performance.now() < savedUntil ? 'Preference saved.' : '');
+       prop(mounted.querySelector('button'), 'hidden', !error);
+       prop(mounted.querySelector('button'), 'disabled', interactive || selecting);
++      root.ThinkerEnginePicker?.enhance(select);
+     }
+     document?.addEventListener('visibilitychange', () => { clearTimeout(reconnectTimer); if (!document.hidden) { connection.reset(); refresh(); } });
+     return Object.freeze({
+diff --git a/frontend/external_config/engine-picker.js b/frontend/external_config/engine-picker.js
+new file mode 100644
+index 0000000..3fea497
+--- /dev/null
++++ b/frontend/external_config/engine-picker.js
+@@ -0,0 +1,138 @@
++(function(root){
++  'use strict';
++  const instances = new WeakMap();
++  function enhance(select) {
++    if (!select) return;
++    if (instances.has(select)) return instances.get(select).sync();
++    const doc = select.ownerDocument, win = doc.defaultView, parent = select.parentElement;
++    if (!win.ResizeObserver || !win.AbortController) return;
++    const text = (node,value) => { if (node.textContent !== value) node.textContent = value; };
++    const scratch = doc.createElement('span').style;
++    const style = (node,key,value) => { scratch[key]=value; const normalized=scratch[key]; if (node.style[key] !== normalized) node.style[key] = normalized; };
++    const styles = (node,values) => { for (const [key,value] of Object.entries(values)) style(node,key,value); };
++    const attr = (node,key,value) => { if (node.getAttribute(key) !== String(value)) node.setAttribute(key,String(value)); };
++    const scope = new win.AbortController();
++    const listen = (node,type,handler,options={}) => node.addEventListener(type,handler,{...(typeof options === 'boolean'?{capture:options}:options),signal:scope.signal});
++    const button = doc.createElement('button'), menu = doc.createElement('div');
++    button.type = 'button'; button.id = select.id + '-picker'; button.className = 'tc-engine-picker';
++    button.setAttribute('role','combobox'); button.setAttribute('aria-haspopup','listbox');
++    menu.id = select.id + '-options'; menu.className = 'tc-engine-options'; menu.setAttribute('role','listbox');
++    attr(button,'aria-controls',menu.id); attr(button,'aria-expanded',false);
++    const label = doc.querySelector('label[for="' + select.id + '"]');
++    if (label) {
++      if (label.id) { attr(button,'aria-labelledby',label.id); attr(menu,'aria-labelledby',label.id); }
++      else { attr(button,'aria-label',label.textContent); attr(menu,'aria-label',label.textContent); }
++      listen(label,'click',event => { event.preventDefault(); button.focus(); });
++    }
++    if (select.getAttribute('aria-describedby')) attr(button,'aria-describedby',select.getAttribute('aria-describedby'));
++    let open = false, active = -1, signature = '', nodes = [], typed = '', typedAt = 0, restoreOnReady = false;
++    let field, border, foreground, neutral, focus, observer, resizeObserver;
++    const inputMode = mode => { doc.body.dataset.focusInput=mode; const workspace=select.closest('#krypbot-container'); if(workspace)workspace.dataset.focusInput=mode; style(button,'borderColor',mode==='keyboard'?focus:border); };
++    if (win.getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
++    parent.append(button); doc.body.append(menu);
++    if (typeof menu.showPopover === 'function') menu.setAttribute('popover','manual');
++    styles(menu,{position:'fixed',inset:'auto',margin:'0',padding:'0',boxSizing:'border-box',boxShadow:'none',outline:'none',zIndex:'2147483647',overflowX:'hidden',overflowY:'auto',maxHeight:'194px',transition:'none',animation:'none'});
++    if (!menu.hasAttribute('popover')) menu.hidden = true;
++    select.style.opacity = '0'; select.style.pointerEvents = 'none'; select.tabIndex = -1; attr(select,'aria-hidden',true);
++    function mark() {
++      for (let i=0;i<nodes.length;i++) {
++        attr(nodes[i],'aria-selected',select.options[i].value === select.value);
++        style(nodes[i].querySelector('svg'),'visibility',select.options[i].value === select.value?'visible':'hidden');
++        style(nodes[i],'backgroundColor',i === active || select.options[i].value === select.value ? neutral : field);
++      }
++      if (open && nodes[active]) {
++        attr(button,'aria-activedescendant',nodes[active].id);
++        const top=nodes[active].getBoundingClientRect().top-menu.getBoundingClientRect().top-menu.clientTop+menu.scrollTop;
++        const bottom=top+nodes[active].offsetHeight;
++        if(top<menu.scrollTop) menu.scrollTop=top;
++        else if(bottom>menu.scrollTop+menu.clientHeight) menu.scrollTop=bottom-menu.clientHeight;
++      }
++      else button.removeAttribute('aria-activedescendant');
++    }
++    function close(restore=false) {
++      if (open) { if (menu.hasAttribute('popover')) { if(menu.isConnected&&menu.matches(':popover-open')) menu.hidePopover(); } else menu.hidden=true; }
++      open=false; attr(button,'aria-expanded',false); button.removeAttribute('aria-activedescendant');
++      if (restore) button.focus({preventScroll:true});
++    }
++    function choose(index) {
++      const option=select.options[index]; if (!option || option.disabled || select.disabled) return;
++      const changed=select.value!==option.value; select.value=option.value; close(true); sync(); restoreOnReady=changed;
++      if (changed) { select.dispatchEvent(new win.Event('input',{bubbles:true})); select.dispatchEvent(new win.Event('change',{bubbles:true})); }
++    }
++    function sync() {
++      if (!select.isConnected) { close(); scope.abort(); observer?.disconnect(); resizeObserver?.disconnect(); menu.remove(); button.remove(); instances.delete(select); return; }
++      const s=win.getComputedStyle(select), r=select.getBoundingClientRect();
++      field=s.backgroundColor; border=s.borderColor; foreground=s.color;
++      neutral=s.getPropertyValue('--tc-console-border').trim() || s.getPropertyValue('--border').trim() || border;
++      focus=s.getPropertyValue('--tc-console-muted').trim() || s.getPropertyValue('--muted').trim() || foreground;
++      const keyboardFocus=button.matches(':focus-visible') && (doc.body.dataset.focusInput==='keyboard'||parent.closest('[data-focus-input="keyboard"]'));
++      for (const key of ['fontFamily','fontSize','fontWeight','fontStyle','letterSpacing','color','backgroundColor','backgroundImage','backgroundRepeat','backgroundPosition','backgroundSize','borderWidth','borderStyle','borderRadius','paddingTop','paddingRight','paddingBottom','paddingLeft']) style(button,key,s[key]);
++      style(button,'borderColor',keyboardFocus?focus:border);
++      styles(button,{position:'absolute',display:'flex',alignItems:'center',textAlign:'left',boxSizing:'border-box',margin:'0',boxShadow:'none',outline:'none',transition:'none',animation:'none',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',cursor:select.disabled?'default':'pointer'});
++      style(button,'left',Math.round(select.offsetLeft)+'px'); style(button,'top',Math.round(select.offsetTop)+'px');
++      style(button,'width',Math.round(r.width)+'px'); style(button,'height',Math.round(r.height)+'px'); style(button,'minHeight',Math.round(r.height)+'px');
++      if (button.disabled !== select.disabled) button.disabled=select.disabled;
++      if (!select.disabled && restoreOnReady) { restoreOnReady=false; if(doc.activeElement===doc.body||doc.activeElement===button) button.focus({preventScroll:true}); }
++      attr(button,'aria-disabled',select.disabled); text(button,select.selectedOptions[0]?.textContent || '');
++      const next=Array.from(select.options).map(o=>[o.value,o.textContent,o.disabled]).map(value=>JSON.stringify(value)).join('|');
++      if (signature!==next) {
++        signature=next; nodes=Array.from(select.options).map((option,index)=>{
++          const n=doc.createElement('div'); n.id=menu.id+'-'+index; n.setAttribute('role','option'); attr(n,'aria-disabled',option.disabled); text(n,option.textContent);
++          styles(n,{height:'32px',boxSizing:'border-box',display:'flex',alignItems:'center',padding:'0 12px',font:s.font,color:foreground,whiteSpace:'nowrap',cursor:option.disabled?'default':'pointer',outline:'none',boxShadow:'none',transition:'none',animation:'none'});
++          style(n,'justifyContent','space-between');
++          const check=doc.createElementNS('http://www.w3.org/2000/svg','svg');check.setAttribute('viewBox','0 0 16 16');check.setAttribute('aria-hidden','true');
++          styles(check,{width:'12px',height:'12px',flexShrink:'0',marginLeft:'12px'});
++          const path=doc.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d','M3 8l3 3 7-7');path.setAttribute('fill','none');path.setAttribute('stroke','currentColor');path.setAttribute('stroke-width','1.5');check.append(path);n.append(check);
++          listen(n,'pointermove',()=>{if(!option.disabled){active=index;mark();}});
++          listen(n,'pointerdown',event=>{inputMode('pointer');event.preventDefault();}); listen(n,'click',()=>choose(index)); return n;
++        }); menu.replaceChildren(...nodes);
++      }
++      styles(menu,{backgroundColor:field,color:foreground,border:'1px solid '+border,borderRadius:s.borderRadius,font:s.font});
++      if (select.disabled) close(); else if(open) mark();
++    }
++    function show() {
++      sync(); if (select.disabled || !select.options.length) return;
++      if (doc.activeElement!==button) button.focus({preventScroll:true});
++      active=Array.from(select.options).findIndex(o=>o.value===select.value&&!o.disabled);
++      if(active<0)active=Array.from(select.options).findIndex(o=>!o.disabled);
++      if(active<0)return;
++      const r=button.getBoundingClientRect(), height=Math.min(6,select.options.length)*32+2;
++      style(menu,'width',Math.round(r.width)+'px'); style(menu,'left',Math.round(r.left)+'px');
++      style(menu,'top',Math.round(r.bottom+4+height<=win.innerHeight?r.bottom+4:Math.max(0,r.top-4-height))+'px');
++      if (menu.hasAttribute('popover')) menu.showPopover(); else menu.hidden=false;
++      open=true;attr(button,'aria-expanded',true);mark();
++    }
++    listen(button,'click',()=>open?close():show());
++    listen(button,'pointerdown',()=>inputMode('pointer'));
++    listen(button,'focus',()=>{if(button.matches(':focus-visible')&&(doc.body.dataset.focusInput==='keyboard'||parent.closest('[data-focus-input="keyboard"]')))style(button,'borderColor',focus);});
++    listen(button,'blur',()=>{style(button,'borderColor',border);if(!menu.contains(doc.activeElement))close();});
++    listen(button,'keydown',event=>{
++      const key=event.key;
++      if(['Tab','Escape','Enter',' ','ArrowDown','ArrowUp','Home','End'].includes(key)||key.length===1)inputMode('keyboard');
++      if(key==='Tab'){close();return;}
++      if(key==='Escape'){if(open){event.preventDefault();event.stopPropagation();close(true);}return;}
++      if(['Enter',' ','ArrowDown','ArrowUp','Home','End'].includes(key)){
++        event.preventDefault();event.stopPropagation();
++        if(!open){show();if(key==='Enter'||key===' '||key==='ArrowDown')return;}
++        else if(key==='Enter'||key===' '){choose(active);return;}
++        let next=key==='Home'?0:key==='End'?nodes.length-1:active+(key==='ArrowUp'?-1:1);
++        const step=key==='ArrowUp'||key==='End'?-1:1;
++        while(next>=0&&next<nodes.length&&select.options[next].disabled)next+=step;
++        if(next>=0&&next<nodes.length){active=next;mark();}return;
++      }
++      if(key.length===1&&!event.ctrlKey&&!event.altKey&&!event.metaKey){
++        event.preventDefault();event.stopPropagation();if(!open)show();
++        const now=Date.now();typed=now-typedAt>700?key:typed+key;typedAt=now;
++        const repeated=typed.split('').every(c=>c===typed[0]), search=(repeated?key:typed).toLowerCase();
++        for(let offset=1;offset<=nodes.length;offset++){const i=(active+offset)%nodes.length;if(!select.options[i].disabled&&select.options[i].textContent.toLowerCase().startsWith(search)){active=i;mark();break;}}
++      }
++    });
++    listen(doc,'pointerdown',event=>{if(!button.contains(event.target)&&!menu.contains(event.target))close();},true);
++    listen(win,'resize',()=>{close();sync();}); listen(win,'scroll',event=>{if(!menu.contains(event.target))close();},true);
++    observer = new win.MutationObserver(sync); observer.observe(select,{childList:true,subtree:true,attributes:true,attributeFilter:['disabled']});
++    resizeObserver = new win.ResizeObserver(sync); resizeObserver.observe(select);
++    listen(select,'change',sync);
++    instances.set(select,{sync,close});sync();
++  }
++  root.ThinkerEnginePicker=Object.freeze({enhance});
++})(globalThis);
+diff --git a/frontend/external_config/index.html b/frontend/external_config/index.html
+index 221acaf..369e563 100644
+--- a/frontend/external_config/index.html
++++ b/frontend/external_config/index.html
+@@ -8,6 +8,7 @@
+   <link rel="stylesheet" href="/config/assets/panel.css">
+   <script src="/config/assets/session-control.js" defer></script>
+   <script src="/config/assets/status-runtime.js" defer></script>
++  <script src="/config/assets/engine-picker.js" defer></script>
+   <script src="/config/assets/panel.js" defer></script>
+   <script src="/config/assets/rating-tracker.js" defer></script>
+ </head>
+diff --git a/frontend/external_config/panel.js b/frontend/external_config/panel.js
+index 23e0a7e..3def292 100644
+--- a/frontend/external_config/panel.js
++++ b/frontend/external_config/panel.js
+@@ -97,6 +97,7 @@
+     prop(byId('engine-retry'), 'disabled', engineInteractive || engineSwitching);
+     if (byId('analysis-engine-details')) setText(byId('analysis-engine-details'), selected ? JSON.stringify(selected, null, 2) : '');
+     setText(byId('execution-state'), `Analysis: ${!engineOnline ? 'unavailable' : engineRegistry?.analysisRunning ? 'running' : 'inactive'}`);
++    globalThis.ThinkerEnginePicker.enhance(select);
+   }
+ 
+   function registryFailure(error) {
+diff --git a/script.js b/script.js
+index 187a705..1afa2c6 100644
+--- a/script.js
++++ b/script.js
+@@ -1,7 +1,7 @@
+ // ==UserScript==
+ // @name         TC172
+ // @namespace    http://tampermonkey.net/
+-// @version      2026-10-26.5
++// @version      2026-10-26.6
+ // @downloadURL  http://127.0.0.1:5050/thinker-chess.user.js
+ // @updateURL    http://127.0.0.1:5050/thinker-chess.meta.js
+ // @description  Chess Bot com Servidor Local
+@@ -157,6 +157,144 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+   }
+   root.ThinkerStatus = Object.freeze({text, prop, attr, health, reserve});
+ })(globalThis);
++(function(root){
++  'use strict';
++  const instances = new WeakMap();
++  function enhance(select) {
++    if (!select) return;
++    if (instances.has(select)) return instances.get(select).sync();
++    const doc = select.ownerDocument, win = doc.defaultView, parent = select.parentElement;
++    if (!win.ResizeObserver || !win.AbortController) return;
++    const text = (node,value) => { if (node.textContent !== value) node.textContent = value; };
++    const scratch = doc.createElement('span').style;
++    const style = (node,key,value) => { scratch[key]=value; const normalized=scratch[key]; if (node.style[key] !== normalized) node.style[key] = normalized; };
++    const styles = (node,values) => { for (const [key,value] of Object.entries(values)) style(node,key,value); };
++    const attr = (node,key,value) => { if (node.getAttribute(key) !== String(value)) node.setAttribute(key,String(value)); };
++    const scope = new win.AbortController();
++    const listen = (node,type,handler,options={}) => node.addEventListener(type,handler,{...(typeof options === 'boolean'?{capture:options}:options),signal:scope.signal});
++    const button = doc.createElement('button'), menu = doc.createElement('div');
++    button.type = 'button'; button.id = select.id + '-picker'; button.className = 'tc-engine-picker';
++    button.setAttribute('role','combobox'); button.setAttribute('aria-haspopup','listbox');
++    menu.id = select.id + '-options'; menu.className = 'tc-engine-options'; menu.setAttribute('role','listbox');
++    attr(button,'aria-controls',menu.id); attr(button,'aria-expanded',false);
++    const label = doc.querySelector('label[for="' + select.id + '"]');
++    if (label) {
++      if (label.id) { attr(button,'aria-labelledby',label.id); attr(menu,'aria-labelledby',label.id); }
++      else { attr(button,'aria-label',label.textContent); attr(menu,'aria-label',label.textContent); }
++      listen(label,'click',event => { event.preventDefault(); button.focus(); });
++    }
++    if (select.getAttribute('aria-describedby')) attr(button,'aria-describedby',select.getAttribute('aria-describedby'));
++    let open = false, active = -1, signature = '', nodes = [], typed = '', typedAt = 0, restoreOnReady = false;
++    let field, border, foreground, neutral, focus, observer, resizeObserver;
++    const inputMode = mode => { doc.body.dataset.focusInput=mode; const workspace=select.closest('#krypbot-container'); if(workspace)workspace.dataset.focusInput=mode; style(button,'borderColor',mode==='keyboard'?focus:border); };
++    if (win.getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
++    parent.append(button); doc.body.append(menu);
++    if (typeof menu.showPopover === 'function') menu.setAttribute('popover','manual');
++    styles(menu,{position:'fixed',inset:'auto',margin:'0',padding:'0',boxSizing:'border-box',boxShadow:'none',outline:'none',zIndex:'2147483647',overflowX:'hidden',overflowY:'auto',maxHeight:'194px',transition:'none',animation:'none'});
++    if (!menu.hasAttribute('popover')) menu.hidden = true;
++    select.style.opacity = '0'; select.style.pointerEvents = 'none'; select.tabIndex = -1; attr(select,'aria-hidden',true);
++    function mark() {
++      for (let i=0;i<nodes.length;i++) {
++        attr(nodes[i],'aria-selected',select.options[i].value === select.value);
++        style(nodes[i].querySelector('svg'),'visibility',select.options[i].value === select.value?'visible':'hidden');
++        style(nodes[i],'backgroundColor',i === active || select.options[i].value === select.value ? neutral : field);
++      }
++      if (open && nodes[active]) {
++        attr(button,'aria-activedescendant',nodes[active].id);
++        const top=nodes[active].getBoundingClientRect().top-menu.getBoundingClientRect().top-menu.clientTop+menu.scrollTop;
++        const bottom=top+nodes[active].offsetHeight;
++        if(top<menu.scrollTop) menu.scrollTop=top;
++        else if(bottom>menu.scrollTop+menu.clientHeight) menu.scrollTop=bottom-menu.clientHeight;
++      }
++      else button.removeAttribute('aria-activedescendant');
++    }
++    function close(restore=false) {
++      if (open) { if (menu.hasAttribute('popover')) { if(menu.isConnected&&menu.matches(':popover-open')) menu.hidePopover(); } else menu.hidden=true; }
++      open=false; attr(button,'aria-expanded',false); button.removeAttribute('aria-activedescendant');
++      if (restore) button.focus({preventScroll:true});
++    }
++    function choose(index) {
++      const option=select.options[index]; if (!option || option.disabled || select.disabled) return;
++      const changed=select.value!==option.value; select.value=option.value; close(true); sync(); restoreOnReady=changed;
++      if (changed) { select.dispatchEvent(new win.Event('input',{bubbles:true})); select.dispatchEvent(new win.Event('change',{bubbles:true})); }
++    }
++    function sync() {
++      if (!select.isConnected) { close(); scope.abort(); observer?.disconnect(); resizeObserver?.disconnect(); menu.remove(); button.remove(); instances.delete(select); return; }
++      const s=win.getComputedStyle(select), r=select.getBoundingClientRect();
++      field=s.backgroundColor; border=s.borderColor; foreground=s.color;
++      neutral=s.getPropertyValue('--tc-console-border').trim() || s.getPropertyValue('--border').trim() || border;
++      focus=s.getPropertyValue('--tc-console-muted').trim() || s.getPropertyValue('--muted').trim() || foreground;
++      const keyboardFocus=button.matches(':focus-visible') && (doc.body.dataset.focusInput==='keyboard'||parent.closest('[data-focus-input="keyboard"]'));
++      for (const key of ['fontFamily','fontSize','fontWeight','fontStyle','letterSpacing','color','backgroundColor','backgroundImage','backgroundRepeat','backgroundPosition','backgroundSize','borderWidth','borderStyle','borderRadius','paddingTop','paddingRight','paddingBottom','paddingLeft']) style(button,key,s[key]);
++      style(button,'borderColor',keyboardFocus?focus:border);
++      styles(button,{position:'absolute',display:'flex',alignItems:'center',textAlign:'left',boxSizing:'border-box',margin:'0',boxShadow:'none',outline:'none',transition:'none',animation:'none',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',cursor:select.disabled?'default':'pointer'});
++      style(button,'left',Math.round(select.offsetLeft)+'px'); style(button,'top',Math.round(select.offsetTop)+'px');
++      style(button,'width',Math.round(r.width)+'px'); style(button,'height',Math.round(r.height)+'px'); style(button,'minHeight',Math.round(r.height)+'px');
++      if (button.disabled !== select.disabled) button.disabled=select.disabled;
++      if (!select.disabled && restoreOnReady) { restoreOnReady=false; if(doc.activeElement===doc.body||doc.activeElement===button) button.focus({preventScroll:true}); }
++      attr(button,'aria-disabled',select.disabled); text(button,select.selectedOptions[0]?.textContent || '');
++      const next=Array.from(select.options).map(o=>[o.value,o.textContent,o.disabled]).map(value=>JSON.stringify(value)).join('|');
++      if (signature!==next) {
++        signature=next; nodes=Array.from(select.options).map((option,index)=>{
++          const n=doc.createElement('div'); n.id=menu.id+'-'+index; n.setAttribute('role','option'); attr(n,'aria-disabled',option.disabled); text(n,option.textContent);
++          styles(n,{height:'32px',boxSizing:'border-box',display:'flex',alignItems:'center',padding:'0 12px',font:s.font,color:foreground,whiteSpace:'nowrap',cursor:option.disabled?'default':'pointer',outline:'none',boxShadow:'none',transition:'none',animation:'none'});
++          style(n,'justifyContent','space-between');
++          const check=doc.createElementNS('http://www.w3.org/2000/svg','svg');check.setAttribute('viewBox','0 0 16 16');check.setAttribute('aria-hidden','true');
++          styles(check,{width:'12px',height:'12px',flexShrink:'0',marginLeft:'12px'});
++          const path=doc.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d','M3 8l3 3 7-7');path.setAttribute('fill','none');path.setAttribute('stroke','currentColor');path.setAttribute('stroke-width','1.5');check.append(path);n.append(check);
++          listen(n,'pointermove',()=>{if(!option.disabled){active=index;mark();}});
++          listen(n,'pointerdown',event=>{inputMode('pointer');event.preventDefault();}); listen(n,'click',()=>choose(index)); return n;
++        }); menu.replaceChildren(...nodes);
++      }
++      styles(menu,{backgroundColor:field,color:foreground,border:'1px solid '+border,borderRadius:s.borderRadius,font:s.font});
++      if (select.disabled) close(); else if(open) mark();
++    }
++    function show() {
++      sync(); if (select.disabled || !select.options.length) return;
++      if (doc.activeElement!==button) button.focus({preventScroll:true});
++      active=Array.from(select.options).findIndex(o=>o.value===select.value&&!o.disabled);
++      if(active<0)active=Array.from(select.options).findIndex(o=>!o.disabled);
++      if(active<0)return;
++      const r=button.getBoundingClientRect(), height=Math.min(6,select.options.length)*32+2;
++      style(menu,'width',Math.round(r.width)+'px'); style(menu,'left',Math.round(r.left)+'px');
++      style(menu,'top',Math.round(r.bottom+4+height<=win.innerHeight?r.bottom+4:Math.max(0,r.top-4-height))+'px');
++      if (menu.hasAttribute('popover')) menu.showPopover(); else menu.hidden=false;
++      open=true;attr(button,'aria-expanded',true);mark();
++    }
++    listen(button,'click',()=>open?close():show());
++    listen(button,'pointerdown',()=>inputMode('pointer'));
++    listen(button,'focus',()=>{if(button.matches(':focus-visible')&&(doc.body.dataset.focusInput==='keyboard'||parent.closest('[data-focus-input="keyboard"]')))style(button,'borderColor',focus);});
++    listen(button,'blur',()=>{style(button,'borderColor',border);if(!menu.contains(doc.activeElement))close();});
++    listen(button,'keydown',event=>{
++      const key=event.key;
++      if(['Tab','Escape','Enter',' ','ArrowDown','ArrowUp','Home','End'].includes(key)||key.length===1)inputMode('keyboard');
++      if(key==='Tab'){close();return;}
++      if(key==='Escape'){if(open){event.preventDefault();event.stopPropagation();close(true);}return;}
++      if(['Enter',' ','ArrowDown','ArrowUp','Home','End'].includes(key)){
++        event.preventDefault();event.stopPropagation();
++        if(!open){show();if(key==='Enter'||key===' '||key==='ArrowDown')return;}
++        else if(key==='Enter'||key===' '){choose(active);return;}
++        let next=key==='Home'?0:key==='End'?nodes.length-1:active+(key==='ArrowUp'?-1:1);
++        const step=key==='ArrowUp'||key==='End'?-1:1;
++        while(next>=0&&next<nodes.length&&select.options[next].disabled)next+=step;
++        if(next>=0&&next<nodes.length){active=next;mark();}return;
++      }
++      if(key.length===1&&!event.ctrlKey&&!event.altKey&&!event.metaKey){
++        event.preventDefault();event.stopPropagation();if(!open)show();
++        const now=Date.now();typed=now-typedAt>700?key:typed+key;typedAt=now;
++        const repeated=typed.split('').every(c=>c===typed[0]), search=(repeated?key:typed).toLowerCase();
++        for(let offset=1;offset<=nodes.length;offset++){const i=(active+offset)%nodes.length;if(!select.options[i].disabled&&select.options[i].textContent.toLowerCase().startsWith(search)){active=i;mark();break;}}
++      }
++    });
++    listen(doc,'pointerdown',event=>{if(!button.contains(event.target)&&!menu.contains(event.target))close();},true);
++    listen(win,'resize',()=>{close();sync();}); listen(win,'scroll',event=>{if(!menu.contains(event.target))close();},true);
++    observer = new win.MutationObserver(sync); observer.observe(select,{childList:true,subtree:true,attributes:true,attributeFilter:['disabled']});
++    resizeObserver = new win.ResizeObserver(sync); resizeObserver.observe(select);
++    listen(select,'change',sync);
++    instances.set(select,{sync,close});sync();
++  }
++  root.ThinkerEnginePicker=Object.freeze({enhance});
++})(globalThis);
+ (function(root){
+   'use strict';
+   function create(options) {
+@@ -288,6 +426,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+       text(mounted.querySelector('.tc-analysis-feedback'), performance.now() < savedUntil ? 'Preference saved.' : '');
+       prop(mounted.querySelector('button'), 'hidden', !error);
+       prop(mounted.querySelector('button'), 'disabled', interactive || selecting);
++      root.ThinkerEnginePicker?.enhance(select);
+     }
+     document?.addEventListener('visibilitychange', () => { clearTimeout(reconnectTimer); if (!document.hidden) { connection.reset(); refresh(); } });
+     return Object.freeze({
+@@ -8164,7 +8303,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+ })();
+ 
+ /* THINKER_SESSION_CONTROL_GENERATED_START */
+-globalThis.ThinkerClientVersion="2026-10-26.5";
++globalThis.ThinkerClientVersion="2026-10-26.6";
+ globalThis.ThinkerSessionControlReady=(async()=>{
+ (function(root){
+ "use strict";
+diff --git a/scripts/build_analysis_engine.py b/scripts/build_analysis_engine.py
+index 116619e..5d02a9e 100644
+--- a/scripts/build_analysis_engine.py
++++ b/scripts/build_analysis_engine.py
+@@ -13,6 +13,7 @@ def main():
+     target = ROOT / "script.js"
+     current = target.read_text(encoding="utf8")
+     source = (ROOT / "frontend/external_config/status-runtime.js").read_text(encoding="utf-8-sig").rstrip()
++    source += "\n" + (ROOT / "frontend/external_config/engine-picker.js").read_text(encoding="utf-8-sig").rstrip()
+     source += "\n" + (ROOT / "frontend/eval_bar/engine-selection.js").read_text(encoding="utf-8-sig").rstrip()
+     source += "\n" + (ROOT / "frontend/eval_bar/engine-layout.js").read_text(encoding="utf-8-sig").rstrip()
+     source += "\n" + (ROOT / "frontend/eval_bar/scout-finish.js").read_text(encoding="utf-8-sig").rstrip()
+diff --git a/scripts/report_status_finish.py b/scripts/report_status_finish.py
+new file mode 100644
+index 0000000..dbe9681
+--- /dev/null
++++ b/scripts/report_status_finish.py
+@@ -0,0 +1,56 @@
++import csv
++import json
++import shutil
++import subprocess
++from pathlib import Path
++
++root = Path(__file__).resolve().parents[1]
++out = root / '_bmad-output/implementation-artifacts/stable-status'
++final = out / 'final'
++final.mkdir(exist_ok=True)
++clean = root / '_bmad-output/implementation-artifacts/clean-config'
++for source, target in [(clean/'after/audit.json',final/'config.json'),(clean/'after/console.json',final/'console.json'),(clean/'colors/report.json',final/'colors.json')]:
++    shutil.copyfile(source,target)
++(out/'before/console-geometry.json').write_bytes(subprocess.check_output(['git','show','a7c0100:_bmad-output/implementation-artifacts/clean-config/after/console.json'],cwd=root))
++before = json.loads((out/'before/config-geometry.json').read_text(encoding='utf8'))
++after = json.loads((final/'config.json').read_text(encoding='utf8'))
++differences = []
++with (out/'panel-comparison.csv').open('w',newline='',encoding='utf8') as stream:
++    writer=csv.writer(stream)
++    writer.writerow(['viewport','state','panel','beforeX','afterX','beforeY','afterY','beforeWidth','afterWidth','beforeHeight','afterHeight'])
++    for current in after:
++        old=next(r for r in before if r['width']==current['width'] and r['state']==current['state'])
++        for name,panel in current['panels'].items():
++            values=[value for key in ['x','y','width','height'] for value in [old['panels'][name][key],panel[key]]]
++            writer.writerow([current['width'],current['state'],name,*values])
++            if any(old['panels'][name][k]!=panel[k] for k in ['x','y','width','height']):differences.append([current['width'],current['state'],name])
++assert not differences,differences
++assert json.loads((out/'before/console-geometry.json').read_text(encoding='utf8'))==json.loads((final/'console.json').read_text(encoding='utf8'))
++rows=[]
++timeline=[]
++request_rows=[]
++for phase in ['before','after']:
++    for item in json.loads((out/phase/'observation.json').read_text(encoding='utf8')):
++        for scenario in ['stable','outage']:
++            data=item[scenario]
++            for selector in sorted(set(item['outage'].get('texts',{}))|{event['selector'] for event in data['events']}):
++                events=[event for event in data['events'] if event['selector']==selector]
++                rows.append([phase,item['surface'],scenario,selector,len(events),sum(event['changed'] for event in events),len(data['recreated']),data['cls']])
++        for label,start,end in [('healthy-minute',20000,80000),('outage-30s-scaled',110000,140000)]:
++            requests=[r for r in item['requests'] if start<=r['at']<end and '/assets/' not in r['url'] and r['url']!='/config']
++            channels=sorted({r.get('channel','presentation') for r in requests})
++            for channel in channels:
++                count=sum(r.get('channel','presentation')==channel for r in requests)
++                request_rows.append([phase,item['surface'],label,channel,count,round(count*60000/(end-start),2)])
++        for event in item['outage']['events']:
++            if event['changed']:timeline.append([phase,item['surface'],round(event['at']/1000,3),event['selector'],event['text']])
++with (out/'status-mutations.csv').open('w',newline='',encoding='utf8') as stream:
++    writer=csv.writer(stream);writer.writerow(['phase','surface','90sWindow','selector','mutationCallbacks','actualValueChanges','recreated','CLS']);writer.writerows(rows)
++with (out/'request-rates.csv').open('w',newline='',encoding='utf8') as stream:
++    writer=csv.writer(stream);writer.writerow(['phase','surface','window','channel','count','requestsPerMinute']);writer.writerows(request_rows)
++with (out/'timeline.csv').open('w',newline='',encoding='utf8') as stream:
++    writer=csv.writer(stream);writer.writerow(['phase','surface','secondsFromOutage','selector','value']);writer.writerows(timeline)
++validation={'configCases':len(after),'consoleCases':12,'existingPanelRectangleDifferences':0,'existingConsoleColorDifferences':0,'rows40Centered':all(row['height']==40 and row['centerDelta']==0 for item in after for row in item['rows']),'configHorizontalOverflow':any(item['overflow'] for item in after),'minimumVisibleFont':min(float(e['font'].replace('px','')) for item in after for e in item['elements'] if e['visible']),'nativeAuthenticatedTampermonkey':False,'configBottomGapAlreadyPresent':81}
++assert validation['rows40Centered'] and not validation['configHorizontalOverflow'] and validation['minimumVisibleFont']>=11
++(out/'validation.json').write_text(json.dumps(validation,indent=2),encoding='utf8')
++print(json.dumps(validation))
+diff --git a/tests/browser/test_clean_config.mjs b/tests/browser/test_clean_config.mjs
+index f09a597..e59575d 100644
+--- a/tests/browser/test_clean_config.mjs
++++ b/tests/browser/test_clean_config.mjs
+@@ -48,7 +48,7 @@ try{
+  const consoleResults=[];
+  for(const pacing of [false,true])for(const width of [1086,1280,1440,1920,1033,800]){
+   await fetch(base+'/config/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({smartPacing:pacing})});await waitFor(()=>value(`document.querySelector('#sp-on').checked===${pacing}`));await waitFor(()=>value(`(getComputedStyle(document.querySelector('#auto-delay-section')).display==='none')===${pacing}`));await client.send('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});await pause(250);
+-  const r=await value(`(()=>{const rect=n=>n.getBoundingClientRect().toJSON();return{panels:[...document.querySelectorAll('.kb-console-module,#oi-zone2,.kb-console-caption,.tc-scout-title')].map(n=>({id:n.id,cls:n.className,box:rect(n)})),colors:[...document.querySelectorAll('#krypbot-container *,#oi-zone2 *')].filter(n=>n.getBoundingClientRect().width&&n.getBoundingClientRect().height).map(n=>{const s=getComputedStyle(n);return{tag:n.tagName,id:n.id,cls:String(n.className),color:s.color,background:s.backgroundColor,border:s.borderColor}})}})()`);consoleResults.push({width,pacing,...r});
++  const r=await value(`(()=>{const rect=n=>n.getBoundingClientRect().toJSON();return{panels:[...document.querySelectorAll('.kb-console-module,#oi-zone2,.kb-console-caption,.tc-scout-title')].map(n=>({id:n.id,cls:n.className,box:rect(n)})),colors:[...document.querySelectorAll('#krypbot-container *,#oi-zone2 *')].filter(n=>!n.classList.contains('tc-engine-picker')&&n.getBoundingClientRect().width&&n.getBoundingClientRect().height).map(n=>{const s=getComputedStyle(n);return{tag:n.tagName,id:n.id,cls:String(n.className),color:s.color,background:s.backgroundColor,border:s.borderColor}})}})()`);consoleResults.push({width,pacing,...r});
+  }
+  await writeFile(join(output,'console.json'),JSON.stringify(consoleResults));
+  if(!before){const old=JSON.parse(await readFile(join(output,'../before/console.json'),'utf8'));if(JSON.stringify(consoleResults)!==JSON.stringify(old))throw Error('Console changed; inspect before/after console.json');for(const r of results){assert.equal(r.details,0);assert.equal(r.overflow,false);assert(r.rows.every(x=>x.height===40&&x.centerDelta===0));}}
+diff --git a/tests/browser/test_engine_picker.mjs b/tests/browser/test_engine_picker.mjs
+new file mode 100644
+index 0000000..80b6390
+--- /dev/null
++++ b/tests/browser/test_engine_picker.mjs
+@@ -0,0 +1,72 @@
++import assert from 'node:assert/strict';
++import {spawn} from 'node:child_process';
++import {mkdtemp,mkdir,writeFile,readFile,rm} from 'node:fs/promises';
++import {tmpdir} from 'node:os';
++import {resolve,join} from 'node:path';
++import {createServer} from 'node:net';
++const root=resolve(import.meta.dirname,'../..'),before=process.argv.includes('--before');
++const output=join(root,'_bmad-output/implementation-artifacts/stable-status/menu');await mkdir(output,{recursive:true});
++const pause=ms=>new Promise(r=>setTimeout(r,ms));
++const port=()=>new Promise(r=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>r(p));});});
++const serverPort=await port(),debugPort=await port(),base=`http://127.0.0.1:${serverPort}`;
++const profile=await mkdtemp(join(tmpdir(),'thinker-config-entry-'));
++const preference=join(profile,'preferences.json');
++const server=spawn('python',['tests/clean_config_fixture.py',String(serverPort),'--preferences',preference],{cwd:root,stdio:'ignore',windowsHide:true});
++const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--disable-gpu','--no-first-run','--disable-background-timer-throttling',`--remote-debugging-port=${debugPort}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
++let client;const messages=[],exceptions=[],network=[];
++async function waitFor(test){for(let i=0;i<240;i++){try{if(await test())return;}catch{}await pause(100);}throw Error('Timeout');}
++async function connect(url){const socket=new WebSocket(url),pending=new Map(),handlers=new Map();let id=0;socket.addEventListener('message',e=>{const m=JSON.parse(e.data);handlers.get(m.method)?.(m.params);const p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(Error(m.error.message)):p.resolve(m.result);}});await new Promise(r=>socket.addEventListener('open',r,{once:true}));return{socket,on:(m,f)=>handlers.set(m,f),send:(method,params={})=>new Promise((resolve,reject)=>{pending.set(++id,{resolve,reject});socket.send(JSON.stringify({id,method,params}));})};}
++async function value(expression){const r=await client.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;}
++const measure=()=>{
++ const rect=n=>{const r=n.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,right:r.right,bottom:r.bottom}};
++ const visible=n=>{const r=n.getBoundingClientRect(),s=getComputedStyle(n);return r.width>0&&r.height>0&&s.display!=='none'&&s.visibility!=='hidden'&&s.opacity!=='0';};
++ const selector=n=>n.id?'#'+n.id:n.dataset.key?'[data-key="'+n.dataset.key+'"]':n.tagName.toLowerCase()+(n.className?'.'+String(n.className).trim().split(/\s+/).join('.'):'');
++ const panels=Object.fromEntries([...document.querySelectorAll('#panels>.panel')].map(n=>{const clone=n.cloneNode(true);Object.assign(clone.style,{position:'fixed',visibility:'hidden',width:n.getBoundingClientRect().width+'px',height:'max-content',alignSelf:'start'});document.body.append(clone);const natural=clone.getBoundingClientRect().height;clone.remove();const last=[...n.children].filter(visible).at(-1);return[n.id,{...rect(n),natural,tail:rect(n).bottom-1-rect(last).bottom}]}));
++ const elements=[...document.querySelectorAll('h1,h2,p,small,span,button,input,select,summary,label,output,a')].filter(n=>!n.closest('script,style')&&(n.textContent.trim()||n.matches('input'))).map(n=>({selector:selector(n),text:n.matches('input')?n.value:n.textContent.trim(),title:n.title||'',visible:visible(n),font:getComputedStyle(n).fontSize,disabled:Boolean(n.disabled),box:rect(n)}));
++ const rows=[...document.querySelectorAll('.control-row')].map(n=>{const c=n.querySelector('button,input'),label=n.querySelector('label,span');return{label:label?.textContent,...rect(n),control:rect(c),centerDelta:rect(c).y+rect(c).height/2-rect(n).y-rect(n).height/2}});
++ const hint=document.querySelector('#analysis-engine-message'),s=getComputedStyle(hint),clone=hint.cloneNode(true);Object.assign(clone.style,{position:'fixed',width:hint.clientWidth+'px',font:s.font,lineHeight:s.lineHeight,whiteSpace:'normal',height:'auto',maxHeight:'none',overflow:'visible',margin:'0'});clone.style.setProperty('white-space','normal','important');document.body.append(clone);const fullHeight=clone.getBoundingClientRect().height;clone.remove();
++ return{width:innerWidth,panels,rows,elements,hint:{text:hint.textContent,title:hint.title,box:rect(hint),fullHeight,lineHeight:s.lineHeight,whiteSpace:s.whiteSpace,overflow:s.overflow,textOverflow:s.textOverflow},details:document.querySelectorAll('.engine-details').length,fields:[...document.querySelectorAll('#kb-session-duration,#kb-session-min-rate,#kb-session-max-rate,#tc-rating-target')].map(n=>({id:n.id,value:n.value,placeholder:n.placeholder})),startDisabled:document.querySelector('#kb-session-start').disabled,overflow:document.documentElement.scrollWidth>innerWidth};
++};
++const key=async k=>{await client.send('Input.dispatchKeyEvent',{type:'keyDown',key:k,code:k===' '?'Space':k});await client.send('Input.dispatchKeyEvent',{type:'keyUp',key:k,code:k===' '?'Space':k});};
++const boxes=()=>[...document.querySelectorAll('#panels>.panel,.kb-console-module,#oi-zone2,.kb-console-caption,.tc-scout-title')].map(n=>({id:n.id,cls:n.className,rect:n.getBoundingClientRect().toJSON()}));
++try{
++ await waitFor(async()=> (await fetch(base+'/config/load')).ok);await waitFor(async()=> (await fetch(`http://127.0.0.1:${debugPort}/json/list`)).ok);
++ const tab=(await(await fetch(`http://127.0.0.1:${debugPort}/json/list`)).json()).find(t=>t.type==='page');client=await connect(tab.webSocketDebuggerUrl);await client.send('Page.enable');await client.send('Emulation.setFocusEmulationEnabled',{enabled:true});await client.send('Runtime.enable');await client.send('Accessibility.enable');client.on('Runtime.exceptionThrown',e=>exceptions.push(e));client.on('Runtime.consoleAPICalled',e=>messages.push(e));const results=[];const version=await client.send('Browser.getVersion');
++ for(const surface of ['config','console']){
++ await client.send('Page.navigate',{url:base+(surface==='config'?'/config':'/tests/fixtures/userscript_bootstrap.html?delay=20')});const id=surface==='config'?'analysis-engine':'tc-analysis-engine';await waitFor(()=>value(`document.querySelector('#${id}')?.options.length===3&&!document.querySelector('#${id}').disabled`));
++ if(process.argv.includes('--preview')){await value(await readFile(join(root,'frontend/external_config/engine-picker.js'),'utf8'));await value(`ThinkerEnginePicker.enhance(document.querySelector('#${id}'))`);}
++ assert.equal(await value('Boolean(window.ThinkerEnginePicker)'),true,'Picker must be loaded from product');
++ for(const width of surface==='config'?[1440,1280,1024,768,390]:[1086,1280,1440,1920,1033,800]){
++ await client.send('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});await pause(180);await value(`document.querySelector('#${id}').scrollIntoView({block:'center'})`);await pause(100);
++ const pageWidth=await value('document.documentElement.scrollWidth');const closed=await value('('+boxes.toString()+')()');const selectRect=await value(`document.querySelector('#${id}').getBoundingClientRect().toJSON()`);const buttonRect=await value(`document.querySelector('#${id}-picker').getBoundingClientRect().toJSON()`);assert.deepEqual(buttonRect,selectRect);
++ await value(`document.querySelector('#${id}-picker').click()`);const opened=await value('('+boxes.toString()+')()');assert.deepEqual(opened,closed,'Menu changed panel rectangles');
++ const m=await value(`(()=>{const n=document.querySelector('#${id}-options'),s=document.querySelector('#${id}'),r=n.getBoundingClientRect(),b=s.getBoundingClientRect();return{box:r.toJSON(),select:b.toJSON(),color:getComputedStyle(n).backgroundColor,inputColor:getComputedStyle(s).backgroundColor,options:[...n.children].map(n=>({height:n.getBoundingClientRect().height,font:getComputedStyle(n).fontSize,padding:getComputedStyle(n).paddingLeft,color:getComputedStyle(n).color,background:getComputedStyle(n).backgroundColor})),scroll:n.scrollHeight>n.clientHeight,topLayer:n.matches(':popover-open'),animations:n.getAnimations().length,overflow:document.documentElement.scrollWidth>innerWidth}})()`);
++ await writeFile(join(output,'probe.json'),JSON.stringify({surface,width,m},null,2));
++ assert.equal(m.box.width,m.select.width);assert.equal(m.box.x,m.select.x);assert(m.box.bottom<=1000&&m.box.y>=0);assert.equal(m.color,m.inputColor);assert.equal(m.animations,0);assert.equal(m.scroll,false);if(surface==='config')assert.equal(m.overflow,false);assert.equal(await value('document.documentElement.scrollWidth'),pageWidth,'Menu introduced horizontal overflow');assert(m.options.every(o=>o.height===32&&o.padding==='12px'&&parseFloat(o.font)>=11));assert(m.box.y===m.select.bottom+4||m.box.bottom===m.select.y-4);results.push({surface,width,...m});
++ if((surface==='config'&&[1440,390].includes(width))||(surface==='console'&&[1440,1086].includes(width))){const shot=await client.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});await writeFile(join(output,`${surface}-${width}-open.png`),Buffer.from(shot.data,'base64'));assert.equal(await value(`document.querySelector('#${id}-picker').getAttribute('aria-expanded')`),'true');}
++ await key('Escape');assert.equal(await value(`document.querySelector('#${id}-picker').getAttribute('aria-expanded')`),'false');
++ }
++ await value(`document.body.dataset.focusInput='keyboard';document.querySelector('#${id}-picker').focus()`);await key('ArrowDown');await key('End');await key('Enter');await waitFor(()=>value(`document.querySelector('#${id}').value==='komodo-14.1'&&!document.querySelector('#${id}').disabled`));
++ await key(' ');await key('Home');await key('Enter');await waitFor(()=>value(`document.querySelector('#${id}').value==='stockfish-19-1mb'&&!document.querySelector('#${id}').disabled`));
++ await key('Enter');await key('k');await key('Enter');await waitFor(()=>value(`document.querySelector('#${id}').value==='komodo-14.1'&&!document.querySelector('#${id}').disabled`));
++ await key('Enter');await key('Tab');assert.equal(await value(`document.querySelector('#${id}-picker').getAttribute('aria-expanded')`),'false');await value(`document.querySelector('#${id}-picker').click()`);await value("document.body.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}))");assert.equal(await value(`document.querySelector('#${id}-picker').getAttribute('aria-expanded')`),'false');
++ await client.send('Page.reload');await waitFor(()=>value(`document.querySelector('#${id}')?.value==='komodo-14.1'&&!document.querySelector('#${id}').disabled`));
++ if(process.argv.includes('--preview')){await value(await readFile(join(root,'frontend/external_config/engine-picker.js'),'utf8'));await value(`ThinkerEnginePicker.enhance(document.querySelector('#${id}'))`);}
++ await client.send('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});await value(`document.querySelector('#${id}').scrollIntoView({block:'center'})`);await pause(100);
++ await value(`document.querySelector('#${id}-picker').style.visibility='hidden';document.querySelector('#${id}').style.opacity='1'`);
++ const nativeRect=await value(`({...document.querySelector('#${id}').getBoundingClientRect().toJSON(),scrollY:window.scrollY})`);
++ await client.send('Runtime.evaluate',{expression:`document.querySelector('#${id}').showPicker()`,userGesture:true});await pause(100);
++ const nativeShot=await client.send('Page.captureScreenshot',{format:'png',clip:{x:nativeRect.x-4,y:nativeRect.y+nativeRect.scrollY-4,width:nativeRect.width+8,height:142,scale:3}});await writeFile(join(output,`${surface}-native-before-300.png`),Buffer.from(nativeShot.data,'base64'));await key('Escape');await value(`document.querySelector('#${id}').style.opacity='0';document.querySelector('#${id}-picker').style.visibility='visible'`);
++ await value(`document.querySelector('#${id}-picker').click()`);const ax=await client.send('Accessibility.getFullAXTree');assert(ax.nodes.some(n=>n.role?.value==='combobox'&&n.name?.value==='Analysis Engine'));assert(ax.nodes.some(n=>n.role?.value==='listbox'));await key('Escape');
++ const flipped=await value(`(()=>{const source=document.querySelector('#${id}'),s=getComputedStyle(source),host=document.createElement('div');host.style.cssText='position:fixed;left:12px;bottom:8px;width:320px;height:32px;z-index:1000';const n=source.cloneNode(true);n.id='qa-edge-engine';Object.assign(n.style,{width:'100%',height:'32px',margin:'0',opacity:'1',font:s.font,color:s.color,backgroundColor:s.backgroundColor,border:s.border,borderRadius:s.borderRadius});n.disabled=false;host.append(n);document.body.append(host);ThinkerEnginePicker.enhance(n);document.querySelector('#qa-edge-engine-picker').click();const control=document.querySelector('#qa-edge-engine-picker').getBoundingClientRect().toJSON(),menu=document.querySelector('#qa-edge-engine-options').getBoundingClientRect().toJSON();host.remove();return{control,menu,boundaryHarness:true};})()`);assert.equal(flipped.menu.bottom,flipped.control.top-4);results.push({surface,flip:flipped});await pause(100);
++ for(const mode of ['rest','hover','selected','keyboard','disabled']){
++ await value(`document.body.dataset.focusInput='${mode==='keyboard'?'keyboard':'pointer'}';document.querySelector('#${id}-picker').focus();document.querySelector('#${id}-picker').click()`);
++ if(mode==='hover'){const r=await value(`document.querySelector('#${id}-options').children[1].getBoundingClientRect().toJSON()`);await client.send('Input.dispatchMouseEvent',{type:'mouseMoved',x:r.x+20,y:r.y+16});}
++ if(mode==='keyboard')await key('Home');
++ if(mode==='disabled')await value(`document.querySelector('#${id}').disabled=true;ThinkerEnginePicker.enhance(document.querySelector('#${id}'))`);
++ const r=await value(`({...document.querySelector('#${id}-picker').getBoundingClientRect().toJSON(),scrollY:window.scrollY,scrollX:window.scrollX})`);const shot=await client.send('Page.captureScreenshot',{format:'png',clip:{x:r.x+r.scrollX-4,y:r.y+r.scrollY-4,width:r.width+8,height:mode==='disabled'?40:142,scale:3}});await writeFile(join(output,`${surface}-${mode}-300.png`),Buffer.from(shot.data,'base64'));await key('Escape');
++ }
++ await value(`document.querySelector('#${id}').disabled=false;document.querySelector('#${id}').replaceChildren();ThinkerEnginePicker.enhance(document.querySelector('#${id}'));document.querySelector('#${id}-picker').click()`);assert.equal(await value(`document.querySelector('#${id}-picker').getAttribute('aria-expanded')`),'false');
++ }
++ assert.deepEqual(messages,[]);assert.deepEqual(exceptions,[]);await writeFile(join(output,'report.json'),JSON.stringify({version,support:await value("({baseSelect:CSS.supports('appearance','base-select'),popover:'showPopover' in HTMLElement.prototype})"),results,messages,exceptions,preview:process.argv.includes('--preview')},null,2));console.log('PASS engine menu: 11 viewport cases, keyboard, persistence, overlay geometry, colors and quiet console');
++}finally{client?.socket.close();chrome.kill();server.kill();await pause(500);assert(profile.startsWith(join(tmpdir(),'thinker-config-entry-')));await rm(profile,{recursive:true,force:true,maxRetries:6,retryDelay:200});}
+diff --git a/tests/browser/test_status_all_indicators.mjs b/tests/browser/test_status_all_indicators.mjs
+new file mode 100644
+index 0000000..27eeef7
+--- /dev/null
++++ b/tests/browser/test_status_all_indicators.mjs
+@@ -0,0 +1,41 @@
++import assert from 'node:assert/strict';
++import {spawn} from 'node:child_process';
++import {mkdtemp,mkdir,writeFile,readFile,rm} from 'node:fs/promises';
++import {tmpdir} from 'node:os';
++import {resolve,join} from 'node:path';
++import {createServer} from 'node:net';
++const root=resolve(import.meta.dirname,'../..'),before=process.argv.includes('--before');
++const output=join(root,'_bmad-output/implementation-artifacts/stable-status/all-indicators');await mkdir(output,{recursive:true});
++const pause=ms=>new Promise(r=>setTimeout(r,ms));
++const port=()=>new Promise(r=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>r(p));});});
++const serverPort=await port(),debugPort=await port(),base=`http://127.0.0.1:${serverPort}`;
++const profile=await mkdtemp(join(tmpdir(),'thinker-config-entry-'));
++const preference=join(profile,'preferences.json');
++const server=spawn('python',['tests/clean_config_fixture.py',String(serverPort),'--preferences',preference],{cwd:root,stdio:'ignore',windowsHide:true});
++const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--disable-gpu','--no-first-run','--disable-background-timer-throttling',`--remote-debugging-port=${debugPort}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
++let client;const messages=[],exceptions=[],network=[];
++async function waitFor(test){for(let i=0;i<240;i++){try{if(await test())return;}catch{}await pause(100);}throw Error('Timeout');}
++async function connect(url){const socket=new WebSocket(url),pending=new Map(),handlers=new Map();let id=0;socket.addEventListener('message',e=>{const m=JSON.parse(e.data);handlers.get(m.method)?.(m.params);const p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(Error(m.error.message)):p.resolve(m.result);}});await new Promise(r=>socket.addEventListener('open',r,{once:true}));return{socket,on:(m,f)=>handlers.set(m,f),send:(method,params={})=>new Promise((resolve,reject)=>{pending.set(++id,{resolve,reject});socket.send(JSON.stringify({id,method,params}));})};}
++async function value(expression){const r=await client.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;}
++const measure=()=>{
++ const rect=n=>{const r=n.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,right:r.right,bottom:r.bottom}};
++ const visible=n=>{const r=n.getBoundingClientRect(),s=getComputedStyle(n);return r.width>0&&r.height>0&&s.display!=='none'&&s.visibility!=='hidden'&&s.opacity!=='0';};
++ const selector=n=>n.id?'#'+n.id:n.dataset.key?'[data-key="'+n.dataset.key+'"]':n.tagName.toLowerCase()+(n.className?'.'+String(n.className).trim().split(/\s+/).join('.'):'');
++ const panels=Object.fromEntries([...document.querySelectorAll('#panels>.panel')].map(n=>{const clone=n.cloneNode(true);Object.assign(clone.style,{position:'fixed',visibility:'hidden',width:n.getBoundingClientRect().width+'px',height:'max-content',alignSelf:'start'});document.body.append(clone);const natural=clone.getBoundingClientRect().height;clone.remove();const last=[...n.children].filter(visible).at(-1);return[n.id,{...rect(n),natural,tail:rect(n).bottom-1-rect(last).bottom}]}));
++ const elements=[...document.querySelectorAll('h1,h2,p,small,span,button,input,select,summary,label,output,a')].filter(n=>!n.closest('script,style')&&(n.textContent.trim()||n.matches('input'))).map(n=>({selector:selector(n),text:n.matches('input')?n.value:n.textContent.trim(),title:n.title||'',visible:visible(n),font:getComputedStyle(n).fontSize,disabled:Boolean(n.disabled),box:rect(n)}));
++ const rows=[...document.querySelectorAll('.control-row')].map(n=>{const c=n.querySelector('button,input'),label=n.querySelector('label,span');return{label:label?.textContent,...rect(n),control:rect(c),centerDelta:rect(c).y+rect(c).height/2-rect(n).y-rect(n).height/2}});
++ const hint=document.querySelector('#analysis-engine-message'),s=getComputedStyle(hint),clone=hint.cloneNode(true);Object.assign(clone.style,{position:'fixed',width:hint.clientWidth+'px',font:s.font,lineHeight:s.lineHeight,whiteSpace:'normal',height:'auto',maxHeight:'none',overflow:'visible',margin:'0'});clone.style.setProperty('white-space','normal','important');document.body.append(clone);const fullHeight=clone.getBoundingClientRect().height;clone.remove();
++ return{width:innerWidth,panels,rows,elements,hint:{text:hint.textContent,title:hint.title,box:rect(hint),fullHeight,lineHeight:s.lineHeight,whiteSpace:s.whiteSpace,overflow:s.overflow,textOverflow:s.textOverflow},details:document.querySelectorAll('.engine-details').length,fields:[...document.querySelectorAll('#kb-session-duration,#kb-session-min-rate,#kb-session-max-rate,#tc-rating-target')].map(n=>({id:n.id,value:n.value,placeholder:n.placeholder})),startDisabled:document.querySelector('#kb-session-start').disabled,overflow:document.documentElement.scrollWidth>innerWidth};
++};
++const clients=[];
++try{
++ await waitFor(async()=> (await fetch(base+'/config/load')).ok);await waitFor(async()=> (await fetch(`http://127.0.0.1:${debugPort}/json/list`)).ok);
++ for(const surface of ['config','console']){
++ const tab=await(await fetch(`http://127.0.0.1:${debugPort}/json/new?about:blank`,{method:'PUT'})).json();client=await connect(tab.webSocketDebuggerUrl);clients.push({surface,client});await client.send('Page.enable');await client.send('Emulation.setFocusEmulationEnabled',{enabled:true});await client.send('Runtime.enable');client.on('Runtime.exceptionThrown',e=>exceptions.push(e));await client.send('Page.navigate',{url:base+(surface==='config'?'/config':'/tests/fixtures/userscript_bootstrap.html?delay=20')});await waitFor(()=>value(surface==='config'?"document.querySelector('#analysis-engine-state')?.textContent==='Ready'":"document.querySelector('.tc-analysis-status')?.textContent==='Ready'"));
++ }
++ await pause(6500);
++ for(const item of clients){client=item.client;await value(`(()=>{document.body.dataset.focusInput='keyboard';document.querySelector('.tc-engine-picker').focus({preventScroll:true});window.qaStable={records:[],nodes:[],cls:0};for(const selector of ['#connection','#userscript-connection','#execution-state','#client-build-state','#analysis-engine-state','#analysis-engine-message','#engine-retry','#save-state','#kb-session-phase','#kb-session-ttl','#kb-session-observed','#kb-session-raw','#session-availability','#banner-display-state','.tc-analysis-status','#tc-analysis-message','.tc-analysis-feedback','.tc-analysis-notice button','.tc-engine-picker']){const node=document.querySelector(selector);if(!node)continue;qaStable.nodes.push({selector,node});new MutationObserver(records=>qaStable.records.push({selector,count:records.length,text:node.textContent})).observe(node,{attributes:true,childList:true,characterData:true,subtree:true});}new PerformanceObserver(list=>{for(const e of list.getEntries())if(!e.hadRecentInput)qaStable.cls+=e.value}).observe({type:'layout-shift'});})()`);}
++ for(let i=0;i<60;i++)await pause(1000);
++ const results=[];for(const item of clients){client=item.client;const r=await value('({records:qaStable.records,cls:qaStable.cls,recreated:qaStable.nodes.filter(({selector,node})=>document.querySelector(selector)!==node).map(({selector})=>selector),selectors:qaStable.nodes.map(({selector})=>selector)})');assert.deepEqual(r.records,[]);assert.equal(r.cls,0);assert.deepEqual(r.recreated,[]);results.push({surface:item.surface,...r});}
++ assert.deepEqual(exceptions,[]);await writeFile(join(output,'report.json'),JSON.stringify({seconds:60,results,exceptions},null,2));console.log('PASS60s all connection, engine, Auto Play, banner and focused picker indicators: zero mutations/recreation/CLS');
++}finally{for(const item of clients)item.client.socket.close();chrome.kill();server.kill();await pause(500);assert(profile.startsWith(join(tmpdir(),'thinker-config-entry-')));await rm(profile,{recursive:true,force:true,maxRetries:6,retryDelay:200});}

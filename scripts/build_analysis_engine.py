@@ -13,6 +13,7 @@ def main():
     target = ROOT / "script.js"
     current = target.read_text(encoding="utf8")
     source = (ROOT / "frontend/external_config/status-runtime.js").read_text(encoding="utf-8-sig").rstrip()
+    source += "\n" + (ROOT / "frontend/external_config/engine-picker.js").read_text(encoding="utf-8-sig").rstrip()
     source += "\n" + (ROOT / "frontend/eval_bar/engine-selection.js").read_text(encoding="utf-8-sig").rstrip()
     source += "\n" + (ROOT / "frontend/eval_bar/engine-layout.js").read_text(encoding="utf-8-sig").rstrip()
     source += "\n" + (ROOT / "frontend/eval_bar/scout-finish.js").read_text(encoding="utf-8-sig").rstrip()

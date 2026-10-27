@@ -1,0 +1,62 @@
+[
+  {
+    "width": 1440,
+    "active": false,
+    "componentColorsEqual": true,
+    "elements": 160
+  },
+  {
+    "width": 1280,
+    "active": false,
+    "componentColorsEqual": true,
+    "elements": 160
+  },
+  {
+    "width": 1024,
+    "active": false,
+    "componentColorsEqual": true,
+    "elements": 160
+  },
+  {
+    "width": 768,
+    "active": false,
+    "componentColorsEqual": true,
+    "elements": 160
+  },
+  {
+    "width": 390,
+    "active": false,
+    "componentColorsEqual": true,
+    "elements": 160
+  },
+  {
+    "width": 1440,
+    "active": true,
+    "componentColorsEqual": true,
+    "elements": 160
+  },
+  {
+    "width": 1280,
+    "active": true,
+    "componentColorsEqual": true,
+    "elements": 160
+  },
+  {
+    "width": 1024,
+    "active": true,
+    "componentColorsEqual": true,
+    "elements": 160
+  },
+  {
+    "width": 768,
+    "active": true,
+    "componentColorsEqual": true,
+    "elements": 160
+  },
+  {
+    "width": 390,
+    "active": true,
+    "componentColorsEqual": true,
+    "elements": 160
+  }
+]

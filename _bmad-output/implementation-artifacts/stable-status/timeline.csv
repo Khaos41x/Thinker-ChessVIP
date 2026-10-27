@@ -1,0 +1,137 @@
+phase,surface,secondsFromOutage,selector,value
+before,config,0.891,#connection,Local server offline
+before,config,0.891,#userscript-connection,Chess.com: connection unknown
+before,config,0.891,#save-state,Cannot reach the local server. Check that it is running.
+before,config,0.891,#connection,Local server offline
+before,config,0.891,#userscript-connection,Chess.com: connection unknown
+before,config,0.891,#save-state,Cannot reach the local server. Check that it is running.
+before,config,0.893,#execution-state,Analysis: unavailable
+before,config,0.893,#analysis-engine-state,Connection Lost
+before,config,0.893,#analysis-engine-message,"Engine registry unavailable. Check the local server, then Retry."
+before,config,0.893,#execution-state,Analysis: unavailable
+before,config,0.893,#analysis-engine-state,Connection Lost
+before,config,0.893,#analysis-engine-message,"Engine registry unavailable. Check the local server, then Retry."
+before,config,2.909,#analysis-engine-state,Initializing
+before,config,2.909,#analysis-engine-state,Initializing
+before,config,2.913,#analysis-engine-state,Connection Lost
+before,config,2.913,#analysis-engine-state,Connection Lost
+before,config,4.923,#analysis-engine-state,Initializing
+before,config,4.923,#analysis-engine-state,Initializing
+before,config,4.927,#analysis-engine-state,Connection Lost
+before,config,4.927,#analysis-engine-state,Connection Lost
+before,config,6.937,#analysis-engine-state,Initializing
+before,config,6.937,#analysis-engine-state,Initializing
+before,config,6.94,#analysis-engine-state,Connection Lost
+before,config,6.94,#analysis-engine-state,Connection Lost
+before,config,8.983,#analysis-engine-state,Initializing
+before,config,8.983,#analysis-engine-state,Initializing
+before,config,9.012,#analysis-engine-state,Connection Lost
+before,config,9.012,#analysis-engine-state,Connection Lost
+before,config,10.99,#analysis-engine-state,Initializing
+before,config,10.99,#analysis-engine-state,Initializing
+before,config,10.991,#analysis-engine-state,Connection Lost
+before,config,10.991,#analysis-engine-state,Connection Lost
+before,config,13.004,#analysis-engine-state,Initializing
+before,config,13.004,#analysis-engine-state,Initializing
+before,config,13.005,#analysis-engine-state,Connection Lost
+before,config,13.005,#analysis-engine-state,Connection Lost
+before,config,15.022,#analysis-engine-state,Initializing
+before,config,15.022,#analysis-engine-state,Initializing
+before,config,15.024,#analysis-engine-state,Connection Lost
+before,config,15.024,#analysis-engine-state,Connection Lost
+before,config,17.03,#analysis-engine-state,Initializing
+before,config,17.03,#analysis-engine-state,Initializing
+before,config,17.031,#analysis-engine-state,Connection Lost
+before,config,17.031,#analysis-engine-state,Connection Lost
+before,config,19.044,#analysis-engine-state,Initializing
+before,config,19.044,#analysis-engine-state,Initializing
+before,config,19.046,#analysis-engine-state,Connection Lost
+before,config,19.046,#analysis-engine-state,Connection Lost
+before,config,21.053,#analysis-engine-state,Initializing
+before,config,21.053,#analysis-engine-state,Initializing
+before,config,21.055,#analysis-engine-state,Connection Lost
+before,config,21.055,#analysis-engine-state,Connection Lost
+before,config,23.073,#analysis-engine-state,Initializing
+before,config,23.073,#analysis-engine-state,Initializing
+before,config,23.078,#analysis-engine-state,Connection Lost
+before,config,23.078,#analysis-engine-state,Connection Lost
+before,config,25.079,#analysis-engine-state,Initializing
+before,config,25.079,#analysis-engine-state,Initializing
+before,config,25.081,#analysis-engine-state,Connection Lost
+before,config,25.081,#analysis-engine-state,Connection Lost
+before,config,27.097,#analysis-engine-state,Initializing
+before,config,27.097,#analysis-engine-state,Initializing
+before,config,27.099,#analysis-engine-state,Connection Lost
+before,config,27.099,#analysis-engine-state,Connection Lost
+before,config,29.102,#analysis-engine-state,Initializing
+before,config,29.102,#analysis-engine-state,Initializing
+before,config,29.104,#analysis-engine-state,Connection Lost
+before,config,29.104,#analysis-engine-state,Connection Lost
+before,config,31.115,#analysis-engine-state,Initializing
+before,config,31.115,#analysis-engine-state,Initializing
+before,config,31.118,#analysis-engine-state,Connection Lost
+before,config,31.118,#analysis-engine-state,Connection Lost
+before,config,33.119,#analysis-engine-state,Initializing
+before,config,33.119,#analysis-engine-state,Initializing
+before,config,33.121,#analysis-engine-state,Connection Lost
+before,config,33.121,#analysis-engine-state,Connection Lost
+before,config,35.133,#analysis-engine-state,Initializing
+before,config,35.133,#analysis-engine-state,Initializing
+before,config,35.136,#analysis-engine-state,Connection Lost
+before,config,35.136,#analysis-engine-state,Connection Lost
+before,config,37.149,#analysis-engine-state,Initializing
+before,config,37.149,#analysis-engine-state,Initializing
+before,config,37.152,#analysis-engine-state,Connection Lost
+before,config,37.152,#analysis-engine-state,Connection Lost
+before,config,39.17,#analysis-engine-state,Initializing
+before,config,39.17,#analysis-engine-state,Initializing
+before,config,39.191,#analysis-engine-state,Connection Lost
+before,config,39.191,#analysis-engine-state,Connection Lost
+before,config,41.18,#analysis-engine-state,Initializing
+before,config,41.18,#analysis-engine-state,Initializing
+before,config,41.181,#analysis-engine-state,Connection Lost
+before,config,41.181,#analysis-engine-state,Connection Lost
+before,config,43.189,#analysis-engine-state,Initializing
+before,config,43.189,#analysis-engine-state,Initializing
+before,config,43.191,#analysis-engine-state,Connection Lost
+before,config,43.191,#analysis-engine-state,Connection Lost
+before,config,45.197,#analysis-engine-state,Initializing
+before,config,45.197,#analysis-engine-state,Initializing
+before,config,45.199,#analysis-engine-state,Connection Lost
+before,config,45.199,#analysis-engine-state,Connection Lost
+before,config,47.217,#connection,Local server connected
+before,config,47.217,#userscript-connection,Chess.com: disconnected
+before,config,47.217,#client-build-state,Local version 2026-10-26.5 · Reload Chess.com after updating the userscript.
+before,config,47.217,#analysis-engine-state,Initializing
+before,config,47.217,#save-state,Settings saved · Chess.com disconnected
+before,config,47.217,#connection,Local server connected
+before,config,47.217,#userscript-connection,Chess.com: disconnected
+before,config,47.217,#client-build-state,Local version 2026-10-26.5 · Reload Chess.com after updating the userscript.
+before,config,47.217,#analysis-engine-state,Initializing
+before,config,47.217,#save-state,Settings saved · Chess.com disconnected
+before,config,47.232,#execution-state,Analysis: inactive
+before,config,47.232,#analysis-engine-state,Ready
+before,config,47.232,#analysis-engine-message,Fast Analysis · Lichess Stockfish with a 1.11 MiB NNUE network. Analysis starts only in an authorized context.
+before,config,47.232,#execution-state,Analysis: inactive
+before,config,47.232,#analysis-engine-state,Ready
+before,config,47.232,#analysis-engine-message,Fast Analysis · Lichess Stockfish with a 1.11 MiB NNUE network. Analysis starts only in an authorized context.
+before,console,0.237,.tc-analysis-status,Error
+before,console,0.237,#tc-analysis-message,Cannot reach analysis engine
+before,console,0.237,.tc-analysis-status,Error
+before,console,0.237,#tc-analysis-message,Cannot reach analysis engine
+after,config,6.857,#execution-state,Analysis: unavailable
+after,config,6.857,#analysis-engine-state,Connection Lost
+after,config,6.857,#analysis-engine-message,"Engine registry unavailable. Check the local server, then Retry."
+after,config,6.859,#connection,Local server offline
+after,config,6.859,#userscript-connection,Chess.com: connection unknown
+after,config,6.859,#save-state,Cannot reach the local server. Check that it is running.
+after,config,60.908,#execution-state,Analysis: inactive
+after,config,60.908,#analysis-engine-state,Ready
+after,config,60.908,#analysis-engine-message,Fast Analysis · Lichess Stockfish with a 1.11 MiB NNUE network. Analysis starts only in an authorized context.
+after,config,60.91,#connection,Local server connected
+after,config,60.91,#userscript-connection,Chess.com: connected
+after,config,60.91,#save-state,Applied in a Chess.com tab
+after,console,6.056,.tc-analysis-status,Error
+after,console,6.056,#tc-analysis-message,Cannot reach analysis engine
+after,console,60.109,.tc-analysis-status,Ready
+after,console,60.109,#tc-analysis-message,Fast Analysis · Stockfish 19 · 1MB

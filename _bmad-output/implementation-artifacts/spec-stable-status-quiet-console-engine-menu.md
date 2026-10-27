@@ -2,9 +2,9 @@
 title: Stable status, quiet diagnostics and engine menu
 type: bugfix
 created: 2026-10-27
-status: in-progress
+status: done
 baseline_commit: a7c0100
-review_loop_iteration: 0
+review_loop_iteration: 1
 context: []
 ---
 
@@ -46,13 +46,13 @@ Ask first only for new copy or a layout change that violates the approved dimens
 
 ## Tasks & Acceptance
 
-- [ ] Audit communication, status writers, CSS/JS motion and90s observations before edits.
-- [ ] Add minimal shared difference setters and connection-health policy; apply to both status surfaces.
-- [ ] Preserve status node identities, accepted states during revalidation, fixed error notice height and explicit-action loading.
-- [ ] Audit every production diagnostic; leave only opt-in debug and handled expected failures.
-- [ ] Add shared accessible engine picker retaining native select IDs/change/value/persistence.
-- [ ] Run browser status, fault, recovery, visibility, keyboard, menu geometry/color and console-origin tests.
-- [ ] Rebuild deterministically, document actual coverage/remaining limitations and commit each block separately.
+- [x] Audit communication, status writers, CSS/JS motion and90s observations before edits.
+- [x] Add minimal shared difference setters and connection-health policy; apply to both status surfaces.
+- [x] Preserve status node identities, accepted states during revalidation, fixed error notice height and explicit-action loading.
+- [x] Audit every production diagnostic; leave only opt-in debug and handled expected failures.
+- [x] Add shared accessible engine picker retaining native select IDs/change/value/persistence.
+- [x] Run browser status, fault, recovery, visibility, keyboard, menu geometry/color and console-origin tests.
+- [x] Rebuild deterministically, document actual coverage/remaining limitations and commit each block separately.
 
 Given stable backend responses for60s, indicators must have zero mutations/recreation and CLS0 after settling. Given one failed check, visible status remains. Given a sustained outage, existing error copy appears once after threshold with no status animation. Given reconnection or Retry, existing states recover without an intermediate background flash. Given menu selection by keyboard or pointer, the existing change path acknowledges and persists the engine. Given open/closed menu, all console panel/title rectangles and component colors remain equal. No product copy is introduced.
 
@@ -63,3 +63,16 @@ Browser documentation confirms base-select styling is not uniformly supported; u
 ## Verification
 
 Use Node/Chromium CDP regression scripts, existing Flask fixture and registry APIs, deterministic build checks and targeted session/engine tests. Record raw observations, screenshots and per-block diffs under `stable-status`. Preserve the existing Config alignment limitation from the previous task rather than claiming it is newly solved.
+
+## Review outcome
+
+Blind and edge review findings were patched: operational hidden-tab session relay stays active/recoverable; registry backoff is independent; picker focus styling is computed once before writing; popup navigation changes only menu scrollTop; pending offline preferences resume on recovery. Session/revision/geometry regressions passed. No remaining introduced blocker was reported by the edge reviewer; native authenticated verification was blocked by the Computer Use URL policy and is explicitly not claimed.
+
+## Suggested Review Order
+
+- Shared difference setters and health policy: [status-runtime.js](../../frontend/external_config/status-runtime.js#L1).
+- Accepted status projection and independent checks: [panel.js](../../frontend/external_config/panel.js#L1).
+- Operational sync and queued recovery: [config-connection.js](../../frontend/eval_bar/config-connection.js#L1), [connection-resume.js](../../frontend/eval_bar/connection-resume.js#L1).
+- Native select enhancement and accessible popup: [engine-picker.js](../../frontend/external_config/engine-picker.js#L1).
+- Real transport interruption and production silence: [quiet regression](../../tests/browser/test_status_console_quiet.mjs#L1).
+- Evidence and limitations: [report](stable-status/REPORT.md).

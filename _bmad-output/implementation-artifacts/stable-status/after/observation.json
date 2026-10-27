@@ -3,796 +3,860 @@
     "surface": "config",
     "requests": [
       {
-        "at": 11,
+        "at": 10,
         "url": "/config"
       },
       {
-        "at": 127,
+        "at": 244,
         "url": "/config/assets/panel.css"
       },
       {
-        "at": 127,
+        "at": 244,
         "url": "/config/assets/session-control.js"
       },
       {
-        "at": 128,
+        "at": 245,
         "url": "/config/assets/status-runtime.js"
       },
       {
-        "at": 128,
+        "at": 245,
+        "url": "/config/assets/engine-picker.js"
+      },
+      {
+        "at": 246,
         "url": "/config/assets/panel.js"
       },
       {
-        "at": 129,
+        "at": 246,
         "url": "/config/assets/rating-tracker.js"
       },
       {
-        "at": 218,
+        "at": 326,
         "url": "/config/load"
       },
       {
-        "at": 218,
+        "at": 327,
         "url": "/config/status"
       },
       {
-        "at": 243,
+        "at": 348,
         "url": "/config/engines"
       },
       {
-        "at": 2266,
+        "at": 2429,
         "url": "/config/load"
       },
       {
-        "at": 2267,
+        "at": 2431,
         "url": "/config/status"
       },
       {
-        "at": 2320,
+        "at": 2432,
         "url": "/config/engines"
       },
       {
-        "at": 4569,
+        "at": 4893,
         "url": "/config/load"
       },
       {
-        "at": 4570,
+        "at": 4894,
         "url": "/config/status"
       },
       {
-        "at": 4602,
+        "at": 4903,
         "url": "/config/engines"
       },
       {
-        "at": 6631,
+        "at": 6921,
         "url": "/config/load"
       },
       {
-        "at": 6631,
+        "at": 6921,
         "url": "/config/status"
       },
       {
-        "at": 6639,
+        "at": 6923,
         "url": "/config/engines"
       },
       {
-        "at": 8649,
+        "at": 8948,
         "url": "/config/load"
       },
       {
-        "at": 8649,
+        "at": 8948,
         "url": "/config/status"
       },
       {
-        "at": 8658,
+        "at": 8950,
         "url": "/config/engines"
       },
       {
-        "at": 10679,
+        "at": 10973,
+        "url": "/config/engines"
+      },
+      {
+        "at": 10975,
+        "url": "/config/load"
+      },
+      {
+        "at": 10976,
+        "url": "/config/status"
+      },
+      {
+        "at": 13058,
+        "url": "/config/engines"
+      },
+      {
+        "at": 13059,
+        "url": "/config/load"
+      },
+      {
+        "at": 13059,
+        "url": "/config/status"
+      },
+      {
+        "at": 15089,
+        "url": "/config/engines"
+      },
+      {
+        "at": 15090,
+        "url": "/config/load"
+      },
+      {
+        "at": 15091,
+        "url": "/config/status"
+      },
+      {
+        "at": 17114,
+        "url": "/config/engines"
+      },
+      {
+        "at": 17123,
+        "url": "/config/load"
+      },
+      {
+        "at": 17124,
+        "url": "/config/status"
+      },
+      {
+        "at": 19172,
+        "url": "/config/engines"
+      },
+      {
+        "at": 19176,
         "url": "/config/load"
       },
       {
-        "at": 10680,
+        "at": 19177,
         "url": "/config/status"
       },
       {
-        "at": 10689,
+        "at": 21194,
         "url": "/config/engines"
       },
       {
-        "at": 13930,
+        "at": 21197,
         "url": "/config/load"
       },
       {
-        "at": 13930,
+        "at": 21197,
         "url": "/config/status"
       },
       {
-        "at": 15230,
+        "at": 23230,
         "url": "/config/engines"
       },
       {
-        "at": 17445,
+        "at": 23235,
         "url": "/config/load"
       },
       {
-        "at": 17445,
+        "at": 23236,
         "url": "/config/status"
       },
       {
-        "at": 17461,
+        "at": 25263,
         "url": "/config/engines"
       },
       {
-        "at": 19480,
+        "at": 25268,
         "url": "/config/load"
       },
       {
-        "at": 19481,
+        "at": 25269,
         "url": "/config/status"
       },
       {
-        "at": 19491,
+        "at": 27289,
         "url": "/config/engines"
       },
       {
-        "at": 21508,
+        "at": 27290,
         "url": "/config/load"
       },
       {
-        "at": 21509,
+        "at": 27290,
         "url": "/config/status"
       },
       {
-        "at": 21533,
+        "at": 29304,
         "url": "/config/engines"
       },
       {
-        "at": 23559,
+        "at": 29306,
         "url": "/config/load"
       },
       {
-        "at": 23560,
+        "at": 29306,
         "url": "/config/status"
       },
       {
-        "at": 23582,
+        "at": 31323,
         "url": "/config/engines"
       },
       {
-        "at": 25770,
+        "at": 31324,
         "url": "/config/load"
       },
       {
-        "at": 25770,
+        "at": 31324,
         "url": "/config/status"
       },
       {
-        "at": 25783,
+        "at": 33340,
         "url": "/config/engines"
       },
       {
-        "at": 27988,
+        "at": 33341,
         "url": "/config/load"
       },
       {
-        "at": 27989,
+        "at": 33342,
         "url": "/config/status"
       },
       {
-        "at": 27998,
+        "at": 35365,
         "url": "/config/engines"
       },
       {
-        "at": 30018,
+        "at": 35366,
         "url": "/config/load"
       },
       {
-        "at": 30018,
+        "at": 35366,
         "url": "/config/status"
       },
       {
-        "at": 30029,
+        "at": 37388,
         "url": "/config/engines"
       },
       {
-        "at": 32125,
+        "at": 37389,
         "url": "/config/load"
       },
       {
-        "at": 32126,
+        "at": 37390,
         "url": "/config/status"
       },
       {
-        "at": 32156,
+        "at": 39409,
         "url": "/config/engines"
       },
       {
-        "at": 34166,
+        "at": 39410,
         "url": "/config/load"
       },
       {
-        "at": 34166,
+        "at": 39411,
         "url": "/config/status"
       },
       {
-        "at": 34173,
+        "at": 41425,
         "url": "/config/engines"
       },
       {
-        "at": 36181,
+        "at": 41426,
         "url": "/config/load"
       },
       {
-        "at": 36181,
+        "at": 41426,
         "url": "/config/status"
       },
       {
-        "at": 36188,
+        "at": 43437,
         "url": "/config/engines"
       },
       {
-        "at": 38203,
+        "at": 43439,
         "url": "/config/load"
       },
       {
-        "at": 38203,
+        "at": 43440,
         "url": "/config/status"
       },
       {
-        "at": 38213,
+        "at": 45471,
         "url": "/config/engines"
       },
       {
-        "at": 40229,
+        "at": 45471,
         "url": "/config/load"
       },
       {
-        "at": 40229,
+        "at": 45472,
         "url": "/config/status"
       },
       {
-        "at": 40236,
+        "at": 47498,
         "url": "/config/engines"
       },
       {
-        "at": 42256,
+        "at": 47500,
         "url": "/config/load"
       },
       {
-        "at": 42256,
+        "at": 47501,
         "url": "/config/status"
       },
       {
-        "at": 42267,
+        "at": 49520,
         "url": "/config/engines"
       },
       {
-        "at": 44291,
+        "at": 49521,
         "url": "/config/load"
       },
       {
-        "at": 44292,
+        "at": 49521,
         "url": "/config/status"
       },
       {
-        "at": 44390,
+        "at": 51544,
         "url": "/config/engines"
       },
       {
-        "at": 46419,
+        "at": 51544,
         "url": "/config/load"
       },
       {
-        "at": 46419,
+        "at": 51544,
         "url": "/config/status"
       },
       {
-        "at": 46429,
+        "at": 53567,
         "url": "/config/engines"
       },
       {
-        "at": 48442,
+        "at": 53577,
         "url": "/config/load"
       },
       {
-        "at": 48442,
+        "at": 53577,
         "url": "/config/status"
       },
       {
-        "at": 48450,
+        "at": 55590,
         "url": "/config/engines"
       },
       {
-        "at": 50477,
+        "at": 55591,
         "url": "/config/load"
       },
       {
-        "at": 50478,
+        "at": 55591,
         "url": "/config/status"
       },
       {
-        "at": 50492,
+        "at": 57598,
         "url": "/config/engines"
       },
       {
-        "at": 52509,
+        "at": 57603,
         "url": "/config/load"
       },
       {
-        "at": 52509,
+        "at": 57604,
         "url": "/config/status"
       },
       {
-        "at": 52528,
+        "at": 59618,
         "url": "/config/engines"
       },
       {
-        "at": 54596,
+        "at": 59620,
         "url": "/config/load"
       },
       {
-        "at": 54597,
+        "at": 59620,
         "url": "/config/status"
       },
       {
-        "at": 54654,
+        "at": 61642,
         "url": "/config/engines"
       },
       {
-        "at": 56679,
+        "at": 61653,
         "url": "/config/load"
       },
       {
-        "at": 56679,
+        "at": 61654,
         "url": "/config/status"
       },
       {
-        "at": 56799,
+        "at": 63664,
         "url": "/config/engines"
       },
       {
-        "at": 58815,
+        "at": 63669,
         "url": "/config/load"
       },
       {
-        "at": 58815,
+        "at": 63669,
         "url": "/config/status"
       },
       {
-        "at": 58821,
+        "at": 65675,
         "url": "/config/engines"
       },
       {
-        "at": 60834,
+        "at": 65680,
         "url": "/config/load"
       },
       {
-        "at": 60834,
+        "at": 65680,
         "url": "/config/status"
       },
       {
-        "at": 60843,
+        "at": 67684,
         "url": "/config/engines"
       },
       {
-        "at": 62861,
+        "at": 67689,
         "url": "/config/load"
       },
       {
-        "at": 62861,
+        "at": 67689,
         "url": "/config/status"
       },
       {
-        "at": 62868,
+        "at": 69691,
         "url": "/config/engines"
       },
       {
-        "at": 64877,
+        "at": 69699,
         "url": "/config/load"
       },
       {
-        "at": 64878,
+        "at": 69699,
         "url": "/config/status"
       },
       {
-        "at": 64886,
+        "at": 71703,
         "url": "/config/engines"
       },
       {
-        "at": 66899,
+        "at": 71709,
         "url": "/config/load"
       },
       {
-        "at": 66899,
+        "at": 71709,
         "url": "/config/status"
       },
       {
-        "at": 66906,
+        "at": 73720,
         "url": "/config/engines"
       },
       {
-        "at": 68917,
+        "at": 73722,
         "url": "/config/load"
       },
       {
-        "at": 68917,
+        "at": 73722,
         "url": "/config/status"
       },
       {
-        "at": 68924,
+        "at": 75735,
         "url": "/config/engines"
       },
       {
-        "at": 70942,
+        "at": 75735,
         "url": "/config/load"
       },
       {
-        "at": 70942,
+        "at": 75736,
         "url": "/config/status"
       },
       {
-        "at": 70949,
+        "at": 77756,
         "url": "/config/engines"
       },
       {
-        "at": 73354,
+        "at": 77757,
         "url": "/config/load"
       },
       {
-        "at": 73354,
+        "at": 77758,
         "url": "/config/status"
       },
       {
-        "at": 73391,
+        "at": 79770,
         "url": "/config/engines"
       },
       {
-        "at": 75437,
+        "at": 79771,
         "url": "/config/load"
       },
       {
-        "at": 75438,
+        "at": 79771,
         "url": "/config/status"
       },
       {
-        "at": 75449,
+        "at": 81781,
         "url": "/config/engines"
       },
       {
-        "at": 77459,
+        "at": 81782,
         "url": "/config/load"
       },
       {
-        "at": 77459,
+        "at": 81783,
         "url": "/config/status"
       },
       {
-        "at": 77466,
+        "at": 83805,
         "url": "/config/engines"
       },
       {
-        "at": 79483,
+        "at": 83806,
         "url": "/config/load"
       },
       {
-        "at": 79483,
+        "at": 83806,
         "url": "/config/status"
       },
       {
-        "at": 79835,
+        "at": 85819,
         "url": "/config/engines"
       },
       {
-        "at": 82512,
+        "at": 85819,
         "url": "/config/load"
       },
       {
-        "at": 82519,
+        "at": 85820,
         "url": "/config/status"
       },
       {
-        "at": 83307,
+        "at": 87827,
         "url": "/config/engines"
       },
       {
-        "at": 85376,
+        "at": 87833,
         "url": "/config/load"
       },
       {
-        "at": 85376,
+        "at": 87833,
         "url": "/config/status"
       },
       {
-        "at": 85412,
+        "at": 89840,
         "url": "/config/engines"
       },
       {
-        "at": 87836,
+        "at": 89846,
         "url": "/config/load"
       },
       {
-        "at": 87836,
+        "at": 89846,
         "url": "/config/status"
       },
       {
-        "at": 87879,
+        "at": 91862,
         "url": "/config/engines"
       },
       {
-        "at": 89935,
+        "at": 91863,
         "url": "/config/load"
       },
       {
-        "at": 89935,
+        "at": 91863,
         "url": "/config/status"
       },
       {
-        "at": 90005,
+        "at": 93893,
         "url": "/config/engines"
       },
       {
-        "at": 92024,
+        "at": 93893,
         "url": "/config/load"
       },
       {
-        "at": 92025,
+        "at": 93894,
         "url": "/config/status"
       },
       {
-        "at": 92032,
+        "at": 95923,
         "url": "/config/engines"
       },
       {
-        "at": 94053,
+        "at": 95924,
         "url": "/config/load"
       },
       {
-        "at": 94054,
+        "at": 95928,
         "url": "/config/status"
       },
       {
-        "at": 94062,
+        "at": 97968,
         "url": "/config/engines"
       },
       {
-        "at": 96090,
+        "at": 97969,
         "url": "/config/load"
       },
       {
-        "at": 96091,
+        "at": 97970,
         "url": "/config/status"
       },
       {
-        "at": 96107,
+        "at": 99982,
         "url": "/config/engines"
       },
       {
-        "at": 98141,
+        "at": 99988,
         "url": "/config/load"
       },
       {
-        "at": 98142,
+        "at": 99988,
         "url": "/config/status"
       },
       {
-        "at": 98159,
+        "at": 101996,
         "url": "/config/engines"
       },
       {
-        "at": 100196,
+        "at": 101996,
         "url": "/config/load"
       },
       {
-        "at": 100196,
+        "at": 101997,
         "url": "/config/status"
       },
       {
-        "at": 100199,
+        "at": 106003,
         "url": "/config/engines"
       },
       {
-        "at": 102213,
+        "at": 106004,
         "url": "/config/load"
       },
       {
-        "at": 102213,
+        "at": 106004,
         "url": "/config/status"
       },
       {
-        "at": 102215,
+        "at": 114009,
         "url": "/config/engines"
       },
       {
-        "at": 106230,
+        "at": 114011,
         "url": "/config/load"
       },
       {
-        "at": 106230,
+        "at": 114011,
         "url": "/config/status"
       },
       {
-        "at": 106234,
+        "at": 130027,
         "url": "/config/engines"
       },
       {
-        "at": 114261,
+        "at": 130027,
         "url": "/config/load"
       },
       {
-        "at": 114262,
+        "at": 130028,
         "url": "/config/status"
       },
       {
-        "at": 114269,
+        "at": 160041,
         "url": "/config/engines"
       },
       {
-        "at": 130281,
+        "at": 160042,
         "url": "/config/load"
       },
       {
-        "at": 130281,
+        "at": 160042,
         "url": "/config/status"
       },
       {
-        "at": 130284,
+        "at": 162067,
         "url": "/config/engines"
       },
       {
-        "at": 160294,
+        "at": 162068,
         "url": "/config/load"
       },
       {
-        "at": 160294,
+        "at": 162068,
         "url": "/config/status"
       },
       {
-        "at": 160303,
+        "at": 164092,
         "url": "/config/engines"
       },
       {
-        "at": 162311,
+        "at": 164092,
         "url": "/config/load"
       },
       {
-        "at": 162311,
+        "at": 164093,
         "url": "/config/status"
       },
       {
-        "at": 162320,
+        "at": 166106,
         "url": "/config/engines"
       },
       {
-        "at": 164332,
+        "at": 166107,
         "url": "/config/load"
       },
       {
-        "at": 164332,
+        "at": 166107,
         "url": "/config/status"
       },
       {
-        "at": 164343,
+        "at": 168120,
         "url": "/config/engines"
       },
       {
-        "at": 166363,
+        "at": 168120,
         "url": "/config/load"
       },
       {
-        "at": 166363,
+        "at": 168120,
         "url": "/config/status"
       },
       {
-        "at": 166373,
+        "at": 170142,
         "url": "/config/engines"
       },
       {
-        "at": 168382,
+        "at": 170143,
         "url": "/config/load"
       },
       {
-        "at": 168383,
+        "at": 170143,
         "url": "/config/status"
       },
       {
-        "at": 168394,
+        "at": 172170,
         "url": "/config/engines"
       },
       {
-        "at": 170446,
+        "at": 172170,
         "url": "/config/load"
       },
       {
-        "at": 170447,
+        "at": 172171,
         "url": "/config/status"
       },
       {
-        "at": 170454,
+        "at": 174185,
         "url": "/config/engines"
       },
       {
-        "at": 172471,
+        "at": 174186,
         "url": "/config/load"
       },
       {
-        "at": 172472,
+        "at": 174186,
         "url": "/config/status"
       },
       {
-        "at": 172481,
+        "at": 176205,
         "url": "/config/engines"
       },
       {
-        "at": 174830,
+        "at": 176206,
         "url": "/config/load"
       },
       {
-        "at": 174830,
+        "at": 176206,
         "url": "/config/status"
       },
       {
-        "at": 174852,
+        "at": 178222,
         "url": "/config/engines"
       },
       {
-        "at": 176873,
+        "at": 178225,
         "url": "/config/load"
       },
       {
-        "at": 176873,
+        "at": 178235,
         "url": "/config/status"
       },
       {
-        "at": 176883,
+        "at": 180260,
         "url": "/config/engines"
       },
       {
-        "at": 180777,
+        "at": 180261,
         "url": "/config/load"
       },
       {
-        "at": 180778,
+        "at": 180261,
         "url": "/config/status"
       },
       {
-        "at": 181549,
+        "at": 182276,
         "url": "/config/engines"
       },
       {
-        "at": 183563,
+        "at": 182276,
         "url": "/config/load"
       },
       {
-        "at": 183563,
+        "at": 182277,
         "url": "/config/status"
       },
       {
-        "at": 183578,
+        "at": 184288,
         "url": "/config/engines"
       },
       {
-        "at": 185613,
+        "at": 184289,
         "url": "/config/load"
       },
       {
-        "at": 185614,
+        "at": 184289,
         "url": "/config/status"
       },
       {
-        "at": 186154,
+        "at": 186305,
         "url": "/config/engines"
       },
       {
-        "at": 188197,
+        "at": 186305,
         "url": "/config/load"
       },
       {
-        "at": 188198,
+        "at": 186305,
         "url": "/config/status"
       },
       {
-        "at": 188208,
+        "at": 188317,
         "url": "/config/engines"
+      },
+      {
+        "at": 188323,
+        "url": "/config/load"
+      },
+      {
+        "at": 188324,
+        "url": "/config/status"
       }
     ],
     "messages": [],
@@ -838,31 +902,7 @@
     "outage": {
       "events": [
         {
-          "at": 6778.20000000298,
-          "selector": "#connection",
-          "records": 1,
-          "text": "Local server offline",
-          "changed": true,
-          "removed": false
-        },
-        {
-          "at": 6778.20000000298,
-          "selector": "#userscript-connection",
-          "records": 1,
-          "text": "Chess.com: connection unknown",
-          "changed": true,
-          "removed": false
-        },
-        {
-          "at": 6778.20000000298,
-          "selector": "#save-state",
-          "records": 2,
-          "text": "Cannot reach the local server. Check that it is running.",
-          "changed": true,
-          "removed": false
-        },
-        {
-          "at": 6781.800000011921,
+          "at": 6857.20000000298,
           "selector": "#execution-state",
           "records": 1,
           "text": "Analysis: unavailable",
@@ -870,15 +910,15 @@
           "removed": false
         },
         {
-          "at": 6781.800000011921,
+          "at": 6857.20000000298,
           "selector": "#analysis-engine-state",
-          "records": 1,
+          "records": 2,
           "text": "Connection Lost",
           "changed": true,
           "removed": false
         },
         {
-          "at": 6781.800000011921,
+          "at": 6857.20000000298,
           "selector": "#analysis-engine-message",
           "records": 3,
           "text": "Engine registry unavailable. Check the local server, then Retry.",
@@ -886,7 +926,7 @@
           "removed": false
         },
         {
-          "at": 6781.9000000059605,
+          "at": 6857.20000000298,
           "selector": "#engine-retry",
           "records": 1,
           "text": "Retry",
@@ -894,31 +934,47 @@
           "removed": false
         },
         {
-          "at": 60849.90000000596,
+          "at": 6857.20000000298,
+          "selector": "#analysis-engine-picker",
+          "records": 3,
+          "text": "Stockfish 19 · 1MB",
+          "changed": false,
+          "removed": false
+        },
+        {
+          "at": 6859.0999999940395,
           "selector": "#connection",
           "records": 1,
-          "text": "Local server connected",
+          "text": "Local server offline",
           "changed": true,
           "removed": false
         },
         {
-          "at": 60849.90000000596,
+          "at": 6859.0999999940395,
           "selector": "#userscript-connection",
           "records": 1,
-          "text": "Chess.com: connected",
+          "text": "Chess.com: connection unknown",
           "changed": true,
           "removed": false
         },
         {
-          "at": 60850,
+          "at": 6859.0999999940395,
           "selector": "#save-state",
           "records": 2,
-          "text": "Applied in a Chess.com tab",
+          "text": "Cannot reach the local server. Check that it is running.",
           "changed": true,
           "removed": false
         },
         {
-          "at": 60856,
+          "at": 6859.9000000059605,
+          "selector": "#analysis-engine-picker",
+          "records": 1,
+          "text": "Stockfish 19 · 1MB",
+          "changed": false,
+          "removed": false
+        },
+        {
+          "at": 60908,
           "selector": "#execution-state",
           "records": 1,
           "text": "Analysis: inactive",
@@ -926,15 +982,15 @@
           "removed": false
         },
         {
-          "at": 60856,
+          "at": 60908,
           "selector": "#analysis-engine-state",
-          "records": 1,
+          "records": 2,
           "text": "Ready",
           "changed": true,
           "removed": false
         },
         {
-          "at": 60856,
+          "at": 60908,
           "selector": "#analysis-engine-message",
           "records": 3,
           "text": "Fast Analysis · Lichess Stockfish with a 1.11 MiB NNUE network. Analysis starts only in an authorized context.",
@@ -942,11 +998,43 @@
           "removed": false
         },
         {
-          "at": 60856,
+          "at": 60908,
           "selector": "#engine-retry",
           "records": 1,
           "text": "Retry",
           "changed": false,
+          "removed": false
+        },
+        {
+          "at": 60908,
+          "selector": "#analysis-engine-picker",
+          "records": 3,
+          "text": "Stockfish 19 · 1MB",
+          "changed": false,
+          "removed": false
+        },
+        {
+          "at": 60910.5,
+          "selector": "#connection",
+          "records": 1,
+          "text": "Local server connected",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 60910.5,
+          "selector": "#userscript-connection",
+          "records": 1,
+          "text": "Chess.com: connected",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 60910.5,
+          "selector": "#save-state",
+          "records": 2,
+          "text": "Applied in a Chess.com tab",
+          "changed": true,
           "removed": false
         }
       ],
@@ -957,11 +1045,12 @@
         "#connection": "Local server connected",
         "#userscript-connection": "Chess.com: connected",
         "#execution-state": "Analysis: inactive",
-        "#client-build-state": "Userscript 2026-10-26.5 · up to date",
+        "#client-build-state": "Userscript 2026-10-26.6 · up to date",
         "#analysis-engine-state": "Ready",
         "#analysis-engine-message": "Fast Analysis · Lichess Stockfish with a 1.11 MiB NNUE network. Analysis starts only in an authorized context.",
         "#engine-retry": "Retry",
-        "#save-state": "Applied in a Chess.com tab"
+        "#save-state": "Applied in a Chess.com tab",
+        "#analysis-engine-picker": "Stockfish 19 · 1MB"
       }
     }
   },
@@ -969,1392 +1058,1885 @@
     "surface": "console",
     "requests": [
       {
-        "at": 770,
+        "at": 689,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 770,
-        "url": "/config/load"
+        "at": 690,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 776,
-        "url": "/config/load"
+        "at": 695,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 844,
-        "url": "/config/session/bridge"
+        "at": 718,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 1861,
-        "url": "/config/load"
+        "at": 1732,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 1868,
-        "url": "/config/session/bridge"
+        "at": 1740,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 2890,
-        "url": "/config/load"
+        "at": 2755,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 2896,
-        "url": "/config/session/bridge"
+        "at": 2761,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 3915,
-        "url": "/config/load"
+        "at": 3775,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 3922,
-        "url": "/config/session/bridge"
+        "at": 3781,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 4112,
+        "at": 4119,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 4113,
-        "url": "/config/load"
+        "at": 4119,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 4929,
-        "url": "/config/load"
+        "at": 4801,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 4935,
-        "url": "/config/session/bridge"
+        "at": 4809,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 5946,
-        "url": "/config/load"
+        "at": 5814,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 5951,
-        "url": "/config/session/bridge"
+        "at": 5819,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 6971,
-        "url": "/config/load"
-      },
-      {
-        "at": 6982,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 7990,
-        "url": "/config/load"
-      },
-      {
-        "at": 7995,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 8105,
+        "at": 6117,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 8105,
-        "url": "/config/load"
+        "at": 6118,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 9005,
-        "url": "/config/load"
+        "at": 6829,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 9010,
-        "url": "/config/session/bridge"
+        "at": 6834,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 10026,
-        "url": "/config/load"
+        "at": 7841,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 10039,
-        "url": "/config/session/bridge"
+        "at": 7847,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 11181,
-        "url": "/config/load"
-      },
-      {
-        "at": 11193,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 12107,
+        "at": 8119,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 12107,
-        "url": "/config/load"
+        "at": 8120,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 12215,
-        "url": "/config/load"
+        "at": 8857,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 12240,
-        "url": "/config/session/bridge"
+        "at": 8870,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 13270,
-        "url": "/config/load"
+        "at": 9891,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 13285,
-        "url": "/config/session/bridge"
+        "at": 9901,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 14316,
-        "url": "/config/load"
-      },
-      {
-        "at": 14321,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 15328,
-        "url": "/config/load"
-      },
-      {
-        "at": 15338,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 16114,
+        "at": 10127,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 16114,
-        "url": "/config/load"
+        "at": 10127,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 16362,
-        "url": "/config/load"
+        "at": 10910,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 16374,
-        "url": "/config/session/bridge"
+        "at": 10915,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 17409,
-        "url": "/config/load"
+        "at": 11948,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 17423,
-        "url": "/config/session/bridge"
+        "at": 11965,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 18441,
-        "url": "/config/load"
-      },
-      {
-        "at": 18449,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 19468,
-        "url": "/config/load"
-      },
-      {
-        "at": 19475,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 20101,
+        "at": 12121,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 20101,
-        "url": "/config/load"
+        "at": 12121,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 20499,
-        "url": "/config/load"
+        "at": 12980,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 20505,
-        "url": "/config/session/bridge"
+        "at": 12985,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 21519,
-        "url": "/config/load"
+        "at": 13997,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 21525,
-        "url": "/config/session/bridge"
+        "at": 14003,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 22115,
+        "at": 14127,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 22116,
-        "url": "/config/load"
+        "at": 14128,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 22532,
-        "url": "/config/load"
+        "at": 15020,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 22544,
-        "url": "/config/session/bridge"
+        "at": 15025,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 23569,
-        "url": "/config/load"
+        "at": 16038,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 23620,
-        "url": "/config/session/bridge"
+        "at": 16043,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 24677,
-        "url": "/config/load"
-      },
-      {
-        "at": 24697,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 25723,
-        "url": "/config/load"
-      },
-      {
-        "at": 25750,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 26115,
+        "at": 16120,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 26116,
-        "url": "/config/load"
+        "at": 16121,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 26763,
-        "url": "/config/load"
+        "at": 17058,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 26781,
-        "url": "/config/session/bridge"
+        "at": 17064,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 27794,
-        "url": "/config/load"
+        "at": 18079,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 27806,
-        "url": "/config/session/bridge"
+        "at": 18084,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 28837,
-        "url": "/config/load"
-      },
-      {
-        "at": 28844,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 29855,
-        "url": "/config/load"
-      },
-      {
-        "at": 29875,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 30113,
+        "at": 18132,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 30114,
-        "url": "/config/load"
+        "at": 18134,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 30905,
-        "url": "/config/load"
+        "at": 19094,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 30912,
-        "url": "/config/session/bridge"
+        "at": 19100,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 31924,
-        "url": "/config/load"
+        "at": 20114,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 31929,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 32945,
-        "url": "/config/load"
-      },
-      {
-        "at": 32951,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 33961,
-        "url": "/config/load"
-      },
-      {
-        "at": 33966,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 34105,
+        "at": 20120,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 34105,
-        "url": "/config/load"
+        "at": 20120,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 34982,
-        "url": "/config/load"
+        "at": 20126,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 34987,
-        "url": "/config/session/bridge"
+        "at": 21145,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 36005,
-        "url": "/config/load"
+        "at": 21156,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 36012,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 37018,
-        "url": "/config/load"
-      },
-      {
-        "at": 37024,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 38038,
-        "url": "/config/load"
-      },
-      {
-        "at": 38044,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 38101,
+        "at": 22123,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 38101,
-        "url": "/config/load"
+        "at": 22123,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 39052,
-        "url": "/config/load"
+        "at": 22168,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 39057,
-        "url": "/config/session/bridge"
+        "at": 22174,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 40079,
-        "url": "/config/load"
+        "at": 23190,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 40094,
-        "url": "/config/session/bridge"
+        "at": 23196,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 41106,
-        "url": "/config/load"
-      },
-      {
-        "at": 41116,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 42105,
+        "at": 24127,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 42105,
-        "url": "/config/load"
+        "at": 24127,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 42134,
-        "url": "/config/load"
+        "at": 24202,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 42139,
-        "url": "/config/session/bridge"
+        "at": 24207,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 43149,
-        "url": "/config/load"
+        "at": 25223,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 43154,
-        "url": "/config/session/bridge"
+        "at": 25228,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 44114,
-        "url": "/config/load"
-      },
-      {
-        "at": 44165,
-        "url": "/config/load"
-      },
-      {
-        "at": 44173,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 45186,
-        "url": "/config/load"
-      },
-      {
-        "at": 45191,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 46106,
+        "at": 26125,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 46209,
-        "url": "/config/load"
+        "at": 26125,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 46215,
-        "url": "/config/session/bridge"
+        "at": 26243,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 47232,
-        "url": "/config/load"
+        "at": 26247,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 47238,
-        "url": "/config/session/bridge"
+        "at": 27257,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 48112,
+        "at": 27262,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 28124,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 48113,
-        "url": "/config/load"
+        "at": 28124,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 48253,
-        "url": "/config/load"
+        "at": 28274,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 48258,
-        "url": "/config/session/bridge"
+        "at": 28278,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 49271,
-        "url": "/config/load"
+        "at": 29288,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 49276,
-        "url": "/config/session/bridge"
+        "at": 29292,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 50282,
-        "url": "/config/load"
-      },
-      {
-        "at": 50287,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 51303,
-        "url": "/config/load"
-      },
-      {
-        "at": 51308,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 52103,
+        "at": 30119,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 52103,
-        "url": "/config/load"
+        "at": 30119,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 52323,
-        "url": "/config/load"
+        "at": 30307,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 52327,
-        "url": "/config/session/bridge"
+        "at": 30312,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 53334,
-        "url": "/config/load"
+        "at": 31319,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 53339,
-        "url": "/config/session/bridge"
+        "at": 31323,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 54346,
-        "url": "/config/load"
-      },
-      {
-        "at": 54351,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 55369,
-        "url": "/config/load"
-      },
-      {
-        "at": 55378,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 56104,
+        "at": 32114,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 56105,
-        "url": "/config/load"
+        "at": 32115,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 56386,
-        "url": "/config/load"
+        "at": 32342,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 56391,
-        "url": "/config/session/bridge"
+        "at": 32346,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 57401,
-        "url": "/config/load"
+        "at": 33363,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 57406,
-        "url": "/config/session/bridge"
+        "at": 33368,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 58423,
-        "url": "/config/load"
-      },
-      {
-        "at": 58431,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 59444,
-        "url": "/config/load"
-      },
-      {
-        "at": 59451,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 60108,
+        "at": 34124,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 60108,
-        "url": "/config/load"
+        "at": 34124,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 60466,
-        "url": "/config/load"
+        "at": 34374,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 60471,
-        "url": "/config/session/bridge"
+        "at": 34379,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 61478,
-        "url": "/config/load"
+        "at": 35394,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 61484,
-        "url": "/config/session/bridge"
+        "at": 35399,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 62497,
-        "url": "/config/load"
-      },
-      {
-        "at": 62513,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 63540,
-        "url": "/config/load"
-      },
-      {
-        "at": 63545,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 64102,
+        "at": 36123,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 64103,
-        "url": "/config/load"
+        "at": 36124,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 64553,
-        "url": "/config/load"
+        "at": 36405,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 64559,
-        "url": "/config/session/bridge"
+        "at": 36410,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 65577,
-        "url": "/config/load"
+        "at": 37443,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 65582,
-        "url": "/config/session/bridge"
+        "at": 37460,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 66108,
-        "url": "/config/load"
-      },
-      {
-        "at": 66587,
-        "url": "/config/load"
-      },
-      {
-        "at": 66592,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 67599,
-        "url": "/config/load"
-      },
-      {
-        "at": 67603,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 68111,
+        "at": 38115,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 68618,
-        "url": "/config/load"
+        "at": 38115,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 68623,
-        "url": "/config/session/bridge"
+        "at": 38476,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 69642,
-        "url": "/config/load"
+        "at": 38480,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 69646,
-        "url": "/config/session/bridge"
+        "at": 39497,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 70104,
-        "url": "/config/load"
+        "at": 39503,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 70653,
-        "url": "/config/load"
-      },
-      {
-        "at": 70658,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 71698,
-        "url": "/config/load"
-      },
-      {
-        "at": 71827,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 72145,
+        "at": 40114,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 72871,
-        "url": "/config/load"
+        "at": 40114,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 72878,
-        "url": "/config/session/bridge"
+        "at": 40521,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 73889,
-        "url": "/config/load"
+        "at": 40527,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 73894,
-        "url": "/config/session/bridge"
+        "at": 41536,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 74112,
-        "url": "/config/load"
+        "at": 41541,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 74904,
-        "url": "/config/load"
+        "at": 42115,
+        "url": "/eval-bar/engines"
       },
       {
-        "at": 74911,
-        "url": "/config/session/bridge"
+        "at": 42116,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 75921,
-        "url": "/config/load"
+        "at": 42554,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 75925,
-        "url": "/config/session/bridge"
+        "at": 42558,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 43563,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 43574,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 44119,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 44119,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 44581,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 44588,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 45594,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 45599,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 46114,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 46114,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 46608,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 46613,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 47626,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 47631,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 48118,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 48118,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 48645,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 48650,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 49657,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 49663,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 50113,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 50113,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 50673,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 50678,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 51690,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 51695,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 52125,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 52125,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 52703,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 52708,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 53719,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 53725,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 54114,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 54114,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 54745,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 54750,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 55759,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 55764,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 56112,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 56112,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 56769,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 56775,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 57779,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 57784,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 58121,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 58121,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 58791,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 58796,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 59804,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 59809,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 60124,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 60124,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 60815,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 60819,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 61839,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 61847,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 62128,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 62128,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 62867,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 62871,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 63878,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 63882,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 64114,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 64115,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 64892,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 64896,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 65913,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 65919,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 66123,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 66123,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 66935,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 66940,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 67958,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 67963,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 68113,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 68113,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 68975,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 68981,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 69986,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 69991,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 70112,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 70112,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 70996,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 71001,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 72013,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 72018,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 72123,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 72124,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 73036,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 73041,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 74058,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 74063,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 74122,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 74122,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 75077,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 75081,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 76100,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 76104,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
         "at": 76109,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 76941,
-        "url": "/config/load"
+        "at": 76110,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 76949,
-        "url": "/config/session/bridge"
+        "at": 77117,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 77966,
-        "url": "/config/load"
+        "at": 77122,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 77972,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 78114,
-        "url": "/config/load"
-      },
-      {
-        "at": 78987,
-        "url": "/config/load"
-      },
-      {
-        "at": 78995,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 80001,
-        "url": "/config/load"
-      },
-      {
-        "at": 80008,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 80109,
+        "at": 78115,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 81048,
-        "url": "/config/load"
+        "at": 78115,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 81183,
-        "url": "/config/session/bridge"
+        "at": 78143,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 82110,
-        "url": "/config/load"
+        "at": 78147,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 82317,
-        "url": "/config/load"
+        "at": 79151,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 82323,
-        "url": "/config/session/bridge"
+        "at": 79156,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 83341,
-        "url": "/config/load"
-      },
-      {
-        "at": 83351,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 84112,
+        "at": 80120,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 84368,
-        "url": "/config/load"
+        "at": 80121,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 84381,
-        "url": "/config/session/bridge"
+        "at": 80165,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 85408,
-        "url": "/config/load"
+        "at": 80170,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 85426,
-        "url": "/config/session/bridge"
+        "at": 81180,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 86105,
-        "url": "/config/load"
+        "at": 81184,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 86476,
-        "url": "/config/load"
-      },
-      {
-        "at": 86498,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 87511,
-        "url": "/config/load"
-      },
-      {
-        "at": 87520,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 88101,
+        "at": 82111,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 88535,
-        "url": "/config/load"
+        "at": 82112,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 88548,
-        "url": "/config/session/bridge"
+        "at": 82200,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 89567,
-        "url": "/config/load"
+        "at": 82205,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 89581,
-        "url": "/config/session/bridge"
+        "at": 83220,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 90109,
+        "at": 83224,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 84124,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 90110,
-        "url": "/config/load"
+        "at": 84125,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 90586,
-        "url": "/config/load"
+        "at": 84243,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 90596,
-        "url": "/config/session/bridge"
+        "at": 84248,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 91613,
-        "url": "/config/load"
+        "at": 85256,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 91618,
-        "url": "/config/session/bridge"
+        "at": 85261,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 92636,
-        "url": "/config/load"
-      },
-      {
-        "at": 92641,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 93656,
-        "url": "/config/load"
-      },
-      {
-        "at": 93660,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 94102,
+        "at": 86112,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 94103,
-        "url": "/config/load"
+        "at": 86112,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 94697,
-        "url": "/config/load"
+        "at": 86270,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 94754,
-        "url": "/config/session/bridge"
+        "at": 86276,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 95829,
-        "url": "/config/load"
+        "at": 87280,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 95834,
-        "url": "/config/session/bridge"
+        "at": 87285,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 96108,
-        "url": "/config/load"
-      },
-      {
-        "at": 96860,
-        "url": "/config/load"
-      },
-      {
-        "at": 96882,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 97897,
-        "url": "/config/load"
-      },
-      {
-        "at": 97903,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 98110,
+        "at": 88115,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 98917,
-        "url": "/config/load"
+        "at": 88115,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 100933,
+        "at": 88298,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 88302,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 89321,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 89325,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 90120,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 100933,
-        "url": "/config/load"
+        "at": 90121,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 100933,
-        "url": "/config/load"
+        "at": 90330,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 102940,
+        "at": 90335,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 91342,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 91346,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 92121,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 104949,
-        "url": "/config/load"
+        "at": 92121,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 106953,
+        "at": 92419,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 92447,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 93463,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 93468,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 94124,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 114964,
+        "at": 94124,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 94482,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 94487,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 95491,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 95496,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 96125,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 120961,
-        "url": "/config/load"
+        "at": 96125,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 130975,
+        "at": 96510,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 96515,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 97534,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 97540,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 98121,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 150980,
-        "url": "/config/load"
+        "at": 98121,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 150986,
-        "url": "/config/load"
+        "at": 98546,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 150992,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 151999,
-        "url": "/config/load"
-      },
-      {
-        "at": 152006,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 153020,
-        "url": "/config/load"
-      },
-      {
-        "at": 153026,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 154043,
-        "url": "/config/load"
-      },
-      {
-        "at": 154049,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 154106,
-        "url": "/config/load"
-      },
-      {
-        "at": 155060,
-        "url": "/config/load"
-      },
-      {
-        "at": 155067,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 156071,
-        "url": "/config/load"
-      },
-      {
-        "at": 156077,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 157094,
-        "url": "/config/load"
-      },
-      {
-        "at": 157100,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 158100,
-        "url": "/config/load"
-      },
-      {
-        "at": 158110,
-        "url": "/config/load"
-      },
-      {
-        "at": 158117,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 159135,
-        "url": "/config/load"
-      },
-      {
-        "at": 159141,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 160148,
-        "url": "/config/load"
-      },
-      {
-        "at": 160155,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 160992,
+        "at": 100137,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 161163,
-        "url": "/config/load"
+        "at": 100558,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 161170,
-        "url": "/config/session/bridge"
+        "at": 104146,
+        "url": "/eval-bar/engines"
       },
       {
-        "at": 162104,
-        "url": "/config/load"
+        "at": 104564,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 162182,
-        "url": "/config/load"
+        "at": 112164,
+        "url": "/eval-bar/engines"
       },
       {
-        "at": 162189,
-        "url": "/config/session/bridge"
+        "at": 112572,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 163202,
-        "url": "/config/load"
+        "at": 128176,
+        "url": "/eval-bar/engines"
       },
       {
-        "at": 163208,
-        "url": "/config/session/bridge"
+        "at": 128585,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 158190,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 158601,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 158601,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 158611,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 159616,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 159622,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 160107,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 160635,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 160642,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 161653,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 161660,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 162108,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 162109,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 162675,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 162683,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 163703,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 163709,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 164111,
+        "url": "/eval-bar/engines"
       },
       {
         "at": 164112,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 164715,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 164722,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 165731,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 165738,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 166120,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 164112,
-        "url": "/config/load"
+        "at": 166121,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 164221,
-        "url": "/config/load"
+        "at": 166745,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 164228,
-        "url": "/config/session/bridge"
+        "at": 166751,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 165244,
-        "url": "/config/load"
+        "at": 167764,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 165252,
-        "url": "/config/session/bridge"
+        "at": 167771,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 166258,
-        "url": "/config/load"
-      },
-      {
-        "at": 166265,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 167279,
-        "url": "/config/load"
-      },
-      {
-        "at": 167286,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 168100,
+        "at": 168111,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 168100,
-        "url": "/config/load"
+        "at": 168111,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 168300,
-        "url": "/config/load"
+        "at": 168792,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 168307,
-        "url": "/config/session/bridge"
+        "at": 168800,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 169314,
-        "url": "/config/load"
+        "at": 169807,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 169321,
-        "url": "/config/session/bridge"
+        "at": 169815,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 170337,
-        "url": "/config/load"
-      },
-      {
-        "at": 170344,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 171354,
-        "url": "/config/load"
-      },
-      {
-        "at": 171361,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 172109,
+        "at": 170121,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 172109,
-        "url": "/config/load"
+        "at": 170121,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 172374,
-        "url": "/config/load"
+        "at": 170821,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 172380,
-        "url": "/config/session/bridge"
+        "at": 170827,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 173413,
-        "url": "/config/load"
+        "at": 171833,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 173618,
-        "url": "/config/session/bridge"
+        "at": 171839,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 174759,
-        "url": "/config/load"
-      },
-      {
-        "at": 174770,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 175784,
-        "url": "/config/load"
-      },
-      {
-        "at": 175791,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 176101,
+        "at": 172113,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 176101,
-        "url": "/config/load"
+        "at": 172113,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 176807,
-        "url": "/config/load"
+        "at": 172852,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 176816,
-        "url": "/config/session/bridge"
+        "at": 172859,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 177846,
-        "url": "/config/load"
+        "at": 173870,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 177895,
-        "url": "/config/session/bridge"
+        "at": 173877,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 178934,
-        "url": "/config/load"
-      },
-      {
-        "at": 178990,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 180002,
-        "url": "/config/load"
-      },
-      {
-        "at": 180010,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 180098,
+        "at": 174119,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 180098,
-        "url": "/config/load"
+        "at": 174120,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 181018,
-        "url": "/config/load"
+        "at": 174887,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 181026,
-        "url": "/config/session/bridge"
+        "at": 174895,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 182049,
-        "url": "/config/load"
+        "at": 175905,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 182088,
-        "url": "/config/session/bridge"
+        "at": 175911,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 183113,
-        "url": "/config/load"
-      },
-      {
-        "at": 183120,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 184109,
+        "at": 176107,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 184109,
-        "url": "/config/load"
+        "at": 176108,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 184140,
-        "url": "/config/load"
+        "at": 176920,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 184146,
-        "url": "/config/session/bridge"
+        "at": 176926,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 185171,
-        "url": "/config/load"
+        "at": 177939,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 185190,
-        "url": "/config/session/bridge"
+        "at": 177945,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       },
       {
-        "at": 186213,
-        "url": "/config/load"
-      },
-      {
-        "at": 186219,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 187234,
-        "url": "/config/load"
-      },
-      {
-        "at": 187241,
-        "url": "/config/session/bridge"
-      },
-      {
-        "at": 188094,
+        "at": 178111,
         "url": "/eval-bar/engines"
       },
       {
-        "at": 188095,
-        "url": "/config/load"
+        "at": 178111,
+        "url": "/config/load",
+        "channel": "workspace-sync"
       },
       {
-        "at": 188249,
-        "url": "/config/load"
+        "at": 178957,
+        "url": "/config/load",
+        "channel": "session-relay"
       },
       {
-        "at": 188255,
-        "url": "/config/session/bridge"
+        "at": 178963,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 179983,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 179989,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 180108,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 180108,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 181003,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 181009,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 182017,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 182023,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 182111,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 182111,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 183031,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 183038,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 184056,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 184064,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 184121,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 184122,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 185078,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 185084,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 186092,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 186098,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 186109,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 186109,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 187105,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 187112,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
+      },
+      {
+        "at": 188118,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 188119,
+        "url": "/config/load",
+        "channel": "workspace-sync"
+      },
+      {
+        "at": 188119,
+        "url": "/config/load",
+        "channel": "session-relay"
+      },
+      {
+        "at": 188134,
+        "url": "/config/session/bridge",
+        "channel": "session-relay"
       }
     ],
     "messages": [],
@@ -2400,15 +2982,15 @@
     "outage": {
       "events": [
         {
-          "at": 6422.5,
+          "at": 6055.79999999702,
           "selector": ".tc-analysis-status",
-          "records": 1,
+          "records": 2,
           "text": "Error",
           "changed": true,
           "removed": false
         },
         {
-          "at": 6422.5,
+          "at": 6055.9000000059605,
           "selector": "#tc-analysis-message",
           "records": 2,
           "text": "Cannot reach analysis engine",
@@ -2416,7 +2998,7 @@
           "removed": false
         },
         {
-          "at": 6422.5,
+          "at": 6055.9000000059605,
           "selector": ".tc-analysis-notice button",
           "records": 1,
           "text": "Retry",
@@ -2424,15 +3006,31 @@
           "removed": false
         },
         {
-          "at": 62472,
-          "selector": ".tc-analysis-status",
+          "at": 6055.9000000059605,
+          "selector": "#tc-analysis-engine-picker",
+          "records": 3,
+          "text": "Stockfish 19 · 1MB",
+          "changed": false,
+          "removed": false
+        },
+        {
+          "at": 6058.20000000298,
+          "selector": "#tc-analysis-engine-picker",
           "records": 1,
+          "text": "Stockfish 19 · 1MB",
+          "changed": false,
+          "removed": false
+        },
+        {
+          "at": 60108.70000000298,
+          "selector": ".tc-analysis-status",
+          "records": 2,
           "text": "Ready",
           "changed": true,
           "removed": false
         },
         {
-          "at": 62472,
+          "at": 60108.70000000298,
           "selector": "#tc-analysis-message",
           "records": 2,
           "text": "Fast Analysis · Stockfish 19 · 1MB",
@@ -2440,10 +3038,18 @@
           "removed": false
         },
         {
-          "at": 62472,
+          "at": 60108.70000000298,
           "selector": ".tc-analysis-notice button",
           "records": 1,
           "text": "Retry",
+          "changed": false,
+          "removed": false
+        },
+        {
+          "at": 60108.70000000298,
+          "selector": "#tc-analysis-engine-picker",
+          "records": 3,
+          "text": "Stockfish 19 · 1MB",
           "changed": false,
           "removed": false
         }
@@ -2454,7 +3060,8 @@
       "texts": {
         ".tc-analysis-status": "Ready",
         "#tc-analysis-message": "Fast Analysis · Stockfish 19 · 1MB",
-        ".tc-analysis-notice button": "Retry"
+        ".tc-analysis-notice button": "Retry",
+        "#tc-analysis-engine-picker": "Stockfish 19 · 1MB"
       }
     }
   }

@@ -1,0 +1,46 @@
+{
+  "seconds": 60,
+  "results": [
+    {
+      "surface": "config",
+      "records": [],
+      "cls": 0,
+      "recreated": [],
+      "selectors": [
+        "#connection",
+        "#userscript-connection",
+        "#execution-state",
+        "#client-build-state",
+        "#analysis-engine-state",
+        "#analysis-engine-message",
+        "#engine-retry",
+        "#save-state",
+        "#kb-session-phase",
+        "#kb-session-ttl",
+        "#kb-session-observed",
+        "#kb-session-raw",
+        "#session-availability",
+        "#banner-display-state",
+        ".tc-engine-picker"
+      ]
+    },
+    {
+      "surface": "console",
+      "records": [],
+      "cls": 0,
+      "recreated": [],
+      "selectors": [
+        "#kb-session-phase",
+        "#kb-session-ttl",
+        "#kb-session-observed",
+        "#kb-session-raw",
+        ".tc-analysis-status",
+        "#tc-analysis-message",
+        ".tc-analysis-feedback",
+        ".tc-analysis-notice button",
+        ".tc-engine-picker"
+      ]
+    }
+  ],
+  "exceptions": []
+}
