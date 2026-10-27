@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "suffix": "",
+      "count": 0,
+      "hasText": false,
+      "json": null,
+      "overflow": null,
+      "maxHeight": null
+    },
+    {
+      "suffix": "?debug=1",
+      "count": 1,
+      "hasText": true,
+      "json": {
+        "capabilities": [
+          "analysis",
+          "streaming",
+          "cancellation",
+          "centipawns",
+          "mate",
+          "white-pov"
+        ],
+        "configuration": null,
+        "description": "Fast Analysis · Lichess Stockfish with a 1.11 MiB NNUE network.",
+        "id": "stockfish-19-1mb",
+        "identity": null,
+        "initializationError": null,
+        "installed": true,
+        "name": "Stockfish 19 · 1MB",
+        "networkBytes": 1166381,
+        "resources": {},
+        "runtimeReady": false,
+        "status": "Ready",
+        "version": "19"
+      },
+      "overflow": "visible",
+      "maxHeight": "none"
+    },
+    {
+      "suffix": "?debug=0",
+      "count": 0,
+      "hasText": false,
+      "json": null,
+      "overflow": null,
+      "maxHeight": null
+    }
+  ],
+  "serverJsonPreserved": true,
+  "exceptions": []
+}

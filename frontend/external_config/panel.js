@@ -7,6 +7,16 @@
     workspace: [['ghostMode', 'Clean View']],
   };
   const byId = id => document.getElementById(id);
+  if (new URLSearchParams(location.search).get('debug') === '1') {
+    const details = document.createElement('details');
+    details.className = 'engine-details';
+    const summary = document.createElement('summary');
+    summary.textContent = 'Technical details';
+    const data = document.createElement('pre');
+    data.id = 'analysis-engine-details';
+    details.append(summary, data);
+    document.querySelector('.analysis-engine').append(details);
+  }
   let config = null;
   let engineRegistry = null;
   let engineSwitching = false;
@@ -66,7 +76,7 @@
     byId('analysis-engine-message').title = byId('analysis-engine-message').textContent;
     byId('engine-retry').hidden = !engineError && !selected?.initializationError;
     byId('engine-retry').disabled = engineRefreshing || engineSwitching;
-    byId('analysis-engine-details').textContent = selected ? JSON.stringify(selected, null, 2) : '';
+    if (byId('analysis-engine-details')) byId('analysis-engine-details').textContent = selected ? JSON.stringify(selected, null, 2) : '';
     byId('execution-state').textContent = `Analysis: ${!engineOnline ? 'unavailable' : engineRegistry?.analysisRunning ? 'running' : 'inactive'}`;
   }
 

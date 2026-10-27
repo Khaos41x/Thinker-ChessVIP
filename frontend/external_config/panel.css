@@ -469,7 +469,7 @@ body[data-focus-input=pointer] input:focus-visible {
 #analysis-engine-message[data-error="true"] { color: #ffb4ad; }
 .engine-details { margin-top: 8px; color: var(--muted); font-size: 11px; }
 .engine-details summary { cursor: pointer; }
-.engine-details pre { max-height: 220px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 10px; }
+.engine-details pre { max-height: none; overflow: visible; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 11px; }
 .notice { display: flex; flex-wrap: wrap; gap: 8px 24px; }
 .autoplay-fields { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; align-items: start; }
 .session-field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; line-height: 16px; color: var(--muted); }
