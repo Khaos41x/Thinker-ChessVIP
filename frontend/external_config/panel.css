@@ -520,8 +520,11 @@ body[data-focus-input=pointer] input:focus-visible {
   line-height: 20px;
 }
 .control-detail {
-  margin: 0 0 8px;
-  line-height: 17px;
+  display:block;
+  height:24px;
+  margin: 0;
+  font-size:11px;
+  line-height: 24px;
 }
 .control-detail + .control-row,
 [data-controls=visuals] + .control-row {
