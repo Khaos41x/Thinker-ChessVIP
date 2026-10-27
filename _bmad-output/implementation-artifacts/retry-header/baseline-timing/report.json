@@ -1,0 +1,61 @@
+{
+  "commit": "cbee05a",
+  "reports": [
+    {
+      "surface": "config",
+      "state": "offline",
+      "events": [
+        {
+          "at": 1.800000011920929,
+          "text": "Initializing"
+        },
+        {
+          "at": 4.5,
+          "text": "Connection Lost"
+        }
+      ]
+    },
+    {
+      "surface": "config",
+      "state": "online",
+      "events": [
+        {
+          "at": 1.2000000029802322,
+          "text": "Initializing"
+        },
+        {
+          "at": 9.200000002980232,
+          "text": "Ready"
+        }
+      ]
+    },
+    {
+      "surface": "console",
+      "state": "offline",
+      "events": [
+        {
+          "at": 3,
+          "text": "Initializing"
+        },
+        {
+          "at": 5.799999997019768,
+          "text": "Error"
+        }
+      ]
+    },
+    {
+      "surface": "console",
+      "state": "online",
+      "events": [
+        {
+          "at": 2.5,
+          "text": "Initializing"
+        },
+        {
+          "at": 13,
+          "text": "Ready"
+        }
+      ]
+    }
+  ]
+}

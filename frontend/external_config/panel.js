@@ -22,6 +22,8 @@
     const height=Math.round(clone.getBoundingClientRect().height);clone.remove();
     line.style.height=height+'px';node.style.height=height+'px';node.style.webkitLineClamp=String(Math.max(1,Math.round(height/17)));
   }
+  const engineFeedback = globalThis.ThinkerStatus.interaction();
+  engineFeedback.bind(document.querySelector(".analysis-engine"), byId("analysis-engine-state"), byId("analysis-engine-message"));
   let engineInteractive = false;
   let registryTimer = null;
   let registryRetryRequested = false;
@@ -87,13 +89,13 @@
       prop(option, 'disabled', engine ? !engine.installed : false);
     }
     const active = selected?.runtimeReady && engineRegistry?.analysisContextAuthorized;
-    const state = engineSwitching ? 'Switching' : engineInteractive || engineRefreshing && !engineRegistry ? 'Initializing' : engineError ? (!engineOnline && engineRegistry ? 'Connection Lost' : 'Error') : !selected ? 'Initializing' : !selected.installed ? 'Unavailable' : selected.initializationError ? 'Error' : active ? 'Active' : 'Ready';
+    const state = engineFeedback.active() || engineInteractive || engineRefreshing && !engineRegistry ? 'Initializing' : engineError ? (!engineOnline && engineRegistry ? 'Connection Lost' : 'Error') : !selected ? 'Initializing' : !selected.installed ? 'Unavailable' : selected.initializationError ? 'Error' : active ? 'Active' : 'Ready';
     setText(byId('analysis-engine-state'), state);
     attr(byId('analysis-engine-state'), 'data-error', state === 'Error' || state === 'Connection Lost');
     setText(byId('analysis-engine-message'), engineError || (engineSwitching ? 'Saving engine preference…' : selected?.initializationError || (active ? 'Running in an authorized analysis context.' : selected ? `${selected.description || 'Preference saved.'} Analysis starts only in an authorized context.` : 'Checking installed engines…')));
     attr(byId('analysis-engine-message'), 'data-error', Boolean(engineError || selected?.initializationError));
     prop(byId('analysis-engine-message'), 'title', byId('analysis-engine-message').textContent);
-    prop(byId('engine-retry'), 'hidden', !engineError && !selected?.initializationError);
+    prop(byId('engine-retry'), 'hidden', !engineError && !selected?.initializationError && !engineInteractive);
     prop(byId('engine-retry'), 'disabled', engineInteractive || engineSwitching);
     if (byId('analysis-engine-details')) setText(byId('analysis-engine-details'), selected ? JSON.stringify(selected, null, 2) : '');
     setText(byId('execution-state'), `Analysis: ${!engineOnline ? 'unavailable' : engineRegistry?.analysisRunning ? 'running' : 'inactive'}`);
@@ -107,7 +109,9 @@
   }
 
   async function refreshEngines(clearError = false) {
-    if (clearError) { registryRetryRequested = true; registryHealth.reset(); engineInteractive = true; }
+    if (clearError && engineFeedback.active()) return;
+    if (clearError && (engineSwitching || document.hidden)) return;
+    if (clearError) { engineFeedback.begin(byId('engine-retry'), byId('analysis-engine')); registryRetryRequested = true; registryHealth.reset(); engineInteractive = true; }
     if (engineRefreshing) { if (clearError) renderEngine(); return; }
     if (engineSwitching || document.hidden || !clearError && !registryHealth.due()) return;
     clearTimeout(registryTimer);
@@ -120,14 +124,14 @@
       if (!engineSwitching && version === engineRequestVersion) {
         engineRegistry = engines; engineOnline = true; registryHealth.success();
         if (clearError || registryRetryRequested || !engineError?.startsWith('Could not save')) engineError = null;
-        renderEngine();
       }
-    } catch (error) { if (!engineSwitching && version === engineRequestVersion) { if (registryHealth.failure()) registryFailure(error); } }
-    finally { engineRefreshing = false; engineInteractive = false; registryRetryRequested = false; renderEngine(); if (!document.hidden) registryTimer = setTimeout(refreshEngines, registryHealth.delay()); }
+    } catch (error) { if (!engineSwitching && version === engineRequestVersion) { const confirmed = registryHealth.failure(); if (engineInteractive || confirmed) registryFailure(error); } }
+    finally { if (engineInteractive) await engineFeedback.wait(); engineRefreshing = false; const userRequest = engineInteractive; engineInteractive = false; registryRetryRequested = false; if (userRequest && !engineSwitching) engineFeedback.finish(renderEngine, byId('engine-retry'), byId('analysis-engine')); else renderEngine(); if (!document.hidden) registryTimer = setTimeout(refreshEngines, registryHealth.delay()); }
   }
 
   byId('analysis-engine').addEventListener('change', async event => {
-    if (engineSwitching || !engineRegistry) return;
+    if (engineSwitching || engineFeedback.active() || !engineRegistry) return;
+    engineFeedback.begin(byId('engine-retry'), byId('analysis-engine'));
     const engineId = event.target.value;
     engineSwitching = true; engineError = null; engineRequestVersion++;
     renderEngine();
@@ -140,7 +144,7 @@
       if (error.data?.engines) engineRegistry = error.data;
       engineError = `Could not save engine preference: ${error.message}. Previous saved preference retained.`;
       if (!error.status) engineOnline = false;
-    } finally { engineSwitching = false; renderEngine(); refreshEngines(); }
+    } finally { await engineFeedback.wait(); engineSwitching = false; engineFeedback.finish(renderEngine, byId('engine-retry'), byId('analysis-engine')); refreshEngines(); }
   });
   byId('engine-retry').addEventListener('click', () => refreshEngines(true));
 

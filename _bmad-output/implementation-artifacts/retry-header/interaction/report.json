@@ -1,0 +1,382 @@
+{
+  "reports": [
+    {
+      "surface": "config",
+      "scenario": "offline",
+      "during": {
+        "text": "Connection Lost",
+        "animations": [
+          180
+        ],
+        "busy": "false"
+      },
+      "requests": 1,
+      "events": [
+        {
+          "at": 6.5999999940395355,
+          "text": "Initializing"
+        },
+        {
+          "at": 715.2000000029802,
+          "text": "Connection Lost"
+        }
+      ],
+      "announcements": [
+        "Connection Lost"
+      ],
+      "shifts": [],
+      "cls": 0,
+      "start": 9263.59999999404,
+      "final": "Connection Lost",
+      "animations": 0,
+      "focus": "engine-retry",
+      "disabled": false
+    },
+    {
+      "surface": "config",
+      "scenario": "reduced",
+      "during": {
+        "text": "Connection Lost",
+        "animations": [],
+        "busy": "false"
+      },
+      "requests": 1,
+      "events": [
+        {
+          "at": 17.099999994039536,
+          "text": "Initializing"
+        },
+        {
+          "at": 723.5999999940395,
+          "text": "Connection Lost"
+        }
+      ],
+      "announcements": [
+        "Connection Lost"
+      ],
+      "shifts": [],
+      "cls": 0,
+      "start": 10341.5,
+      "final": "Connection Lost",
+      "animations": 0,
+      "focus": "engine-retry",
+      "disabled": false
+    },
+    {
+      "surface": "config",
+      "scenario": "online",
+      "during": {
+        "text": "Ready",
+        "animations": [
+          180
+        ],
+        "busy": "false"
+      },
+      "requests": 1,
+      "events": [
+        {
+          "at": 6.5,
+          "text": "Initializing"
+        },
+        {
+          "at": 718.7000000029802,
+          "text": "Ready"
+        }
+      ],
+      "announcements": [
+        "Ready"
+      ],
+      "shifts": [],
+      "cls": 0,
+      "start": 11451.09999999404,
+      "final": "Ready",
+      "animations": 0,
+      "focus": "analysis-engine-picker",
+      "disabled": false
+    },
+    {
+      "surface": "config",
+      "scenario": "switch",
+      "during": {
+        "text": "Ready",
+        "animations": [
+          180
+        ],
+        "busy": "false"
+      },
+      "requests": 2,
+      "events": [
+        {
+          "at": 4.200000002980232,
+          "text": "Initializing"
+        },
+        {
+          "at": 712,
+          "text": "Ready"
+        }
+      ],
+      "announcements": [
+        "Ready"
+      ],
+      "shifts": [],
+      "cls": 0,
+      "start": 12484.09999999404,
+      "final": "Ready",
+      "animations": 0,
+      "focus": "analysis-engine-picker",
+      "disabled": false
+    },
+    {
+      "surface": "config",
+      "scenario": "slow-switch",
+      "during": {
+        "text": "Initializing",
+        "animations": [],
+        "busy": "true"
+      },
+      "requests": 1,
+      "events": [
+        {
+          "at": 12.200000002980232,
+          "text": "Initializing"
+        },
+        {
+          "at": 1048.8999999910593,
+          "text": "Ready"
+        }
+      ],
+      "announcements": [
+        "Ready"
+      ],
+      "shifts": [],
+      "cls": 0,
+      "start": 13570.29999999702,
+      "final": "Ready",
+      "animations": 0,
+      "focus": "analysis-engine-picker",
+      "disabled": false
+    },
+    {
+      "surface": "config",
+      "scenario": "failed-switch",
+      "during": {
+        "text": "Connection Lost",
+        "animations": [
+          180
+        ],
+        "busy": "false"
+      },
+      "requests": 2,
+      "events": [
+        {
+          "at": 3.199999988079071,
+          "text": "Initializing"
+        },
+        {
+          "at": 719.0999999940395,
+          "text": "Connection Lost"
+        }
+      ],
+      "announcements": [
+        "Connection Lost"
+      ],
+      "shifts": [],
+      "cls": 0,
+      "start": 14943,
+      "final": "Connection Lost",
+      "animations": 0,
+      "focus": "engine-retry",
+      "disabled": false
+    },
+    {
+      "surface": "console",
+      "scenario": "offline",
+      "during": {
+        "text": "Error",
+        "animations": [
+          180
+        ],
+        "busy": "false"
+      },
+      "requests": 1,
+      "events": [
+        {
+          "at": 4.200000002980232,
+          "text": "Initializing"
+        },
+        {
+          "at": 707.5,
+          "text": "Error"
+        }
+      ],
+      "announcements": [
+        "Error"
+      ],
+      "shifts": [],
+      "cls": 0,
+      "start": 10290.5,
+      "final": "Error",
+      "animations": 0,
+      "focus": "Retry",
+      "disabled": false
+    },
+    {
+      "surface": "console",
+      "scenario": "reduced",
+      "during": {
+        "text": "Error",
+        "animations": [],
+        "busy": "false"
+      },
+      "requests": 1,
+      "events": [
+        {
+          "at": 4.399999991059303,
+          "text": "Initializing"
+        },
+        {
+          "at": 710.5999999940395,
+          "text": "Error"
+        }
+      ],
+      "announcements": [
+        "Error"
+      ],
+      "shifts": [],
+      "cls": 0,
+      "start": 11320.20000000298,
+      "final": "Error",
+      "animations": 0,
+      "focus": "Retry",
+      "disabled": false
+    },
+    {
+      "surface": "console",
+      "scenario": "online",
+      "during": {
+        "text": "Ready",
+        "animations": [
+          180
+        ],
+        "busy": "false"
+      },
+      "requests": 1,
+      "events": [
+        {
+          "at": 9,
+          "text": "Initializing"
+        },
+        {
+          "at": 714.3999999910593,
+          "text": "Ready"
+        }
+      ],
+      "announcements": [
+        "Ready"
+      ],
+      "shifts": [],
+      "cls": 0,
+      "start": 12488.90000000596,
+      "final": "Ready",
+      "animations": 0,
+      "focus": "tc-analysis-engine-picker",
+      "disabled": false
+    },
+    {
+      "surface": "console",
+      "scenario": "switch",
+      "during": {
+        "text": "Ready",
+        "animations": [
+          180
+        ],
+        "busy": "false"
+      },
+      "requests": 1,
+      "events": [
+        {
+          "at": 12.300000011920929,
+          "text": "Initializing"
+        },
+        {
+          "at": 714.2000000029802,
+          "text": "Ready"
+        }
+      ],
+      "announcements": [
+        "Ready"
+      ],
+      "shifts": [],
+      "cls": 0,
+      "start": 13529.09999999404,
+      "final": "Ready",
+      "animations": 0,
+      "focus": "tc-analysis-engine-picker",
+      "disabled": false
+    },
+    {
+      "surface": "console",
+      "scenario": "slow-switch",
+      "during": {
+        "text": "Initializing",
+        "animations": [],
+        "busy": "true"
+      },
+      "requests": 1,
+      "events": [
+        {
+          "at": 4.399999991059303,
+          "text": "Initializing"
+        },
+        {
+          "at": 1059,
+          "text": "Ready"
+        }
+      ],
+      "announcements": [
+        "Ready"
+      ],
+      "shifts": [],
+      "cls": 0,
+      "start": 14553.40000000596,
+      "final": "Ready",
+      "animations": 0,
+      "focus": "tc-analysis-engine-picker",
+      "disabled": false
+    },
+    {
+      "surface": "console",
+      "scenario": "failed-switch",
+      "during": {
+        "text": "Error",
+        "animations": [
+          180
+        ],
+        "busy": "false"
+      },
+      "requests": 1,
+      "events": [
+        {
+          "at": 14,
+          "text": "Initializing"
+        },
+        {
+          "at": 722.2999999970198,
+          "text": "Error"
+        }
+      ],
+      "announcements": [
+        "Error"
+      ],
+      "shifts": [],
+      "cls": 0,
+      "start": 15964,
+      "final": "Error",
+      "animations": 0,
+      "focus": "Retry",
+      "disabled": false
+    }
+  ],
+  "messages": [],
+  "exceptions": []
+}

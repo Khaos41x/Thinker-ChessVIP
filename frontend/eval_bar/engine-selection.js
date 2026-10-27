@@ -5,6 +5,7 @@
     let pending = false;
     const {text, prop, health} = root.ThinkerStatus;
     const connection = health();
+    const actionFeedback = root.ThinkerStatus.interaction();
     let reconnectTimer = null;
     let interactive = false;
     const document = root.document;
@@ -33,9 +34,10 @@
       });
     }
     async function refresh(force = false, initialize = false) {
-      if (force && pending && !selecting) { interactive = true; render(); return; }
+      if (force && actionFeedback.active()) return;
+      if (force && pending && !selecting) { actionFeedback.begin(mounted?.querySelector("button"), mounted?.querySelector("select")); interactive = true; render(); return; }
       if (pending || selecting || document?.hidden || (!force && !connection.due())) return;
-      if (force) { connection.reset(); interactive = true; }
+      if (force) { actionFeedback.begin(mounted?.querySelector("button"), mounted?.querySelector("select")); connection.reset(); interactive = true; }
       pending = true;
       render();
       const epoch = selectionEpoch;
@@ -53,16 +55,21 @@
       } catch (cause) {
         if (epoch !== selectionEpoch) return;
         if (cause.data?.engines) state = cause.data;
-        if (connection.failure()) error = String(cause.message || cause);
+        const confirmed = connection.failure();
+        if (interactive || confirmed) error = String(cause.message || cause);
       }
       finally {
-        pending = false; interactive = false; render();
+        if (interactive) await actionFeedback.wait();
+        pending = false;
+        const userRequest = interactive; interactive = false;
+        if (userRequest && !selecting) actionFeedback.finish(render, mounted?.querySelector("button"), mounted?.querySelector("select")); else render();
         clearTimeout(reconnectTimer);
         if (connection.snapshot().failures && !document?.hidden) reconnectTimer = setTimeout(() => refresh(), connection.delay());
       }
     }
     async function selectPreference(engineId) {
-      if (selecting || !state) return;
+      if (selecting || actionFeedback.active() || !state) return;
+      actionFeedback.begin(mounted?.querySelector("button"), mounted?.querySelector("select"));
       attemptedEngineId = engineId;
       savedUntil = 0;
       if (feedbackTimer !== null) { clearTimeout(feedbackTimer); feedbackTimer = null; }
@@ -72,13 +79,14 @@
         if (!result.ok || result.selectedEngineId !== engineId) throw new Error('Preference was not acknowledged');
         state = result;
         attemptedEngineId = null;
+        await actionFeedback.wait();
         savedUntil = performance.now() + 1500;
         if (feedbackTimer !== null) clearTimeout(feedbackTimer);
         feedbackTimer = setTimeout(() => { savedUntil = 0; feedbackTimer = null; render(); }, 1500);
       } catch (cause) {
         if (cause.data?.engines) state = cause.data;
         error = String(cause.message || cause);
-      } finally { selecting = false; render(); }
+      } finally { await actionFeedback.wait(); selecting = false; actionFeedback.finish(render, mounted?.querySelector("button"), mounted?.querySelector("select")); }
     }
     function render() {
       const host = options.getHost?.();
@@ -94,6 +102,7 @@
         const message = doc.createElement('p'); message.id = 'tc-analysis-message'; message.setAttribute('role', 'status');
         const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry';
         retry.addEventListener('click', () => {
+          if (actionFeedback.active() || selecting) return;
           let operation;
           if (attemptedEngineId && state?.engines?.find(engine => engine.id === attemptedEngineId)?.installed) operation = selectPreference(attemptedEngineId);
           else { attemptedEngineId = null; operation = refresh(true); }
@@ -102,7 +111,7 @@
         });
         select.addEventListener('change', () => selectPreference(select.value));
         const stateLine = doc.createElement('span'); stateLine.className = 'tc-analysis-state';
-        const feedback = doc.createElement('span'); feedback.className = 'tc-analysis-feedback'; feedback.setAttribute('aria-live', 'polite');
+        const feedback = doc.createElement('span'); feedback.className = 'tc-analysis-feedback'; feedback.setAttribute('aria-live', 'off');
         const notice = doc.createElement('div'); notice.className = 'tc-analysis-notice';
         notice.append(message, retry);
         stateLine.append(status, feedback); heading.append(label, stateLine); mounted.append(heading, select, notice);
@@ -110,6 +119,7 @@
         if (caption) caption.after(mounted); else parent.prepend(mounted);
         root.ThinkerStatus.reserve(status, ['Initializing','Switching','Unavailable','Active','Ready','Error'], 10);
       }
+      actionFeedback.bind(mounted, mounted.querySelector(".tc-analysis-status"), mounted.querySelector("p"));
       const select = mounted.querySelector('select');
       const selected = state?.engines?.find(engine => engine.id === state.selectedEngineId);
       if (state?.engines && select.options.length !== state.engines.length) {
@@ -121,13 +131,13 @@
       }
       if (!selecting && state) prop(select, 'value', state.selectedEngineId);
       prop(select, 'disabled', selecting || Boolean(error) || !state);
-      text(mounted.querySelector('.tc-analysis-status'), selecting ? 'Switching' : interactive || pending && !state ? 'Initializing' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing');
-      root.ThinkerStatus.attr(mounted.querySelector('.tc-analysis-status'), 'data-error', Boolean(error || selected?.initializationError));
+      text(mounted.querySelector('.tc-analysis-status'), actionFeedback.active() || interactive || pending && !state ? 'Initializing' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing');
+      root.ThinkerStatus.attr(mounted.querySelector('.tc-analysis-status'), 'data-error', !actionFeedback.active() && Boolean(error || selected?.initializationError));
       const hint = error || selected?.initializationError || (selected ? [selected.description?.split(' · ')[0], selected.name].filter(Boolean).join(' · ') : 'Checking installed engines…');
       text(mounted.querySelector('p'), hint);
       prop(mounted.querySelector('p'), 'title', hint);
       text(mounted.querySelector('.tc-analysis-feedback'), performance.now() < savedUntil ? 'Preference saved.' : '');
-      prop(mounted.querySelector('button'), 'hidden', !error);
+      prop(mounted.querySelector('button'), 'hidden', !error && !interactive);
       prop(mounted.querySelector('button'), 'disabled', interactive || selecting);
       root.ThinkerEnginePicker?.enhance(select);
     }

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-26.6
+// @version      2026-10-27.1
 // @downloadURL  http://127.0.0.1:5050/thinker-chess.user.js
 // @updateURL    http://127.0.0.1:5050/thinker-chess.meta.js
 // @description  Chess Bot com Servidor Local
@@ -144,6 +144,51 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     context.font = node.ownerDocument.defaultView.getComputedStyle(node).font;
     node.style.minWidth = Math.ceil(Math.max(...values.map(value=>context.measureText(value).width)) + extra) + 'px';
   }
+  function interaction() {
+    let started = null, returnFocus = false, bound = null, status = null, live = null, animation = null;
+    function bind(region, indicator, message) {
+      if (!region || bound === region) return;
+      bound = region; status = indicator;
+      attr(status, 'aria-live', 'off');
+      attr(message, 'aria-live', 'off');
+      live = region.ownerDocument.createElement('span');
+      live.setAttribute('aria-live', 'polite');
+      live.setAttribute('aria-atomic', 'true');
+      live.style.cssText = 'position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0';
+      region.append(live);
+      attr(region, 'aria-busy', started !== null);
+    }
+    return Object.freeze({
+      bind,
+      active() { return started !== null; },
+      begin(button, select) {
+        if (started !== null) return false;
+        started = performance.now();
+        const active = (button || select)?.ownerDocument.activeElement;
+        returnFocus = Boolean(active && (active === button || active === select || active.id === select?.id + '-picker'));
+        animation?.cancel(); animation = null;
+        text(live, '');
+        attr(bound, 'aria-busy', true);
+        return true;
+      },
+      async wait() {
+        while (started !== null && performance.now() - started < 700) await new Promise(resolve => setTimeout(resolve, Math.max(1, Math.ceil(700 - (performance.now() - started)))));
+      },
+      finish(render, button, select) {
+        if (started === null) { render(); return; }
+        started = null;
+        render();
+        attr(bound, 'aria-busy', false);
+        text(live, status?.textContent || '');
+        if (status?.animate && !status.ownerDocument.defaultView.matchMedia('(prefers-reduced-motion: reduce)').matches) animation = status.animate([{opacity:0},{opacity:1}], {duration:180, easing:'ease-out'});
+        if (returnFocus && (!bound || [button,select,bound.ownerDocument.body].includes(bound.ownerDocument.activeElement) || bound.ownerDocument.activeElement.id === select?.id + '-picker')) queueMicrotask(() => {
+          const target = button && !button.hidden && !button.disabled ? button : select?.ownerDocument.getElementById(select.id + '-picker') || select;
+          target?.focus({preventScroll:true});
+        });
+        returnFocus = false;
+      }
+    });
+  }
   function health({now = Date.now, interval = 2000} = {}) {
     let failures = 0, lastSuccess = now(), nextAt = 0;
     return Object.freeze({
@@ -155,7 +200,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       snapshot() { return {failures, lastSuccess, nextAt}; }
     });
   }
-  root.ThinkerStatus = Object.freeze({text, prop, attr, health, reserve});
+  root.ThinkerStatus = Object.freeze({text, prop, attr, health, reserve, interaction});
 })(globalThis);
 (function(root){
   'use strict';
@@ -302,6 +347,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     let pending = false;
     const {text, prop, health} = root.ThinkerStatus;
     const connection = health();
+    const actionFeedback = root.ThinkerStatus.interaction();
     let reconnectTimer = null;
     let interactive = false;
     const document = root.document;
@@ -330,9 +376,10 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       });
     }
     async function refresh(force = false, initialize = false) {
-      if (force && pending && !selecting) { interactive = true; render(); return; }
+      if (force && actionFeedback.active()) return;
+      if (force && pending && !selecting) { actionFeedback.begin(mounted?.querySelector("button"), mounted?.querySelector("select")); interactive = true; render(); return; }
       if (pending || selecting || document?.hidden || (!force && !connection.due())) return;
-      if (force) { connection.reset(); interactive = true; }
+      if (force) { actionFeedback.begin(mounted?.querySelector("button"), mounted?.querySelector("select")); connection.reset(); interactive = true; }
       pending = true;
       render();
       const epoch = selectionEpoch;
@@ -350,16 +397,21 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       } catch (cause) {
         if (epoch !== selectionEpoch) return;
         if (cause.data?.engines) state = cause.data;
-        if (connection.failure()) error = String(cause.message || cause);
+        const confirmed = connection.failure();
+        if (interactive || confirmed) error = String(cause.message || cause);
       }
       finally {
-        pending = false; interactive = false; render();
+        if (interactive) await actionFeedback.wait();
+        pending = false;
+        const userRequest = interactive; interactive = false;
+        if (userRequest && !selecting) actionFeedback.finish(render, mounted?.querySelector("button"), mounted?.querySelector("select")); else render();
         clearTimeout(reconnectTimer);
         if (connection.snapshot().failures && !document?.hidden) reconnectTimer = setTimeout(() => refresh(), connection.delay());
       }
     }
     async function selectPreference(engineId) {
-      if (selecting || !state) return;
+      if (selecting || actionFeedback.active() || !state) return;
+      actionFeedback.begin(mounted?.querySelector("button"), mounted?.querySelector("select"));
       attemptedEngineId = engineId;
       savedUntil = 0;
       if (feedbackTimer !== null) { clearTimeout(feedbackTimer); feedbackTimer = null; }
@@ -369,13 +421,14 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         if (!result.ok || result.selectedEngineId !== engineId) throw new Error('Preference was not acknowledged');
         state = result;
         attemptedEngineId = null;
+        await actionFeedback.wait();
         savedUntil = performance.now() + 1500;
         if (feedbackTimer !== null) clearTimeout(feedbackTimer);
         feedbackTimer = setTimeout(() => { savedUntil = 0; feedbackTimer = null; render(); }, 1500);
       } catch (cause) {
         if (cause.data?.engines) state = cause.data;
         error = String(cause.message || cause);
-      } finally { selecting = false; render(); }
+      } finally { await actionFeedback.wait(); selecting = false; actionFeedback.finish(render, mounted?.querySelector("button"), mounted?.querySelector("select")); }
     }
     function render() {
       const host = options.getHost?.();
@@ -391,6 +444,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         const message = doc.createElement('p'); message.id = 'tc-analysis-message'; message.setAttribute('role', 'status');
         const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry';
         retry.addEventListener('click', () => {
+          if (actionFeedback.active() || selecting) return;
           let operation;
           if (attemptedEngineId && state?.engines?.find(engine => engine.id === attemptedEngineId)?.installed) operation = selectPreference(attemptedEngineId);
           else { attemptedEngineId = null; operation = refresh(true); }
@@ -399,7 +453,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         });
         select.addEventListener('change', () => selectPreference(select.value));
         const stateLine = doc.createElement('span'); stateLine.className = 'tc-analysis-state';
-        const feedback = doc.createElement('span'); feedback.className = 'tc-analysis-feedback'; feedback.setAttribute('aria-live', 'polite');
+        const feedback = doc.createElement('span'); feedback.className = 'tc-analysis-feedback'; feedback.setAttribute('aria-live', 'off');
         const notice = doc.createElement('div'); notice.className = 'tc-analysis-notice';
         notice.append(message, retry);
         stateLine.append(status, feedback); heading.append(label, stateLine); mounted.append(heading, select, notice);
@@ -407,6 +461,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         if (caption) caption.after(mounted); else parent.prepend(mounted);
         root.ThinkerStatus.reserve(status, ['Initializing','Switching','Unavailable','Active','Ready','Error'], 10);
       }
+      actionFeedback.bind(mounted, mounted.querySelector(".tc-analysis-status"), mounted.querySelector("p"));
       const select = mounted.querySelector('select');
       const selected = state?.engines?.find(engine => engine.id === state.selectedEngineId);
       if (state?.engines && select.options.length !== state.engines.length) {
@@ -418,13 +473,13 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       }
       if (!selecting && state) prop(select, 'value', state.selectedEngineId);
       prop(select, 'disabled', selecting || Boolean(error) || !state);
-      text(mounted.querySelector('.tc-analysis-status'), selecting ? 'Switching' : interactive || pending && !state ? 'Initializing' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing');
-      root.ThinkerStatus.attr(mounted.querySelector('.tc-analysis-status'), 'data-error', Boolean(error || selected?.initializationError));
+      text(mounted.querySelector('.tc-analysis-status'), actionFeedback.active() || interactive || pending && !state ? 'Initializing' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing');
+      root.ThinkerStatus.attr(mounted.querySelector('.tc-analysis-status'), 'data-error', !actionFeedback.active() && Boolean(error || selected?.initializationError));
       const hint = error || selected?.initializationError || (selected ? [selected.description?.split(' · ')[0], selected.name].filter(Boolean).join(' · ') : 'Checking installed engines…');
       text(mounted.querySelector('p'), hint);
       prop(mounted.querySelector('p'), 'title', hint);
       text(mounted.querySelector('.tc-analysis-feedback'), performance.now() < savedUntil ? 'Preference saved.' : '');
-      prop(mounted.querySelector('button'), 'hidden', !error);
+      prop(mounted.querySelector('button'), 'hidden', !error && !interactive);
       prop(mounted.querySelector('button'), 'disabled', interactive || selecting);
       root.ThinkerEnginePicker?.enhance(select);
     }
@@ -8303,7 +8358,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
 })();
 
 /* THINKER_SESSION_CONTROL_GENERATED_START */
-globalThis.ThinkerClientVersion="2026-10-26.6";
+globalThis.ThinkerClientVersion="2026-10-27.1";
 globalThis.ThinkerSessionControlReady=(async()=>{
 (function(root){
 "use strict";
