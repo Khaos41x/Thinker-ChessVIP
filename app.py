@@ -1488,7 +1488,10 @@ def run_server(port=5050):
         Log.banner()
 
     try:
-        serve_local(app, initialize, lambda bound_port: Log.success(f"Rodando em http://127.0.0.1:{bound_port}"), port)
+        def ready(bound_port):
+            Log.success(f"Rodando em http://127.0.0.1:{bound_port}")
+            Log.success(f"Config: http://127.0.0.1:{bound_port}/config")
+        serve_local(app, initialize, ready, port)
     finally:
         rating_tracker.stop()
         analysis_engine_registry.close()
