@@ -1,0 +1,50 @@
+diff --git a/app.py b/app.py
+index 1f61557..7022606 100644
+--- a/app.py
++++ b/app.py
+@@ -1488,7 +1488,10 @@ def run_server(port=5050):
+         Log.banner()
+ 
+     try:
+-        serve_local(app, initialize, lambda bound_port: Log.success(f"Rodando em http://127.0.0.1:{bound_port}"), port)
++        def ready(bound_port):
++            Log.success(f"Rodando em http://127.0.0.1:{bound_port}")
++            Log.success(f"Config: http://127.0.0.1:{bound_port}/config")
++        serve_local(app, initialize, ready, port)
+     finally:
+         rating_tracker.stop()
+         analysis_engine_registry.close()
+diff --git a/tests/test_server_startup.py b/tests/test_server_startup.py
+index dbc14c5..996c3b5 100644
+--- a/tests/test_server_startup.py
++++ b/tests/test_server_startup.py
+@@ -51,6 +51,7 @@ class StartupTests(unittest.TestCase):
+         threading.Thread(target=lambda: [lines.put((time.perf_counter(), line)) for line in process.stdout], daemon=True).start()
+         deadline = time.monotonic() + 20
+         output = []
++        listening = None
+         while time.monotonic() < deadline:
+             try:
+                 timestamp, line = lines.get(timeout=.1)
+@@ -63,7 +64,12 @@ class StartupTests(unittest.TestCase):
+                 port = int(match.group(1))
+                 with socket.create_connection(('127.0.0.1', port), timeout=1):
+                     pass
+-                return port, timestamp, output
++                listening = (port, timestamp)
++            config = re.search(r'Config: http://127\.0\.0\.1:(\d+)/config', line)
++            if config:
++                self.assertIsNotNone(listening, 'Config printed before verified readiness')
++                self.assertEqual(int(config.group(1)), listening[0])
++                return listening[0], listening[1], output
+         self.fail('No verified listening socket after startup')
+ 
+     def test_real_app_listens_before_ready_and_serves_config_and_registry(self):
+@@ -91,6 +97,7 @@ class StartupTests(unittest.TestCase):
+         output, _ = second.communicate(timeout=8)
+         self.assertNotEqual(second.returncode, 0)
+         self.assertNotIn('Rodando em', output)
++        self.assertNotIn('Config: http://', output)
+         self.assertNotIn('Komodo ONLINE', output)
+         self.assertIsNone(first.poll())
+         with socket.create_connection(('127.0.0.1', port), timeout=1):

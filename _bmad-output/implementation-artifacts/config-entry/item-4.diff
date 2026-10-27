@@ -1,0 +1,215 @@
+diff --git a/frontend/eval_bar/engine-selection.js b/frontend/eval_bar/engine-selection.js
+index 8d22747..e501391 100644
+--- a/frontend/eval_bar/engine-selection.js
++++ b/frontend/eval_bar/engine-selection.js
+@@ -28,7 +28,7 @@
+       });
+     }
+     async function refresh(force = false, initialize = false) {
+-      if (pending || selecting || (!force && performance.now() - lastRefresh < 1500)) return;
++      if (pending || selecting || (!force && (error || performance.now() - lastRefresh < 1500))) return;
+       pending = true;
+       render();
+       const epoch = selectionEpoch;
+@@ -84,6 +84,7 @@
+         const message = doc.createElement('p'); message.id = 'tc-analysis-message'; message.setAttribute('role', 'status');
+         const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry';
+         retry.addEventListener('click', () => {
++          options.onRetry?.();
+           if (attemptedEngineId && state?.engines?.find(engine => engine.id === attemptedEngineId)?.installed) return selectPreference(attemptedEngineId);
+           attemptedEngineId = null;
+           refresh(true);
+@@ -120,6 +121,7 @@
+       cacheContext() { refresh(false, true); return allowed() && state?.activeEngineId ? state.cacheContext : ''; },
+       requestIdentity() { return state && allowed() ? {engineId: state.activeEngineId, selectionGeneration: state.selectionGeneration} : {}; },
+       refresh,
++      unavailable() { selectionEpoch++; error = 'Cannot reach analysis engine'; render(); },
+       selectPreference,
+       snapshot() { return {state, pending, error, attemptedEngineId}; }
+     });
+diff --git a/frontend/external_config/session-control.js b/frontend/external_config/session-control.js
+index fcdc7ee..4e89c36 100644
+--- a/frontend/external_config/session-control.js
++++ b/frontend/external_config/session-control.js
+@@ -44,7 +44,7 @@ factories["presentation"]=function(module,exports,require){
+ const{validateSessionConfig,ESTIMATOR_VERSION,CONTROLLER_VERSION}=require("./models");const SESSION_FIELDS=Object.freeze({durationMinutes:"sessionDurationMinutes",minimumPercent:"sessionMinimumPercent",maximumPercent:"sessionMaximumPercent"});function validateSessionDraft(draft){const value=Object.fromEntries(Object.keys(SESSION_FIELDS).map(key=>[key,(draft[key]==null||String(draft[key]).trim()==="")?null:Number(draft[key])]));if(value.durationMinutes!==null&&(!Number.isInteger(value.durationMinutes)||value.durationMinutes<1||value.durationMinutes>1440)||value.minimumPercent!==null&&(!Number.isFinite(value.minimumPercent)||value.minimumPercent<=0||value.minimumPercent>=100)||value.maximumPercent!==null&&(!Number.isFinite(value.maximumPercent)||value.maximumPercent<=0||value.maximumPercent>=100)||value.minimumPercent!==null&&value.maximumPercent!==null&&value.minimumPercent>=value.maximumPercent){throw Object.assign(new TypeError("Use 1–1440 minutes and win rates with 0 < minimum < maximum < 100."),{code:"SESSION_CONFIG_INVALID"});}return Object.freeze(value);}function sessionConfigFromDraft(draft,context={}){const value=validateSessionDraft(draft);if(value.durationMinutes===null){throw Object.assign(new TypeError("Use 1–1440 minutes and win rates with 0 < minimum < maximum < 100."),{code:"SESSION_CONFIG_INVALID"});}if((value.minimumPercent===null)!==(value.maximumPercent===null)){throw Object.assign(new TypeError("Configure both win-rate targets before starting a session."),{code:"SESSION_TARGETS_UNSET"});}return validateSessionConfig({schemaVersion:1,durationMs:value.durationMinutes*60000,minWinRate:value.minimumPercent===null?null:value.minimumPercent / 100,maxWinRate:value.maximumPercent===null?null:value.maximumPercent / 100,boostOffsetElo:value.minimumPercent===null?0:200,correctionOffsetElo:value.maximumPercent===null?0:-200,minCompletedGames:5,perceptionElo:Number.isInteger(context.perceptionElo)?context.perceptionElo:1700,scaleId:context.scaleId||"calibration-scale-unavailable",estimatorVersion:ESTIMATOR_VERSION,controllerVersion:CONTROLLER_VERSION,minimumAdmissionHeadroomMs:30000,queueObservationTimeoutMs:30000,maximumDrainMs:900000,maximumConsecutiveSaturatedGames:3});}function draftFromConfig(config){return Object.fromEntries(Object.entries(SESSION_FIELDS).map(([field,key])=>[field,config[key]==null?"":String(config[key])]));}function draftPatch(draft){const value=validateSessionDraft(draft);return Object.fromEntries(Object.entries(SESSION_FIELDS).map(([field,key])=>[key,value[field]]));}function migrateSessionFields(storage){const key="thinker.sessionFields.v1";if(storage.getItem(key)==="1")return false;for(const field of Object.values(SESSION_FIELDS))storage.removeItem(field);storage.setItem(key,"1");return true;}module.exports={migrateSessionFields,SESSION_FIELDS,validateSessionDraft,sessionConfigFromDraft,draftFromConfig,draftPatch};
+ };
+ factories["external"]=function(module,exports,require){
+-const{availability}=require('./ui');const{draftFromConfig,draftPatch,SESSION_FIELDS}=require('./presentation');function createGmConfigRequest(request,serverUrl){return(path,body)=>new Promise((resolve,reject)=>request({method:body?'POST':'GET',url:serverUrl+path,timeout:5000,headers:{'Content-Type':'application/json'},...(body?{['data']:JSON.stringify(body)}:{}),onload(response){try{const result=JSON.parse(response.responseText);if(response.status<200||response.status>=300)throw new Error(result.error||'Configuration unavailable');resolve(result);}catch(error){reject(error);}},onerror:()=>reject(new Error('Local server unavailable')),ontimeout:()=>reject(new Error('Local server timed out')),}));}function createExternalSessionBridge(options){const clientId=options.clientId;let busy=false;let stopped=false;let timer=null;let ack=null;const pendingDraft={};let accepted=null;const seen=new Set();const identity=()=>{const snapshot=options.bridge.sessionSnapshot();return snapshot?`${snapshot.sessionId}:${snapshot.revision}`:null;};function draftChanged(draft,changedField){const fields=changedField&&SESSION_FIELDS[changedField]?[changedField]:Object.keys(SESSION_FIELDS);for(const field of fields){const value=String(draft[field]);if(changedField||!accepted||Number(value)!==accepted[SESSION_FIELDS[field]]||value.trim()==='')pendingDraft[field]=value;}}async function tick(){if(busy||stopped)return;busy=true;try{const config=await options.request('/config/load');accepted=config;options.presenter.applyDraft(draftFromConfig(config));if(Object.keys(pendingDraft).length){const edits={...pendingDraft};try{const validated=draftPatch({...draftFromConfig(config),...edits});const patch=Object.fromEntries(Object.keys(edits).map(field=>[SESSION_FIELDS[field],validated[SESSION_FIELDS[field]]]));const result=await options.request('/config/save',{...patch,_expectedRevision:config._revision,_serverId:config._serverId});for(const field of Object.keys(edits))if(pendingDraft[field]===edits[field])delete pendingDraft[field];accepted=result.config;options.presenter.applyDraft(draftFromConfig(result.config));}catch(error){options.onError?.(error);}}const status=options.bridge.status();const blockers=availability(status,options.startBlocker());const projection={status,availability:{...blockers,export:null},sessionIdentity:identity()};const result=await options.request('/config/session/bridge',{clientId,projection,...(ack?{ack}:{})});ack=null;const command=result.command;if(result.owner&&command&&!seen.has(command.id)){seen.add(command.id);if(seen.size>200)seen.delete(seen.values().next().value);ack={id:command.id,ok:false,error:'Session action expired. Check the session before retrying.'};if(command.ownerId===clientId&&command.expiresAt>Date.now()&&command.sessionIdentity===identity()){try{await options.request(`/config/session/commands/${command.id}/authorize`,{clientId});if(command.expiresAt<=Date.now()||command.sessionIdentity!==identity())throw new Error('Session action is no longer current');const current=availability(options.bridge.status(),options.startBlocker());if(command.action!=='export'&&current[command.action])throw new Error(current[command.action]);let value;if(command.action==='start')value=await options.bridge.start(options.createConfig(draftFromConfig(command.config)));else if(command.action==='stop'){value=await options.bridge.gracefulStop();if(value?.allowed!==true)throw new Error(value?.reason||'Session could not finish');}else value=options.bridge.exportDiagnostic();ack={id:command.id,ok:true,result:command.action==='export'?value:null};}catch(error){ack.error=String(error.code||error.message||error);}options.presenter.update();}}}catch(error){options.onError?.(error);}finally{busy=false;if(!stopped)timer=options.setTimeout(tick,1000);}}return Object.freeze({start:tick,draftChanged,stop(){stopped=true;options.clearTimeout(timer);},snapshot:()=>({accepted,pendingDraft:{...pendingDraft},busy})});}module.exports={createExternalSessionBridge,createGmConfigRequest};
++const{availability}=require('./ui');const{draftFromConfig,draftPatch,SESSION_FIELDS}=require('./presentation');function createGmConfigRequest(request,serverUrl){return(path,body)=>new Promise((resolve,reject)=>request({method:body?'POST':'GET',url:serverUrl+path,timeout:5000,headers:{'Content-Type':'application/json'},...(body?{['data']:JSON.stringify(body)}:{}),onload(response){try{const result=JSON.parse(response.responseText);if(response.status<200||response.status>=300)throw new Error(result.error||'Configuration unavailable');resolve(result);}catch(error){reject(error);}},onerror:()=>reject(Object.assign(new Error('Local server unavailable'),{code:'SERVER_UNAVAILABLE'})),ontimeout:()=>reject(Object.assign(new Error('Local server timed out'),{code:'SERVER_UNAVAILABLE'})),}));}function createExternalSessionBridge(options){const clientId=options.clientId;let busy=false;let stopped=false;let timer=null;let ack=null;const pendingDraft={};let accepted=null;const seen=new Set();const identity=()=>{const snapshot=options.bridge.sessionSnapshot();return snapshot?`${snapshot.sessionId}:${snapshot.revision}`:null;};function draftChanged(draft,changedField){const fields=changedField&&SESSION_FIELDS[changedField]?[changedField]:Object.keys(SESSION_FIELDS);for(const field of fields){const value=String(draft[field]);if(changedField||!accepted||Number(value)!==accepted[SESSION_FIELDS[field]]||value.trim()==='')pendingDraft[field]=value;}}async function tick(){if(busy||stopped||options.isOffline?.())return;options.clearTimeout(timer);timer=null;busy=true;try{const config=await options.request('/config/load');accepted=config;options.presenter.applyDraft(draftFromConfig(config));if(Object.keys(pendingDraft).length){const edits={...pendingDraft};try{const validated=draftPatch({...draftFromConfig(config),...edits});const patch=Object.fromEntries(Object.keys(edits).map(field=>[SESSION_FIELDS[field],validated[SESSION_FIELDS[field]]]));const result=await options.request('/config/save',{...patch,_expectedRevision:config._revision,_serverId:config._serverId});for(const field of Object.keys(edits))if(pendingDraft[field]===edits[field])delete pendingDraft[field];accepted=result.config;options.presenter.applyDraft(draftFromConfig(result.config));}catch(error){options.onError?.(error);}}const status=options.bridge.status();const blockers=availability(status,options.startBlocker());const projection={status,availability:{...blockers,export:null},sessionIdentity:identity()};const result=await options.request('/config/session/bridge',{clientId,projection,...(ack?{ack}:{})});ack=null;const command=result.command;if(result.owner&&command&&!seen.has(command.id)){seen.add(command.id);if(seen.size>200)seen.delete(seen.values().next().value);ack={id:command.id,ok:false,error:'Session action expired. Check the session before retrying.'};if(command.ownerId===clientId&&command.expiresAt>Date.now()&&command.sessionIdentity===identity()){try{await options.request(`/config/session/commands/${command.id}/authorize`,{clientId});if(command.expiresAt<=Date.now()||command.sessionIdentity!==identity())throw new Error('Session action is no longer current');const current=availability(options.bridge.status(),options.startBlocker());if(command.action!=='export'&&current[command.action])throw new Error(current[command.action]);let value;if(command.action==='start')value=await options.bridge.start(options.createConfig(draftFromConfig(command.config)));else if(command.action==='stop'){value=await options.bridge.gracefulStop();if(value?.allowed!==true)throw new Error(value?.reason||'Session could not finish');}else value=options.bridge.exportDiagnostic();ack={id:command.id,ok:true,result:command.action==='export'?value:null};}catch(error){ack.error=String(error.code||error.message||error);}options.presenter.update();}}}catch(error){options.onError?.(error);}finally{busy=false;if(!stopped)timer=options.setTimeout(tick,1000);}}return Object.freeze({start:tick,draftChanged,stop(){stopped=true;options.clearTimeout(timer);},snapshot:()=>({accepted,pendingDraft:{...pendingDraft},busy})});}module.exports={createExternalSessionBridge,createGmConfigRequest};
+ };
+ factories["index"]=function(module,exports,require){
+ module.exports=Object.freeze({...require("./clock"),...require("./controller"),...require("./leader"),...require("./models"),...require("./ports"),...require("./platform-chesscom"),...require("./reducer"),...require("./repository"),...require("./runtime"),...require("./statistics"),...require("./status"),...require("./telemetry"),...require("./ui"),...require("./presentation"),...require("./external"),});
+diff --git a/frontend/session_control/external.js b/frontend/session_control/external.js
+index 180cdd5..2e020b7 100644
+--- a/frontend/session_control/external.js
++++ b/frontend/session_control/external.js
+@@ -13,7 +13,7 @@ function createGmConfigRequest(request, serverUrl) {
+         if (response.status < 200 || response.status >= 300) throw new Error(result.error || 'Configuration unavailable');
+         resolve(result);
+       } catch (error) { reject(error); }
+-    }, onerror: () => reject(new Error('Local server unavailable')), ontimeout: () => reject(new Error('Local server timed out')),
++    }, onerror: () => reject(Object.assign(new Error('Local server unavailable'), {code:'SERVER_UNAVAILABLE'})), ontimeout: () => reject(Object.assign(new Error('Local server timed out'), {code:'SERVER_UNAVAILABLE'})),
+   }));
+ }
+ 
+@@ -38,7 +38,9 @@ function createExternalSessionBridge(options) {
+     }
+   }
+   async function tick() {
+-    if (busy || stopped) return;
++    if (busy || stopped || options.isOffline?.()) return;
++    options.clearTimeout(timer);
++    timer = null;
+     busy = true;
+     try {
+       const config = await options.request('/config/load');
+diff --git a/script.js b/script.js
+index 559f96e..00f30ad 100644
+--- a/script.js
++++ b/script.js
+@@ -1,7 +1,7 @@
+ // ==UserScript==
+ // @name         TC172
+ // @namespace    http://tampermonkey.net/
+-// @version      2026-10-26.3
++// @version      2026-10-26.4
+ // @downloadURL  http://127.0.0.1:5050/thinker-chess.user.js
+ // @updateURL    http://127.0.0.1:5050/thinker-chess.meta.js
+ // @description  Chess Bot com Servidor Local
+@@ -163,7 +163,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+       });
+     }
+     async function refresh(force = false, initialize = false) {
+-      if (pending || selecting || (!force && performance.now() - lastRefresh < 1500)) return;
++      if (pending || selecting || (!force && (error || performance.now() - lastRefresh < 1500))) return;
+       pending = true;
+       render();
+       const epoch = selectionEpoch;
+@@ -219,6 +219,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+         const message = doc.createElement('p'); message.id = 'tc-analysis-message'; message.setAttribute('role', 'status');
+         const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry';
+         retry.addEventListener('click', () => {
++          options.onRetry?.();
+           if (attemptedEngineId && state?.engines?.find(engine => engine.id === attemptedEngineId)?.installed) return selectPreference(attemptedEngineId);
+           attemptedEngineId = null;
+           refresh(true);
+@@ -255,6 +256,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+       cacheContext() { refresh(false, true); return allowed() && state?.activeEngineId ? state.cacheContext : ''; },
+       requestIdentity() { return state && allowed() ? {engineId: state.activeEngineId, selectionGeneration: state.selectionGeneration} : {}; },
+       refresh,
++      unavailable() { selectionEpoch++; error = 'Cannot reach analysis engine'; render(); },
+       selectPreference,
+       snapshot() { return {state, pending, error, attemptedEngineId}; }
+     });
+@@ -3432,6 +3434,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+     return globalThis.ThinkerEvalBarV2?.resolveChessComEvalAuthorization?.(window.location, document) || null;
+   }
+ 
++  let resumeExternalSessionConnection = () => {};
+   const analysisEngineSelection = globalThis.ThinkerAnalysisEngine.create({
+     serverUrl: SERVER_URL,
+     storage: localStorage,
+@@ -3439,6 +3442,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+     getHost: () => document.querySelector("#krypbot-container .kb-engine-module"),
+     headers: engineRequestHeaders,
+     request: options => GM_xmlhttpRequest(options),
++    onRetry: () => { _externalServerOffline = false; resumeExternalSessionConnection(); pollExternalConfig(); },
+   });
+ 
+   function getEvalBarCacheContext() {
+@@ -7253,6 +7257,16 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+         });
+         const sessionMenu = document.getElementById("krypbot-container");
+         globalThis.ThinkerFocusFinish.bind(sessionMenu);
++        const resumeConfigConnection = () => {
++          if (!_externalServerOffline) return;
++          _externalServerOffline = false;
++          resumeExternalSessionConnection();
++          flushConfigSave();
++          pollExternalConfig();
++          analysisEngineSelection.refresh(true);
++        };
++        sessionMenu.addEventListener("pointerdown", resumeConfigConnection, true);
++        sessionMenu.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") resumeConfigConnection(); }, true);
+         sessionMenu.addEventListener("pointerdown", () => { sessionMenu.dataset.focusInput = "pointer"; }, true);
+         thinkerKeyboardFocusHandler = (event) => {
+           if (event.key === "Tab") sessionMenu.dataset.focusInput = "keyboard";
+@@ -7474,9 +7488,11 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+             request: api.createGmConfigRequest(GM_xmlhttpRequest, SERVER_URL), createConfig: sessionConfigFromDraft,
+             startBlocker: sessionStartBlocker,
+             setTimeout: window.setTimeout.bind(window), clearTimeout: window.clearTimeout.bind(window),
+-            onError: error => debug("error", "[External Config] Session synchronization", error),
++            isOffline: () => _externalServerOffline,
++            onError: error => { if (error.code === 'SERVER_UNAVAILABLE') markServerUnavailable(); debug("error", "[External Config] Session synchronization", error); },
+           });
+           sessionControlPresenter.update();
++          resumeExternalSessionConnection = () => externalSessionBridge.start();
+           externalSessionBridge.start();
+           window.krypbotSessionControlUI = Object.freeze({ update: sessionControlPresenter.update, readConfig: sessionControlPresenter.readConfig, dispose: sessionControlPresenter.dispose });
+           window.setInterval(() => {
+@@ -7522,7 +7538,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+         }
+ 
+         function flushConfigSave() {
+-          if (_configSaveInFlight || !_queuedConfigSnapshot) return;
++          if (_externalServerOffline || _configSaveInFlight || !_queuedConfigSnapshot) return;
+           const snapshot = _queuedConfigSnapshot;
+           _queuedConfigSnapshot = null;
+           _configSaveInFlight = true;
+@@ -7560,8 +7576,8 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+                 pollExternalConfig();
+               }
+             },
+-            onerror: onFailure,
+-            ontimeout: onFailure,
++            onerror: () => { markServerUnavailable(); onFailure(); },
++            ontimeout: () => { markServerUnavailable(); onFailure(); },
+             onabort: onFailure,
+           });
+         }
+@@ -7844,8 +7860,15 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+   let _externalServerId = "";
+   let _externalPollPending = false;
+   let _externalConfigError = null;
++  let _externalServerOffline = false;
++
++  function markServerUnavailable() {
++    _externalServerOffline = true;
++    analysisEngineSelection.unavailable();
++  }
+ 
+   function pollExternalConfig() {
++    if (_externalServerOffline) return;
+     analysisEngineSelection.refresh();
+     if (!_menuReady || _localConfigPending || _externalPollPending) return;
+     const requestRevision = _localConfigRevision;
+@@ -7858,8 +7881,8 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+       url: SERVER_URL + "/config/load",
+       headers: { "X-Thinker-Version": globalThis.ThinkerClientVersion || "", "X-Thinker-Client": "userscript", "X-Thinker-Applied-Revision": String(_externalAppliedRevision), "X-Thinker-Server": _externalServerId, "X-Thinker-Banner-State": bannerState },
+       timeout: 5000,
+-      onerror() { _externalPollPending = false; _externalConfigError = "network"; },
+-      ontimeout() { _externalPollPending = false; _externalConfigError = "timeout"; },
++      onerror() { markServerUnavailable(); _externalPollPending = false; _externalConfigError = "network"; },
++      ontimeout() { markServerUnavailable(); _externalPollPending = false; _externalConfigError = "timeout"; },
+       onabort() { _externalPollPending = false; },
+       onload(resp) {
+         _externalPollPending = false;
+@@ -8083,7 +8106,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+ })();
+ 
+ /* THINKER_SESSION_CONTROL_GENERATED_START */
+-globalThis.ThinkerClientVersion="2026-10-26.3";
++globalThis.ThinkerClientVersion="2026-10-26.4";
+ globalThis.ThinkerSessionControlReady=(async()=>{
+ (function(root){
+ "use strict";
+@@ -8131,7 +8154,7 @@ factories["presentation"]=function(module,exports,require){
+ const{validateSessionConfig,ESTIMATOR_VERSION,CONTROLLER_VERSION}=require("./models");const SESSION_FIELDS=Object.freeze({durationMinutes:"sessionDurationMinutes",minimumPercent:"sessionMinimumPercent",maximumPercent:"sessionMaximumPercent"});function validateSessionDraft(draft){const value=Object.fromEntries(Object.keys(SESSION_FIELDS).map(key=>[key,(draft[key]==null||String(draft[key]).trim()==="")?null:Number(draft[key])]));if(value.durationMinutes!==null&&(!Number.isInteger(value.durationMinutes)||value.durationMinutes<1||value.durationMinutes>1440)||value.minimumPercent!==null&&(!Number.isFinite(value.minimumPercent)||value.minimumPercent<=0||value.minimumPercent>=100)||value.maximumPercent!==null&&(!Number.isFinite(value.maximumPercent)||value.maximumPercent<=0||value.maximumPercent>=100)||value.minimumPercent!==null&&value.maximumPercent!==null&&value.minimumPercent>=value.maximumPercent){throw Object.assign(new TypeError("Use 1–1440 minutes and win rates with 0 < minimum < maximum < 100."),{code:"SESSION_CONFIG_INVALID"});}return Object.freeze(value);}function sessionConfigFromDraft(draft,context={}){const value=validateSessionDraft(draft);if(value.durationMinutes===null){throw Object.assign(new TypeError("Use 1–1440 minutes and win rates with 0 < minimum < maximum < 100."),{code:"SESSION_CONFIG_INVALID"});}if((value.minimumPercent===null)!==(value.maximumPercent===null)){throw Object.assign(new TypeError("Configure both win-rate targets before starting a session."),{code:"SESSION_TARGETS_UNSET"});}return validateSessionConfig({schemaVersion:1,durationMs:value.durationMinutes*60000,minWinRate:value.minimumPercent===null?null:value.minimumPercent / 100,maxWinRate:value.maximumPercent===null?null:value.maximumPercent / 100,boostOffsetElo:value.minimumPercent===null?0:200,correctionOffsetElo:value.maximumPercent===null?0:-200,minCompletedGames:5,perceptionElo:Number.isInteger(context.perceptionElo)?context.perceptionElo:1700,scaleId:context.scaleId||"calibration-scale-unavailable",estimatorVersion:ESTIMATOR_VERSION,controllerVersion:CONTROLLER_VERSION,minimumAdmissionHeadroomMs:30000,queueObservationTimeoutMs:30000,maximumDrainMs:900000,maximumConsecutiveSaturatedGames:3});}function draftFromConfig(config){return Object.fromEntries(Object.entries(SESSION_FIELDS).map(([field,key])=>[field,config[key]==null?"":String(config[key])]));}function draftPatch(draft){const value=validateSessionDraft(draft);return Object.fromEntries(Object.entries(SESSION_FIELDS).map(([field,key])=>[key,value[field]]));}function migrateSessionFields(storage){const key="thinker.sessionFields.v1";if(storage.getItem(key)==="1")return false;for(const field of Object.values(SESSION_FIELDS))storage.removeItem(field);storage.setItem(key,"1");return true;}module.exports={migrateSessionFields,SESSION_FIELDS,validateSessionDraft,sessionConfigFromDraft,draftFromConfig,draftPatch};
+ };
+ factories["external"]=function(module,exports,require){
+-const{availability}=require('./ui');const{draftFromConfig,draftPatch,SESSION_FIELDS}=require('./presentation');function createGmConfigRequest(request,serverUrl){return(path,body)=>new Promise((resolve,reject)=>request({method:body?'POST':'GET',url:serverUrl+path,timeout:5000,headers:{'Content-Type':'application/json'},...(body?{['data']:JSON.stringify(body)}:{}),onload(response){try{const result=JSON.parse(response.responseText);if(response.status<200||response.status>=300)throw new Error(result.error||'Configuration unavailable');resolve(result);}catch(error){reject(error);}},onerror:()=>reject(new Error('Local server unavailable')),ontimeout:()=>reject(new Error('Local server timed out')),}));}function createExternalSessionBridge(options){const clientId=options.clientId;let busy=false;let stopped=false;let timer=null;let ack=null;const pendingDraft={};let accepted=null;const seen=new Set();const identity=()=>{const snapshot=options.bridge.sessionSnapshot();return snapshot?`${snapshot.sessionId}:${snapshot.revision}`:null;};function draftChanged(draft,changedField){const fields=changedField&&SESSION_FIELDS[changedField]?[changedField]:Object.keys(SESSION_FIELDS);for(const field of fields){const value=String(draft[field]);if(changedField||!accepted||Number(value)!==accepted[SESSION_FIELDS[field]]||value.trim()==='')pendingDraft[field]=value;}}async function tick(){if(busy||stopped)return;busy=true;try{const config=await options.request('/config/load');accepted=config;options.presenter.applyDraft(draftFromConfig(config));if(Object.keys(pendingDraft).length){const edits={...pendingDraft};try{const validated=draftPatch({...draftFromConfig(config),...edits});const patch=Object.fromEntries(Object.keys(edits).map(field=>[SESSION_FIELDS[field],validated[SESSION_FIELDS[field]]]));const result=await options.request('/config/save',{...patch,_expectedRevision:config._revision,_serverId:config._serverId});for(const field of Object.keys(edits))if(pendingDraft[field]===edits[field])delete pendingDraft[field];accepted=result.config;options.presenter.applyDraft(draftFromConfig(result.config));}catch(error){options.onError?.(error);}}const status=options.bridge.status();const blockers=availability(status,options.startBlocker());const projection={status,availability:{...blockers,export:null},sessionIdentity:identity()};const result=await options.request('/config/session/bridge',{clientId,projection,...(ack?{ack}:{})});ack=null;const command=result.command;if(result.owner&&command&&!seen.has(command.id)){seen.add(command.id);if(seen.size>200)seen.delete(seen.values().next().value);ack={id:command.id,ok:false,error:'Session action expired. Check the session before retrying.'};if(command.ownerId===clientId&&command.expiresAt>Date.now()&&command.sessionIdentity===identity()){try{await options.request(`/config/session/commands/${command.id}/authorize`,{clientId});if(command.expiresAt<=Date.now()||command.sessionIdentity!==identity())throw new Error('Session action is no longer current');const current=availability(options.bridge.status(),options.startBlocker());if(command.action!=='export'&&current[command.action])throw new Error(current[command.action]);let value;if(command.action==='start')value=await options.bridge.start(options.createConfig(draftFromConfig(command.config)));else if(command.action==='stop'){value=await options.bridge.gracefulStop();if(value?.allowed!==true)throw new Error(value?.reason||'Session could not finish');}else value=options.bridge.exportDiagnostic();ack={id:command.id,ok:true,result:command.action==='export'?value:null};}catch(error){ack.error=String(error.code||error.message||error);}options.presenter.update();}}}catch(error){options.onError?.(error);}finally{busy=false;if(!stopped)timer=options.setTimeout(tick,1000);}}return Object.freeze({start:tick,draftChanged,stop(){stopped=true;options.clearTimeout(timer);},snapshot:()=>({accepted,pendingDraft:{...pendingDraft},busy})});}module.exports={createExternalSessionBridge,createGmConfigRequest};
++const{availability}=require('./ui');const{draftFromConfig,draftPatch,SESSION_FIELDS}=require('./presentation');function createGmConfigRequest(request,serverUrl){return(path,body)=>new Promise((resolve,reject)=>request({method:body?'POST':'GET',url:serverUrl+path,timeout:5000,headers:{'Content-Type':'application/json'},...(body?{['data']:JSON.stringify(body)}:{}),onload(response){try{const result=JSON.parse(response.responseText);if(response.status<200||response.status>=300)throw new Error(result.error||'Configuration unavailable');resolve(result);}catch(error){reject(error);}},onerror:()=>reject(Object.assign(new Error('Local server unavailable'),{code:'SERVER_UNAVAILABLE'})),ontimeout:()=>reject(Object.assign(new Error('Local server timed out'),{code:'SERVER_UNAVAILABLE'})),}));}function createExternalSessionBridge(options){const clientId=options.clientId;let busy=false;let stopped=false;let timer=null;let ack=null;const pendingDraft={};let accepted=null;const seen=new Set();const identity=()=>{const snapshot=options.bridge.sessionSnapshot();return snapshot?`${snapshot.sessionId}:${snapshot.revision}`:null;};function draftChanged(draft,changedField){const fields=changedField&&SESSION_FIELDS[changedField]?[changedField]:Object.keys(SESSION_FIELDS);for(const field of fields){const value=String(draft[field]);if(changedField||!accepted||Number(value)!==accepted[SESSION_FIELDS[field]]||value.trim()==='')pendingDraft[field]=value;}}async function tick(){if(busy||stopped||options.isOffline?.())return;options.clearTimeout(timer);timer=null;busy=true;try{const config=await options.request('/config/load');accepted=config;options.presenter.applyDraft(draftFromConfig(config));if(Object.keys(pendingDraft).length){const edits={...pendingDraft};try{const validated=draftPatch({...draftFromConfig(config),...edits});const patch=Object.fromEntries(Object.keys(edits).map(field=>[SESSION_FIELDS[field],validated[SESSION_FIELDS[field]]]));const result=await options.request('/config/save',{...patch,_expectedRevision:config._revision,_serverId:config._serverId});for(const field of Object.keys(edits))if(pendingDraft[field]===edits[field])delete pendingDraft[field];accepted=result.config;options.presenter.applyDraft(draftFromConfig(result.config));}catch(error){options.onError?.(error);}}const status=options.bridge.status();const blockers=availability(status,options.startBlocker());const projection={status,availability:{...blockers,export:null},sessionIdentity:identity()};const result=await options.request('/config/session/bridge',{clientId,projection,...(ack?{ack}:{})});ack=null;const command=result.command;if(result.owner&&command&&!seen.has(command.id)){seen.add(command.id);if(seen.size>200)seen.delete(seen.values().next().value);ack={id:command.id,ok:false,error:'Session action expired. Check the session before retrying.'};if(command.ownerId===clientId&&command.expiresAt>Date.now()&&command.sessionIdentity===identity()){try{await options.request(`/config/session/commands/${command.id}/authorize`,{clientId});if(command.expiresAt<=Date.now()||command.sessionIdentity!==identity())throw new Error('Session action is no longer current');const current=availability(options.bridge.status(),options.startBlocker());if(command.action!=='export'&&current[command.action])throw new Error(current[command.action]);let value;if(command.action==='start')value=await options.bridge.start(options.createConfig(draftFromConfig(command.config)));else if(command.action==='stop'){value=await options.bridge.gracefulStop();if(value?.allowed!==true)throw new Error(value?.reason||'Session could not finish');}else value=options.bridge.exportDiagnostic();ack={id:command.id,ok:true,result:command.action==='export'?value:null};}catch(error){ack.error=String(error.code||error.message||error);}options.presenter.update();}}}catch(error){options.onError?.(error);}finally{busy=false;if(!stopped)timer=options.setTimeout(tick,1000);}}return Object.freeze({start:tick,draftChanged,stop(){stopped=true;options.clearTimeout(timer);},snapshot:()=>({accepted,pendingDraft:{...pendingDraft},busy})});}module.exports={createExternalSessionBridge,createGmConfigRequest};
+ };
+ factories["index"]=function(module,exports,require){
+ module.exports=Object.freeze({...require("./clock"),...require("./controller"),...require("./leader"),...require("./models"),...require("./ports"),...require("./platform-chesscom"),...require("./reducer"),...require("./repository"),...require("./runtime"),...require("./statistics"),...require("./status"),...require("./telemetry"),...require("./ui"),...require("./presentation"),...require("./external"),});

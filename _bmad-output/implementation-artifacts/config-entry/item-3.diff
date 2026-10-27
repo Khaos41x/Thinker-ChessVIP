@@ -1,0 +1,168 @@
+diff --git a/app.py b/app.py
+index 7022606..41340a2 100644
+--- a/app.py
++++ b/app.py
+@@ -30,6 +30,7 @@ from flask import Flask, Response, request, jsonify
+ from flask_cors import CORS
+ from flask_socketio import SocketIO
+ from core.external_config import create_external_config_blueprint
++from core.status_page import status_page, status_artwork
+ from core.rating_tracker import RatingTrackerService, create_rating_tracker_blueprint
+ from core.rating_tracker.service import UnavailableRatingTrackerService
+ 
+@@ -886,7 +887,10 @@ def calculate_complexity(lines, turn):
+ 
+ @app.route("/")
+ def index():
+-    return "KrypBot v2.2 ONLINE"
++    return status_page()
++
++
++app.add_url_rule('/status/horse.webp', 'status_artwork', status_artwork)
+ 
+ 
+ def resolve_getmove_engine_parameters(elo, time_limit, board, runtime_game_token=None):
+diff --git a/core/status_page.py b/core/status_page.py
+new file mode 100644
+index 0000000..dddf371
+--- /dev/null
++++ b/core/status_page.py
+@@ -0,0 +1,18 @@
++from pathlib import Path
++
++from flask import Response, request, send_file
++
++ROOT = Path(__file__).resolve().parents[1]
++
++
++def status_page():
++    if 'text/html' in request.headers.get('Accept', '').lower() and request.accept_mimetypes.best_match(['text/html', 'text/plain']) == 'text/html':
++        response = send_file(ROOT / 'frontend/status/index.html', mimetype='text/html')
++    else:
++        response = Response('Thinker Chess ONLINE', mimetype='text/plain')
++    response.vary.add('Accept')
++    return response
++
++
++def status_artwork():
++    return send_file(ROOT / 'assets/banner-horse.webp', mimetype='image/webp')
+diff --git a/frontend/status/index.html b/frontend/status/index.html
+new file mode 100644
+index 0000000..c9804eb
+--- /dev/null
++++ b/frontend/status/index.html
+@@ -0,0 +1,30 @@
++<!doctype html>
++<html lang="en">
++<head>
++  <meta charset="utf-8">
++  <meta name="viewport" content="width=device-width, initial-scale=1">
++  <title>Thinker Chess</title>
++  <link rel="stylesheet" href="/config/assets/panel.css">
++  <style>
++    :root { --status-max-width:360px; }
++    body { min-height:100svh; display:grid; place-items:center; padding:calc(2 * var(--space)); }
++    .status-card { width:min(100%,var(--status-max-width)); max-width:var(--status-max-width); margin:0; padding:calc(2 * var(--space)); display:grid; justify-items:center; gap:var(--space); border:1px solid var(--border); border-radius:var(--radius); background:var(--panel); color:#deded9; }
++    .status-card img { display:block; width:70px; height:140px; object-fit:contain; }
++    .status-card h1 { width:100%; margin:0; font-size:28px; line-height:36px; text-align:center; }
++    .status { display:grid; grid-template-columns:8px 40px; align-items:center; width:56px; gap:8px; font-size:12px; line-height:18px; color:var(--muted); }
++    .status::before { content:""; width:8px; height:8px; border-radius:50%; background:var(--accent); }
++    .status-card .compact-button { display:flex; align-items:center; justify-content:center; width:160px; height:32px; margin:0; padding:0 12px; font-size:11px; line-height:16px; text-decoration:none; }
++    .status-card a:focus { outline:none; box-shadow:none; }
++    .status-card a:focus-visible { border-color:#a0a19b; }
++    .status-card a:hover { filter:brightness(1.08); }
++  </style>
++</head>
++<body>
++  <main class="status-card">
++    <img src="/status/horse.webp" width="70" height="140" alt="">
++    <h1>Thinker Chess</h1>
++    <p class="status">Online</p>
++    <a class="compact-button" href="/config">Open External Config</a>
++  </main>
++</body>
++</html>
+diff --git a/script.js b/script.js
+index 5d0a6e3..559f96e 100644
+--- a/script.js
++++ b/script.js
+@@ -2643,7 +2643,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+   }
+ 
+   function log(msg) {
+-    debug("log", "[KrypBot]", msg);
++    debug("log", "[Thinker Chess]", msg);
+   }
+ 
+   function updateMySession(result) {
+@@ -3848,15 +3848,15 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+               }
+             }
+           } catch (e) {
+-            debug("log", "[KrypBot] Eval parse error:", e);
++            debug("log", "[Thinker Chess] Eval parse error:", e);
+           }
+         },
+         onerror: function (e) {
+-          debug("log", "[KrypBot] Eval request error:", e);
++          debug("log", "[Thinker Chess] Eval request error:", e);
+         },
+       });
+     } catch (e) {
+-      debug("log", "[KrypBot] Eval exception:", e);
++      debug("log", "[Thinker Chess] Eval exception:", e);
+     }
+   }
+ 
+diff --git a/tests/server_speed.py b/tests/server_speed.py
+index a69579e..1376e13 100644
+--- a/tests/server_speed.py
++++ b/tests/server_speed.py
+@@ -56,7 +56,7 @@ def create_app():
+     
+     @app.route("/")
+     def index():
+-        return "KrypBot SPEED TEST"
++        return "Thinker Chess SPEED TEST"
+     
+     return app
+ 
+diff --git a/tests/speed.py b/tests/speed.py
+index fc97dc2..3cfb442 100644
+--- a/tests/speed.py
++++ b/tests/speed.py
+@@ -32,7 +32,7 @@ def configure_elo(elo):
+ 
+ @app.route("/")
+ def index():
+-    return "KrypBot SPEED"
++    return "Thinker Chess SPEED"
+ 
+ @app.route("/getmove", methods=["POST"])
+ def getmove():
+diff --git a/tests/speed_test.py b/tests/speed_test.py
+index 99d2fa5..1d73e67 100644
+--- a/tests/speed_test.py
++++ b/tests/speed_test.py
+@@ -34,7 +34,7 @@ def configure_elo(elo):
+ 
+ @app.route("/")
+ def index():
+-    return "KrypBot SPEED"
++    return "Thinker Chess SPEED"
+ 
+ @app.route("/getmove", methods=["POST"])
+ def getmove():
+diff --git a/tests/test_server.py b/tests/test_server.py
+index 3aad674..97f9f5d 100644
+--- a/tests/test_server.py
++++ b/tests/test_server.py
+@@ -298,7 +298,7 @@ try:
+     
+     # Teste /
+     response = client.get('/')
+-    if response.data == b"KrypBot v2.1 (Komodo) ONLINE":
++    if response.status_code == 200 and response.data == b"Thinker Chess ONLINE":
+         print(f"  [OK] / -> {response.data.decode()}")
+     else:
+         print(f"  [ERRO] / -> {response.data}")

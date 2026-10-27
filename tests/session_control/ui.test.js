@@ -355,7 +355,7 @@ async function run() {
   assert(source.includes('const visuals = module("Visuals", "kb-visuals-module")'), "Visuals module is missing");
   assert(source.includes('const engine = module("Engine Control", "kb-engine-module")'), "Engine Control module is missing");
   assert(source.includes('[bot, autoMoves, autoQueue, queueNote]'), "Core controls are not grouped together");
-  assert(source.includes('ThinkerEngineLayout.group({ core, visuals, engine, autoRating, strength, timing, smartPacing, puzzle, autoMoves })'), "Engine controls are not grouped together");
+  assert(source.includes('ThinkerEngineLayout.group({ core, visuals, engine, autoRating, strength, timing, smartPacing, puzzle, autoMoves, serverUrl: SERVER_URL })'), "Engine controls are not grouped together");
   assert(source.includes("grid-template-columns:345px 345px 296px"), "three-column named console grid is missing");
   assert(source.includes("border:0 !important; border-radius:0 !important"), "embedded console shell is not visually removed");
   assert(source.includes("backdrop-filter:none !important"), "glass blur is not neutralized");

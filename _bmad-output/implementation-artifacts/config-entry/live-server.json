@@ -1,0 +1,13 @@
+{
+  "readyLines": [
+    "[23:04:24.140] [SUCCESS] Rodando em http://127.0.0.1:5050",
+    "[23:04:24.142] [SUCCESS] Config: http://127.0.0.1:5050/config"
+  ],
+  "rootHtmlStatus": 200,
+  "rootPlainStatus": 200,
+  "configStatus": 200,
+  "deliveredVersion": "2026-10-26.4",
+  "userscriptVersion": null,
+  "userscriptConnected": false,
+  "applied": false
+}

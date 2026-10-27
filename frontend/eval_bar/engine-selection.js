@@ -28,7 +28,7 @@
       });
     }
     async function refresh(force = false, initialize = false) {
-      if (pending || selecting || (!force && performance.now() - lastRefresh < 1500)) return;
+      if (pending || selecting || (!force && (error || performance.now() - lastRefresh < 1500))) return;
       pending = true;
       render();
       const epoch = selectionEpoch;
@@ -84,6 +84,7 @@
         const message = doc.createElement('p'); message.id = 'tc-analysis-message'; message.setAttribute('role', 'status');
         const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry';
         retry.addEventListener('click', () => {
+          options.onRetry?.();
           if (attemptedEngineId && state?.engines?.find(engine => engine.id === attemptedEngineId)?.installed) return selectPreference(attemptedEngineId);
           attemptedEngineId = null;
           refresh(true);
@@ -120,6 +121,7 @@
       cacheContext() { refresh(false, true); return allowed() && state?.activeEngineId ? state.cacheContext : ''; },
       requestIdentity() { return state && allowed() ? {engineId: state.activeEngineId, selectionGeneration: state.selectionGeneration} : {}; },
       refresh,
+      unavailable() { selectionEpoch++; error = 'Cannot reach analysis engine'; render(); },
       selectPreference,
       snapshot() { return {state, pending, error, attemptedEngineId}; }
     });

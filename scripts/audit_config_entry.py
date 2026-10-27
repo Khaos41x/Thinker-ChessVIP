@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / '_bmad-output/implementation-artifacts/config-entry'
 OUT.mkdir(parents=True, exist_ok=True)
-command = ['rg', '--json', '--hidden', '--no-ignore', '-i', 'kryp|v2\.2', '.', '-g', '!.git/**', '-g', '!**/node_modules/**', '-g', '!**/__pycache__/**', '-g', '!engine/**', '-g', '!_bmad-output/implementation-artifacts/config-entry/**']
+command = ['rg', '--json', '--hidden', '--no-ignore', '-i', r'kryp|v2\.2', '.', '-g', '!.git/**', '-g', '!**/node_modules/**', '-g', '!**/__pycache__/**', '-g', '!engine/**', '-g', '!_bmad-output/implementation-artifacts/config-entry/**']
 result = subprocess.run(command, cwd=ROOT, capture_output=True, encoding='utf8', errors='replace')
 matches = []
 for line in result.stdout.splitlines():

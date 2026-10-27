@@ -1,0 +1,205 @@
+{
+  "passed": true,
+  "states": [
+    {
+      "state": "without-userscript",
+      "messages": 0,
+      "exceptions": 0
+    },
+    {
+      "state": "ready",
+      "messages": 0
+    },
+    {
+      "state": "#st-on",
+      "messages": 0
+    },
+    {
+      "state": "#st-off",
+      "messages": 0
+    },
+    {
+      "state": "#sp-on",
+      "messages": 0
+    },
+    {
+      "state": "#sp-off",
+      "messages": 0
+    },
+    {
+      "state": "arrow-color",
+      "messages": 0
+    },
+    {
+      "state": "server-off/error",
+      "messages": 0,
+      "pollRequests": 9,
+      "paused": true
+    },
+    {
+      "state": "retry/reconnected",
+      "messages": 0
+    },
+    {
+      "state": "reload",
+      "messages": 0
+    }
+  ],
+  "messages": [],
+  "browserMessages": [],
+  "exceptions": [],
+  "network": [],
+  "requests": [
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/save",
+      "method": "POST",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/save",
+      "method": "POST",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/save",
+      "method": "POST",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/save",
+      "method": "POST",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/save",
+      "method": "POST",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "failed": true
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/save",
+      "method": "POST",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "status": 200,
+      "failed": false
+    }
+  ],
+  "thirdPartyMessages": [],
+  "scope": "Isolated Chromium; real Flask stopped/restarted; GM transport faithfully relayed outside page via CDP binding; no authenticated Tampermonkey or third-party ads loaded"
+}

@@ -22,7 +22,7 @@ const measure=()=>{
  const panels=Object.fromEntries([...document.querySelectorAll('.kb-console-module,#oi-zone2')].map((n,i)=>[n.id||n.className,{box:box(n),title:n.querySelector('.kb-console-caption,.tc-scout-title')?box(n.querySelector('.kb-console-caption,.tc-scout-title')):null}]));
  const colors=[...document.querySelectorAll('#krypbot-container *,#oi-zone2 *')].filter(n=>visible(n)&&!n.closest('.kb-config-shortcut')).map(n=>{const s=getComputedStyle(n);return{id:n.id,tag:n.tagName,cls:String(n.className),color:s.color,background:s.backgroundColor,border:s.borderColor}});
  const link=document.querySelector('.kb-config-shortcut'),toggle=document.querySelector('.kb-core-module .kb-radio-group');
- const small=[...document.querySelectorAll('#krypbot-container *,#oi-zone2 *')].filter(n=>visible(n)&&[...n.childNodes].some(c=>c.nodeType===3&&c.textContent.trim())&&parseFloat(getComputedStyle(n).fontSize)<11).map(n=>n.id||n.className);
+ const small=[...document.querySelectorAll('#krypbot-container *,#oi-zone2 *')].filter(n=>visible(n)&&[...n.childNodes].some(c=>c.nodeType===3&&c.textContent.trim())&&parseFloat(getComputedStyle(n).fontSize)>0&&parseFloat(getComputedStyle(n).fontSize)<11).map(n=>({tag:n.tagName,id:n.id,text:n.textContent,font:getComputedStyle(n).fontSize,color:getComputedStyle(n).color,textIndent:getComputedStyle(n).textIndent,overflow:getComputedStyle(n).overflow}));
  return{width:innerWidth,mode:document.querySelector('#oi-wrapper').dataset.layoutMode,panels,colors,link:link?{box:box(link),svg:box(link.querySelector('svg')),href:link.href,target:link.target,rel:link.rel,label:link.getAttribute('aria-label'),title:link.title}:null,toggle:box(toggle),small,overflow:document.querySelector("#oi-wrapper").scrollWidth>document.querySelector("#oi-wrapper").clientWidth};
 };
 try{
@@ -38,9 +38,9 @@ try{
  for(const pacing of [false,true])for(const width of [1086,1280,1440,1920,1033,800]){
   await fetch(base+'/config/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({smartPacing:pacing})});await waitFor(()=>value(`document.querySelector('#sp-on').checked===${pacing}`));
   await client.send('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});await pause(250);const r=await value('('+measure.toString()+')()');r.pacing=pacing;results.push(r);
-  assert.equal(r.overflow,false);
+  assert.deepEqual(r.small,[]);assert.equal(r.overflow,false);
   if(!before){assert(r.link);assert.equal(r.link.href,'http://127.0.0.1:5050/config');assert.equal(r.link.label,'Open External Config');assert.equal(r.link.title,r.link.label);assert.equal(r.link.target,'_blank');assert.equal(r.link.rel,'noopener noreferrer');assert.equal(r.link.box.right,r.toggle.right);assert(r.link.box.width>=24&&r.link.box.height>=24);for(const v of Object.values(r.link.box))assert(Number.isInteger(v));}
-  if([1086,1440,800].includes(width)&&!pacing){const shot=await client.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true});await writeFile(join(output,`console-${width}.png`),Buffer.from(shot.data,'base64'));}
+  if([1086,1440,800].includes(width)&&!pacing){const area=await value('document.querySelector("#oi-wrapper").getBoundingClientRect().toJSON()');const shot=await client.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:{x:0,y:area.y-12,width,height:area.height+24,scale:1}});await writeFile(join(output,`console-${width}.png`),Buffer.from(shot.data,'base64'));}
  }
  if(!before){
   const baseline=JSON.parse(await readFile(join(output,'../before/measurements.json'),'utf8'));for(let i=0;i<results.length;i++){assert.deepEqual(results[i].panels,baseline[i].panels,'Panel/title geometry changed');assert.deepEqual(results[i].colors,baseline[i].colors,'Existing component colors changed');}
@@ -52,6 +52,12 @@ try{
   const count=async()=> (await(await fetch(`http://127.0.0.1:${debugPort}/json/list`)).json()).filter(t=>t.type==='page').length;
   let n=await count();await client.send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});await client.send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});await waitFor(async()=>await count()>n);
   const opened=(await(await fetch(`http://127.0.0.1:${debugPort}/json/list`)).json()).find(t=>t.url==='http://127.0.0.1:5050/config');assert(opened,'New tab did not navigate to Config');
+  await client.send('Page.bringToFront');await value('document.querySelector(".kb-config-shortcut").focus()');n=await count();
+  await client.send('Input.dispatchKeyEvent',{type:'keyDown',key:' ',code:'Space',windowsVirtualKeyCode:32});await client.send('Input.dispatchKeyEvent',{type:'keyUp',key:' ',code:'Space',windowsVirtualKeyCode:32});await waitFor(async()=>await count()>n);
+  for(const [button,buttons,modifiers] of [['left',1,0],['middle',4,0],['left',1,2]]){
+   await client.send('Page.bringToFront');n=await count();await client.send('Input.dispatchMouseEvent',{type:'mousePressed',x:b.x+12,y:b.y+12,button,buttons,modifiers,clickCount:1});await client.send('Input.dispatchMouseEvent',{type:'mouseReleased',x:b.x+12,y:b.y+12,button,buttons:0,modifiers,clickCount:1});await waitFor(async()=>await count()>n);
+  }
+  await value('document.querySelector("#krypbot-container").classList.add("minimized")');assert.equal(await value('document.querySelector(".kb-config-shortcut").getBoundingClientRect().width'),0);await value('document.querySelector("#krypbot-container").classList.remove("minimized")');
  }
  await writeFile(join(output,'measurements.json'),JSON.stringify(results,null,2));await writeFile(join(output,'console.json'),JSON.stringify({messages,exceptions,network},null,2));assert.deepEqual(exceptions,[]);
  console.log(JSON.stringify({passed:true,before,states:results.length,panelGeometryUnchanged:!before,colorsUnchanged:!before,messages:messages.length}));

@@ -1,0 +1,65 @@
+{
+  "viewports": [
+    1086,
+    1280,
+    1440,
+    1920,
+    1033,
+    800
+  ],
+  "states": 12,
+  "panelsAndTitlesEqual": true,
+  "existingColorsEqual": true,
+  "allVisibleTextAtLeast11px": true,
+  "noConsoleOverflow": true,
+  "desktopBottomDelta": [
+    {
+      "width": 1086,
+      "pacing": false,
+      "visualsEngine": 0,
+      "scoutAutoPlay": 0
+    },
+    {
+      "width": 1280,
+      "pacing": false,
+      "visualsEngine": 0,
+      "scoutAutoPlay": 0
+    },
+    {
+      "width": 1440,
+      "pacing": false,
+      "visualsEngine": 0,
+      "scoutAutoPlay": 0
+    },
+    {
+      "width": 1920,
+      "pacing": false,
+      "visualsEngine": 0,
+      "scoutAutoPlay": 0
+    },
+    {
+      "width": 1086,
+      "pacing": true,
+      "visualsEngine": 0,
+      "scoutAutoPlay": 0
+    },
+    {
+      "width": 1280,
+      "pacing": true,
+      "visualsEngine": 0,
+      "scoutAutoPlay": 0
+    },
+    {
+      "width": 1440,
+      "pacing": true,
+      "visualsEngine": 0,
+      "scoutAutoPlay": 0
+    },
+    {
+      "width": 1920,
+      "pacing": true,
+      "visualsEngine": 0,
+      "scoutAutoPlay": 0
+    }
+  ]
+}

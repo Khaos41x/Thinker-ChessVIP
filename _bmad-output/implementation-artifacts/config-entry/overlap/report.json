@@ -1,0 +1,40 @@
+{
+  "mode": "stacked",
+  "parent": "BODY",
+  "position": "absolute",
+  "zIndex": "2147483647",
+  "pointerEvents": "none",
+  "background": "rgba(0, 0, 0, 0)",
+  "core": {
+    "x": 12,
+    "y": 1024,
+    "width": 776,
+    "height": 171,
+    "top": 1024,
+    "right": 788,
+    "bottom": 1195,
+    "left": 12
+  },
+  "visuals": {
+    "x": 12,
+    "y": 1207,
+    "width": 776,
+    "height": 211,
+    "top": 1207,
+    "right": 788,
+    "bottom": 1418,
+    "left": 12
+  },
+  "gap": 12,
+  "host": {
+    "x": 28,
+    "y": 1195,
+    "width": 48,
+    "height": 12,
+    "top": 1195,
+    "right": 76,
+    "bottom": 1207,
+    "left": 28
+  },
+  "scope": "Synthetic host timer deliberately extending behind the transparent console gap; demonstrates mechanism, not authenticated Chess.com geometry"
+}

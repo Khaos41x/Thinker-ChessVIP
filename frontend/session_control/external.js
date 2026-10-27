@@ -13,7 +13,7 @@ function createGmConfigRequest(request, serverUrl) {
         if (response.status < 200 || response.status >= 300) throw new Error(result.error || 'Configuration unavailable');
         resolve(result);
       } catch (error) { reject(error); }
-    }, onerror: () => reject(new Error('Local server unavailable')), ontimeout: () => reject(new Error('Local server timed out')),
+    }, onerror: () => reject(Object.assign(new Error('Local server unavailable'), {code:'SERVER_UNAVAILABLE'})), ontimeout: () => reject(Object.assign(new Error('Local server timed out'), {code:'SERVER_UNAVAILABLE'})),
   }));
 }
 
@@ -38,7 +38,9 @@ function createExternalSessionBridge(options) {
     }
   }
   async function tick() {
-    if (busy || stopped) return;
+    if (busy || stopped || options.isOffline?.()) return;
+    options.clearTimeout(timer);
+    timer = null;
     busy = true;
     try {
       const config = await options.request('/config/load');
