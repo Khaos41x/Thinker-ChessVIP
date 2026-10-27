@@ -1,0 +1,312 @@
+[
+  {
+    "file": "script.js",
+    "line": 202,
+    "source": "feedbackTimer = setTimeout(() => { savedUntil = 0; feedbackTimer = null; render(); }, 1500);"
+  },
+  {
+    "file": "script.js",
+    "line": 533,
+    "source": "sessionToastTimer = window.setTimeout(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 836,
+    "source": "sessionControlReadinessTimer = window.setTimeout(async () => {"
+  },
+  {
+    "file": "script.js",
+    "line": 879,
+    "source": "sessionControlStatusTimer = window.setTimeout(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 1091,
+    "source": "window.setInterval(observeSessionLifecycle, 300);"
+  },
+  {
+    "file": "script.js",
+    "line": 1910,
+    "source": "const timeout = setTimeout(() => controller.abort(), 12000);"
+  },
+  {
+    "file": "script.js",
+    "line": 1973,
+    "source": "this.retryTimer = setTimeout(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 2562,
+    "source": "setTimeout(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 2583,
+    "source": "this.checkTimer = setTimeout(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 2598,
+    "source": "this.freshnessInterval = window.setInterval(() => this.checkOpponent(), 60000);"
+  },
+  {
+    "file": "script.js",
+    "line": 2908,
+    "source": "timerId = setTimeout(async () => {"
+  },
+  {
+    "file": "script.js",
+    "line": 3666,
+    "source": "console.warn(\"[Thinker Eval Bar V2]\", stage, getEvalBarDiagnostics(), error || null);"
+  },
+  {
+    "file": "script.js",
+    "line": 4033,
+    "source": "setInterval(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 4677,
+    "source": "auto_queue_fallback_timer = setTimeout(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 4716,
+    "source": "auto_queue_click_timer = setTimeout(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 4745,
+    "source": "setTimeout(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 4791,
+    "source": "auto_queue_checkInterval = setInterval(clickNewGame, 1000);"
+  },
+  {
+    "file": "script.js",
+    "line": 5889,
+    "source": "thinkerUiReconcileTimer = window.setInterval(reconcileThinkerUiShells, 400);"
+  },
+  {
+    "file": "script.js",
+    "line": 6458,
+    "source": "#krypbot-container.kb-console.minimized {"
+  },
+  {
+    "file": "script.js",
+    "line": 6462,
+    "source": "#krypbot-container.kb-console.minimized:hover { border-color:#4b4c47 !important; box-shadow:none !important; }"
+  },
+  {
+    "file": "script.js",
+    "line": 6664,
+    "source": "#oi-wrapper > #krypbot-container.kb-console.minimized {"
+  },
+  {
+    "file": "script.js",
+    "line": 7116,
+    "source": "thinkerMountTimer = setInterval(function () {"
+  },
+  {
+    "file": "script.js",
+    "line": 7140,
+    "source": "thinkerBannerFrame = requestAnimationFrame(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 7178,
+    "source": "thinkerWorkspaceFrame = requestAnimationFrame(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 7490,
+    "source": "setTimeout: window.setTimeout.bind(window), clearTimeout: window.clearTimeout.bind(window),"
+  },
+  {
+    "file": "script.js",
+    "line": 7498,
+    "source": "window.setInterval(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 7549,
+    "source": "_configRetryTimer = window.setTimeout(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 7597,
+    "source": "window.setTimeout(pollExternalConfig, 2000);"
+  },
+  {
+    "file": "script.js",
+    "line": 7727,
+    "source": "setTimeout(syncEvalBarRenderer, 1500);"
+  },
+  {
+    "file": "script.js",
+    "line": 7761,
+    "source": "thinkerUrlMonitorTimer = setInterval(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 7768,
+    "source": "setTimeout(() => OpponentIntel.checkOpponent(), 150);"
+  },
+  {
+    "file": "script.js",
+    "line": 7841,
+    "source": "setInterval(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 8029,
+    "source": "thinkerShellWatchTimer = window.setInterval(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 8065,
+    "source": "setInterval(pollExternalConfig, 2000);"
+  },
+  {
+    "file": "script.js",
+    "line": 8068,
+    "source": "setInterval(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 8078,
+    "source": "setInterval(() => {"
+  },
+  {
+    "file": "script.js",
+    "line": 8097,
+    "source": "thinkerRouteWatchTimer = window.setInterval(maybeStartThinkerUserscript, 250);"
+  },
+  {
+    "file": "frontend\\eval_bar\\engine-selection.js",
+    "line": 67,
+    "source": "feedbackTimer = setTimeout(() => { savedUntil = 0; feedbackTimer = null; render(); }, 1500);"
+  },
+  {
+    "file": "frontend\\external_config\\panel.js",
+    "line": 50,
+    "source": "const timeout = setTimeout(() => controller.abort(), options.timeoutMs || 4000);"
+  },
+  {
+    "file": "frontend\\external_config\\panel.js",
+    "line": 182,
+    "source": "await new Promise(resolve => setTimeout(resolve, 300));"
+  },
+  {
+    "file": "frontend\\external_config\\panel.js",
+    "line": 224,
+    "source": "timer = setTimeout(save, 200);"
+  },
+  {
+    "file": "frontend\\external_config\\panel.js",
+    "line": 246,
+    "source": "if (!permanent) timer = setTimeout(save, error.status === 409 ? 100 : 2500);"
+  },
+  {
+    "file": "frontend\\external_config\\panel.js",
+    "line": 251,
+    "source": "timer = setTimeout(save, 200);"
+  },
+  {
+    "file": "frontend\\external_config\\panel.js",
+    "line": 290,
+    "source": "pollTimer = setTimeout(poll, 2000);"
+  },
+  {
+    "file": "frontend\\rating_tracker\\bridge.js",
+    "line": 31,
+    "source": "const timer = setTimeout(cancel, timeoutMs);"
+  },
+  {
+    "file": "frontend\\rating_tracker\\bridge.js",
+    "line": 62,
+    "source": "timer = setTimeout(flush, Math.min(300000, 5000 * 2 ** Math.min(attempts, 6)));"
+  },
+  {
+    "file": "frontend\\rating_tracker\\dom-adapter.js",
+    "line": 102,
+    "source": "if (nextKey) stableTimer = setTimeout(() => {"
+  },
+  {
+    "file": "frontend\\rating_tracker\\dom-adapter.js",
+    "line": 108,
+    "source": "const schedule = () => { if (!timer) timer = setTimeout(() => { timer = null; inspect(); }, 50); };"
+  },
+  {
+    "file": "frontend\\rating_tracker\\dom-adapter.js",
+    "line": 119,
+    "source": "const fallback = setInterval(inspect, 30000);"
+  },
+  {
+    "file": "frontend\\rating_tracker\\external.js",
+    "line": 9,
+    "source": "const timer = setTimeout(() => controller.abort(), 8000);"
+  },
+  {
+    "file": "frontend\\rating_tracker\\index.js",
+    "line": 69,
+    "source": "finally { if (!destroyed && token === generation) snapshotTimer = setTimeout(poll, 15000); }"
+  },
+  {
+    "file": "frontend\\rating_tracker\\session-goal.js",
+    "line": 3,
+    "source": "function createSessionGoalGuard({ transport, getSession, getUsername, getRole, stop, storage, crypto = globalThis.crypto, now = Date.now, onChange = () => {}, setTimer = setTimeout, clearTimer = clearTimeout }) {"
+  },
+  {
+    "file": "frontend\\rating_tracker\\target-field.js",
+    "line": 34,
+    "source": "finally { if (!stopped) timer = setTimeout(refresh, 2000); }"
+  },
+  {
+    "file": "frontend\\session_control\\external.js",
+    "line": 92,
+    "source": "if (!stopped) timer = options.setTimeout(tick, 1000);"
+  },
+  {
+    "file": "frontend\\session_control\\runtime.js",
+    "line": 77,
+    "source": "const setIntervalFn = settings.setInterval || globalThis.setInterval;"
+  },
+  {
+    "file": "frontend\\session_control\\runtime.js",
+    "line": 88,
+    "source": "if (renewalTimer !== null || typeof setIntervalFn !== \"function\") return;"
+  },
+  {
+    "file": "frontend\\session_control\\runtime.js",
+    "line": 89,
+    "source": "renewalTimer = setIntervalFn(() => {"
+  },
+  {
+    "file": "frontend\\eval_bar\\userscript-adapter.ts",
+    "line": 882,
+    "source": "this.presentationTimer = this.options.window.setTimeout(() => {"
+  },
+  {
+    "file": "frontend\\eval_bar\\userscript-adapter.ts",
+    "line": 1085,
+    "source": "this.interval = this.options.window.setInterval("
+  },
+  {
+    "file": "frontend\\eval_bar\\userscript-adapter.ts",
+    "line": 1281,
+    "source": "this.boardMissingTimer = this.options.window.setTimeout(() => {"
+  },
+  {
+    "file": "frontend\\eval_bar\\userscript-adapter.ts",
+    "line": 1307,
+    "source": "this.routeReconcileTimer = this.options.window.setTimeout(tick, 16);"
+  },
+  {
+    "file": "frontend\\eval_bar\\userscript-adapter.ts",
+    "line": 1310,
+    "source": "this.routeReconcileTimer = this.options.window.setTimeout(tick, 0);"
+  }
+]

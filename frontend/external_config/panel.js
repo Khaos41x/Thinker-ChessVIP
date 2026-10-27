@@ -7,6 +7,24 @@
     workspace: [['ghostMode', 'Clean View']],
   };
   const byId = id => document.getElementById(id);
+  const {text:setText, prop, attr, health} = globalThis.ThinkerStatus;
+  globalThis.ThinkerStatus.reserve(byId('connection'), ['Local server connected','Local server offline']);
+  globalThis.ThinkerStatus.reserve(byId('userscript-connection'), ['Chess.com: connected','Chess.com: disconnected','Chess.com: connection unknown']);
+  globalThis.ThinkerStatus.reserve(byId('execution-state'), ['Analysis: unavailable','Analysis: running','Analysis: inactive']);
+  globalThis.ThinkerStatus.reserve(byId('analysis-engine-state'), ['Initializing','Switching','Connection Lost','Unavailable','Active','Ready','Error'], 10);
+  const connectionHealth = health(), registryHealth = health();
+  let versionAccepted = false;
+  function reserveVersionLine() {
+    const node = byId('client-build-state'), line = node.parentElement, clone = line.cloneNode(true);
+    Object.assign(clone.style,{position:'fixed',visibility:'hidden',width:line.clientWidth+'px',height:'auto',minHeight:'0',margin:'0'});
+    for (const child of clone.children) child.style.cssText='display:inline;width:auto;height:auto;white-space:normal;overflow:visible;vertical-align:baseline;-webkit-line-clamp:unset';
+    document.body.append(clone);
+    const height=Math.round(clone.getBoundingClientRect().height);clone.remove();
+    line.style.height=height+'px';node.style.height=height+'px';node.style.webkitLineClamp=String(Math.max(1,Math.round(height/17)));
+  }
+  let engineInteractive = false;
+  let registryTimer = null;
+  let registryRetryRequested = false;
   if (new URLSearchParams(location.search).get('debug') === '1') {
     const details = document.createElement('details');
     details.className = 'engine-details';
@@ -41,8 +59,8 @@
 
   function message(text, error = false) {
     if (config?._persistenceError && !error) { text = config._persistenceError; error = true; }
-    byId('save-state').textContent = text;
-    byId('save-state').dataset.error = String(error);
+    setText(byId('save-state'), text);
+    attr(byId('save-state'), 'data-error', error);
   }
 
   async function request(url, options = {}) {
@@ -62,22 +80,23 @@
   function renderEngine() {
     const select = byId('analysis-engine');
     const selected = engineRegistry?.engines.find(engine => engine.id === engineRegistry.selectedEngineId);
-    if (!engineSwitching && engineRegistry) select.value = engineRegistry.selectedEngineId;
-    select.disabled = !engineOnline || engineSwitching || !engineRegistry;
+    if (!engineSwitching && engineRegistry) prop(select, 'value', engineRegistry.selectedEngineId);
+    prop(select, 'disabled', !engineOnline || engineSwitching || !engineRegistry);
     for (const option of select.options) {
       const engine = engineRegistry?.engines.find(item => item.id === option.value);
-      option.disabled = engine ? !engine.installed : false;
+      prop(option, 'disabled', engine ? !engine.installed : false);
     }
     const active = selected?.runtimeReady && engineRegistry?.analysisContextAuthorized;
-    const state = engineSwitching ? 'Switching' : engineRefreshing && (!engineOnline || engineError) ? 'Initializing' : engineError ? (!engineOnline && engineRegistry ? 'Connection Lost' : 'Error') : !selected ? 'Initializing' : !selected.installed ? 'Unavailable' : selected.initializationError ? 'Error' : active ? 'Active' : 'Ready';
-    byId('analysis-engine-state').textContent = state;
-    byId('analysis-engine-message').textContent = engineError || (engineSwitching ? 'Saving engine preference…' : selected?.initializationError || (active ? 'Running in an authorized analysis context.' : selected ? `${selected.description || 'Preference saved.'} Analysis starts only in an authorized context.` : 'Checking installed engines…'));
-    byId('analysis-engine-message').dataset.error = String(Boolean(engineError || selected?.initializationError));
-    byId('analysis-engine-message').title = byId('analysis-engine-message').textContent;
-    byId('engine-retry').hidden = !engineError && !selected?.initializationError;
-    byId('engine-retry').disabled = engineRefreshing || engineSwitching;
-    if (byId('analysis-engine-details')) byId('analysis-engine-details').textContent = selected ? JSON.stringify(selected, null, 2) : '';
-    byId('execution-state').textContent = `Analysis: ${!engineOnline ? 'unavailable' : engineRegistry?.analysisRunning ? 'running' : 'inactive'}`;
+    const state = engineSwitching ? 'Switching' : engineInteractive || engineRefreshing && !engineRegistry ? 'Initializing' : engineError ? (!engineOnline && engineRegistry ? 'Connection Lost' : 'Error') : !selected ? 'Initializing' : !selected.installed ? 'Unavailable' : selected.initializationError ? 'Error' : active ? 'Active' : 'Ready';
+    setText(byId('analysis-engine-state'), state);
+    attr(byId('analysis-engine-state'), 'data-error', state === 'Error' || state === 'Connection Lost');
+    setText(byId('analysis-engine-message'), engineError || (engineSwitching ? 'Saving engine preference…' : selected?.initializationError || (active ? 'Running in an authorized analysis context.' : selected ? `${selected.description || 'Preference saved.'} Analysis starts only in an authorized context.` : 'Checking installed engines…')));
+    attr(byId('analysis-engine-message'), 'data-error', Boolean(engineError || selected?.initializationError));
+    prop(byId('analysis-engine-message'), 'title', byId('analysis-engine-message').textContent);
+    prop(byId('engine-retry'), 'hidden', !engineError && !selected?.initializationError);
+    prop(byId('engine-retry'), 'disabled', engineInteractive || engineSwitching);
+    if (byId('analysis-engine-details')) setText(byId('analysis-engine-details'), selected ? JSON.stringify(selected, null, 2) : '');
+    setText(byId('execution-state'), `Analysis: ${!engineOnline ? 'unavailable' : engineRegistry?.analysisRunning ? 'running' : 'inactive'}`);
   }
 
   function registryFailure(error) {
@@ -87,7 +106,10 @@
   }
 
   async function refreshEngines(clearError = false) {
-    if (engineRefreshing) return;
+    if (clearError) { registryRetryRequested = true; registryHealth.reset(); engineInteractive = true; }
+    if (engineRefreshing) { if (clearError) renderEngine(); return; }
+    if (engineSwitching || document.hidden || !clearError && !registryHealth.due()) return;
+    clearTimeout(registryTimer);
     engineRefreshing = true;
     renderEngine();
     const version = engineRequestVersion;
@@ -95,12 +117,12 @@
       const engines = await request('/config/engines');
       if (!Array.isArray(engines.engines) || !engines.selectedEngineId) throw new Error('Invalid registry response');
       if (!engineSwitching && version === engineRequestVersion) {
-        engineRegistry = engines; engineOnline = true;
-        if (clearError || !engineError?.startsWith('Could not save')) engineError = null;
+        engineRegistry = engines; engineOnline = true; registryHealth.success();
+        if (clearError || registryRetryRequested || !engineError?.startsWith('Could not save')) engineError = null;
         renderEngine();
       }
-    } catch (error) { if (!engineSwitching && version === engineRequestVersion) registryFailure(error); }
-    finally { engineRefreshing = false; renderEngine(); }
+    } catch (error) { if (!engineSwitching && version === engineRequestVersion) { if (registryHealth.failure()) registryFailure(error); } }
+    finally { engineRefreshing = false; engineInteractive = false; registryRetryRequested = false; renderEngine(); if (!document.hidden) registryTimer = setTimeout(refreshEngines, registryHealth.delay()); }
   }
 
   byId('analysis-engine').addEventListener('change', async event => {
@@ -117,7 +139,7 @@
       if (error.data?.engines) engineRegistry = error.data;
       engineError = `Could not save engine preference: ${error.message}. Previous saved preference retained.`;
       if (!error.status) engineOnline = false;
-    } finally { engineSwitching = false; renderEngine(); }
+    } finally { engineSwitching = false; renderEngine(); refreshEngines(); }
   });
   byId('engine-retry').addEventListener('click', () => refreshEngines(true));
 
@@ -133,10 +155,10 @@
     const autoQueue = document.querySelector('[data-key="autoQueue"]');
     if (autoQueue && config) {
       const sessionOwnsQueue = Boolean(projection?.status && !['IDLE', 'COMPLETED', 'ABORTED'].includes(projection.status.phase));
-      autoQueue.disabled = sessionOwnsQueue;
-      autoQueue.setAttribute('aria-disabled', String(sessionOwnsQueue));
-      autoQueue.setAttribute('aria-checked', String(sessionOwnsQueue || config.autoQueue));
-      autoQueue.title = sessionOwnsQueue ? 'Auto Play controls the queue until this session ends. Your saved preference is unchanged.' : '';
+      prop(autoQueue, 'disabled', sessionOwnsQueue);
+      attr(autoQueue, 'aria-disabled', sessionOwnsQueue);
+      attr(autoQueue, 'aria-checked', sessionOwnsQueue || config.autoQueue);
+      prop(autoQueue, 'title', sessionOwnsQueue ? 'Auto Play controls the queue until this session ends. Your saved preference is unchanged.' : '');
     }
     if (projection?.status) {
       sessionApi.presentStatus(panel, projection.status, sessionApi.formatDuration, projection.availability.start);
@@ -147,18 +169,18 @@
         if (action === 'start') {
           try { sessionApi.sessionConfigFromDraft({ durationMinutes: byId('kb-session-duration').value, minimumPercent: byId('kb-session-min-rate').value, maximumPercent: byId('kb-session-max-rate').value }); } catch { invalidDraft = true; }
         }
-        node.disabled = sessionBusy || Boolean(reason) || invalidDraft;
-        node.setAttribute('aria-disabled', String(node.disabled));
-        node.title = reason ? sessionReasons[reason] || reason : '';
+        prop(node, 'disabled', sessionBusy || Boolean(reason) || invalidDraft);
+        attr(node, 'aria-disabled', node.disabled);
+        prop(node, 'title', reason ? sessionReasons[reason] || reason : '');
       }
     } else {
-      panel.querySelectorAll('[data-action]').forEach(node => { node.disabled = true; node.setAttribute('aria-disabled', 'true'); });
-      byId('kb-session-phase').textContent = 'Unavailable';
-      ['kb-session-ttl', 'kb-session-observed', 'kb-session-raw'].forEach(id => { byId(id).textContent = '—'; });
+      panel.querySelectorAll('[data-action]').forEach(node => { prop(node, 'disabled', true); attr(node, 'aria-disabled', true); });
+      setText(byId('kb-session-phase'), 'Unavailable');
+      ['kb-session-ttl', 'kb-session-observed', 'kb-session-raw'].forEach(id => { setText(byId(id), '—'); });
     }
     const reason = projection?.availability.start;
-    byId('session-availability').textContent = sessionError || (sessionBusy ? 'Waiting for the Chess.com session acknowledgement…' : !projection ? 'Open Chess.com with the userscript to use session actions. Settings remain editable.' : reason && reason !== 'ACTIVE_SESSION_EXISTS' ? sessionReasons[reason] || reason : 'Session actions run through the connected Chess.com workspace.');
-    byId('session-availability').dataset.error = String(Boolean(sessionError));
+    setText(byId('session-availability'), sessionError || (sessionBusy ? 'Waiting for the Chess.com session acknowledgement…' : !projection ? 'Open Chess.com with the userscript to use session actions. Settings remain editable.' : reason && reason !== 'ACTIVE_SESSION_EXISTS' ? sessionReasons[reason] || reason : 'Session actions run through the connected Chess.com workspace.'));
+    attr(byId('session-availability'), 'data-error', Boolean(sessionError));
   }
   function downloadDiagnostic(value) {
     const url = URL.createObjectURL(new Blob([JSON.stringify(value, null, 2)], { type: 'application/json' }));
@@ -189,7 +211,7 @@
 
   function render() {
     if (!config) return;
-    byId('panels').setAttribute('aria-busy', 'false');
+    attr(byId('panels'), 'aria-busy', 'false');
     if (config._persistenceError) message(config._persistenceError, true);
     document.querySelectorAll('[data-key]').forEach(node => {
       node.disabled = false;
@@ -206,10 +228,10 @@
       if (immediate) byId(id).value = '0.00';
     });
     document.querySelectorAll('[data-mode]').forEach(node => node.setAttribute('aria-pressed', String(node.dataset.mode === config.delayMode)));
-    byId('elo-value').textContent = config.elo;
+    setText(byId('elo-value'), config.elo);
     byId('elo').style.setProperty('--range-fill', `calc(${(config.elo - 800) / 2400} * (100% - 16px) + 8px)`);
-    byId('timing-value').textContent = immediate ? 'Immediate' : `${Number(config.minDelay).toFixed(2)}–${Number(config.maxDelay).toFixed(2)} s`;
-    byId('timing-hint').textContent = config.smartPacing ? 'Smart Pacing controls move timing. Manual settings are retained.' : 'Enable Auto Moves to apply this timing.';
+    setText(byId('timing-value'), immediate ? 'Immediate' : `${Number(config.minDelay).toFixed(2)}–${Number(config.maxDelay).toFixed(2)} s`);
+    setText(byId('timing-hint'), config.smartPacing ? 'Smart Pacing controls move timing. Manual settings are retained.' : 'Enable Auto Moves to apply this timing.');
     renderSession(sessionProjection);
   }
 
@@ -254,22 +276,28 @@
   }
 
   async function poll() {
-    if (polling) return;
+    if (polling || document.hidden) return;
     polling = true;
     const version = editVersion;
     try {
-      const [next, status] = await Promise.all([request('/config/load'), request('/config/status')]);
+      const results = await Promise.allSettled([request('/config/load'), request('/config/status')]);
+      const failed = results.find(result => result.status === 'rejected');
+      if (failed) throw failed.reason;
+      const [next, status] = results.map(result => result.value);
       if (!saving && !Object.keys(pending).length && version === editVersion &&
           (!config || next._serverId !== config._serverId || next._revision >= config._revision)) {
         config = next;
         render();
         if (!drafts.size && !invalid.size) message(status.applied && status.revision === next._revision ? 'Applied in a Chess.com tab' : 'Settings saved · Chess.com disconnected');
       }
-      document.querySelector('.connection').dataset.state = 'synced';
-      byId('connection').textContent = 'Local server connected';
-      byId('userscript-connection').textContent = status.userscriptConnected ? 'Chess.com: connected' : 'Chess.com: disconnected';
-      byId('client-build-state').textContent = !status.serverVersion ? 'Restart the local server to verify the installed userscript.' : !status.userscriptConnected ? `Local version ${status.serverVersion} · Reload Chess.com after updating the userscript.` : status.userscriptUpdateRequired ? `Userscript update required · local version ${status.serverVersion}, browser ${status.userscriptVersion || 'not verified'}.` : `Userscript ${status.userscriptVersion} · up to date`;
-      byId('userscript-update').textContent = status.userscriptUpdateRequired ? 'Update userscript now' : 'Install / update userscript';
+      connectionHealth.success();
+      attr(document.querySelector('.connection'), 'data-state', 'synced');
+      setText(byId('connection'), 'Local server connected');
+      setText(byId('userscript-connection'), status.userscriptConnected ? 'Chess.com: connected' : 'Chess.com: disconnected');
+      setText(byId('client-build-state'), !status.serverVersion ? 'Restart the local server to verify the installed userscript.' : !status.userscriptConnected ? `Local version ${status.serverVersion} · Reload Chess.com after updating the userscript.` : status.userscriptUpdateRequired ? `Userscript update required · local version ${status.serverVersion}, browser ${status.userscriptVersion || 'not verified'}.` : `Userscript ${status.userscriptVersion} · up to date`);
+      prop(byId('client-build-state'), 'title', byId('client-build-state').textContent);
+      setText(byId('userscript-update'), status.userscriptUpdateRequired ? 'Update userscript now' : 'Install / update userscript');
+      if (!versionAccepted) { reserveVersionLine(); versionAccepted = true; }
       renderSession(status.sessionConnected ? status.sessionProjection : null);
       const bannerLabels = {
         visible: 'Visible on Chess.com', disabled: 'Disabled', 'ghost-mode': 'Hidden by Clean View',
@@ -277,18 +305,19 @@
         'route-not-supported': 'Not shown on this page', 'insufficient-space-or-height': 'Not enough room (96 px minimum)',
         'awaiting-layout': 'Updating position…', disconnected: 'Waiting for Chess.com',
       };
-      byId('banner-display-state').textContent = config?.ghostMode ? bannerLabels['ghost-mode'] : config?.banner === false ? bannerLabels.disabled : bannerLabels[status.bannerState] || 'Waiting for display status';
+      setText(byId('banner-display-state'), config?.ghostMode ? bannerLabels['ghost-mode'] : config?.banner === false ? bannerLabels.disabled : bannerLabels[status.bannerState] || 'Waiting for display status');
     } catch (_) {
-      renderSession(null);
-      byId('userscript-connection').textContent = 'Chess.com: connection unknown';
-      document.querySelector('.connection').dataset.state = 'offline';
-      byId('connection').textContent = 'Local server offline';
-      message('Cannot reach the local server. Check that it is running.', true);
+      if (connectionHealth.failure()) {
+        renderSession(null);
+        setText(byId('userscript-connection'), 'Chess.com: connection unknown');
+        attr(document.querySelector('.connection'), 'data-state', 'offline');
+        setText(byId('connection'), 'Local server offline');
+        message('Cannot reach the local server. Check that it is running.', true);
+      }
     } finally {
       polling = false;
       clearTimeout(pollTimer);
-      pollTimer = setTimeout(poll, 2000);
-      refreshEngines();
+      if (!document.hidden) pollTimer = setTimeout(poll, connectionHealth.delay());
     }
   }
 
@@ -382,14 +411,17 @@
   });
   byId('elo').addEventListener('input', event => queue({ elo: Number(event.target.value) }));
   byId('color').addEventListener('input', event => queue({ color: event.target.value }));
-  byId('retry').addEventListener('click', () => { clearTimeout(timer); save(); poll(); engineError = null; refreshEngines(); });
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) poll(); });
-  window.addEventListener('online', () => { save(); poll(); engineError = null; refreshEngines(); });
+  byId('retry').addEventListener('click', () => { clearTimeout(timer); connectionHealth.reset(); registryHealth.reset(); save(); poll(); refreshEngines(true); });
+  document.addEventListener('visibilitychange', () => { clearTimeout(pollTimer); clearTimeout(registryTimer); if (!document.hidden) { connectionHealth.reset(); registryHealth.reset(); poll(); refreshEngines(); } });
+  window.addEventListener('online', () => { connectionHealth.reset(); registryHealth.reset(); save(); poll(); refreshEngines(); });
   document.addEventListener('pointerdown', event => {
     document.body.dataset.focusInput = 'pointer';
     const control = event.target.closest('button,input,select,a,[tabindex]');
     if (control && control !== document.activeElement) control.style.setProperty('--tc-idle-border', getComputedStyle(control).borderColor);
   }, true);
   document.addEventListener('keydown', event => { if (event.key === 'Tab') document.body.dataset.focusInput = 'keyboard'; }, true);
+  window.addEventListener('resize', reserveVersionLine);
+  reserveVersionLine();
   poll();
+  refreshEngines();
 })();

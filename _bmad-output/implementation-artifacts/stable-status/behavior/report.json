@@ -1,0 +1,633 @@
+{
+  "reports": [
+    {
+      "surface": "config",
+      "afterSingle": "Ready",
+      "hiddenRequests": 0,
+      "errorAfterMs": 8228,
+      "animations": 0,
+      "retryLoading": "Initializing",
+      "cls": {
+        "value": 0,
+        "entries": []
+      },
+      "requests": [
+        {
+          "at": 1793101417092,
+          "path": "/config"
+        },
+        {
+          "at": 1793101417253,
+          "path": "/config/assets/panel.css"
+        },
+        {
+          "at": 1793101417253,
+          "path": "/config/assets/session-control.js"
+        },
+        {
+          "at": 1793101417253,
+          "path": "/config/assets/status-runtime.js"
+        },
+        {
+          "at": 1793101417254,
+          "path": "/config/assets/panel.js"
+        },
+        {
+          "at": 1793101417254,
+          "path": "/config/assets/rating-tracker.js"
+        },
+        {
+          "at": 1793101417436,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101417442,
+          "path": "/config/status"
+        },
+        {
+          "at": 1793101417490,
+          "path": "/rating-goals/target"
+        },
+        {
+          "at": 1793101417585,
+          "path": "/config/engines"
+        },
+        {
+          "at": 1793101419555,
+          "path": "/rating-goals/target"
+        },
+        {
+          "at": 1793101419617,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101419618,
+          "path": "/config/status"
+        },
+        {
+          "at": 1793101419668,
+          "path": "/config/engines"
+        },
+        {
+          "at": 1793101421575,
+          "path": "/rating-goals/target"
+        },
+        {
+          "at": 1793101421713,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101421714,
+          "path": "/config/status"
+        },
+        {
+          "at": 1793101421733,
+          "path": "/config/engines"
+        },
+        {
+          "at": 1793101423619,
+          "path": "/rating-goals/target"
+        },
+        {
+          "at": 1793101423956,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101423956,
+          "path": "/config/status"
+        },
+        {
+          "at": 1793101423979,
+          "path": "/config/engines"
+        },
+        {
+          "at": 1793101425657,
+          "path": "/rating-goals/target"
+        },
+        {
+          "at": 1793101426004,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101426004,
+          "path": "/config/status"
+        },
+        {
+          "at": 1793101426030,
+          "path": "/config/engines"
+        },
+        {
+          "at": 1793101431102,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101431103,
+          "path": "/config/status"
+        },
+        {
+          "at": 1793101431103,
+          "path": "/rating-goals/target"
+        },
+        {
+          "at": 1793101431159,
+          "path": "/config/engines"
+        },
+        {
+          "at": 1793101433168,
+          "path": "/rating-goals/target"
+        },
+        {
+          "at": 1793101433185,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101433185,
+          "path": "/config/status"
+        },
+        {
+          "at": 1793101433388,
+          "path": "/config/engines"
+        },
+        {
+          "at": 1793101435391,
+          "path": "/rating-goals/target"
+        },
+        {
+          "at": 1793101435610,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101435610,
+          "path": "/config/status"
+        },
+        {
+          "at": 1793101435829,
+          "path": "/config/engines"
+        },
+        {
+          "at": 1793101439608,
+          "path": "/rating-goals/target"
+        },
+        {
+          "at": 1793101440076,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101440076,
+          "path": "/config/status"
+        },
+        {
+          "at": 1793101440282,
+          "path": "/config/engines"
+        },
+        {
+          "at": 1793101440541,
+          "path": "/config/engines"
+        },
+        {
+          "at": 1793101447823,
+          "path": "/rating-goals/target"
+        },
+        {
+          "at": 1793101448494,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101448494,
+          "path": "/config/status"
+        },
+        {
+          "at": 1793101448520,
+          "path": "/config/engines"
+        }
+      ]
+    },
+    {
+      "surface": "console",
+      "afterSingle": "Ready",
+      "hiddenRequests": 0,
+      "errorAfterMs": 7638,
+      "animations": 0,
+      "retryLoading": "Initializing",
+      "cls": {
+        "value": 0,
+        "entries": []
+      },
+      "requests": [
+        {
+          "at": 1793101449997,
+          "path": "/eval-bar/engines"
+        },
+        {
+          "at": 1793101449997,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101450000,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101450012,
+          "path": "/config/session/bridge"
+        },
+        {
+          "at": 1793101451024,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101451049,
+          "path": "/config/session/bridge"
+        },
+        {
+          "at": 1793101452062,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101452085,
+          "path": "/config/session/bridge"
+        },
+        {
+          "at": 1793101453092,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101453112,
+          "path": "/config/session/bridge"
+        },
+        {
+          "at": 1793101453436,
+          "path": "/eval-bar/engines"
+        },
+        {
+          "at": 1793101453436,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101454132,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101454156,
+          "path": "/config/session/bridge"
+        },
+        {
+          "at": 1793101455176,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101455197,
+          "path": "/config/session/bridge"
+        },
+        {
+          "at": 1793101455650,
+          "path": "/eval-bar/engines"
+        },
+        {
+          "at": 1793101456210,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101456231,
+          "path": "/config/session/bridge"
+        },
+        {
+          "at": 1793101457237,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101457259,
+          "path": "/config/session/bridge"
+        },
+        {
+          "at": 1793101457441,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101458271,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101458281,
+          "path": "/config/session/bridge"
+        },
+        {
+          "at": 1793101463480,
+          "path": "/eval-bar/engines"
+        },
+        {
+          "at": 1793101463480,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101463481,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101463496,
+          "path": "/config/session/bridge"
+        },
+        {
+          "at": 1793101464515,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101464536,
+          "path": "/config/session/bridge"
+        },
+        {
+          "at": 1793101465546,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101467439,
+          "path": "/eval-bar/engines"
+        },
+        {
+          "at": 1793101467811,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101467811,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101469656,
+          "path": "/eval-bar/engines"
+        },
+        {
+          "at": 1793101472026,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101472329,
+          "path": "/config/load"
+        },
+        {
+          "at": 1793101472330,
+          "path": "/eval-bar/engines"
+        },
+        {
+          "at": 1793101474548,
+          "path": "/eval-bar/engines"
+        }
+      ]
+    }
+  ],
+  "logs": [
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101421949,
+        "url": "http://127.0.0.1:7110/config/engines",
+        "networkRequestId": "16624.25"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101433386.152,
+        "url": "http://127.0.0.1:7110/rating-goals/target",
+        "networkRequestId": "16624.38"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101433386.584,
+        "url": "http://127.0.0.1:7110/config/load",
+        "networkRequestId": "16624.39"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101433387.097,
+        "url": "http://127.0.0.1:7110/config/status",
+        "networkRequestId": "16624.40"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101433596.698,
+        "url": "http://127.0.0.1:7110/config/engines",
+        "networkRequestId": "16624.41"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101435594.811,
+        "url": "http://127.0.0.1:7110/rating-goals/target",
+        "networkRequestId": "16624.42"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101435827.37,
+        "url": "http://127.0.0.1:7110/config/load",
+        "networkRequestId": "16624.43"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101435827.834,
+        "url": "http://127.0.0.1:7110/config/status",
+        "networkRequestId": "16624.44"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101436045.634,
+        "url": "http://127.0.0.1:7110/config/engines",
+        "networkRequestId": "16624.45"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101439821.2,
+        "url": "http://127.0.0.1:7110/rating-goals/target",
+        "networkRequestId": "16624.46"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101440277.795,
+        "url": "http://127.0.0.1:7110/config/load",
+        "networkRequestId": "16624.47"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101440280.624,
+        "url": "http://127.0.0.1:7110/config/status",
+        "networkRequestId": "16624.48"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101440490.732,
+        "url": "http://127.0.0.1:7110/config/engines",
+        "networkRequestId": "16624.49"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101440745.752,
+        "url": "http://127.0.0.1:7110/config/engines",
+        "networkRequestId": "16624.50"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101453647.671,
+        "url": "http://127.0.0.1:7110/eval-bar/engines",
+        "networkRequestId": "16624.73"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101465794.79,
+        "url": "http://127.0.0.1:7110/config/load",
+        "networkRequestId": "16624.93"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101467651.053,
+        "url": "http://127.0.0.1:7110/eval-bar/engines",
+        "networkRequestId": "16624.94"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101468013.237,
+        "url": "http://127.0.0.1:7110/config/load",
+        "networkRequestId": "16624.95"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101468013.7,
+        "url": "http://127.0.0.1:7110/config/load",
+        "networkRequestId": "16624.96"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101469857.772,
+        "url": "http://127.0.0.1:7110/eval-bar/engines",
+        "networkRequestId": "16624.97"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101472241.229,
+        "url": "http://127.0.0.1:7110/config/load",
+        "networkRequestId": "16624.98"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101472535.989,
+        "url": "http://127.0.0.1:7110/config/load",
+        "networkRequestId": "16624.99"
+      }
+    },
+    {
+      "kind": "browser",
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "timestamp": 1793101472536.349,
+        "url": "http://127.0.0.1:7110/eval-bar/engines",
+        "networkRequestId": "16624.100"
+      }
+    }
+  ],
+  "exceptions": [],
+  "visibility": "fixture visibilitychange contract; not native tab automation"
+}

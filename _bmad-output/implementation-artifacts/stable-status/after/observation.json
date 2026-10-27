@@ -1,0 +1,2461 @@
+[
+  {
+    "surface": "config",
+    "requests": [
+      {
+        "at": 11,
+        "url": "/config"
+      },
+      {
+        "at": 127,
+        "url": "/config/assets/panel.css"
+      },
+      {
+        "at": 127,
+        "url": "/config/assets/session-control.js"
+      },
+      {
+        "at": 128,
+        "url": "/config/assets/status-runtime.js"
+      },
+      {
+        "at": 128,
+        "url": "/config/assets/panel.js"
+      },
+      {
+        "at": 129,
+        "url": "/config/assets/rating-tracker.js"
+      },
+      {
+        "at": 218,
+        "url": "/config/load"
+      },
+      {
+        "at": 218,
+        "url": "/config/status"
+      },
+      {
+        "at": 243,
+        "url": "/config/engines"
+      },
+      {
+        "at": 2266,
+        "url": "/config/load"
+      },
+      {
+        "at": 2267,
+        "url": "/config/status"
+      },
+      {
+        "at": 2320,
+        "url": "/config/engines"
+      },
+      {
+        "at": 4569,
+        "url": "/config/load"
+      },
+      {
+        "at": 4570,
+        "url": "/config/status"
+      },
+      {
+        "at": 4602,
+        "url": "/config/engines"
+      },
+      {
+        "at": 6631,
+        "url": "/config/load"
+      },
+      {
+        "at": 6631,
+        "url": "/config/status"
+      },
+      {
+        "at": 6639,
+        "url": "/config/engines"
+      },
+      {
+        "at": 8649,
+        "url": "/config/load"
+      },
+      {
+        "at": 8649,
+        "url": "/config/status"
+      },
+      {
+        "at": 8658,
+        "url": "/config/engines"
+      },
+      {
+        "at": 10679,
+        "url": "/config/load"
+      },
+      {
+        "at": 10680,
+        "url": "/config/status"
+      },
+      {
+        "at": 10689,
+        "url": "/config/engines"
+      },
+      {
+        "at": 13930,
+        "url": "/config/load"
+      },
+      {
+        "at": 13930,
+        "url": "/config/status"
+      },
+      {
+        "at": 15230,
+        "url": "/config/engines"
+      },
+      {
+        "at": 17445,
+        "url": "/config/load"
+      },
+      {
+        "at": 17445,
+        "url": "/config/status"
+      },
+      {
+        "at": 17461,
+        "url": "/config/engines"
+      },
+      {
+        "at": 19480,
+        "url": "/config/load"
+      },
+      {
+        "at": 19481,
+        "url": "/config/status"
+      },
+      {
+        "at": 19491,
+        "url": "/config/engines"
+      },
+      {
+        "at": 21508,
+        "url": "/config/load"
+      },
+      {
+        "at": 21509,
+        "url": "/config/status"
+      },
+      {
+        "at": 21533,
+        "url": "/config/engines"
+      },
+      {
+        "at": 23559,
+        "url": "/config/load"
+      },
+      {
+        "at": 23560,
+        "url": "/config/status"
+      },
+      {
+        "at": 23582,
+        "url": "/config/engines"
+      },
+      {
+        "at": 25770,
+        "url": "/config/load"
+      },
+      {
+        "at": 25770,
+        "url": "/config/status"
+      },
+      {
+        "at": 25783,
+        "url": "/config/engines"
+      },
+      {
+        "at": 27988,
+        "url": "/config/load"
+      },
+      {
+        "at": 27989,
+        "url": "/config/status"
+      },
+      {
+        "at": 27998,
+        "url": "/config/engines"
+      },
+      {
+        "at": 30018,
+        "url": "/config/load"
+      },
+      {
+        "at": 30018,
+        "url": "/config/status"
+      },
+      {
+        "at": 30029,
+        "url": "/config/engines"
+      },
+      {
+        "at": 32125,
+        "url": "/config/load"
+      },
+      {
+        "at": 32126,
+        "url": "/config/status"
+      },
+      {
+        "at": 32156,
+        "url": "/config/engines"
+      },
+      {
+        "at": 34166,
+        "url": "/config/load"
+      },
+      {
+        "at": 34166,
+        "url": "/config/status"
+      },
+      {
+        "at": 34173,
+        "url": "/config/engines"
+      },
+      {
+        "at": 36181,
+        "url": "/config/load"
+      },
+      {
+        "at": 36181,
+        "url": "/config/status"
+      },
+      {
+        "at": 36188,
+        "url": "/config/engines"
+      },
+      {
+        "at": 38203,
+        "url": "/config/load"
+      },
+      {
+        "at": 38203,
+        "url": "/config/status"
+      },
+      {
+        "at": 38213,
+        "url": "/config/engines"
+      },
+      {
+        "at": 40229,
+        "url": "/config/load"
+      },
+      {
+        "at": 40229,
+        "url": "/config/status"
+      },
+      {
+        "at": 40236,
+        "url": "/config/engines"
+      },
+      {
+        "at": 42256,
+        "url": "/config/load"
+      },
+      {
+        "at": 42256,
+        "url": "/config/status"
+      },
+      {
+        "at": 42267,
+        "url": "/config/engines"
+      },
+      {
+        "at": 44291,
+        "url": "/config/load"
+      },
+      {
+        "at": 44292,
+        "url": "/config/status"
+      },
+      {
+        "at": 44390,
+        "url": "/config/engines"
+      },
+      {
+        "at": 46419,
+        "url": "/config/load"
+      },
+      {
+        "at": 46419,
+        "url": "/config/status"
+      },
+      {
+        "at": 46429,
+        "url": "/config/engines"
+      },
+      {
+        "at": 48442,
+        "url": "/config/load"
+      },
+      {
+        "at": 48442,
+        "url": "/config/status"
+      },
+      {
+        "at": 48450,
+        "url": "/config/engines"
+      },
+      {
+        "at": 50477,
+        "url": "/config/load"
+      },
+      {
+        "at": 50478,
+        "url": "/config/status"
+      },
+      {
+        "at": 50492,
+        "url": "/config/engines"
+      },
+      {
+        "at": 52509,
+        "url": "/config/load"
+      },
+      {
+        "at": 52509,
+        "url": "/config/status"
+      },
+      {
+        "at": 52528,
+        "url": "/config/engines"
+      },
+      {
+        "at": 54596,
+        "url": "/config/load"
+      },
+      {
+        "at": 54597,
+        "url": "/config/status"
+      },
+      {
+        "at": 54654,
+        "url": "/config/engines"
+      },
+      {
+        "at": 56679,
+        "url": "/config/load"
+      },
+      {
+        "at": 56679,
+        "url": "/config/status"
+      },
+      {
+        "at": 56799,
+        "url": "/config/engines"
+      },
+      {
+        "at": 58815,
+        "url": "/config/load"
+      },
+      {
+        "at": 58815,
+        "url": "/config/status"
+      },
+      {
+        "at": 58821,
+        "url": "/config/engines"
+      },
+      {
+        "at": 60834,
+        "url": "/config/load"
+      },
+      {
+        "at": 60834,
+        "url": "/config/status"
+      },
+      {
+        "at": 60843,
+        "url": "/config/engines"
+      },
+      {
+        "at": 62861,
+        "url": "/config/load"
+      },
+      {
+        "at": 62861,
+        "url": "/config/status"
+      },
+      {
+        "at": 62868,
+        "url": "/config/engines"
+      },
+      {
+        "at": 64877,
+        "url": "/config/load"
+      },
+      {
+        "at": 64878,
+        "url": "/config/status"
+      },
+      {
+        "at": 64886,
+        "url": "/config/engines"
+      },
+      {
+        "at": 66899,
+        "url": "/config/load"
+      },
+      {
+        "at": 66899,
+        "url": "/config/status"
+      },
+      {
+        "at": 66906,
+        "url": "/config/engines"
+      },
+      {
+        "at": 68917,
+        "url": "/config/load"
+      },
+      {
+        "at": 68917,
+        "url": "/config/status"
+      },
+      {
+        "at": 68924,
+        "url": "/config/engines"
+      },
+      {
+        "at": 70942,
+        "url": "/config/load"
+      },
+      {
+        "at": 70942,
+        "url": "/config/status"
+      },
+      {
+        "at": 70949,
+        "url": "/config/engines"
+      },
+      {
+        "at": 73354,
+        "url": "/config/load"
+      },
+      {
+        "at": 73354,
+        "url": "/config/status"
+      },
+      {
+        "at": 73391,
+        "url": "/config/engines"
+      },
+      {
+        "at": 75437,
+        "url": "/config/load"
+      },
+      {
+        "at": 75438,
+        "url": "/config/status"
+      },
+      {
+        "at": 75449,
+        "url": "/config/engines"
+      },
+      {
+        "at": 77459,
+        "url": "/config/load"
+      },
+      {
+        "at": 77459,
+        "url": "/config/status"
+      },
+      {
+        "at": 77466,
+        "url": "/config/engines"
+      },
+      {
+        "at": 79483,
+        "url": "/config/load"
+      },
+      {
+        "at": 79483,
+        "url": "/config/status"
+      },
+      {
+        "at": 79835,
+        "url": "/config/engines"
+      },
+      {
+        "at": 82512,
+        "url": "/config/load"
+      },
+      {
+        "at": 82519,
+        "url": "/config/status"
+      },
+      {
+        "at": 83307,
+        "url": "/config/engines"
+      },
+      {
+        "at": 85376,
+        "url": "/config/load"
+      },
+      {
+        "at": 85376,
+        "url": "/config/status"
+      },
+      {
+        "at": 85412,
+        "url": "/config/engines"
+      },
+      {
+        "at": 87836,
+        "url": "/config/load"
+      },
+      {
+        "at": 87836,
+        "url": "/config/status"
+      },
+      {
+        "at": 87879,
+        "url": "/config/engines"
+      },
+      {
+        "at": 89935,
+        "url": "/config/load"
+      },
+      {
+        "at": 89935,
+        "url": "/config/status"
+      },
+      {
+        "at": 90005,
+        "url": "/config/engines"
+      },
+      {
+        "at": 92024,
+        "url": "/config/load"
+      },
+      {
+        "at": 92025,
+        "url": "/config/status"
+      },
+      {
+        "at": 92032,
+        "url": "/config/engines"
+      },
+      {
+        "at": 94053,
+        "url": "/config/load"
+      },
+      {
+        "at": 94054,
+        "url": "/config/status"
+      },
+      {
+        "at": 94062,
+        "url": "/config/engines"
+      },
+      {
+        "at": 96090,
+        "url": "/config/load"
+      },
+      {
+        "at": 96091,
+        "url": "/config/status"
+      },
+      {
+        "at": 96107,
+        "url": "/config/engines"
+      },
+      {
+        "at": 98141,
+        "url": "/config/load"
+      },
+      {
+        "at": 98142,
+        "url": "/config/status"
+      },
+      {
+        "at": 98159,
+        "url": "/config/engines"
+      },
+      {
+        "at": 100196,
+        "url": "/config/load"
+      },
+      {
+        "at": 100196,
+        "url": "/config/status"
+      },
+      {
+        "at": 100199,
+        "url": "/config/engines"
+      },
+      {
+        "at": 102213,
+        "url": "/config/load"
+      },
+      {
+        "at": 102213,
+        "url": "/config/status"
+      },
+      {
+        "at": 102215,
+        "url": "/config/engines"
+      },
+      {
+        "at": 106230,
+        "url": "/config/load"
+      },
+      {
+        "at": 106230,
+        "url": "/config/status"
+      },
+      {
+        "at": 106234,
+        "url": "/config/engines"
+      },
+      {
+        "at": 114261,
+        "url": "/config/load"
+      },
+      {
+        "at": 114262,
+        "url": "/config/status"
+      },
+      {
+        "at": 114269,
+        "url": "/config/engines"
+      },
+      {
+        "at": 130281,
+        "url": "/config/load"
+      },
+      {
+        "at": 130281,
+        "url": "/config/status"
+      },
+      {
+        "at": 130284,
+        "url": "/config/engines"
+      },
+      {
+        "at": 160294,
+        "url": "/config/load"
+      },
+      {
+        "at": 160294,
+        "url": "/config/status"
+      },
+      {
+        "at": 160303,
+        "url": "/config/engines"
+      },
+      {
+        "at": 162311,
+        "url": "/config/load"
+      },
+      {
+        "at": 162311,
+        "url": "/config/status"
+      },
+      {
+        "at": 162320,
+        "url": "/config/engines"
+      },
+      {
+        "at": 164332,
+        "url": "/config/load"
+      },
+      {
+        "at": 164332,
+        "url": "/config/status"
+      },
+      {
+        "at": 164343,
+        "url": "/config/engines"
+      },
+      {
+        "at": 166363,
+        "url": "/config/load"
+      },
+      {
+        "at": 166363,
+        "url": "/config/status"
+      },
+      {
+        "at": 166373,
+        "url": "/config/engines"
+      },
+      {
+        "at": 168382,
+        "url": "/config/load"
+      },
+      {
+        "at": 168383,
+        "url": "/config/status"
+      },
+      {
+        "at": 168394,
+        "url": "/config/engines"
+      },
+      {
+        "at": 170446,
+        "url": "/config/load"
+      },
+      {
+        "at": 170447,
+        "url": "/config/status"
+      },
+      {
+        "at": 170454,
+        "url": "/config/engines"
+      },
+      {
+        "at": 172471,
+        "url": "/config/load"
+      },
+      {
+        "at": 172472,
+        "url": "/config/status"
+      },
+      {
+        "at": 172481,
+        "url": "/config/engines"
+      },
+      {
+        "at": 174830,
+        "url": "/config/load"
+      },
+      {
+        "at": 174830,
+        "url": "/config/status"
+      },
+      {
+        "at": 174852,
+        "url": "/config/engines"
+      },
+      {
+        "at": 176873,
+        "url": "/config/load"
+      },
+      {
+        "at": 176873,
+        "url": "/config/status"
+      },
+      {
+        "at": 176883,
+        "url": "/config/engines"
+      },
+      {
+        "at": 180777,
+        "url": "/config/load"
+      },
+      {
+        "at": 180778,
+        "url": "/config/status"
+      },
+      {
+        "at": 181549,
+        "url": "/config/engines"
+      },
+      {
+        "at": 183563,
+        "url": "/config/load"
+      },
+      {
+        "at": 183563,
+        "url": "/config/status"
+      },
+      {
+        "at": 183578,
+        "url": "/config/engines"
+      },
+      {
+        "at": 185613,
+        "url": "/config/load"
+      },
+      {
+        "at": 185614,
+        "url": "/config/status"
+      },
+      {
+        "at": 186154,
+        "url": "/config/engines"
+      },
+      {
+        "at": 188197,
+        "url": "/config/load"
+      },
+      {
+        "at": 188198,
+        "url": "/config/status"
+      },
+      {
+        "at": 188208,
+        "url": "/config/engines"
+      }
+    ],
+    "messages": [],
+    "exceptions": [],
+    "snapshots": [
+      {
+        "second": 15,
+        "events": 0,
+        "cls": 0
+      },
+      {
+        "second": 30,
+        "events": 0,
+        "cls": 0
+      },
+      {
+        "second": 45,
+        "events": 0,
+        "cls": 0
+      },
+      {
+        "second": 60,
+        "events": 0,
+        "cls": 0
+      },
+      {
+        "second": 75,
+        "events": 0,
+        "cls": 0
+      },
+      {
+        "second": 90,
+        "events": 0,
+        "cls": 0
+      }
+    ],
+    "stable": {
+      "events": [],
+      "cls": 0,
+      "shifts": [],
+      "recreated": []
+    },
+    "outage": {
+      "events": [
+        {
+          "at": 6778.20000000298,
+          "selector": "#connection",
+          "records": 1,
+          "text": "Local server offline",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 6778.20000000298,
+          "selector": "#userscript-connection",
+          "records": 1,
+          "text": "Chess.com: connection unknown",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 6778.20000000298,
+          "selector": "#save-state",
+          "records": 2,
+          "text": "Cannot reach the local server. Check that it is running.",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 6781.800000011921,
+          "selector": "#execution-state",
+          "records": 1,
+          "text": "Analysis: unavailable",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 6781.800000011921,
+          "selector": "#analysis-engine-state",
+          "records": 1,
+          "text": "Connection Lost",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 6781.800000011921,
+          "selector": "#analysis-engine-message",
+          "records": 3,
+          "text": "Engine registry unavailable. Check the local server, then Retry.",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 6781.9000000059605,
+          "selector": "#engine-retry",
+          "records": 1,
+          "text": "Retry",
+          "changed": false,
+          "removed": false
+        },
+        {
+          "at": 60849.90000000596,
+          "selector": "#connection",
+          "records": 1,
+          "text": "Local server connected",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 60849.90000000596,
+          "selector": "#userscript-connection",
+          "records": 1,
+          "text": "Chess.com: connected",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 60850,
+          "selector": "#save-state",
+          "records": 2,
+          "text": "Applied in a Chess.com tab",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 60856,
+          "selector": "#execution-state",
+          "records": 1,
+          "text": "Analysis: inactive",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 60856,
+          "selector": "#analysis-engine-state",
+          "records": 1,
+          "text": "Ready",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 60856,
+          "selector": "#analysis-engine-message",
+          "records": 3,
+          "text": "Fast Analysis · Lichess Stockfish with a 1.11 MiB NNUE network. Analysis starts only in an authorized context.",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 60856,
+          "selector": "#engine-retry",
+          "records": 1,
+          "text": "Retry",
+          "changed": false,
+          "removed": false
+        }
+      ],
+      "cls": 0,
+      "shifts": [],
+      "recreated": [],
+      "texts": {
+        "#connection": "Local server connected",
+        "#userscript-connection": "Chess.com: connected",
+        "#execution-state": "Analysis: inactive",
+        "#client-build-state": "Userscript 2026-10-26.5 · up to date",
+        "#analysis-engine-state": "Ready",
+        "#analysis-engine-message": "Fast Analysis · Lichess Stockfish with a 1.11 MiB NNUE network. Analysis starts only in an authorized context.",
+        "#engine-retry": "Retry",
+        "#save-state": "Applied in a Chess.com tab"
+      }
+    }
+  },
+  {
+    "surface": "console",
+    "requests": [
+      {
+        "at": 770,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 770,
+        "url": "/config/load"
+      },
+      {
+        "at": 776,
+        "url": "/config/load"
+      },
+      {
+        "at": 844,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 1861,
+        "url": "/config/load"
+      },
+      {
+        "at": 1868,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 2890,
+        "url": "/config/load"
+      },
+      {
+        "at": 2896,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 3915,
+        "url": "/config/load"
+      },
+      {
+        "at": 3922,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 4112,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 4113,
+        "url": "/config/load"
+      },
+      {
+        "at": 4929,
+        "url": "/config/load"
+      },
+      {
+        "at": 4935,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 5946,
+        "url": "/config/load"
+      },
+      {
+        "at": 5951,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 6971,
+        "url": "/config/load"
+      },
+      {
+        "at": 6982,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 7990,
+        "url": "/config/load"
+      },
+      {
+        "at": 7995,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 8105,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 8105,
+        "url": "/config/load"
+      },
+      {
+        "at": 9005,
+        "url": "/config/load"
+      },
+      {
+        "at": 9010,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 10026,
+        "url": "/config/load"
+      },
+      {
+        "at": 10039,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 11181,
+        "url": "/config/load"
+      },
+      {
+        "at": 11193,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 12107,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 12107,
+        "url": "/config/load"
+      },
+      {
+        "at": 12215,
+        "url": "/config/load"
+      },
+      {
+        "at": 12240,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 13270,
+        "url": "/config/load"
+      },
+      {
+        "at": 13285,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 14316,
+        "url": "/config/load"
+      },
+      {
+        "at": 14321,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 15328,
+        "url": "/config/load"
+      },
+      {
+        "at": 15338,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 16114,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 16114,
+        "url": "/config/load"
+      },
+      {
+        "at": 16362,
+        "url": "/config/load"
+      },
+      {
+        "at": 16374,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 17409,
+        "url": "/config/load"
+      },
+      {
+        "at": 17423,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 18441,
+        "url": "/config/load"
+      },
+      {
+        "at": 18449,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 19468,
+        "url": "/config/load"
+      },
+      {
+        "at": 19475,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 20101,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 20101,
+        "url": "/config/load"
+      },
+      {
+        "at": 20499,
+        "url": "/config/load"
+      },
+      {
+        "at": 20505,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 21519,
+        "url": "/config/load"
+      },
+      {
+        "at": 21525,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 22115,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 22116,
+        "url": "/config/load"
+      },
+      {
+        "at": 22532,
+        "url": "/config/load"
+      },
+      {
+        "at": 22544,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 23569,
+        "url": "/config/load"
+      },
+      {
+        "at": 23620,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 24677,
+        "url": "/config/load"
+      },
+      {
+        "at": 24697,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 25723,
+        "url": "/config/load"
+      },
+      {
+        "at": 25750,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 26115,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 26116,
+        "url": "/config/load"
+      },
+      {
+        "at": 26763,
+        "url": "/config/load"
+      },
+      {
+        "at": 26781,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 27794,
+        "url": "/config/load"
+      },
+      {
+        "at": 27806,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 28837,
+        "url": "/config/load"
+      },
+      {
+        "at": 28844,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 29855,
+        "url": "/config/load"
+      },
+      {
+        "at": 29875,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 30113,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 30114,
+        "url": "/config/load"
+      },
+      {
+        "at": 30905,
+        "url": "/config/load"
+      },
+      {
+        "at": 30912,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 31924,
+        "url": "/config/load"
+      },
+      {
+        "at": 31929,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 32945,
+        "url": "/config/load"
+      },
+      {
+        "at": 32951,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 33961,
+        "url": "/config/load"
+      },
+      {
+        "at": 33966,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 34105,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 34105,
+        "url": "/config/load"
+      },
+      {
+        "at": 34982,
+        "url": "/config/load"
+      },
+      {
+        "at": 34987,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 36005,
+        "url": "/config/load"
+      },
+      {
+        "at": 36012,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 37018,
+        "url": "/config/load"
+      },
+      {
+        "at": 37024,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 38038,
+        "url": "/config/load"
+      },
+      {
+        "at": 38044,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 38101,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 38101,
+        "url": "/config/load"
+      },
+      {
+        "at": 39052,
+        "url": "/config/load"
+      },
+      {
+        "at": 39057,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 40079,
+        "url": "/config/load"
+      },
+      {
+        "at": 40094,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 41106,
+        "url": "/config/load"
+      },
+      {
+        "at": 41116,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 42105,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 42105,
+        "url": "/config/load"
+      },
+      {
+        "at": 42134,
+        "url": "/config/load"
+      },
+      {
+        "at": 42139,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 43149,
+        "url": "/config/load"
+      },
+      {
+        "at": 43154,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 44114,
+        "url": "/config/load"
+      },
+      {
+        "at": 44165,
+        "url": "/config/load"
+      },
+      {
+        "at": 44173,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 45186,
+        "url": "/config/load"
+      },
+      {
+        "at": 45191,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 46106,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 46209,
+        "url": "/config/load"
+      },
+      {
+        "at": 46215,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 47232,
+        "url": "/config/load"
+      },
+      {
+        "at": 47238,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 48112,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 48113,
+        "url": "/config/load"
+      },
+      {
+        "at": 48253,
+        "url": "/config/load"
+      },
+      {
+        "at": 48258,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 49271,
+        "url": "/config/load"
+      },
+      {
+        "at": 49276,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 50282,
+        "url": "/config/load"
+      },
+      {
+        "at": 50287,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 51303,
+        "url": "/config/load"
+      },
+      {
+        "at": 51308,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 52103,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 52103,
+        "url": "/config/load"
+      },
+      {
+        "at": 52323,
+        "url": "/config/load"
+      },
+      {
+        "at": 52327,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 53334,
+        "url": "/config/load"
+      },
+      {
+        "at": 53339,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 54346,
+        "url": "/config/load"
+      },
+      {
+        "at": 54351,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 55369,
+        "url": "/config/load"
+      },
+      {
+        "at": 55378,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 56104,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 56105,
+        "url": "/config/load"
+      },
+      {
+        "at": 56386,
+        "url": "/config/load"
+      },
+      {
+        "at": 56391,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 57401,
+        "url": "/config/load"
+      },
+      {
+        "at": 57406,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 58423,
+        "url": "/config/load"
+      },
+      {
+        "at": 58431,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 59444,
+        "url": "/config/load"
+      },
+      {
+        "at": 59451,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 60108,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 60108,
+        "url": "/config/load"
+      },
+      {
+        "at": 60466,
+        "url": "/config/load"
+      },
+      {
+        "at": 60471,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 61478,
+        "url": "/config/load"
+      },
+      {
+        "at": 61484,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 62497,
+        "url": "/config/load"
+      },
+      {
+        "at": 62513,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 63540,
+        "url": "/config/load"
+      },
+      {
+        "at": 63545,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 64102,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 64103,
+        "url": "/config/load"
+      },
+      {
+        "at": 64553,
+        "url": "/config/load"
+      },
+      {
+        "at": 64559,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 65577,
+        "url": "/config/load"
+      },
+      {
+        "at": 65582,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 66108,
+        "url": "/config/load"
+      },
+      {
+        "at": 66587,
+        "url": "/config/load"
+      },
+      {
+        "at": 66592,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 67599,
+        "url": "/config/load"
+      },
+      {
+        "at": 67603,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 68111,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 68618,
+        "url": "/config/load"
+      },
+      {
+        "at": 68623,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 69642,
+        "url": "/config/load"
+      },
+      {
+        "at": 69646,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 70104,
+        "url": "/config/load"
+      },
+      {
+        "at": 70653,
+        "url": "/config/load"
+      },
+      {
+        "at": 70658,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 71698,
+        "url": "/config/load"
+      },
+      {
+        "at": 71827,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 72145,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 72871,
+        "url": "/config/load"
+      },
+      {
+        "at": 72878,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 73889,
+        "url": "/config/load"
+      },
+      {
+        "at": 73894,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 74112,
+        "url": "/config/load"
+      },
+      {
+        "at": 74904,
+        "url": "/config/load"
+      },
+      {
+        "at": 74911,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 75921,
+        "url": "/config/load"
+      },
+      {
+        "at": 75925,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 76109,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 76941,
+        "url": "/config/load"
+      },
+      {
+        "at": 76949,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 77966,
+        "url": "/config/load"
+      },
+      {
+        "at": 77972,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 78114,
+        "url": "/config/load"
+      },
+      {
+        "at": 78987,
+        "url": "/config/load"
+      },
+      {
+        "at": 78995,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 80001,
+        "url": "/config/load"
+      },
+      {
+        "at": 80008,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 80109,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 81048,
+        "url": "/config/load"
+      },
+      {
+        "at": 81183,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 82110,
+        "url": "/config/load"
+      },
+      {
+        "at": 82317,
+        "url": "/config/load"
+      },
+      {
+        "at": 82323,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 83341,
+        "url": "/config/load"
+      },
+      {
+        "at": 83351,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 84112,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 84368,
+        "url": "/config/load"
+      },
+      {
+        "at": 84381,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 85408,
+        "url": "/config/load"
+      },
+      {
+        "at": 85426,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 86105,
+        "url": "/config/load"
+      },
+      {
+        "at": 86476,
+        "url": "/config/load"
+      },
+      {
+        "at": 86498,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 87511,
+        "url": "/config/load"
+      },
+      {
+        "at": 87520,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 88101,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 88535,
+        "url": "/config/load"
+      },
+      {
+        "at": 88548,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 89567,
+        "url": "/config/load"
+      },
+      {
+        "at": 89581,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 90109,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 90110,
+        "url": "/config/load"
+      },
+      {
+        "at": 90586,
+        "url": "/config/load"
+      },
+      {
+        "at": 90596,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 91613,
+        "url": "/config/load"
+      },
+      {
+        "at": 91618,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 92636,
+        "url": "/config/load"
+      },
+      {
+        "at": 92641,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 93656,
+        "url": "/config/load"
+      },
+      {
+        "at": 93660,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 94102,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 94103,
+        "url": "/config/load"
+      },
+      {
+        "at": 94697,
+        "url": "/config/load"
+      },
+      {
+        "at": 94754,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 95829,
+        "url": "/config/load"
+      },
+      {
+        "at": 95834,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 96108,
+        "url": "/config/load"
+      },
+      {
+        "at": 96860,
+        "url": "/config/load"
+      },
+      {
+        "at": 96882,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 97897,
+        "url": "/config/load"
+      },
+      {
+        "at": 97903,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 98110,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 98917,
+        "url": "/config/load"
+      },
+      {
+        "at": 100933,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 100933,
+        "url": "/config/load"
+      },
+      {
+        "at": 100933,
+        "url": "/config/load"
+      },
+      {
+        "at": 102940,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 104949,
+        "url": "/config/load"
+      },
+      {
+        "at": 106953,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 114964,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 120961,
+        "url": "/config/load"
+      },
+      {
+        "at": 130975,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 150980,
+        "url": "/config/load"
+      },
+      {
+        "at": 150986,
+        "url": "/config/load"
+      },
+      {
+        "at": 150992,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 151999,
+        "url": "/config/load"
+      },
+      {
+        "at": 152006,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 153020,
+        "url": "/config/load"
+      },
+      {
+        "at": 153026,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 154043,
+        "url": "/config/load"
+      },
+      {
+        "at": 154049,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 154106,
+        "url": "/config/load"
+      },
+      {
+        "at": 155060,
+        "url": "/config/load"
+      },
+      {
+        "at": 155067,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 156071,
+        "url": "/config/load"
+      },
+      {
+        "at": 156077,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 157094,
+        "url": "/config/load"
+      },
+      {
+        "at": 157100,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 158100,
+        "url": "/config/load"
+      },
+      {
+        "at": 158110,
+        "url": "/config/load"
+      },
+      {
+        "at": 158117,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 159135,
+        "url": "/config/load"
+      },
+      {
+        "at": 159141,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 160148,
+        "url": "/config/load"
+      },
+      {
+        "at": 160155,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 160992,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 161163,
+        "url": "/config/load"
+      },
+      {
+        "at": 161170,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 162104,
+        "url": "/config/load"
+      },
+      {
+        "at": 162182,
+        "url": "/config/load"
+      },
+      {
+        "at": 162189,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 163202,
+        "url": "/config/load"
+      },
+      {
+        "at": 163208,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 164112,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 164112,
+        "url": "/config/load"
+      },
+      {
+        "at": 164221,
+        "url": "/config/load"
+      },
+      {
+        "at": 164228,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 165244,
+        "url": "/config/load"
+      },
+      {
+        "at": 165252,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 166258,
+        "url": "/config/load"
+      },
+      {
+        "at": 166265,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 167279,
+        "url": "/config/load"
+      },
+      {
+        "at": 167286,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 168100,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 168100,
+        "url": "/config/load"
+      },
+      {
+        "at": 168300,
+        "url": "/config/load"
+      },
+      {
+        "at": 168307,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 169314,
+        "url": "/config/load"
+      },
+      {
+        "at": 169321,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 170337,
+        "url": "/config/load"
+      },
+      {
+        "at": 170344,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 171354,
+        "url": "/config/load"
+      },
+      {
+        "at": 171361,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 172109,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 172109,
+        "url": "/config/load"
+      },
+      {
+        "at": 172374,
+        "url": "/config/load"
+      },
+      {
+        "at": 172380,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 173413,
+        "url": "/config/load"
+      },
+      {
+        "at": 173618,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 174759,
+        "url": "/config/load"
+      },
+      {
+        "at": 174770,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 175784,
+        "url": "/config/load"
+      },
+      {
+        "at": 175791,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 176101,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 176101,
+        "url": "/config/load"
+      },
+      {
+        "at": 176807,
+        "url": "/config/load"
+      },
+      {
+        "at": 176816,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 177846,
+        "url": "/config/load"
+      },
+      {
+        "at": 177895,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 178934,
+        "url": "/config/load"
+      },
+      {
+        "at": 178990,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 180002,
+        "url": "/config/load"
+      },
+      {
+        "at": 180010,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 180098,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 180098,
+        "url": "/config/load"
+      },
+      {
+        "at": 181018,
+        "url": "/config/load"
+      },
+      {
+        "at": 181026,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 182049,
+        "url": "/config/load"
+      },
+      {
+        "at": 182088,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 183113,
+        "url": "/config/load"
+      },
+      {
+        "at": 183120,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 184109,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 184109,
+        "url": "/config/load"
+      },
+      {
+        "at": 184140,
+        "url": "/config/load"
+      },
+      {
+        "at": 184146,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 185171,
+        "url": "/config/load"
+      },
+      {
+        "at": 185190,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 186213,
+        "url": "/config/load"
+      },
+      {
+        "at": 186219,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 187234,
+        "url": "/config/load"
+      },
+      {
+        "at": 187241,
+        "url": "/config/session/bridge"
+      },
+      {
+        "at": 188094,
+        "url": "/eval-bar/engines"
+      },
+      {
+        "at": 188095,
+        "url": "/config/load"
+      },
+      {
+        "at": 188249,
+        "url": "/config/load"
+      },
+      {
+        "at": 188255,
+        "url": "/config/session/bridge"
+      }
+    ],
+    "messages": [],
+    "exceptions": [],
+    "snapshots": [
+      {
+        "second": 15,
+        "events": 0,
+        "cls": 0
+      },
+      {
+        "second": 30,
+        "events": 0,
+        "cls": 0
+      },
+      {
+        "second": 45,
+        "events": 0,
+        "cls": 0
+      },
+      {
+        "second": 60,
+        "events": 0,
+        "cls": 0
+      },
+      {
+        "second": 75,
+        "events": 0,
+        "cls": 0
+      },
+      {
+        "second": 90,
+        "events": 0,
+        "cls": 0
+      }
+    ],
+    "stable": {
+      "events": [],
+      "cls": 0,
+      "shifts": [],
+      "recreated": []
+    },
+    "outage": {
+      "events": [
+        {
+          "at": 6422.5,
+          "selector": ".tc-analysis-status",
+          "records": 1,
+          "text": "Error",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 6422.5,
+          "selector": "#tc-analysis-message",
+          "records": 2,
+          "text": "Cannot reach analysis engine",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 6422.5,
+          "selector": ".tc-analysis-notice button",
+          "records": 1,
+          "text": "Retry",
+          "changed": false,
+          "removed": false
+        },
+        {
+          "at": 62472,
+          "selector": ".tc-analysis-status",
+          "records": 1,
+          "text": "Ready",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 62472,
+          "selector": "#tc-analysis-message",
+          "records": 2,
+          "text": "Fast Analysis · Stockfish 19 · 1MB",
+          "changed": true,
+          "removed": false
+        },
+        {
+          "at": 62472,
+          "selector": ".tc-analysis-notice button",
+          "records": 1,
+          "text": "Retry",
+          "changed": false,
+          "removed": false
+        }
+      ],
+      "cls": 0,
+      "shifts": [],
+      "recreated": [],
+      "texts": {
+        ".tc-analysis-status": "Ready",
+        "#tc-analysis-message": "Fast Analysis · Stockfish 19 · 1MB",
+        ".tc-analysis-notice button": "Retry"
+      }
+    }
+  }
+]

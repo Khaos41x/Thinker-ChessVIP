@@ -55,7 +55,11 @@ function findById(panel, id) {
 
 function setText(panel, id, value) {
   const node = findById(panel, id);
-  if (node) node.textContent = value;
+  if (node && node.textContent !== String(value)) node.textContent = value;
+}
+
+function setAttribute(node, key, value) {
+  if (node.getAttribute?.(key) !== String(value)) node.setAttribute(key, String(value));
 }
 
 function actionNode(panel, target) {
@@ -80,21 +84,22 @@ function availability(status, startBlocker) {
 function presentAvailability(panel, action, reason) {
   const button = panel.querySelector(`[data-action="${action}"]`);
   if (!button) return;
+  const previousReason=button.getAttribute?.("data-disabled-reason") ?? null;
   button.toggleAttribute("disabled", Boolean(reason));
-  button.setAttribute("aria-disabled", reason ? "true" : "false");
+  setAttribute(button, "aria-disabled", reason ? "true" : "false");
   if (reason) {
-    button.setAttribute("data-disabled-reason", reason);
+    setAttribute(button, "data-disabled-reason", reason);
   } else {
     button.removeAttribute("data-disabled-reason");
   }
-  button.removeAttribute("title");
+  if (previousReason !== (reason || null)) button.removeAttribute("title");
 }
 
 function presentStatus(panel, status, formatDuration, startBlocker) {
   const counts = status.observedCounts;
   const controlCounts = status.controlCounts;
-  panel.setAttribute("data-session-state", status.phase === "IDLE" ? "never-started" : status.phase.toLowerCase().replace(/_/g, "-"));
-  panel.setAttribute("data-session-history", status.phase === "IDLE" ? "none" : "present");
+  setAttribute(panel, "data-session-state", status.phase === "IDLE" ? "never-started" : status.phase.toLowerCase().replace(/_/g, "-"));
+  setAttribute(panel, "data-session-history", status.phase === "IDLE" ? "none" : "present");
   setText(panel, "kb-session-phase", phaseLabel(status.phase));
   setText(panel, "kb-session-ttl", formatDuration(status.remainingTtlMs));
   setText(panel, "kb-session-observed", `${counts.wins} W | ${counts.draws} D | ${counts.losses} L`);

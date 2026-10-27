@@ -1,5 +1,6 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+require('../frontend/external_config/status-runtime.js');
 require('../frontend/eval_bar/engine-selection.js');
 (async () => {
   let context = 'analysis';

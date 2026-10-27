@@ -3,7 +3,11 @@
   function create(options) {
     let state = null;
     let pending = false;
-    let lastRefresh = -Infinity;
+    const {text, prop, health} = root.ThinkerStatus;
+    const connection = health();
+    let reconnectTimer = null;
+    let interactive = false;
+    const document = root.document;
     let error = null;
     let selecting = false;
     let mounted = null;
@@ -15,7 +19,7 @@
     function send(path, payload) {
       return new Promise((resolve, reject) => {
         options.request({method: payload ? 'POST' : 'GET', url: options.serverUrl + path,
-          headers: options.headers(), ...(payload ? {data: JSON.stringify(payload)} : {}), timeout: 30000,
+          headers: options.headers(), ...(payload ? {data: JSON.stringify(payload)} : {}), timeout: payload ? 30000 : 5000,
           onload(response) {
             try {
               const result = JSON.parse(response.responseText);
@@ -23,16 +27,18 @@
               resolve(result);
             } catch (cause) { reject(cause); }
           }, onerror() {reject(new Error('Cannot reach analysis engine'));},
+          onabort() {reject(new Error('Cannot reach analysis engine'));},
           ontimeout() {reject(new Error('Analysis engine initialization timed out'));}
         });
       });
     }
     async function refresh(force = false, initialize = false) {
-      if (pending || selecting || (!force && (error || performance.now() - lastRefresh < 1500))) return;
+      if (force && pending && !selecting) { interactive = true; render(); return; }
+      if (pending || selecting || document?.hidden || (!force && !connection.due())) return;
+      if (force) { connection.reset(); interactive = true; }
       pending = true;
       render();
       const epoch = selectionEpoch;
-      lastRefresh = performance.now();
       try {
         let next = await send('/eval-bar/engines' + (allowed() ? '?context=' + encodeURIComponent(options.authorize()) : ''));
         if (epoch !== selectionEpoch) return;
@@ -41,15 +47,19 @@
           next = await send('/eval-bar/engines/select', {engineId: next.selectedEngineId, context: options.authorize(), initializeOnly: true});
         }
         if (epoch !== selectionEpoch) return;
-        state = next;
+        state = next; connection.success();
         try { options.storage?.setItem("thinkerAnalysisEngine", next.selectedEngineId); } catch (_) {}
         if (!attemptedEngineId) error = null;
       } catch (cause) {
         if (epoch !== selectionEpoch) return;
         if (cause.data?.engines) state = cause.data;
-        error = String(cause.message || cause);
+        if (connection.failure()) error = String(cause.message || cause);
       }
-      finally { pending = false; render(); }
+      finally {
+        pending = false; interactive = false; render();
+        clearTimeout(reconnectTimer);
+        if (connection.snapshot().failures && !document?.hidden) reconnectTimer = setTimeout(() => refresh(), connection.delay());
+      }
     }
     async function selectPreference(engineId) {
       if (selecting || !state) return;
@@ -84,10 +94,11 @@
         const message = doc.createElement('p'); message.id = 'tc-analysis-message'; message.setAttribute('role', 'status');
         const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry';
         retry.addEventListener('click', () => {
+          let operation;
+          if (attemptedEngineId && state?.engines?.find(engine => engine.id === attemptedEngineId)?.installed) operation = selectPreference(attemptedEngineId);
+          else { attemptedEngineId = null; operation = refresh(true); }
           options.onRetry?.();
-          if (attemptedEngineId && state?.engines?.find(engine => engine.id === attemptedEngineId)?.installed) return selectPreference(attemptedEngineId);
-          attemptedEngineId = null;
-          refresh(true);
+          return operation;
         });
         select.addEventListener('change', () => selectPreference(select.value));
         const stateLine = doc.createElement('span'); stateLine.className = 'tc-analysis-state';
@@ -97,6 +108,7 @@
         stateLine.append(status, feedback); heading.append(label, stateLine); mounted.append(heading, select, notice);
         const caption = parent.querySelector('.kb-console-caption');
         if (caption) caption.after(mounted); else parent.prepend(mounted);
+        root.ThinkerStatus.reserve(status, ['Initializing','Switching','Unavailable','Active','Ready','Error'], 10);
       }
       const select = mounted.querySelector('select');
       const selected = state?.engines?.find(engine => engine.id === state.selectedEngineId);
@@ -105,23 +117,25 @@
       }
       for (const option of select.options) {
         const engine = state?.engines?.find(item => item.id === option.value);
-        option.disabled = engine ? !engine.installed : false;
+        prop(option, 'disabled', engine ? !engine.installed : false);
       }
-      if (!selecting && state) select.value = state.selectedEngineId;
-      select.disabled = selecting || Boolean(error) || !state;
-      mounted.querySelector('.tc-analysis-status').textContent = selecting ? 'Switching' : pending && (!state || error) ? 'Initializing' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing';
+      if (!selecting && state) prop(select, 'value', state.selectedEngineId);
+      prop(select, 'disabled', selecting || Boolean(error) || !state);
+      text(mounted.querySelector('.tc-analysis-status'), selecting ? 'Switching' : interactive || pending && !state ? 'Initializing' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing');
+      root.ThinkerStatus.attr(mounted.querySelector('.tc-analysis-status'), 'data-error', Boolean(error || selected?.initializationError));
       const hint = error || selected?.initializationError || (selected ? [selected.description?.split(' · ')[0], selected.name].filter(Boolean).join(' · ') : 'Checking installed engines…');
-      mounted.querySelector('p').textContent = hint;
-      mounted.querySelector('p').title = hint;
-      mounted.querySelector('.tc-analysis-feedback').textContent = performance.now() < savedUntil ? 'Preference saved.' : '';
-      mounted.querySelector('button').hidden = !error;
-      mounted.querySelector('button').disabled = pending || selecting;
+      text(mounted.querySelector('p'), hint);
+      prop(mounted.querySelector('p'), 'title', hint);
+      text(mounted.querySelector('.tc-analysis-feedback'), performance.now() < savedUntil ? 'Preference saved.' : '');
+      prop(mounted.querySelector('button'), 'hidden', !error);
+      prop(mounted.querySelector('button'), 'disabled', interactive || selecting);
     }
+    document?.addEventListener('visibilitychange', () => { clearTimeout(reconnectTimer); if (!document.hidden) { connection.reset(); refresh(); } });
     return Object.freeze({
       cacheContext() { refresh(false, true); return allowed() && state?.activeEngineId ? state.cacheContext : ''; },
       requestIdentity() { return state && allowed() ? {engineId: state.activeEngineId, selectionGeneration: state.selectionGeneration} : {}; },
       refresh,
-      unavailable() { selectionEpoch++; error = 'Cannot reach analysis engine'; render(); },
+      unavailable() { error = 'Cannot reach analysis engine'; render(); },
       selectPreference,
       snapshot() { return {state, pending, error, attemptedEngineId}; }
     });

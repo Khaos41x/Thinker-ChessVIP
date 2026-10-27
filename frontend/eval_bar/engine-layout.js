@@ -21,6 +21,9 @@
         #krypbot-container .tc-analysis-notice { display:flex; align-items:center; gap:var(--space-2); height:var(--row-h); }
         #krypbot-container .tc-analysis-notice p { flex:1; min-width:0; margin:0; line-height:16px; }
         #krypbot-container .tc-analysis-notice button { flex:0 0 auto; height:var(--control-height); min-height:var(--control-height); margin:0; }
+        #krypbot-container .tc-analysis-notice button { width:64px; }
+        #krypbot-container :is(.tc-analysis-status,.tc-analysis-feedback,.tc-analysis-notice,.tc-analysis-notice p,.tc-analysis-notice button) { animation:none !important; transition:none !important; }
+        #krypbot-container .tc-analysis-status[data-error=true]::before { content:''; display:inline-block; width:6px; height:6px; margin-right:4px; border-radius:50%; background:currentColor; }
         #krypbot-container .kb-engine-timing .kb-run-delay-controls { grid-template-columns:minmax(0,1fr) 124px; align-items:center; gap:var(--field-gap); }
         #krypbot-container .kb-engine-timing .kb-delay-range { display:grid; grid-template-columns:round(down,calc((100% - 11px - var(--field-gap) - var(--field-gap))/2),1px) 11px minmax(0,1fr); }
         #krypbot-container .kb-engine-timing .kb-num-input { padding-left:var(--space-2); padding-right:var(--space-2); }

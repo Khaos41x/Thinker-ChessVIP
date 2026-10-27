@@ -6,7 +6,7 @@ const { draftFromConfig, draftPatch, SESSION_FIELDS } = require('./presentation'
 function createGmConfigRequest(request, serverUrl) {
   return (path, body) => new Promise((resolve, reject) => request({
     method: body ? 'POST' : 'GET', url: serverUrl + path, timeout: 5000,
-    headers: { 'Content-Type': 'application/json' }, ...(body ? { ['data']: JSON.stringify(body) } : {}),
+    headers: { 'Content-Type': 'application/json', 'X-Thinker-Channel':'session-relay' }, ...(body ? { ['data']: JSON.stringify(body) } : {}),
     onload(response) {
       try {
         const result = JSON.parse(response.responseText);
@@ -23,6 +23,7 @@ function createExternalSessionBridge(options) {
   let stopped = false;
   let timer = null;
   let ack = null;
+  let connectionFailures = 0;
   const pendingDraft = {};
   let accepted = null;
   const seen = new Set();
@@ -38,12 +39,13 @@ function createExternalSessionBridge(options) {
     }
   }
   async function tick() {
-    if (busy || stopped || options.isOffline?.()) return;
+    if (busy || stopped) return;
     options.clearTimeout(timer);
     timer = null;
     busy = true;
     try {
       const config = await options.request('/config/load');
+      connectionFailures = 0;
       accepted = config;
       options.presenter.applyDraft(draftFromConfig(config));
       if (Object.keys(pendingDraft).length) {
@@ -86,10 +88,10 @@ function createExternalSessionBridge(options) {
           options.presenter.update();
         }
       }
-    } catch (error) { options.onError?.(error); }
+    } catch (error) { if (error.code === 'SERVER_UNAVAILABLE') connectionFailures++; options.onError?.(error); }
     finally {
       busy = false;
-      if (!stopped) timer = options.setTimeout(tick, 1000);
+      if (!stopped) timer = options.setTimeout(tick, Math.min(30000, 1000 * 2 ** Math.min(connectionFailures, 5)));
     }
   }
   return Object.freeze({ start: tick, draftChanged, stop() { stopped = true; options.clearTimeout(timer); }, snapshot: () => ({ accepted, pendingDraft: { ...pendingDraft }, busy }) });

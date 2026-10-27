@@ -21,17 +21,21 @@ function mountTarget({ window, host, request, id = 'tc-rating-target', installSt
   let saved = '';
   const settled = new Set();
   let timer;
+  let refreshing = false;
+  const connection = window.ThinkerStatus?.health?.();
   function apply(value) {
     saved = value.target === null ? '' : String(value.target);
     if (!dirty && !saving) input.value = saved;
   }
   async function refresh() {
     clearTimeout(timer);
+    if (stopped || refreshing || document.hidden) return;
+    refreshing = true;
     const started = version;
     const epoch = mutationEpoch;
-    try { const value = await request('/rating-goals/target'); if (!stopped && started === version && epoch === mutationEpoch && !saving) apply(value); }
-    catch (_) {}
-    finally { if (!stopped) timer = setTimeout(refresh, 2000); }
+    try { const value = await request('/rating-goals/target'); connection?.success(); if (!stopped && started === version && epoch === mutationEpoch && !saving) apply(value); }
+    catch (_) { connection?.failure(); }
+    finally { refreshing = false; if (!stopped && !document.hidden) timer = setTimeout(refresh, connection?.delay() ?? 2000); }
   }
   async function commit() {
     if (stopped || !dirty) return;
@@ -54,6 +58,8 @@ function mountTarget({ window, host, request, id = 'tc-rating-target', installSt
   input.addEventListener('input', () => { dirty = true; version++; queuedCommit = false; input.removeAttribute('aria-invalid'); input.setCustomValidity(''); });
   input.addEventListener('blur', () => { if (dirty) void commit(); else input.value = saved; });
   input.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); void commit(); } });
+  const visibility = () => { clearTimeout(timer); if (!document.hidden) { connection?.reset(); void refresh(); } };
+  document.addEventListener?.('visibilitychange', visibility);
   void refresh();
   return { refresh, async flush() {
     while (saving && !stopped) await new Promise(resolve => settled.add(resolve));
@@ -62,8 +68,8 @@ function mountTarget({ window, host, request, id = 'tc-rating-target', installSt
     if (dirty || stopped) throw Object.assign(new Error('RATING_TARGET_NOT_SAVED'), { code: 'RATING_TARGET_NOT_SAVED' });
   }, setSessionState(value) {
     const text = value.state === 'reached' ? 'Goal reached' : value.state === 'error' ? 'Rating unavailable · queue paused' : value.state === 'awaiting-rating' ? 'Awaiting rating update' : value.state === 'tracking' && Number.isInteger(value.currentRating) ? `Current ${value.currentRating} · Goal ${value.target}` : '';
-    status.hidden = !text; status.textContent = text;
-  }, destroy() { stopped = true; clearTimeout(timer); for (const resolve of settled) resolve(); settled.clear(); document.removeEventListener?.('keydown', keyboardFocus, true); row.remove(); style.remove(); } };
+    if (status.hidden !== !text) status.hidden = !text; if (status.textContent !== text) status.textContent = text;
+  }, destroy() { stopped = true; clearTimeout(timer); for (const resolve of settled) resolve(); settled.clear(); document.removeEventListener?.('keydown', keyboardFocus, true); document.removeEventListener?.('visibilitychange', visibility); row.remove(); style.remove(); } };
 }
 
 module.exports = { mountTarget };

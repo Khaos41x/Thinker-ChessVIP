@@ -1,0 +1,1 @@
+          resumeExternalSessionConnection = () => { externalSessionBridge.start(); flushConfigSave(); };
