@@ -626,6 +626,7 @@ body[data-focus-input=keyboard] :is(button,input,select,a,[tabindex]):not([aria-
 #engine .strength input[type=range] { display:block; margin:8px 0; }
 #engine .strength .range-labels { margin:0; }
 #analysis-engine-message { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#analysis-engine-message:not([data-error=true]) { white-space:normal; overflow:visible; text-overflow:clip; }
 #engine .timing[hidden] { display:none; }
 
 .autoplay-fields { grid-template-columns:repeat(3,round(down,calc((100% - 24px)/4),1px)) minmax(0,1fr); gap:8px; }
