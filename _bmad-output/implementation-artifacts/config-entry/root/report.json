@@ -1,0 +1,613 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "width": 390,
+      "children": [
+        {
+          "x": 160,
+          "y": 319,
+          "width": 70,
+          "height": 140,
+          "top": 319,
+          "right": 230,
+          "bottom": 459,
+          "left": 160
+        },
+        {
+          "x": 49,
+          "y": 471,
+          "width": 292,
+          "height": 36,
+          "top": 471,
+          "right": 341,
+          "bottom": 507,
+          "left": 49
+        },
+        {
+          "x": 167,
+          "y": 519,
+          "width": 56,
+          "height": 18,
+          "top": 519,
+          "right": 223,
+          "bottom": 537,
+          "left": 167
+        },
+        {
+          "x": 115,
+          "y": 549,
+          "width": 160,
+          "height": 32,
+          "top": 549,
+          "right": 275,
+          "bottom": 581,
+          "left": 115
+        }
+      ],
+      "box": {
+        "x": 24,
+        "y": 294,
+        "width": 342,
+        "height": 312,
+        "top": 294,
+        "right": 366,
+        "bottom": 606,
+        "left": 24
+      },
+      "natural": [
+        140,
+        280
+      ],
+      "image": {
+        "x": 160,
+        "y": 319,
+        "width": 70,
+        "height": 140,
+        "top": 319,
+        "right": 230,
+        "bottom": 459,
+        "left": 160
+      },
+      "href": "/config",
+      "text": "Thinker Chess\n\nOnline\n\nOpen External Config",
+      "background": "rgb(37, 37, 35)",
+      "border": "rgb(58, 58, 54)",
+      "overflow": false,
+      "dpr": 1
+    },
+    {
+      "width": 390,
+      "children": [
+        {
+          "x": 160,
+          "y": 319,
+          "width": 70,
+          "height": 140,
+          "top": 319,
+          "right": 230,
+          "bottom": 459,
+          "left": 160
+        },
+        {
+          "x": 49,
+          "y": 471,
+          "width": 292,
+          "height": 36,
+          "top": 471,
+          "right": 341,
+          "bottom": 507,
+          "left": 49
+        },
+        {
+          "x": 167,
+          "y": 519,
+          "width": 56,
+          "height": 18,
+          "top": 519,
+          "right": 223,
+          "bottom": 537,
+          "left": 167
+        },
+        {
+          "x": 115,
+          "y": 549,
+          "width": 160,
+          "height": 32,
+          "top": 549,
+          "right": 275,
+          "bottom": 581,
+          "left": 115
+        }
+      ],
+      "box": {
+        "x": 24,
+        "y": 294,
+        "width": 342,
+        "height": 312,
+        "top": 294,
+        "right": 366,
+        "bottom": 606,
+        "left": 24
+      },
+      "natural": [
+        140,
+        280
+      ],
+      "image": {
+        "x": 160,
+        "y": 319,
+        "width": 70,
+        "height": 140,
+        "top": 319,
+        "right": 230,
+        "bottom": 459,
+        "left": 160
+      },
+      "href": "/config",
+      "text": "Thinker Chess\n\nOnline\n\nOpen External Config",
+      "background": "rgb(37, 37, 35)",
+      "border": "rgb(58, 58, 54)",
+      "overflow": false,
+      "dpr": 2
+    },
+    {
+      "width": 768,
+      "children": [
+        {
+          "x": 349,
+          "y": 319,
+          "width": 70,
+          "height": 140,
+          "top": 319,
+          "right": 419,
+          "bottom": 459,
+          "left": 349
+        },
+        {
+          "x": 229,
+          "y": 471,
+          "width": 310,
+          "height": 36,
+          "top": 471,
+          "right": 539,
+          "bottom": 507,
+          "left": 229
+        },
+        {
+          "x": 356,
+          "y": 519,
+          "width": 56,
+          "height": 18,
+          "top": 519,
+          "right": 412,
+          "bottom": 537,
+          "left": 356
+        },
+        {
+          "x": 304,
+          "y": 549,
+          "width": 160,
+          "height": 32,
+          "top": 549,
+          "right": 464,
+          "bottom": 581,
+          "left": 304
+        }
+      ],
+      "box": {
+        "x": 204,
+        "y": 294,
+        "width": 360,
+        "height": 312,
+        "top": 294,
+        "right": 564,
+        "bottom": 606,
+        "left": 204
+      },
+      "natural": [
+        140,
+        280
+      ],
+      "image": {
+        "x": 349,
+        "y": 319,
+        "width": 70,
+        "height": 140,
+        "top": 319,
+        "right": 419,
+        "bottom": 459,
+        "left": 349
+      },
+      "href": "/config",
+      "text": "Thinker Chess\n\nOnline\n\nOpen External Config",
+      "background": "rgb(37, 37, 35)",
+      "border": "rgb(58, 58, 54)",
+      "overflow": false,
+      "dpr": 1
+    },
+    {
+      "width": 768,
+      "children": [
+        {
+          "x": 349,
+          "y": 319,
+          "width": 70,
+          "height": 140,
+          "top": 319,
+          "right": 419,
+          "bottom": 459,
+          "left": 349
+        },
+        {
+          "x": 229,
+          "y": 471,
+          "width": 310,
+          "height": 36,
+          "top": 471,
+          "right": 539,
+          "bottom": 507,
+          "left": 229
+        },
+        {
+          "x": 356,
+          "y": 519,
+          "width": 56,
+          "height": 18,
+          "top": 519,
+          "right": 412,
+          "bottom": 537,
+          "left": 356
+        },
+        {
+          "x": 304,
+          "y": 549,
+          "width": 160,
+          "height": 32,
+          "top": 549,
+          "right": 464,
+          "bottom": 581,
+          "left": 304
+        }
+      ],
+      "box": {
+        "x": 204,
+        "y": 294,
+        "width": 360,
+        "height": 312,
+        "top": 294,
+        "right": 564,
+        "bottom": 606,
+        "left": 204
+      },
+      "natural": [
+        140,
+        280
+      ],
+      "image": {
+        "x": 349,
+        "y": 319,
+        "width": 70,
+        "height": 140,
+        "top": 319,
+        "right": 419,
+        "bottom": 459,
+        "left": 349
+      },
+      "href": "/config",
+      "text": "Thinker Chess\n\nOnline\n\nOpen External Config",
+      "background": "rgb(37, 37, 35)",
+      "border": "rgb(58, 58, 54)",
+      "overflow": false,
+      "dpr": 2
+    },
+    {
+      "width": 1440,
+      "children": [
+        {
+          "x": 685,
+          "y": 319,
+          "width": 70,
+          "height": 140,
+          "top": 319,
+          "right": 755,
+          "bottom": 459,
+          "left": 685
+        },
+        {
+          "x": 565,
+          "y": 471,
+          "width": 310,
+          "height": 36,
+          "top": 471,
+          "right": 875,
+          "bottom": 507,
+          "left": 565
+        },
+        {
+          "x": 692,
+          "y": 519,
+          "width": 56,
+          "height": 18,
+          "top": 519,
+          "right": 748,
+          "bottom": 537,
+          "left": 692
+        },
+        {
+          "x": 640,
+          "y": 549,
+          "width": 160,
+          "height": 32,
+          "top": 549,
+          "right": 800,
+          "bottom": 581,
+          "left": 640
+        }
+      ],
+      "box": {
+        "x": 540,
+        "y": 294,
+        "width": 360,
+        "height": 312,
+        "top": 294,
+        "right": 900,
+        "bottom": 606,
+        "left": 540
+      },
+      "natural": [
+        140,
+        280
+      ],
+      "image": {
+        "x": 685,
+        "y": 319,
+        "width": 70,
+        "height": 140,
+        "top": 319,
+        "right": 755,
+        "bottom": 459,
+        "left": 685
+      },
+      "href": "/config",
+      "text": "Thinker Chess\n\nOnline\n\nOpen External Config",
+      "background": "rgb(37, 37, 35)",
+      "border": "rgb(58, 58, 54)",
+      "overflow": false,
+      "dpr": 1
+    },
+    {
+      "width": 1440,
+      "children": [
+        {
+          "x": 685,
+          "y": 319,
+          "width": 70,
+          "height": 140,
+          "top": 319,
+          "right": 755,
+          "bottom": 459,
+          "left": 685
+        },
+        {
+          "x": 565,
+          "y": 471,
+          "width": 310,
+          "height": 36,
+          "top": 471,
+          "right": 875,
+          "bottom": 507,
+          "left": 565
+        },
+        {
+          "x": 692,
+          "y": 519,
+          "width": 56,
+          "height": 18,
+          "top": 519,
+          "right": 748,
+          "bottom": 537,
+          "left": 692
+        },
+        {
+          "x": 640,
+          "y": 549,
+          "width": 160,
+          "height": 32,
+          "top": 549,
+          "right": 800,
+          "bottom": 581,
+          "left": 640
+        }
+      ],
+      "box": {
+        "x": 540,
+        "y": 294,
+        "width": 360,
+        "height": 312,
+        "top": 294,
+        "right": 900,
+        "bottom": 606,
+        "left": 540
+      },
+      "natural": [
+        140,
+        280
+      ],
+      "image": {
+        "x": 685,
+        "y": 319,
+        "width": 70,
+        "height": 140,
+        "top": 319,
+        "right": 755,
+        "bottom": 459,
+        "left": 685
+      },
+      "href": "/config",
+      "text": "Thinker Chess\n\nOnline\n\nOpen External Config",
+      "background": "rgb(37, 37, 35)",
+      "border": "rgb(58, 58, 54)",
+      "overflow": false,
+      "dpr": 2
+    },
+    {
+      "width": 2560,
+      "children": [
+        {
+          "x": 1245,
+          "y": 319,
+          "width": 70,
+          "height": 140,
+          "top": 319,
+          "right": 1315,
+          "bottom": 459,
+          "left": 1245
+        },
+        {
+          "x": 1125,
+          "y": 471,
+          "width": 310,
+          "height": 36,
+          "top": 471,
+          "right": 1435,
+          "bottom": 507,
+          "left": 1125
+        },
+        {
+          "x": 1252,
+          "y": 519,
+          "width": 56,
+          "height": 18,
+          "top": 519,
+          "right": 1308,
+          "bottom": 537,
+          "left": 1252
+        },
+        {
+          "x": 1200,
+          "y": 549,
+          "width": 160,
+          "height": 32,
+          "top": 549,
+          "right": 1360,
+          "bottom": 581,
+          "left": 1200
+        }
+      ],
+      "box": {
+        "x": 1100,
+        "y": 294,
+        "width": 360,
+        "height": 312,
+        "top": 294,
+        "right": 1460,
+        "bottom": 606,
+        "left": 1100
+      },
+      "natural": [
+        140,
+        280
+      ],
+      "image": {
+        "x": 1245,
+        "y": 319,
+        "width": 70,
+        "height": 140,
+        "top": 319,
+        "right": 1315,
+        "bottom": 459,
+        "left": 1245
+      },
+      "href": "/config",
+      "text": "Thinker Chess\n\nOnline\n\nOpen External Config",
+      "background": "rgb(37, 37, 35)",
+      "border": "rgb(58, 58, 54)",
+      "overflow": false,
+      "dpr": 1
+    },
+    {
+      "width": 2560,
+      "children": [
+        {
+          "x": 1245,
+          "y": 319,
+          "width": 70,
+          "height": 140,
+          "top": 319,
+          "right": 1315,
+          "bottom": 459,
+          "left": 1245
+        },
+        {
+          "x": 1125,
+          "y": 471,
+          "width": 310,
+          "height": 36,
+          "top": 471,
+          "right": 1435,
+          "bottom": 507,
+          "left": 1125
+        },
+        {
+          "x": 1252,
+          "y": 519,
+          "width": 56,
+          "height": 18,
+          "top": 519,
+          "right": 1308,
+          "bottom": 537,
+          "left": 1252
+        },
+        {
+          "x": 1200,
+          "y": 549,
+          "width": 160,
+          "height": 32,
+          "top": 549,
+          "right": 1360,
+          "bottom": 581,
+          "left": 1200
+        }
+      ],
+      "box": {
+        "x": 1100,
+        "y": 294,
+        "width": 360,
+        "height": 312,
+        "top": 294,
+        "right": 1460,
+        "bottom": 606,
+        "left": 1100
+      },
+      "natural": [
+        140,
+        280
+      ],
+      "image": {
+        "x": 1245,
+        "y": 319,
+        "width": 70,
+        "height": 140,
+        "top": 319,
+        "right": 1315,
+        "bottom": 459,
+        "left": 1245
+      },
+      "href": "/config",
+      "text": "Thinker Chess\n\nOnline\n\nOpen External Config",
+      "background": "rgb(37, 37, 35)",
+      "border": "rgb(58, 58, 54)",
+      "overflow": false,
+      "dpr": 2
+    }
+  ],
+  "requests": [
+    "http://127.0.0.1:38369/",
+    "http://127.0.0.1:38369/config/assets/panel.css",
+    "http://127.0.0.1:38369/status/horse.webp",
+    "http://127.0.0.1:38369/favicon.ico"
+  ],
+  "errors": [],
+  "scope": "Isolated Chromium + actual Flask routes; no authenticated Chess.com"
+}

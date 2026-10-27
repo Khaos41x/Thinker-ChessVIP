@@ -56,7 +56,7 @@ def create_app():
     
     @app.route("/")
     def index():
-        return "KrypBot SPEED TEST"
+        return "Thinker Chess SPEED TEST"
     
     return app
 

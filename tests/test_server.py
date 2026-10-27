@@ -298,7 +298,7 @@ try:
     
     # Teste /
     response = client.get('/')
-    if response.data == b"KrypBot v2.1 (Komodo) ONLINE":
+    if response.status_code == 200 and response.data == b"Thinker Chess ONLINE":
         print(f"  [OK] / -> {response.data.decode()}")
     else:
         print(f"  [ERRO] / -> {response.data}")

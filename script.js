@@ -2643,7 +2643,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
   }
 
   function log(msg) {
-    debug("log", "[KrypBot]", msg);
+    debug("log", "[Thinker Chess]", msg);
   }
 
   function updateMySession(result) {
@@ -3848,15 +3848,15 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
               }
             }
           } catch (e) {
-            debug("log", "[KrypBot] Eval parse error:", e);
+            debug("log", "[Thinker Chess] Eval parse error:", e);
           }
         },
         onerror: function (e) {
-          debug("log", "[KrypBot] Eval request error:", e);
+          debug("log", "[Thinker Chess] Eval request error:", e);
         },
       });
     } catch (e) {
-      debug("log", "[KrypBot] Eval exception:", e);
+      debug("log", "[Thinker Chess] Eval exception:", e);
     }
   }
 

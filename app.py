@@ -30,6 +30,7 @@ from flask import Flask, Response, request, jsonify
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from core.external_config import create_external_config_blueprint
+from core.status_page import status_page, status_artwork
 from core.rating_tracker import RatingTrackerService, create_rating_tracker_blueprint
 from core.rating_tracker.service import UnavailableRatingTrackerService
 
@@ -886,7 +887,10 @@ def calculate_complexity(lines, turn):
 
 @app.route("/")
 def index():
-    return "KrypBot v2.2 ONLINE"
+    return status_page()
+
+
+app.add_url_rule('/status/horse.webp', 'status_artwork', status_artwork)
 
 
 def resolve_getmove_engine_parameters(elo, time_limit, board, runtime_game_token=None):

@@ -34,7 +34,7 @@ def configure_elo(elo):
 
 @app.route("/")
 def index():
-    return "KrypBot SPEED"
+    return "Thinker Chess SPEED"
 
 @app.route("/getmove", methods=["POST"])
 def getmove():
