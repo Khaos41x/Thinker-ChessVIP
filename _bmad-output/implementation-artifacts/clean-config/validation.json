@@ -1,0 +1,12 @@
+{
+  "configStatesBefore": 60,
+  "configStatesAfter": 60,
+  "consoleStates": 12,
+  "consoleRectangleAndColorDifferences": 0,
+  "controlRowHeight": 40,
+  "controlCenterDelta": 0,
+  "defaultTechnicalDomAbsent": true,
+  "noConfigOverflow": true,
+  "allPanelTailsAtMost12": true,
+  "EApplied": false
+}

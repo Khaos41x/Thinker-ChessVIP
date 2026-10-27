@@ -1,0 +1,39 @@
+commit b73dd6a265121cf3e6b04ace7f6c6eb7aacfd642
+Author:     Miguel Marmore Ataíde Neves <2ln0g0tt7bkehifl@educadesk.educacaodf.serpro.gov.br>
+AuthorDate: Mon Oct 26 23:57:19 2026 -0300
+Commit:     Miguel Marmore Ataíde Neves <2ln0g0tt7bkehifl@educadesk.educacaodf.serpro.gov.br>
+CommitDate: Mon Oct 26 23:57:19 2026 -0300
+
+    fix(C): standardize banner and clean view hint blocks
+
+diff --git a/frontend/external_config/index.html b/frontend/external_config/index.html
+index 293ce4d..e885045 100644
+--- a/frontend/external_config/index.html
++++ b/frontend/external_config/index.html
+@@ -47,7 +47,7 @@
+       <section class="panel" id="visuals"><h2>Visuals</h2><div data-controls="visuals"></div>
+         <div class="control-row"><label for="color">Arrow Color</label><input id="color" data-key="color" type="color" value="#10b981" disabled></div>
+       </section>
+-      <section class="panel" id="workspace"><h2>Workspace</h2><div data-controls="workspace"></div><p class="hint">Hide all Thinker Chess visuals on Chess.com. Controls remain here.</p></section>
++      <section class="panel" id="workspace"><h2>Workspace</h2><div data-controls="workspace"></div><p class="hint control-detail">Hide all Thinker Chess visuals on Chess.com. Controls remain here.</p></section>
+       <section class="panel" id="autoplay"><h2>Auto Play</h2>
+         <div id="kb-session-panel">
+           <div class="autoplay-fields">
+diff --git a/frontend/external_config/panel.css b/frontend/external_config/panel.css
+index 014eb7e..91d6ec0 100644
+--- a/frontend/external_config/panel.css
++++ b/frontend/external_config/panel.css
+@@ -520,8 +520,11 @@ body[data-focus-input=pointer] input:focus-visible {
+   line-height: 20px;
+ }
+ .control-detail {
+-  margin: 0 0 8px;
+-  line-height: 17px;
++  display:block;
++  height:24px;
++  margin: 0;
++  font-size:11px;
++  line-height: 24px;
+ }
+ .control-detail + .control-row,
+ [data-controls=visuals] + .control-row {

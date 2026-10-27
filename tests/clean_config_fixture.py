@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import sys
 import time
+import subprocess
 from flask import jsonify, request, Response
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,6 +27,9 @@ tracker.RatingTrackerService = lambda *args, **kwargs: service_class(database, *
 spec = importlib.util.spec_from_file_location('clean_visual', ROOT / 'tests/phase091_visual_fixture.py')
 visual = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(visual)
+if '--console-baseline' in sys.argv:
+    baseline_source = subprocess.check_output(['git','show','c884834:script.js'], cwd=ROOT).decode('utf8')
+    visual.app.view_functions['userscript'] = lambda: Response(baseline_source, content_type='application/javascript')
 qa = {}
 original_status = visual.app.view_functions['external_config.status']
 original_engines = visual.app.view_functions['analysis_engine_config.registry_status'] if 'analysis_engine_config.registry_status' in visual.app.view_functions else None

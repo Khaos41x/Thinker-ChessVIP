@@ -1,0 +1,42 @@
+commit 8f913cd10c7c37ec490a78940d3ddf25238af4e7
+Author:     Miguel Marmore Ataíde Neves <2ln0g0tt7bkehifl@educadesk.educacaodf.serpro.gov.br>
+AuthorDate: Tue Oct 27 00:08:18 2026 -0300
+Commit:     Miguel Marmore Ataíde Neves <2ln0g0tt7bkehifl@educadesk.educacaodf.serpro.gov.br>
+CommitDate: Tue Oct 27 00:08:18 2026 -0300
+
+    fix(D): show complete analysis hint within existing notice height
+
+diff --git a/frontend/external_config/panel.css b/frontend/external_config/panel.css
+index 91d6ec0..4642b46 100644
+--- a/frontend/external_config/panel.css
++++ b/frontend/external_config/panel.css
+@@ -626,6 +626,7 @@ body[data-focus-input=keyboard] :is(button,input,select,a,[tabindex]):not([aria-
+ #engine .strength input[type=range] { display:block; margin:8px 0; }
+ #engine .strength .range-labels { margin:0; }
+ #analysis-engine-message { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
++#analysis-engine-message:not([data-error=true]) { white-space:normal; overflow:visible; text-overflow:clip; }
+ #engine .timing[hidden] { display:none; }
+ 
+ .autoplay-fields { grid-template-columns:repeat(3,round(down,calc((100% - 24px)/4),1px)) minmax(0,1fr); gap:8px; }
+diff --git a/script.js b/script.js
+index 9d51cb5..035775b 100644
+--- a/script.js
++++ b/script.js
+@@ -1,7 +1,7 @@
+ // ==UserScript==
+ // @name         TC172
+ // @namespace    http://tampermonkey.net/
+-// @version      2026-10-26.4
++// @version      2026-10-26.5
+ // @downloadURL  http://127.0.0.1:5050/thinker-chess.user.js
+ // @updateURL    http://127.0.0.1:5050/thinker-chess.meta.js
+ // @description  Chess Bot com Servidor Local
+@@ -8106,7 +8106,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+ })();
+ 
+ /* THINKER_SESSION_CONTROL_GENERATED_START */
+-globalThis.ThinkerClientVersion="2026-10-26.4";
++globalThis.ThinkerClientVersion="2026-10-26.5";
+ globalThis.ThinkerSessionControlReady=(async()=>{
+ (function(root){
+ "use strict";

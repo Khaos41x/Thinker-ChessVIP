@@ -1,0 +1,63 @@
+commit dca46e0685be8c469eb00af3d32b4045c41bf8f3
+Author:     Miguel Marmore Ataíde Neves <2ln0g0tt7bkehifl@educadesk.educacaodf.serpro.gov.br>
+AuthorDate: Mon Oct 26 23:52:17 2026 -0300
+Commit:     Miguel Marmore Ataíde Neves <2ln0g0tt7bkehifl@educadesk.educacaodf.serpro.gov.br>
+CommitDate: Mon Oct 26 23:52:17 2026 -0300
+
+    fix(B): gate technical engine disclosure behind explicit debug flag
+
+diff --git a/frontend/external_config/index.html b/frontend/external_config/index.html
+index b36f8a1..293ce4d 100644
+--- a/frontend/external_config/index.html
++++ b/frontend/external_config/index.html
+@@ -30,7 +30,6 @@
+           </select>
+           <div class="analysis-engine-notice"><p id="analysis-engine-message" class="hint" role="status" aria-live="polite">Checking installed engines…</p>
+           <button id="engine-retry" class="compact-button" type="button" hidden>Retry</button></div>
+-          <details class="engine-details"><summary>Technical details</summary><pre id="analysis-engine-details"></pre></details>
+         </div>
+         <div class="strength engine-group"><div class="field-heading"><label for="elo">Strength Level</label><output id="elo-value" for="elo">3200</output></div>
+           <input type="range" id="elo" data-key="elo" min="800" max="3200" step="100" value="3200" disabled>
+diff --git a/frontend/external_config/panel.css b/frontend/external_config/panel.css
+index 87e5d10..014eb7e 100644
+--- a/frontend/external_config/panel.css
++++ b/frontend/external_config/panel.css
+@@ -469,7 +469,7 @@ body[data-focus-input=pointer] input:focus-visible {
+ #analysis-engine-message[data-error="true"] { color: #ffb4ad; }
+ .engine-details { margin-top: 8px; color: var(--muted); font-size: 11px; }
+ .engine-details summary { cursor: pointer; }
+-.engine-details pre { max-height: 220px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 10px; }
++.engine-details pre { max-height: none; overflow: visible; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 11px; }
+ .notice { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+ .autoplay-fields { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; align-items: start; }
+ .session-field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; line-height: 16px; color: var(--muted); }
+diff --git a/frontend/external_config/panel.js b/frontend/external_config/panel.js
+index 9c8b754..01ff8e2 100644
+--- a/frontend/external_config/panel.js
++++ b/frontend/external_config/panel.js
+@@ -7,6 +7,16 @@
+     workspace: [['ghostMode', 'Clean View']],
+   };
+   const byId = id => document.getElementById(id);
++  if (new URLSearchParams(location.search).get('debug') === '1') {
++    const details = document.createElement('details');
++    details.className = 'engine-details';
++    const summary = document.createElement('summary');
++    summary.textContent = 'Technical details';
++    const data = document.createElement('pre');
++    data.id = 'analysis-engine-details';
++    details.append(summary, data);
++    document.querySelector('.analysis-engine').append(details);
++  }
+   let config = null;
+   let engineRegistry = null;
+   let engineSwitching = false;
+@@ -66,7 +76,7 @@
+     byId('analysis-engine-message').title = byId('analysis-engine-message').textContent;
+     byId('engine-retry').hidden = !engineError && !selected?.initializationError;
+     byId('engine-retry').disabled = engineRefreshing || engineSwitching;
+-    byId('analysis-engine-details').textContent = selected ? JSON.stringify(selected, null, 2) : '';
++    if (byId('analysis-engine-details')) byId('analysis-engine-details').textContent = selected ? JSON.stringify(selected, null, 2) : '';
+     byId('execution-state').textContent = `Analysis: ${!engineOnline ? 'unavailable' : engineRegistry?.analysisRunning ? 'running' : 'inactive'}`;
+   }
+ 

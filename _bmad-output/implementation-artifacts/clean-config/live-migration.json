@@ -1,0 +1,27 @@
+{
+  "health": {
+    "cache": 0,
+    "engineGeneration": "komodo-14.1:1",
+    "ready": true,
+    "status": "ok"
+  },
+  "configStatus": 200,
+  "fields": {
+    "sessionDurationMinutes": null,
+    "sessionMinimumPercent": null,
+    "sessionMaximumPercent": null,
+    "ratingTarget": null
+  },
+  "databaseMarkers": {
+    "autoPlayFieldsVersion": "2",
+    "ratingTarget": "null"
+  },
+  "historyCountsPreserved": {
+    "players": 0,
+    "goals": 0,
+    "observations": 0,
+    "completed_games": 0,
+    "rating_changes": 0
+  },
+  "preferenceMarker": 2
+}

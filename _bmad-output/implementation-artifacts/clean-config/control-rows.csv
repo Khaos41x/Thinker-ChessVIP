@@ -1,0 +1,1201 @@
+phase,state,viewport,label,rowHeight,centerDelta,controlWidth,controlHeight
+before,default,1440,Bot,40,0,40,24
+before,default,1440,Auto Moves,40,0,40,24
+before,default,1440,Auto Queue,40,0,40,24
+before,default,1440,Auto Rating,40,0,40,24
+before,default,1440,Smart Pacing,40,0,40,24
+before,default,1440,Evaluation Bar,40,0,40,24
+before,default,1440,Banner,40,0,40,24
+before,default,1440,Recent Form,40,0,40,24
+before,default,1440,Arrow Color,40,0,24,24
+before,default,1440,Clean View,40,0,40,24
+before,default,1280,Bot,40,0,40,24
+before,default,1280,Auto Moves,40,0,40,24
+before,default,1280,Auto Queue,40,0,40,24
+before,default,1280,Auto Rating,40,0,40,24
+before,default,1280,Smart Pacing,40,0,40,24
+before,default,1280,Evaluation Bar,40,0,40,24
+before,default,1280,Banner,40,0,40,24
+before,default,1280,Recent Form,40,0,40,24
+before,default,1280,Arrow Color,40,0,24,24
+before,default,1280,Clean View,40,0,40,24
+before,default,1024,Bot,40,0,40,24
+before,default,1024,Auto Moves,40,0,40,24
+before,default,1024,Auto Queue,40,0,40,24
+before,default,1024,Auto Rating,40,0,40,24
+before,default,1024,Smart Pacing,40,0,40,24
+before,default,1024,Evaluation Bar,40,0,40,24
+before,default,1024,Banner,40,0,40,24
+before,default,1024,Recent Form,40,0,40,24
+before,default,1024,Arrow Color,40,0,24,24
+before,default,1024,Clean View,40,0,40,24
+before,default,768,Bot,40,0,40,24
+before,default,768,Auto Moves,40,0,40,24
+before,default,768,Auto Queue,40,0,40,24
+before,default,768,Auto Rating,40,0,40,24
+before,default,768,Smart Pacing,40,0,40,24
+before,default,768,Evaluation Bar,40,0,40,24
+before,default,768,Banner,40,0,40,24
+before,default,768,Recent Form,40,0,40,24
+before,default,768,Arrow Color,40,0,24,24
+before,default,768,Clean View,40,0,40,24
+before,default,390,Bot,40,0,40,24
+before,default,390,Auto Moves,40,0,40,24
+before,default,390,Auto Queue,40,0,40,24
+before,default,390,Auto Rating,40,0,40,24
+before,default,390,Smart Pacing,40,0,40,24
+before,default,390,Evaluation Bar,40,0,40,24
+before,default,390,Banner,40,0,40,24
+before,default,390,Recent Form,40,0,40,24
+before,default,390,Arrow Color,40,0,24,24
+before,default,390,Clean View,40,0,40,24
+before,bot-on,1440,Bot,40,0,40,24
+before,bot-on,1440,Auto Moves,40,0,40,24
+before,bot-on,1440,Auto Queue,40,0,40,24
+before,bot-on,1440,Auto Rating,40,0,40,24
+before,bot-on,1440,Smart Pacing,40,0,40,24
+before,bot-on,1440,Evaluation Bar,40,0,40,24
+before,bot-on,1440,Banner,40,0,40,24
+before,bot-on,1440,Recent Form,40,0,40,24
+before,bot-on,1440,Arrow Color,40,0,24,24
+before,bot-on,1440,Clean View,40,0,40,24
+before,bot-on,1280,Bot,40,0,40,24
+before,bot-on,1280,Auto Moves,40,0,40,24
+before,bot-on,1280,Auto Queue,40,0,40,24
+before,bot-on,1280,Auto Rating,40,0,40,24
+before,bot-on,1280,Smart Pacing,40,0,40,24
+before,bot-on,1280,Evaluation Bar,40,0,40,24
+before,bot-on,1280,Banner,40,0,40,24
+before,bot-on,1280,Recent Form,40,0,40,24
+before,bot-on,1280,Arrow Color,40,0,24,24
+before,bot-on,1280,Clean View,40,0,40,24
+before,bot-on,1024,Bot,40,0,40,24
+before,bot-on,1024,Auto Moves,40,0,40,24
+before,bot-on,1024,Auto Queue,40,0,40,24
+before,bot-on,1024,Auto Rating,40,0,40,24
+before,bot-on,1024,Smart Pacing,40,0,40,24
+before,bot-on,1024,Evaluation Bar,40,0,40,24
+before,bot-on,1024,Banner,40,0,40,24
+before,bot-on,1024,Recent Form,40,0,40,24
+before,bot-on,1024,Arrow Color,40,0,24,24
+before,bot-on,1024,Clean View,40,0,40,24
+before,bot-on,768,Bot,40,0,40,24
+before,bot-on,768,Auto Moves,40,0,40,24
+before,bot-on,768,Auto Queue,40,0,40,24
+before,bot-on,768,Auto Rating,40,0,40,24
+before,bot-on,768,Smart Pacing,40,0,40,24
+before,bot-on,768,Evaluation Bar,40,0,40,24
+before,bot-on,768,Banner,40,0,40,24
+before,bot-on,768,Recent Form,40,0,40,24
+before,bot-on,768,Arrow Color,40,0,24,24
+before,bot-on,768,Clean View,40,0,40,24
+before,bot-on,390,Bot,40,0,40,24
+before,bot-on,390,Auto Moves,40,0,40,24
+before,bot-on,390,Auto Queue,40,0,40,24
+before,bot-on,390,Auto Rating,40,0,40,24
+before,bot-on,390,Smart Pacing,40,0,40,24
+before,bot-on,390,Evaluation Bar,40,0,40,24
+before,bot-on,390,Banner,40,0,40,24
+before,bot-on,390,Recent Form,40,0,40,24
+before,bot-on,390,Arrow Color,40,0,24,24
+before,bot-on,390,Clean View,40,0,40,24
+before,rating-on,1440,Bot,40,0,40,24
+before,rating-on,1440,Auto Moves,40,0,40,24
+before,rating-on,1440,Auto Queue,40,0,40,24
+before,rating-on,1440,Auto Rating,40,0,40,24
+before,rating-on,1440,Smart Pacing,40,0,40,24
+before,rating-on,1440,Evaluation Bar,40,0,40,24
+before,rating-on,1440,Banner,40,0,40,24
+before,rating-on,1440,Recent Form,40,0,40,24
+before,rating-on,1440,Arrow Color,40,0,24,24
+before,rating-on,1440,Clean View,40,0,40,24
+before,rating-on,1280,Bot,40,0,40,24
+before,rating-on,1280,Auto Moves,40,0,40,24
+before,rating-on,1280,Auto Queue,40,0,40,24
+before,rating-on,1280,Auto Rating,40,0,40,24
+before,rating-on,1280,Smart Pacing,40,0,40,24
+before,rating-on,1280,Evaluation Bar,40,0,40,24
+before,rating-on,1280,Banner,40,0,40,24
+before,rating-on,1280,Recent Form,40,0,40,24
+before,rating-on,1280,Arrow Color,40,0,24,24
+before,rating-on,1280,Clean View,40,0,40,24
+before,rating-on,1024,Bot,40,0,40,24
+before,rating-on,1024,Auto Moves,40,0,40,24
+before,rating-on,1024,Auto Queue,40,0,40,24
+before,rating-on,1024,Auto Rating,40,0,40,24
+before,rating-on,1024,Smart Pacing,40,0,40,24
+before,rating-on,1024,Evaluation Bar,40,0,40,24
+before,rating-on,1024,Banner,40,0,40,24
+before,rating-on,1024,Recent Form,40,0,40,24
+before,rating-on,1024,Arrow Color,40,0,24,24
+before,rating-on,1024,Clean View,40,0,40,24
+before,rating-on,768,Bot,40,0,40,24
+before,rating-on,768,Auto Moves,40,0,40,24
+before,rating-on,768,Auto Queue,40,0,40,24
+before,rating-on,768,Auto Rating,40,0,40,24
+before,rating-on,768,Smart Pacing,40,0,40,24
+before,rating-on,768,Evaluation Bar,40,0,40,24
+before,rating-on,768,Banner,40,0,40,24
+before,rating-on,768,Recent Form,40,0,40,24
+before,rating-on,768,Arrow Color,40,0,24,24
+before,rating-on,768,Clean View,40,0,40,24
+before,rating-on,390,Bot,40,0,40,24
+before,rating-on,390,Auto Moves,40,0,40,24
+before,rating-on,390,Auto Queue,40,0,40,24
+before,rating-on,390,Auto Rating,40,0,40,24
+before,rating-on,390,Smart Pacing,40,0,40,24
+before,rating-on,390,Evaluation Bar,40,0,40,24
+before,rating-on,390,Banner,40,0,40,24
+before,rating-on,390,Recent Form,40,0,40,24
+before,rating-on,390,Arrow Color,40,0,24,24
+before,rating-on,390,Clean View,40,0,40,24
+before,pacing-on,1440,Bot,40,0,40,24
+before,pacing-on,1440,Auto Moves,40,0,40,24
+before,pacing-on,1440,Auto Queue,40,0,40,24
+before,pacing-on,1440,Auto Rating,40,0,40,24
+before,pacing-on,1440,Smart Pacing,40,0,40,24
+before,pacing-on,1440,Evaluation Bar,40,0,40,24
+before,pacing-on,1440,Banner,40,0,40,24
+before,pacing-on,1440,Recent Form,40,0,40,24
+before,pacing-on,1440,Arrow Color,40,0,24,24
+before,pacing-on,1440,Clean View,40,0,40,24
+before,pacing-on,1280,Bot,40,0,40,24
+before,pacing-on,1280,Auto Moves,40,0,40,24
+before,pacing-on,1280,Auto Queue,40,0,40,24
+before,pacing-on,1280,Auto Rating,40,0,40,24
+before,pacing-on,1280,Smart Pacing,40,0,40,24
+before,pacing-on,1280,Evaluation Bar,40,0,40,24
+before,pacing-on,1280,Banner,40,0,40,24
+before,pacing-on,1280,Recent Form,40,0,40,24
+before,pacing-on,1280,Arrow Color,40,0,24,24
+before,pacing-on,1280,Clean View,40,0,40,24
+before,pacing-on,1024,Bot,40,0,40,24
+before,pacing-on,1024,Auto Moves,40,0,40,24
+before,pacing-on,1024,Auto Queue,40,0,40,24
+before,pacing-on,1024,Auto Rating,40,0,40,24
+before,pacing-on,1024,Smart Pacing,40,0,40,24
+before,pacing-on,1024,Evaluation Bar,40,0,40,24
+before,pacing-on,1024,Banner,40,0,40,24
+before,pacing-on,1024,Recent Form,40,0,40,24
+before,pacing-on,1024,Arrow Color,40,0,24,24
+before,pacing-on,1024,Clean View,40,0,40,24
+before,pacing-on,768,Bot,40,0,40,24
+before,pacing-on,768,Auto Moves,40,0,40,24
+before,pacing-on,768,Auto Queue,40,0,40,24
+before,pacing-on,768,Auto Rating,40,0,40,24
+before,pacing-on,768,Smart Pacing,40,0,40,24
+before,pacing-on,768,Evaluation Bar,40,0,40,24
+before,pacing-on,768,Banner,40,0,40,24
+before,pacing-on,768,Recent Form,40,0,40,24
+before,pacing-on,768,Arrow Color,40,0,24,24
+before,pacing-on,768,Clean View,40,0,40,24
+before,pacing-on,390,Bot,40,0,40,24
+before,pacing-on,390,Auto Moves,40,0,40,24
+before,pacing-on,390,Auto Queue,40,0,40,24
+before,pacing-on,390,Auto Rating,40,0,40,24
+before,pacing-on,390,Smart Pacing,40,0,40,24
+before,pacing-on,390,Evaluation Bar,40,0,40,24
+before,pacing-on,390,Banner,40,0,40,24
+before,pacing-on,390,Recent Form,40,0,40,24
+before,pacing-on,390,Arrow Color,40,0,24,24
+before,pacing-on,390,Clean View,40,0,40,24
+before,all-on,1440,Bot,40,0,40,24
+before,all-on,1440,Auto Moves,40,0,40,24
+before,all-on,1440,Auto Queue,40,0,40,24
+before,all-on,1440,Auto Rating,40,0,40,24
+before,all-on,1440,Smart Pacing,40,0,40,24
+before,all-on,1440,Evaluation Bar,40,0,40,24
+before,all-on,1440,Banner,40,0,40,24
+before,all-on,1440,Recent Form,40,0,40,24
+before,all-on,1440,Arrow Color,40,0,24,24
+before,all-on,1440,Clean View,40,0,40,24
+before,all-on,1280,Bot,40,0,40,24
+before,all-on,1280,Auto Moves,40,0,40,24
+before,all-on,1280,Auto Queue,40,0,40,24
+before,all-on,1280,Auto Rating,40,0,40,24
+before,all-on,1280,Smart Pacing,40,0,40,24
+before,all-on,1280,Evaluation Bar,40,0,40,24
+before,all-on,1280,Banner,40,0,40,24
+before,all-on,1280,Recent Form,40,0,40,24
+before,all-on,1280,Arrow Color,40,0,24,24
+before,all-on,1280,Clean View,40,0,40,24
+before,all-on,1024,Bot,40,0,40,24
+before,all-on,1024,Auto Moves,40,0,40,24
+before,all-on,1024,Auto Queue,40,0,40,24
+before,all-on,1024,Auto Rating,40,0,40,24
+before,all-on,1024,Smart Pacing,40,0,40,24
+before,all-on,1024,Evaluation Bar,40,0,40,24
+before,all-on,1024,Banner,40,0,40,24
+before,all-on,1024,Recent Form,40,0,40,24
+before,all-on,1024,Arrow Color,40,0,24,24
+before,all-on,1024,Clean View,40,0,40,24
+before,all-on,768,Bot,40,0,40,24
+before,all-on,768,Auto Moves,40,0,40,24
+before,all-on,768,Auto Queue,40,0,40,24
+before,all-on,768,Auto Rating,40,0,40,24
+before,all-on,768,Smart Pacing,40,0,40,24
+before,all-on,768,Evaluation Bar,40,0,40,24
+before,all-on,768,Banner,40,0,40,24
+before,all-on,768,Recent Form,40,0,40,24
+before,all-on,768,Arrow Color,40,0,24,24
+before,all-on,768,Clean View,40,0,40,24
+before,all-on,390,Bot,40,0,40,24
+before,all-on,390,Auto Moves,40,0,40,24
+before,all-on,390,Auto Queue,40,0,40,24
+before,all-on,390,Auto Rating,40,0,40,24
+before,all-on,390,Smart Pacing,40,0,40,24
+before,all-on,390,Evaluation Bar,40,0,40,24
+before,all-on,390,Banner,40,0,40,24
+before,all-on,390,Recent Form,40,0,40,24
+before,all-on,390,Arrow Color,40,0,24,24
+before,all-on,390,Clean View,40,0,40,24
+before,connected,1440,Bot,40,0,40,24
+before,connected,1440,Auto Moves,40,0,40,24
+before,connected,1440,Auto Queue,40,0,40,24
+before,connected,1440,Auto Rating,40,0,40,24
+before,connected,1440,Smart Pacing,40,0,40,24
+before,connected,1440,Evaluation Bar,40,0,40,24
+before,connected,1440,Banner,40,0,40,24
+before,connected,1440,Recent Form,40,0,40,24
+before,connected,1440,Arrow Color,40,0,24,24
+before,connected,1440,Clean View,40,0,40,24
+before,connected,1280,Bot,40,0,40,24
+before,connected,1280,Auto Moves,40,0,40,24
+before,connected,1280,Auto Queue,40,0,40,24
+before,connected,1280,Auto Rating,40,0,40,24
+before,connected,1280,Smart Pacing,40,0,40,24
+before,connected,1280,Evaluation Bar,40,0,40,24
+before,connected,1280,Banner,40,0,40,24
+before,connected,1280,Recent Form,40,0,40,24
+before,connected,1280,Arrow Color,40,0,24,24
+before,connected,1280,Clean View,40,0,40,24
+before,connected,1024,Bot,40,0,40,24
+before,connected,1024,Auto Moves,40,0,40,24
+before,connected,1024,Auto Queue,40,0,40,24
+before,connected,1024,Auto Rating,40,0,40,24
+before,connected,1024,Smart Pacing,40,0,40,24
+before,connected,1024,Evaluation Bar,40,0,40,24
+before,connected,1024,Banner,40,0,40,24
+before,connected,1024,Recent Form,40,0,40,24
+before,connected,1024,Arrow Color,40,0,24,24
+before,connected,1024,Clean View,40,0,40,24
+before,connected,768,Bot,40,0,40,24
+before,connected,768,Auto Moves,40,0,40,24
+before,connected,768,Auto Queue,40,0,40,24
+before,connected,768,Auto Rating,40,0,40,24
+before,connected,768,Smart Pacing,40,0,40,24
+before,connected,768,Evaluation Bar,40,0,40,24
+before,connected,768,Banner,40,0,40,24
+before,connected,768,Recent Form,40,0,40,24
+before,connected,768,Arrow Color,40,0,24,24
+before,connected,768,Clean View,40,0,40,24
+before,connected,390,Bot,40,0,40,24
+before,connected,390,Auto Moves,40,0,40,24
+before,connected,390,Auto Queue,40,0,40,24
+before,connected,390,Auto Rating,40,0,40,24
+before,connected,390,Smart Pacing,40,0,40,24
+before,connected,390,Evaluation Bar,40,0,40,24
+before,connected,390,Banner,40,0,40,24
+before,connected,390,Recent Form,40,0,40,24
+before,connected,390,Arrow Color,40,0,24,24
+before,connected,390,Clean View,40,0,40,24
+before,outdated,1440,Bot,40,0,40,24
+before,outdated,1440,Auto Moves,40,0,40,24
+before,outdated,1440,Auto Queue,40,0,40,24
+before,outdated,1440,Auto Rating,40,0,40,24
+before,outdated,1440,Smart Pacing,40,0,40,24
+before,outdated,1440,Evaluation Bar,40,0,40,24
+before,outdated,1440,Banner,40,0,40,24
+before,outdated,1440,Recent Form,40,0,40,24
+before,outdated,1440,Arrow Color,40,0,24,24
+before,outdated,1440,Clean View,40,0,40,24
+before,outdated,1280,Bot,40,0,40,24
+before,outdated,1280,Auto Moves,40,0,40,24
+before,outdated,1280,Auto Queue,40,0,40,24
+before,outdated,1280,Auto Rating,40,0,40,24
+before,outdated,1280,Smart Pacing,40,0,40,24
+before,outdated,1280,Evaluation Bar,40,0,40,24
+before,outdated,1280,Banner,40,0,40,24
+before,outdated,1280,Recent Form,40,0,40,24
+before,outdated,1280,Arrow Color,40,0,24,24
+before,outdated,1280,Clean View,40,0,40,24
+before,outdated,1024,Bot,40,0,40,24
+before,outdated,1024,Auto Moves,40,0,40,24
+before,outdated,1024,Auto Queue,40,0,40,24
+before,outdated,1024,Auto Rating,40,0,40,24
+before,outdated,1024,Smart Pacing,40,0,40,24
+before,outdated,1024,Evaluation Bar,40,0,40,24
+before,outdated,1024,Banner,40,0,40,24
+before,outdated,1024,Recent Form,40,0,40,24
+before,outdated,1024,Arrow Color,40,0,24,24
+before,outdated,1024,Clean View,40,0,40,24
+before,outdated,768,Bot,40,0,40,24
+before,outdated,768,Auto Moves,40,0,40,24
+before,outdated,768,Auto Queue,40,0,40,24
+before,outdated,768,Auto Rating,40,0,40,24
+before,outdated,768,Smart Pacing,40,0,40,24
+before,outdated,768,Evaluation Bar,40,0,40,24
+before,outdated,768,Banner,40,0,40,24
+before,outdated,768,Recent Form,40,0,40,24
+before,outdated,768,Arrow Color,40,0,24,24
+before,outdated,768,Clean View,40,0,40,24
+before,outdated,390,Bot,40,0,40,24
+before,outdated,390,Auto Moves,40,0,40,24
+before,outdated,390,Auto Queue,40,0,40,24
+before,outdated,390,Auto Rating,40,0,40,24
+before,outdated,390,Smart Pacing,40,0,40,24
+before,outdated,390,Evaluation Bar,40,0,40,24
+before,outdated,390,Banner,40,0,40,24
+before,outdated,390,Recent Form,40,0,40,24
+before,outdated,390,Arrow Color,40,0,24,24
+before,outdated,390,Clean View,40,0,40,24
+before,absent,1440,Bot,40,0,40,24
+before,absent,1440,Auto Moves,40,0,40,24
+before,absent,1440,Auto Queue,40,0,40,24
+before,absent,1440,Auto Rating,40,0,40,24
+before,absent,1440,Smart Pacing,40,0,40,24
+before,absent,1440,Evaluation Bar,40,0,40,24
+before,absent,1440,Banner,40,0,40,24
+before,absent,1440,Recent Form,40,0,40,24
+before,absent,1440,Arrow Color,40,0,24,24
+before,absent,1440,Clean View,40,0,40,24
+before,absent,1280,Bot,40,0,40,24
+before,absent,1280,Auto Moves,40,0,40,24
+before,absent,1280,Auto Queue,40,0,40,24
+before,absent,1280,Auto Rating,40,0,40,24
+before,absent,1280,Smart Pacing,40,0,40,24
+before,absent,1280,Evaluation Bar,40,0,40,24
+before,absent,1280,Banner,40,0,40,24
+before,absent,1280,Recent Form,40,0,40,24
+before,absent,1280,Arrow Color,40,0,24,24
+before,absent,1280,Clean View,40,0,40,24
+before,absent,1024,Bot,40,0,40,24
+before,absent,1024,Auto Moves,40,0,40,24
+before,absent,1024,Auto Queue,40,0,40,24
+before,absent,1024,Auto Rating,40,0,40,24
+before,absent,1024,Smart Pacing,40,0,40,24
+before,absent,1024,Evaluation Bar,40,0,40,24
+before,absent,1024,Banner,40,0,40,24
+before,absent,1024,Recent Form,40,0,40,24
+before,absent,1024,Arrow Color,40,0,24,24
+before,absent,1024,Clean View,40,0,40,24
+before,absent,768,Bot,40,0,40,24
+before,absent,768,Auto Moves,40,0,40,24
+before,absent,768,Auto Queue,40,0,40,24
+before,absent,768,Auto Rating,40,0,40,24
+before,absent,768,Smart Pacing,40,0,40,24
+before,absent,768,Evaluation Bar,40,0,40,24
+before,absent,768,Banner,40,0,40,24
+before,absent,768,Recent Form,40,0,40,24
+before,absent,768,Arrow Color,40,0,24,24
+before,absent,768,Clean View,40,0,40,24
+before,absent,390,Bot,40,0,40,24
+before,absent,390,Auto Moves,40,0,40,24
+before,absent,390,Auto Queue,40,0,40,24
+before,absent,390,Auto Rating,40,0,40,24
+before,absent,390,Smart Pacing,40,0,40,24
+before,absent,390,Evaluation Bar,40,0,40,24
+before,absent,390,Banner,40,0,40,24
+before,absent,390,Recent Form,40,0,40,24
+before,absent,390,Arrow Color,40,0,24,24
+before,absent,390,Clean View,40,0,40,24
+before,loading,1440,Bot,40,0,40,24
+before,loading,1440,Auto Moves,40,0,40,24
+before,loading,1440,Auto Queue,40,0,40,24
+before,loading,1440,Auto Rating,40,0,40,24
+before,loading,1440,Smart Pacing,40,0,40,24
+before,loading,1440,Evaluation Bar,40,0,40,24
+before,loading,1440,Banner,40,0,40,24
+before,loading,1440,Recent Form,40,0,40,24
+before,loading,1440,Arrow Color,40,0,24,24
+before,loading,1440,Clean View,40,0,40,24
+before,loading,1280,Bot,40,0,40,24
+before,loading,1280,Auto Moves,40,0,40,24
+before,loading,1280,Auto Queue,40,0,40,24
+before,loading,1280,Auto Rating,40,0,40,24
+before,loading,1280,Smart Pacing,40,0,40,24
+before,loading,1280,Evaluation Bar,40,0,40,24
+before,loading,1280,Banner,40,0,40,24
+before,loading,1280,Recent Form,40,0,40,24
+before,loading,1280,Arrow Color,40,0,24,24
+before,loading,1280,Clean View,40,0,40,24
+before,loading,1024,Bot,40,0,40,24
+before,loading,1024,Auto Moves,40,0,40,24
+before,loading,1024,Auto Queue,40,0,40,24
+before,loading,1024,Auto Rating,40,0,40,24
+before,loading,1024,Smart Pacing,40,0,40,24
+before,loading,1024,Evaluation Bar,40,0,40,24
+before,loading,1024,Banner,40,0,40,24
+before,loading,1024,Recent Form,40,0,40,24
+before,loading,1024,Arrow Color,40,0,24,24
+before,loading,1024,Clean View,40,0,40,24
+before,loading,768,Bot,40,0,40,24
+before,loading,768,Auto Moves,40,0,40,24
+before,loading,768,Auto Queue,40,0,40,24
+before,loading,768,Auto Rating,40,0,40,24
+before,loading,768,Smart Pacing,40,0,40,24
+before,loading,768,Evaluation Bar,40,0,40,24
+before,loading,768,Banner,40,0,40,24
+before,loading,768,Recent Form,40,0,40,24
+before,loading,768,Arrow Color,40,0,24,24
+before,loading,768,Clean View,40,0,40,24
+before,loading,390,Bot,40,0,40,24
+before,loading,390,Auto Moves,40,0,40,24
+before,loading,390,Auto Queue,40,0,40,24
+before,loading,390,Auto Rating,40,0,40,24
+before,loading,390,Smart Pacing,40,0,40,24
+before,loading,390,Evaluation Bar,40,0,40,24
+before,loading,390,Banner,40,0,40,24
+before,loading,390,Recent Form,40,0,40,24
+before,loading,390,Arrow Color,40,0,24,24
+before,loading,390,Clean View,40,0,40,24
+before,engine-error,1440,Bot,40,0,40,24
+before,engine-error,1440,Auto Moves,40,0,40,24
+before,engine-error,1440,Auto Queue,40,0,40,24
+before,engine-error,1440,Auto Rating,40,0,40,24
+before,engine-error,1440,Smart Pacing,40,0,40,24
+before,engine-error,1440,Evaluation Bar,40,0,40,24
+before,engine-error,1440,Banner,40,0,40,24
+before,engine-error,1440,Recent Form,40,0,40,24
+before,engine-error,1440,Arrow Color,40,0,24,24
+before,engine-error,1440,Clean View,40,0,40,24
+before,engine-error,1280,Bot,40,0,40,24
+before,engine-error,1280,Auto Moves,40,0,40,24
+before,engine-error,1280,Auto Queue,40,0,40,24
+before,engine-error,1280,Auto Rating,40,0,40,24
+before,engine-error,1280,Smart Pacing,40,0,40,24
+before,engine-error,1280,Evaluation Bar,40,0,40,24
+before,engine-error,1280,Banner,40,0,40,24
+before,engine-error,1280,Recent Form,40,0,40,24
+before,engine-error,1280,Arrow Color,40,0,24,24
+before,engine-error,1280,Clean View,40,0,40,24
+before,engine-error,1024,Bot,40,0,40,24
+before,engine-error,1024,Auto Moves,40,0,40,24
+before,engine-error,1024,Auto Queue,40,0,40,24
+before,engine-error,1024,Auto Rating,40,0,40,24
+before,engine-error,1024,Smart Pacing,40,0,40,24
+before,engine-error,1024,Evaluation Bar,40,0,40,24
+before,engine-error,1024,Banner,40,0,40,24
+before,engine-error,1024,Recent Form,40,0,40,24
+before,engine-error,1024,Arrow Color,40,0,24,24
+before,engine-error,1024,Clean View,40,0,40,24
+before,engine-error,768,Bot,40,0,40,24
+before,engine-error,768,Auto Moves,40,0,40,24
+before,engine-error,768,Auto Queue,40,0,40,24
+before,engine-error,768,Auto Rating,40,0,40,24
+before,engine-error,768,Smart Pacing,40,0,40,24
+before,engine-error,768,Evaluation Bar,40,0,40,24
+before,engine-error,768,Banner,40,0,40,24
+before,engine-error,768,Recent Form,40,0,40,24
+before,engine-error,768,Arrow Color,40,0,24,24
+before,engine-error,768,Clean View,40,0,40,24
+before,engine-error,390,Bot,40,0,40,24
+before,engine-error,390,Auto Moves,40,0,40,24
+before,engine-error,390,Auto Queue,40,0,40,24
+before,engine-error,390,Auto Rating,40,0,40,24
+before,engine-error,390,Smart Pacing,40,0,40,24
+before,engine-error,390,Evaluation Bar,40,0,40,24
+before,engine-error,390,Banner,40,0,40,24
+before,engine-error,390,Recent Form,40,0,40,24
+before,engine-error,390,Arrow Color,40,0,24,24
+before,engine-error,390,Clean View,40,0,40,24
+before,server-lost,1440,Bot,40,0,40,24
+before,server-lost,1440,Auto Moves,40,0,40,24
+before,server-lost,1440,Auto Queue,40,0,40,24
+before,server-lost,1440,Auto Rating,40,0,40,24
+before,server-lost,1440,Smart Pacing,40,0,40,24
+before,server-lost,1440,Evaluation Bar,40,0,40,24
+before,server-lost,1440,Banner,40,0,40,24
+before,server-lost,1440,Recent Form,40,0,40,24
+before,server-lost,1440,Arrow Color,40,0,24,24
+before,server-lost,1440,Clean View,40,0,40,24
+before,server-lost,1280,Bot,40,0,40,24
+before,server-lost,1280,Auto Moves,40,0,40,24
+before,server-lost,1280,Auto Queue,40,0,40,24
+before,server-lost,1280,Auto Rating,40,0,40,24
+before,server-lost,1280,Smart Pacing,40,0,40,24
+before,server-lost,1280,Evaluation Bar,40,0,40,24
+before,server-lost,1280,Banner,40,0,40,24
+before,server-lost,1280,Recent Form,40,0,40,24
+before,server-lost,1280,Arrow Color,40,0,24,24
+before,server-lost,1280,Clean View,40,0,40,24
+before,server-lost,1024,Bot,40,0,40,24
+before,server-lost,1024,Auto Moves,40,0,40,24
+before,server-lost,1024,Auto Queue,40,0,40,24
+before,server-lost,1024,Auto Rating,40,0,40,24
+before,server-lost,1024,Smart Pacing,40,0,40,24
+before,server-lost,1024,Evaluation Bar,40,0,40,24
+before,server-lost,1024,Banner,40,0,40,24
+before,server-lost,1024,Recent Form,40,0,40,24
+before,server-lost,1024,Arrow Color,40,0,24,24
+before,server-lost,1024,Clean View,40,0,40,24
+before,server-lost,768,Bot,40,0,40,24
+before,server-lost,768,Auto Moves,40,0,40,24
+before,server-lost,768,Auto Queue,40,0,40,24
+before,server-lost,768,Auto Rating,40,0,40,24
+before,server-lost,768,Smart Pacing,40,0,40,24
+before,server-lost,768,Evaluation Bar,40,0,40,24
+before,server-lost,768,Banner,40,0,40,24
+before,server-lost,768,Recent Form,40,0,40,24
+before,server-lost,768,Arrow Color,40,0,24,24
+before,server-lost,768,Clean View,40,0,40,24
+before,server-lost,390,Bot,40,0,40,24
+before,server-lost,390,Auto Moves,40,0,40,24
+before,server-lost,390,Auto Queue,40,0,40,24
+before,server-lost,390,Auto Rating,40,0,40,24
+before,server-lost,390,Smart Pacing,40,0,40,24
+before,server-lost,390,Evaluation Bar,40,0,40,24
+before,server-lost,390,Banner,40,0,40,24
+before,server-lost,390,Recent Form,40,0,40,24
+before,server-lost,390,Arrow Color,40,0,24,24
+before,server-lost,390,Clean View,40,0,40,24
+before,immediate,1440,Bot,40,0,40,24
+before,immediate,1440,Auto Moves,40,0,40,24
+before,immediate,1440,Auto Queue,40,0,40,24
+before,immediate,1440,Auto Rating,40,0,40,24
+before,immediate,1440,Smart Pacing,40,0,40,24
+before,immediate,1440,Evaluation Bar,40,0,40,24
+before,immediate,1440,Banner,40,0,40,24
+before,immediate,1440,Recent Form,40,0,40,24
+before,immediate,1440,Arrow Color,40,0,24,24
+before,immediate,1440,Clean View,40,0,40,24
+before,immediate,1280,Bot,40,0,40,24
+before,immediate,1280,Auto Moves,40,0,40,24
+before,immediate,1280,Auto Queue,40,0,40,24
+before,immediate,1280,Auto Rating,40,0,40,24
+before,immediate,1280,Smart Pacing,40,0,40,24
+before,immediate,1280,Evaluation Bar,40,0,40,24
+before,immediate,1280,Banner,40,0,40,24
+before,immediate,1280,Recent Form,40,0,40,24
+before,immediate,1280,Arrow Color,40,0,24,24
+before,immediate,1280,Clean View,40,0,40,24
+before,immediate,1024,Bot,40,0,40,24
+before,immediate,1024,Auto Moves,40,0,40,24
+before,immediate,1024,Auto Queue,40,0,40,24
+before,immediate,1024,Auto Rating,40,0,40,24
+before,immediate,1024,Smart Pacing,40,0,40,24
+before,immediate,1024,Evaluation Bar,40,0,40,24
+before,immediate,1024,Banner,40,0,40,24
+before,immediate,1024,Recent Form,40,0,40,24
+before,immediate,1024,Arrow Color,40,0,24,24
+before,immediate,1024,Clean View,40,0,40,24
+before,immediate,768,Bot,40,0,40,24
+before,immediate,768,Auto Moves,40,0,40,24
+before,immediate,768,Auto Queue,40,0,40,24
+before,immediate,768,Auto Rating,40,0,40,24
+before,immediate,768,Smart Pacing,40,0,40,24
+before,immediate,768,Evaluation Bar,40,0,40,24
+before,immediate,768,Banner,40,0,40,24
+before,immediate,768,Recent Form,40,0,40,24
+before,immediate,768,Arrow Color,40,0,24,24
+before,immediate,768,Clean View,40,0,40,24
+before,immediate,390,Bot,40,0,40,24
+before,immediate,390,Auto Moves,40,0,40,24
+before,immediate,390,Auto Queue,40,0,40,24
+before,immediate,390,Auto Rating,40,0,40,24
+before,immediate,390,Smart Pacing,40,0,40,24
+before,immediate,390,Evaluation Bar,40,0,40,24
+before,immediate,390,Banner,40,0,40,24
+before,immediate,390,Recent Form,40,0,40,24
+before,immediate,390,Arrow Color,40,0,24,24
+before,immediate,390,Clean View,40,0,40,24
+after,default,1440,Bot,40,0,40,24
+after,default,1440,Auto Moves,40,0,40,24
+after,default,1440,Auto Queue,40,0,40,24
+after,default,1440,Auto Rating,40,0,40,24
+after,default,1440,Smart Pacing,40,0,40,24
+after,default,1440,Evaluation Bar,40,0,40,24
+after,default,1440,Banner,40,0,40,24
+after,default,1440,Recent Form,40,0,40,24
+after,default,1440,Arrow Color,40,0,24,24
+after,default,1440,Clean View,40,0,40,24
+after,default,1280,Bot,40,0,40,24
+after,default,1280,Auto Moves,40,0,40,24
+after,default,1280,Auto Queue,40,0,40,24
+after,default,1280,Auto Rating,40,0,40,24
+after,default,1280,Smart Pacing,40,0,40,24
+after,default,1280,Evaluation Bar,40,0,40,24
+after,default,1280,Banner,40,0,40,24
+after,default,1280,Recent Form,40,0,40,24
+after,default,1280,Arrow Color,40,0,24,24
+after,default,1280,Clean View,40,0,40,24
+after,default,1024,Bot,40,0,40,24
+after,default,1024,Auto Moves,40,0,40,24
+after,default,1024,Auto Queue,40,0,40,24
+after,default,1024,Auto Rating,40,0,40,24
+after,default,1024,Smart Pacing,40,0,40,24
+after,default,1024,Evaluation Bar,40,0,40,24
+after,default,1024,Banner,40,0,40,24
+after,default,1024,Recent Form,40,0,40,24
+after,default,1024,Arrow Color,40,0,24,24
+after,default,1024,Clean View,40,0,40,24
+after,default,768,Bot,40,0,40,24
+after,default,768,Auto Moves,40,0,40,24
+after,default,768,Auto Queue,40,0,40,24
+after,default,768,Auto Rating,40,0,40,24
+after,default,768,Smart Pacing,40,0,40,24
+after,default,768,Evaluation Bar,40,0,40,24
+after,default,768,Banner,40,0,40,24
+after,default,768,Recent Form,40,0,40,24
+after,default,768,Arrow Color,40,0,24,24
+after,default,768,Clean View,40,0,40,24
+after,default,390,Bot,40,0,40,24
+after,default,390,Auto Moves,40,0,40,24
+after,default,390,Auto Queue,40,0,40,24
+after,default,390,Auto Rating,40,0,40,24
+after,default,390,Smart Pacing,40,0,40,24
+after,default,390,Evaluation Bar,40,0,40,24
+after,default,390,Banner,40,0,40,24
+after,default,390,Recent Form,40,0,40,24
+after,default,390,Arrow Color,40,0,24,24
+after,default,390,Clean View,40,0,40,24
+after,bot-on,1440,Bot,40,0,40,24
+after,bot-on,1440,Auto Moves,40,0,40,24
+after,bot-on,1440,Auto Queue,40,0,40,24
+after,bot-on,1440,Auto Rating,40,0,40,24
+after,bot-on,1440,Smart Pacing,40,0,40,24
+after,bot-on,1440,Evaluation Bar,40,0,40,24
+after,bot-on,1440,Banner,40,0,40,24
+after,bot-on,1440,Recent Form,40,0,40,24
+after,bot-on,1440,Arrow Color,40,0,24,24
+after,bot-on,1440,Clean View,40,0,40,24
+after,bot-on,1280,Bot,40,0,40,24
+after,bot-on,1280,Auto Moves,40,0,40,24
+after,bot-on,1280,Auto Queue,40,0,40,24
+after,bot-on,1280,Auto Rating,40,0,40,24
+after,bot-on,1280,Smart Pacing,40,0,40,24
+after,bot-on,1280,Evaluation Bar,40,0,40,24
+after,bot-on,1280,Banner,40,0,40,24
+after,bot-on,1280,Recent Form,40,0,40,24
+after,bot-on,1280,Arrow Color,40,0,24,24
+after,bot-on,1280,Clean View,40,0,40,24
+after,bot-on,1024,Bot,40,0,40,24
+after,bot-on,1024,Auto Moves,40,0,40,24
+after,bot-on,1024,Auto Queue,40,0,40,24
+after,bot-on,1024,Auto Rating,40,0,40,24
+after,bot-on,1024,Smart Pacing,40,0,40,24
+after,bot-on,1024,Evaluation Bar,40,0,40,24
+after,bot-on,1024,Banner,40,0,40,24
+after,bot-on,1024,Recent Form,40,0,40,24
+after,bot-on,1024,Arrow Color,40,0,24,24
+after,bot-on,1024,Clean View,40,0,40,24
+after,bot-on,768,Bot,40,0,40,24
+after,bot-on,768,Auto Moves,40,0,40,24
+after,bot-on,768,Auto Queue,40,0,40,24
+after,bot-on,768,Auto Rating,40,0,40,24
+after,bot-on,768,Smart Pacing,40,0,40,24
+after,bot-on,768,Evaluation Bar,40,0,40,24
+after,bot-on,768,Banner,40,0,40,24
+after,bot-on,768,Recent Form,40,0,40,24
+after,bot-on,768,Arrow Color,40,0,24,24
+after,bot-on,768,Clean View,40,0,40,24
+after,bot-on,390,Bot,40,0,40,24
+after,bot-on,390,Auto Moves,40,0,40,24
+after,bot-on,390,Auto Queue,40,0,40,24
+after,bot-on,390,Auto Rating,40,0,40,24
+after,bot-on,390,Smart Pacing,40,0,40,24
+after,bot-on,390,Evaluation Bar,40,0,40,24
+after,bot-on,390,Banner,40,0,40,24
+after,bot-on,390,Recent Form,40,0,40,24
+after,bot-on,390,Arrow Color,40,0,24,24
+after,bot-on,390,Clean View,40,0,40,24
+after,rating-on,1440,Bot,40,0,40,24
+after,rating-on,1440,Auto Moves,40,0,40,24
+after,rating-on,1440,Auto Queue,40,0,40,24
+after,rating-on,1440,Auto Rating,40,0,40,24
+after,rating-on,1440,Smart Pacing,40,0,40,24
+after,rating-on,1440,Evaluation Bar,40,0,40,24
+after,rating-on,1440,Banner,40,0,40,24
+after,rating-on,1440,Recent Form,40,0,40,24
+after,rating-on,1440,Arrow Color,40,0,24,24
+after,rating-on,1440,Clean View,40,0,40,24
+after,rating-on,1280,Bot,40,0,40,24
+after,rating-on,1280,Auto Moves,40,0,40,24
+after,rating-on,1280,Auto Queue,40,0,40,24
+after,rating-on,1280,Auto Rating,40,0,40,24
+after,rating-on,1280,Smart Pacing,40,0,40,24
+after,rating-on,1280,Evaluation Bar,40,0,40,24
+after,rating-on,1280,Banner,40,0,40,24
+after,rating-on,1280,Recent Form,40,0,40,24
+after,rating-on,1280,Arrow Color,40,0,24,24
+after,rating-on,1280,Clean View,40,0,40,24
+after,rating-on,1024,Bot,40,0,40,24
+after,rating-on,1024,Auto Moves,40,0,40,24
+after,rating-on,1024,Auto Queue,40,0,40,24
+after,rating-on,1024,Auto Rating,40,0,40,24
+after,rating-on,1024,Smart Pacing,40,0,40,24
+after,rating-on,1024,Evaluation Bar,40,0,40,24
+after,rating-on,1024,Banner,40,0,40,24
+after,rating-on,1024,Recent Form,40,0,40,24
+after,rating-on,1024,Arrow Color,40,0,24,24
+after,rating-on,1024,Clean View,40,0,40,24
+after,rating-on,768,Bot,40,0,40,24
+after,rating-on,768,Auto Moves,40,0,40,24
+after,rating-on,768,Auto Queue,40,0,40,24
+after,rating-on,768,Auto Rating,40,0,40,24
+after,rating-on,768,Smart Pacing,40,0,40,24
+after,rating-on,768,Evaluation Bar,40,0,40,24
+after,rating-on,768,Banner,40,0,40,24
+after,rating-on,768,Recent Form,40,0,40,24
+after,rating-on,768,Arrow Color,40,0,24,24
+after,rating-on,768,Clean View,40,0,40,24
+after,rating-on,390,Bot,40,0,40,24
+after,rating-on,390,Auto Moves,40,0,40,24
+after,rating-on,390,Auto Queue,40,0,40,24
+after,rating-on,390,Auto Rating,40,0,40,24
+after,rating-on,390,Smart Pacing,40,0,40,24
+after,rating-on,390,Evaluation Bar,40,0,40,24
+after,rating-on,390,Banner,40,0,40,24
+after,rating-on,390,Recent Form,40,0,40,24
+after,rating-on,390,Arrow Color,40,0,24,24
+after,rating-on,390,Clean View,40,0,40,24
+after,pacing-on,1440,Bot,40,0,40,24
+after,pacing-on,1440,Auto Moves,40,0,40,24
+after,pacing-on,1440,Auto Queue,40,0,40,24
+after,pacing-on,1440,Auto Rating,40,0,40,24
+after,pacing-on,1440,Smart Pacing,40,0,40,24
+after,pacing-on,1440,Evaluation Bar,40,0,40,24
+after,pacing-on,1440,Banner,40,0,40,24
+after,pacing-on,1440,Recent Form,40,0,40,24
+after,pacing-on,1440,Arrow Color,40,0,24,24
+after,pacing-on,1440,Clean View,40,0,40,24
+after,pacing-on,1280,Bot,40,0,40,24
+after,pacing-on,1280,Auto Moves,40,0,40,24
+after,pacing-on,1280,Auto Queue,40,0,40,24
+after,pacing-on,1280,Auto Rating,40,0,40,24
+after,pacing-on,1280,Smart Pacing,40,0,40,24
+after,pacing-on,1280,Evaluation Bar,40,0,40,24
+after,pacing-on,1280,Banner,40,0,40,24
+after,pacing-on,1280,Recent Form,40,0,40,24
+after,pacing-on,1280,Arrow Color,40,0,24,24
+after,pacing-on,1280,Clean View,40,0,40,24
+after,pacing-on,1024,Bot,40,0,40,24
+after,pacing-on,1024,Auto Moves,40,0,40,24
+after,pacing-on,1024,Auto Queue,40,0,40,24
+after,pacing-on,1024,Auto Rating,40,0,40,24
+after,pacing-on,1024,Smart Pacing,40,0,40,24
+after,pacing-on,1024,Evaluation Bar,40,0,40,24
+after,pacing-on,1024,Banner,40,0,40,24
+after,pacing-on,1024,Recent Form,40,0,40,24
+after,pacing-on,1024,Arrow Color,40,0,24,24
+after,pacing-on,1024,Clean View,40,0,40,24
+after,pacing-on,768,Bot,40,0,40,24
+after,pacing-on,768,Auto Moves,40,0,40,24
+after,pacing-on,768,Auto Queue,40,0,40,24
+after,pacing-on,768,Auto Rating,40,0,40,24
+after,pacing-on,768,Smart Pacing,40,0,40,24
+after,pacing-on,768,Evaluation Bar,40,0,40,24
+after,pacing-on,768,Banner,40,0,40,24
+after,pacing-on,768,Recent Form,40,0,40,24
+after,pacing-on,768,Arrow Color,40,0,24,24
+after,pacing-on,768,Clean View,40,0,40,24
+after,pacing-on,390,Bot,40,0,40,24
+after,pacing-on,390,Auto Moves,40,0,40,24
+after,pacing-on,390,Auto Queue,40,0,40,24
+after,pacing-on,390,Auto Rating,40,0,40,24
+after,pacing-on,390,Smart Pacing,40,0,40,24
+after,pacing-on,390,Evaluation Bar,40,0,40,24
+after,pacing-on,390,Banner,40,0,40,24
+after,pacing-on,390,Recent Form,40,0,40,24
+after,pacing-on,390,Arrow Color,40,0,24,24
+after,pacing-on,390,Clean View,40,0,40,24
+after,all-on,1440,Bot,40,0,40,24
+after,all-on,1440,Auto Moves,40,0,40,24
+after,all-on,1440,Auto Queue,40,0,40,24
+after,all-on,1440,Auto Rating,40,0,40,24
+after,all-on,1440,Smart Pacing,40,0,40,24
+after,all-on,1440,Evaluation Bar,40,0,40,24
+after,all-on,1440,Banner,40,0,40,24
+after,all-on,1440,Recent Form,40,0,40,24
+after,all-on,1440,Arrow Color,40,0,24,24
+after,all-on,1440,Clean View,40,0,40,24
+after,all-on,1280,Bot,40,0,40,24
+after,all-on,1280,Auto Moves,40,0,40,24
+after,all-on,1280,Auto Queue,40,0,40,24
+after,all-on,1280,Auto Rating,40,0,40,24
+after,all-on,1280,Smart Pacing,40,0,40,24
+after,all-on,1280,Evaluation Bar,40,0,40,24
+after,all-on,1280,Banner,40,0,40,24
+after,all-on,1280,Recent Form,40,0,40,24
+after,all-on,1280,Arrow Color,40,0,24,24
+after,all-on,1280,Clean View,40,0,40,24
+after,all-on,1024,Bot,40,0,40,24
+after,all-on,1024,Auto Moves,40,0,40,24
+after,all-on,1024,Auto Queue,40,0,40,24
+after,all-on,1024,Auto Rating,40,0,40,24
+after,all-on,1024,Smart Pacing,40,0,40,24
+after,all-on,1024,Evaluation Bar,40,0,40,24
+after,all-on,1024,Banner,40,0,40,24
+after,all-on,1024,Recent Form,40,0,40,24
+after,all-on,1024,Arrow Color,40,0,24,24
+after,all-on,1024,Clean View,40,0,40,24
+after,all-on,768,Bot,40,0,40,24
+after,all-on,768,Auto Moves,40,0,40,24
+after,all-on,768,Auto Queue,40,0,40,24
+after,all-on,768,Auto Rating,40,0,40,24
+after,all-on,768,Smart Pacing,40,0,40,24
+after,all-on,768,Evaluation Bar,40,0,40,24
+after,all-on,768,Banner,40,0,40,24
+after,all-on,768,Recent Form,40,0,40,24
+after,all-on,768,Arrow Color,40,0,24,24
+after,all-on,768,Clean View,40,0,40,24
+after,all-on,390,Bot,40,0,40,24
+after,all-on,390,Auto Moves,40,0,40,24
+after,all-on,390,Auto Queue,40,0,40,24
+after,all-on,390,Auto Rating,40,0,40,24
+after,all-on,390,Smart Pacing,40,0,40,24
+after,all-on,390,Evaluation Bar,40,0,40,24
+after,all-on,390,Banner,40,0,40,24
+after,all-on,390,Recent Form,40,0,40,24
+after,all-on,390,Arrow Color,40,0,24,24
+after,all-on,390,Clean View,40,0,40,24
+after,connected,1440,Bot,40,0,40,24
+after,connected,1440,Auto Moves,40,0,40,24
+after,connected,1440,Auto Queue,40,0,40,24
+after,connected,1440,Auto Rating,40,0,40,24
+after,connected,1440,Smart Pacing,40,0,40,24
+after,connected,1440,Evaluation Bar,40,0,40,24
+after,connected,1440,Banner,40,0,40,24
+after,connected,1440,Recent Form,40,0,40,24
+after,connected,1440,Arrow Color,40,0,24,24
+after,connected,1440,Clean View,40,0,40,24
+after,connected,1280,Bot,40,0,40,24
+after,connected,1280,Auto Moves,40,0,40,24
+after,connected,1280,Auto Queue,40,0,40,24
+after,connected,1280,Auto Rating,40,0,40,24
+after,connected,1280,Smart Pacing,40,0,40,24
+after,connected,1280,Evaluation Bar,40,0,40,24
+after,connected,1280,Banner,40,0,40,24
+after,connected,1280,Recent Form,40,0,40,24
+after,connected,1280,Arrow Color,40,0,24,24
+after,connected,1280,Clean View,40,0,40,24
+after,connected,1024,Bot,40,0,40,24
+after,connected,1024,Auto Moves,40,0,40,24
+after,connected,1024,Auto Queue,40,0,40,24
+after,connected,1024,Auto Rating,40,0,40,24
+after,connected,1024,Smart Pacing,40,0,40,24
+after,connected,1024,Evaluation Bar,40,0,40,24
+after,connected,1024,Banner,40,0,40,24
+after,connected,1024,Recent Form,40,0,40,24
+after,connected,1024,Arrow Color,40,0,24,24
+after,connected,1024,Clean View,40,0,40,24
+after,connected,768,Bot,40,0,40,24
+after,connected,768,Auto Moves,40,0,40,24
+after,connected,768,Auto Queue,40,0,40,24
+after,connected,768,Auto Rating,40,0,40,24
+after,connected,768,Smart Pacing,40,0,40,24
+after,connected,768,Evaluation Bar,40,0,40,24
+after,connected,768,Banner,40,0,40,24
+after,connected,768,Recent Form,40,0,40,24
+after,connected,768,Arrow Color,40,0,24,24
+after,connected,768,Clean View,40,0,40,24
+after,connected,390,Bot,40,0,40,24
+after,connected,390,Auto Moves,40,0,40,24
+after,connected,390,Auto Queue,40,0,40,24
+after,connected,390,Auto Rating,40,0,40,24
+after,connected,390,Smart Pacing,40,0,40,24
+after,connected,390,Evaluation Bar,40,0,40,24
+after,connected,390,Banner,40,0,40,24
+after,connected,390,Recent Form,40,0,40,24
+after,connected,390,Arrow Color,40,0,24,24
+after,connected,390,Clean View,40,0,40,24
+after,outdated,1440,Bot,40,0,40,24
+after,outdated,1440,Auto Moves,40,0,40,24
+after,outdated,1440,Auto Queue,40,0,40,24
+after,outdated,1440,Auto Rating,40,0,40,24
+after,outdated,1440,Smart Pacing,40,0,40,24
+after,outdated,1440,Evaluation Bar,40,0,40,24
+after,outdated,1440,Banner,40,0,40,24
+after,outdated,1440,Recent Form,40,0,40,24
+after,outdated,1440,Arrow Color,40,0,24,24
+after,outdated,1440,Clean View,40,0,40,24
+after,outdated,1280,Bot,40,0,40,24
+after,outdated,1280,Auto Moves,40,0,40,24
+after,outdated,1280,Auto Queue,40,0,40,24
+after,outdated,1280,Auto Rating,40,0,40,24
+after,outdated,1280,Smart Pacing,40,0,40,24
+after,outdated,1280,Evaluation Bar,40,0,40,24
+after,outdated,1280,Banner,40,0,40,24
+after,outdated,1280,Recent Form,40,0,40,24
+after,outdated,1280,Arrow Color,40,0,24,24
+after,outdated,1280,Clean View,40,0,40,24
+after,outdated,1024,Bot,40,0,40,24
+after,outdated,1024,Auto Moves,40,0,40,24
+after,outdated,1024,Auto Queue,40,0,40,24
+after,outdated,1024,Auto Rating,40,0,40,24
+after,outdated,1024,Smart Pacing,40,0,40,24
+after,outdated,1024,Evaluation Bar,40,0,40,24
+after,outdated,1024,Banner,40,0,40,24
+after,outdated,1024,Recent Form,40,0,40,24
+after,outdated,1024,Arrow Color,40,0,24,24
+after,outdated,1024,Clean View,40,0,40,24
+after,outdated,768,Bot,40,0,40,24
+after,outdated,768,Auto Moves,40,0,40,24
+after,outdated,768,Auto Queue,40,0,40,24
+after,outdated,768,Auto Rating,40,0,40,24
+after,outdated,768,Smart Pacing,40,0,40,24
+after,outdated,768,Evaluation Bar,40,0,40,24
+after,outdated,768,Banner,40,0,40,24
+after,outdated,768,Recent Form,40,0,40,24
+after,outdated,768,Arrow Color,40,0,24,24
+after,outdated,768,Clean View,40,0,40,24
+after,outdated,390,Bot,40,0,40,24
+after,outdated,390,Auto Moves,40,0,40,24
+after,outdated,390,Auto Queue,40,0,40,24
+after,outdated,390,Auto Rating,40,0,40,24
+after,outdated,390,Smart Pacing,40,0,40,24
+after,outdated,390,Evaluation Bar,40,0,40,24
+after,outdated,390,Banner,40,0,40,24
+after,outdated,390,Recent Form,40,0,40,24
+after,outdated,390,Arrow Color,40,0,24,24
+after,outdated,390,Clean View,40,0,40,24
+after,absent,1440,Bot,40,0,40,24
+after,absent,1440,Auto Moves,40,0,40,24
+after,absent,1440,Auto Queue,40,0,40,24
+after,absent,1440,Auto Rating,40,0,40,24
+after,absent,1440,Smart Pacing,40,0,40,24
+after,absent,1440,Evaluation Bar,40,0,40,24
+after,absent,1440,Banner,40,0,40,24
+after,absent,1440,Recent Form,40,0,40,24
+after,absent,1440,Arrow Color,40,0,24,24
+after,absent,1440,Clean View,40,0,40,24
+after,absent,1280,Bot,40,0,40,24
+after,absent,1280,Auto Moves,40,0,40,24
+after,absent,1280,Auto Queue,40,0,40,24
+after,absent,1280,Auto Rating,40,0,40,24
+after,absent,1280,Smart Pacing,40,0,40,24
+after,absent,1280,Evaluation Bar,40,0,40,24
+after,absent,1280,Banner,40,0,40,24
+after,absent,1280,Recent Form,40,0,40,24
+after,absent,1280,Arrow Color,40,0,24,24
+after,absent,1280,Clean View,40,0,40,24
+after,absent,1024,Bot,40,0,40,24
+after,absent,1024,Auto Moves,40,0,40,24
+after,absent,1024,Auto Queue,40,0,40,24
+after,absent,1024,Auto Rating,40,0,40,24
+after,absent,1024,Smart Pacing,40,0,40,24
+after,absent,1024,Evaluation Bar,40,0,40,24
+after,absent,1024,Banner,40,0,40,24
+after,absent,1024,Recent Form,40,0,40,24
+after,absent,1024,Arrow Color,40,0,24,24
+after,absent,1024,Clean View,40,0,40,24
+after,absent,768,Bot,40,0,40,24
+after,absent,768,Auto Moves,40,0,40,24
+after,absent,768,Auto Queue,40,0,40,24
+after,absent,768,Auto Rating,40,0,40,24
+after,absent,768,Smart Pacing,40,0,40,24
+after,absent,768,Evaluation Bar,40,0,40,24
+after,absent,768,Banner,40,0,40,24
+after,absent,768,Recent Form,40,0,40,24
+after,absent,768,Arrow Color,40,0,24,24
+after,absent,768,Clean View,40,0,40,24
+after,absent,390,Bot,40,0,40,24
+after,absent,390,Auto Moves,40,0,40,24
+after,absent,390,Auto Queue,40,0,40,24
+after,absent,390,Auto Rating,40,0,40,24
+after,absent,390,Smart Pacing,40,0,40,24
+after,absent,390,Evaluation Bar,40,0,40,24
+after,absent,390,Banner,40,0,40,24
+after,absent,390,Recent Form,40,0,40,24
+after,absent,390,Arrow Color,40,0,24,24
+after,absent,390,Clean View,40,0,40,24
+after,loading,1440,Bot,40,0,40,24
+after,loading,1440,Auto Moves,40,0,40,24
+after,loading,1440,Auto Queue,40,0,40,24
+after,loading,1440,Auto Rating,40,0,40,24
+after,loading,1440,Smart Pacing,40,0,40,24
+after,loading,1440,Evaluation Bar,40,0,40,24
+after,loading,1440,Banner,40,0,40,24
+after,loading,1440,Recent Form,40,0,40,24
+after,loading,1440,Arrow Color,40,0,24,24
+after,loading,1440,Clean View,40,0,40,24
+after,loading,1280,Bot,40,0,40,24
+after,loading,1280,Auto Moves,40,0,40,24
+after,loading,1280,Auto Queue,40,0,40,24
+after,loading,1280,Auto Rating,40,0,40,24
+after,loading,1280,Smart Pacing,40,0,40,24
+after,loading,1280,Evaluation Bar,40,0,40,24
+after,loading,1280,Banner,40,0,40,24
+after,loading,1280,Recent Form,40,0,40,24
+after,loading,1280,Arrow Color,40,0,24,24
+after,loading,1280,Clean View,40,0,40,24
+after,loading,1024,Bot,40,0,40,24
+after,loading,1024,Auto Moves,40,0,40,24
+after,loading,1024,Auto Queue,40,0,40,24
+after,loading,1024,Auto Rating,40,0,40,24
+after,loading,1024,Smart Pacing,40,0,40,24
+after,loading,1024,Evaluation Bar,40,0,40,24
+after,loading,1024,Banner,40,0,40,24
+after,loading,1024,Recent Form,40,0,40,24
+after,loading,1024,Arrow Color,40,0,24,24
+after,loading,1024,Clean View,40,0,40,24
+after,loading,768,Bot,40,0,40,24
+after,loading,768,Auto Moves,40,0,40,24
+after,loading,768,Auto Queue,40,0,40,24
+after,loading,768,Auto Rating,40,0,40,24
+after,loading,768,Smart Pacing,40,0,40,24
+after,loading,768,Evaluation Bar,40,0,40,24
+after,loading,768,Banner,40,0,40,24
+after,loading,768,Recent Form,40,0,40,24
+after,loading,768,Arrow Color,40,0,24,24
+after,loading,768,Clean View,40,0,40,24
+after,loading,390,Bot,40,0,40,24
+after,loading,390,Auto Moves,40,0,40,24
+after,loading,390,Auto Queue,40,0,40,24
+after,loading,390,Auto Rating,40,0,40,24
+after,loading,390,Smart Pacing,40,0,40,24
+after,loading,390,Evaluation Bar,40,0,40,24
+after,loading,390,Banner,40,0,40,24
+after,loading,390,Recent Form,40,0,40,24
+after,loading,390,Arrow Color,40,0,24,24
+after,loading,390,Clean View,40,0,40,24
+after,engine-error,1440,Bot,40,0,40,24
+after,engine-error,1440,Auto Moves,40,0,40,24
+after,engine-error,1440,Auto Queue,40,0,40,24
+after,engine-error,1440,Auto Rating,40,0,40,24
+after,engine-error,1440,Smart Pacing,40,0,40,24
+after,engine-error,1440,Evaluation Bar,40,0,40,24
+after,engine-error,1440,Banner,40,0,40,24
+after,engine-error,1440,Recent Form,40,0,40,24
+after,engine-error,1440,Arrow Color,40,0,24,24
+after,engine-error,1440,Clean View,40,0,40,24
+after,engine-error,1280,Bot,40,0,40,24
+after,engine-error,1280,Auto Moves,40,0,40,24
+after,engine-error,1280,Auto Queue,40,0,40,24
+after,engine-error,1280,Auto Rating,40,0,40,24
+after,engine-error,1280,Smart Pacing,40,0,40,24
+after,engine-error,1280,Evaluation Bar,40,0,40,24
+after,engine-error,1280,Banner,40,0,40,24
+after,engine-error,1280,Recent Form,40,0,40,24
+after,engine-error,1280,Arrow Color,40,0,24,24
+after,engine-error,1280,Clean View,40,0,40,24
+after,engine-error,1024,Bot,40,0,40,24
+after,engine-error,1024,Auto Moves,40,0,40,24
+after,engine-error,1024,Auto Queue,40,0,40,24
+after,engine-error,1024,Auto Rating,40,0,40,24
+after,engine-error,1024,Smart Pacing,40,0,40,24
+after,engine-error,1024,Evaluation Bar,40,0,40,24
+after,engine-error,1024,Banner,40,0,40,24
+after,engine-error,1024,Recent Form,40,0,40,24
+after,engine-error,1024,Arrow Color,40,0,24,24
+after,engine-error,1024,Clean View,40,0,40,24
+after,engine-error,768,Bot,40,0,40,24
+after,engine-error,768,Auto Moves,40,0,40,24
+after,engine-error,768,Auto Queue,40,0,40,24
+after,engine-error,768,Auto Rating,40,0,40,24
+after,engine-error,768,Smart Pacing,40,0,40,24
+after,engine-error,768,Evaluation Bar,40,0,40,24
+after,engine-error,768,Banner,40,0,40,24
+after,engine-error,768,Recent Form,40,0,40,24
+after,engine-error,768,Arrow Color,40,0,24,24
+after,engine-error,768,Clean View,40,0,40,24
+after,engine-error,390,Bot,40,0,40,24
+after,engine-error,390,Auto Moves,40,0,40,24
+after,engine-error,390,Auto Queue,40,0,40,24
+after,engine-error,390,Auto Rating,40,0,40,24
+after,engine-error,390,Smart Pacing,40,0,40,24
+after,engine-error,390,Evaluation Bar,40,0,40,24
+after,engine-error,390,Banner,40,0,40,24
+after,engine-error,390,Recent Form,40,0,40,24
+after,engine-error,390,Arrow Color,40,0,24,24
+after,engine-error,390,Clean View,40,0,40,24
+after,server-lost,1440,Bot,40,0,40,24
+after,server-lost,1440,Auto Moves,40,0,40,24
+after,server-lost,1440,Auto Queue,40,0,40,24
+after,server-lost,1440,Auto Rating,40,0,40,24
+after,server-lost,1440,Smart Pacing,40,0,40,24
+after,server-lost,1440,Evaluation Bar,40,0,40,24
+after,server-lost,1440,Banner,40,0,40,24
+after,server-lost,1440,Recent Form,40,0,40,24
+after,server-lost,1440,Arrow Color,40,0,24,24
+after,server-lost,1440,Clean View,40,0,40,24
+after,server-lost,1280,Bot,40,0,40,24
+after,server-lost,1280,Auto Moves,40,0,40,24
+after,server-lost,1280,Auto Queue,40,0,40,24
+after,server-lost,1280,Auto Rating,40,0,40,24
+after,server-lost,1280,Smart Pacing,40,0,40,24
+after,server-lost,1280,Evaluation Bar,40,0,40,24
+after,server-lost,1280,Banner,40,0,40,24
+after,server-lost,1280,Recent Form,40,0,40,24
+after,server-lost,1280,Arrow Color,40,0,24,24
+after,server-lost,1280,Clean View,40,0,40,24
+after,server-lost,1024,Bot,40,0,40,24
+after,server-lost,1024,Auto Moves,40,0,40,24
+after,server-lost,1024,Auto Queue,40,0,40,24
+after,server-lost,1024,Auto Rating,40,0,40,24
+after,server-lost,1024,Smart Pacing,40,0,40,24
+after,server-lost,1024,Evaluation Bar,40,0,40,24
+after,server-lost,1024,Banner,40,0,40,24
+after,server-lost,1024,Recent Form,40,0,40,24
+after,server-lost,1024,Arrow Color,40,0,24,24
+after,server-lost,1024,Clean View,40,0,40,24
+after,server-lost,768,Bot,40,0,40,24
+after,server-lost,768,Auto Moves,40,0,40,24
+after,server-lost,768,Auto Queue,40,0,40,24
+after,server-lost,768,Auto Rating,40,0,40,24
+after,server-lost,768,Smart Pacing,40,0,40,24
+after,server-lost,768,Evaluation Bar,40,0,40,24
+after,server-lost,768,Banner,40,0,40,24
+after,server-lost,768,Recent Form,40,0,40,24
+after,server-lost,768,Arrow Color,40,0,24,24
+after,server-lost,768,Clean View,40,0,40,24
+after,server-lost,390,Bot,40,0,40,24
+after,server-lost,390,Auto Moves,40,0,40,24
+after,server-lost,390,Auto Queue,40,0,40,24
+after,server-lost,390,Auto Rating,40,0,40,24
+after,server-lost,390,Smart Pacing,40,0,40,24
+after,server-lost,390,Evaluation Bar,40,0,40,24
+after,server-lost,390,Banner,40,0,40,24
+after,server-lost,390,Recent Form,40,0,40,24
+after,server-lost,390,Arrow Color,40,0,24,24
+after,server-lost,390,Clean View,40,0,40,24
+after,immediate,1440,Bot,40,0,40,24
+after,immediate,1440,Auto Moves,40,0,40,24
+after,immediate,1440,Auto Queue,40,0,40,24
+after,immediate,1440,Auto Rating,40,0,40,24
+after,immediate,1440,Smart Pacing,40,0,40,24
+after,immediate,1440,Evaluation Bar,40,0,40,24
+after,immediate,1440,Banner,40,0,40,24
+after,immediate,1440,Recent Form,40,0,40,24
+after,immediate,1440,Arrow Color,40,0,24,24
+after,immediate,1440,Clean View,40,0,40,24
+after,immediate,1280,Bot,40,0,40,24
+after,immediate,1280,Auto Moves,40,0,40,24
+after,immediate,1280,Auto Queue,40,0,40,24
+after,immediate,1280,Auto Rating,40,0,40,24
+after,immediate,1280,Smart Pacing,40,0,40,24
+after,immediate,1280,Evaluation Bar,40,0,40,24
+after,immediate,1280,Banner,40,0,40,24
+after,immediate,1280,Recent Form,40,0,40,24
+after,immediate,1280,Arrow Color,40,0,24,24
+after,immediate,1280,Clean View,40,0,40,24
+after,immediate,1024,Bot,40,0,40,24
+after,immediate,1024,Auto Moves,40,0,40,24
+after,immediate,1024,Auto Queue,40,0,40,24
+after,immediate,1024,Auto Rating,40,0,40,24
+after,immediate,1024,Smart Pacing,40,0,40,24
+after,immediate,1024,Evaluation Bar,40,0,40,24
+after,immediate,1024,Banner,40,0,40,24
+after,immediate,1024,Recent Form,40,0,40,24
+after,immediate,1024,Arrow Color,40,0,24,24
+after,immediate,1024,Clean View,40,0,40,24
+after,immediate,768,Bot,40,0,40,24
+after,immediate,768,Auto Moves,40,0,40,24
+after,immediate,768,Auto Queue,40,0,40,24
+after,immediate,768,Auto Rating,40,0,40,24
+after,immediate,768,Smart Pacing,40,0,40,24
+after,immediate,768,Evaluation Bar,40,0,40,24
+after,immediate,768,Banner,40,0,40,24
+after,immediate,768,Recent Form,40,0,40,24
+after,immediate,768,Arrow Color,40,0,24,24
+after,immediate,768,Clean View,40,0,40,24
+after,immediate,390,Bot,40,0,40,24
+after,immediate,390,Auto Moves,40,0,40,24
+after,immediate,390,Auto Queue,40,0,40,24
+after,immediate,390,Auto Rating,40,0,40,24
+after,immediate,390,Smart Pacing,40,0,40,24
+after,immediate,390,Evaluation Bar,40,0,40,24
+after,immediate,390,Banner,40,0,40,24
+after,immediate,390,Recent Form,40,0,40,24
+after,immediate,390,Arrow Color,40,0,24,24
+after,immediate,390,Clean View,40,0,40,24

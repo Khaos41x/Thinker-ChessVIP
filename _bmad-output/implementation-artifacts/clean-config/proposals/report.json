@@ -1,0 +1,4914 @@
+[
+  {
+    "name": "P1",
+    "width": 1440,
+    "before": {
+      "width": 1440,
+      "pageHeight": 1146,
+      "panels": {
+        "header": {
+          "x": 277,
+          "y": 40,
+          "width": 871,
+          "height": 77,
+          "top": 40,
+          "right": 1148,
+          "bottom": 117,
+          "left": 277
+        },
+        "connection": {
+          "x": 277,
+          "y": 141,
+          "width": 871,
+          "height": 43,
+          "top": 141,
+          "right": 1148,
+          "bottom": 184,
+          "left": 277
+        },
+        "core": {
+          "x": 277,
+          "y": 196,
+          "width": 429,
+          "height": 175,
+          "top": 196,
+          "right": 706,
+          "bottom": 371,
+          "left": 277
+        },
+        "visuals": {
+          "x": 277,
+          "y": 383,
+          "width": 429,
+          "height": 239,
+          "top": 383,
+          "right": 706,
+          "bottom": 622,
+          "left": 277
+        },
+        "workspace": {
+          "x": 277,
+          "y": 634,
+          "width": 429,
+          "height": 119,
+          "top": 634,
+          "right": 706,
+          "bottom": 753,
+          "left": 277
+        },
+        "engine": {
+          "x": 718,
+          "y": 196,
+          "width": 430,
+          "height": 476,
+          "top": 196,
+          "right": 1148,
+          "bottom": 672,
+          "left": 718
+        },
+        "autoplay": {
+          "x": 277,
+          "y": 765,
+          "width": 871,
+          "height": 268,
+          "top": 765,
+          "right": 1148,
+          "bottom": 1033,
+          "left": 277
+        },
+        "footer": {
+          "x": 277,
+          "y": 1045,
+          "width": 871,
+          "height": 32,
+          "top": 1045,
+          "right": 1148,
+          "bottom": 1077,
+          "left": 277
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "after": {
+      "width": 1440,
+      "pageHeight": 1120,
+      "panels": {
+        "header": {
+          "x": 284,
+          "y": 40,
+          "width": 872,
+          "height": 77,
+          "top": 40,
+          "right": 1156,
+          "bottom": 117,
+          "left": 284
+        },
+        "connection": {
+          "x": 284,
+          "y": 141,
+          "width": 872,
+          "height": 17,
+          "top": 141,
+          "right": 1156,
+          "bottom": 158,
+          "left": 284
+        },
+        "core": {
+          "x": 284,
+          "y": 170,
+          "width": 430,
+          "height": 175,
+          "top": 170,
+          "right": 714,
+          "bottom": 345,
+          "left": 284
+        },
+        "visuals": {
+          "x": 284,
+          "y": 357,
+          "width": 430,
+          "height": 239,
+          "top": 357,
+          "right": 714,
+          "bottom": 596,
+          "left": 284
+        },
+        "workspace": {
+          "x": 284,
+          "y": 608,
+          "width": 430,
+          "height": 119,
+          "top": 608,
+          "right": 714,
+          "bottom": 727,
+          "left": 284
+        },
+        "engine": {
+          "x": 726,
+          "y": 170,
+          "width": 430,
+          "height": 476,
+          "top": 170,
+          "right": 1156,
+          "bottom": 646,
+          "left": 726
+        },
+        "autoplay": {
+          "x": 284,
+          "y": 739,
+          "width": 872,
+          "height": 268,
+          "top": 739,
+          "right": 1156,
+          "bottom": 1007,
+          "left": 284
+        },
+        "footer": {
+          "x": 284,
+          "y": 1019,
+          "width": 872,
+          "height": 32,
+          "top": 1019,
+          "right": 1156,
+          "bottom": 1051,
+          "left": 284
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "heightDelta": -26,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P2",
+    "width": 1440,
+    "before": {
+      "width": 1440,
+      "pageHeight": 1146,
+      "panels": {
+        "header": {
+          "x": 277,
+          "y": 40,
+          "width": 871,
+          "height": 77,
+          "top": 40,
+          "right": 1148,
+          "bottom": 117,
+          "left": 277
+        },
+        "connection": {
+          "x": 277,
+          "y": 141,
+          "width": 871,
+          "height": 43,
+          "top": 141,
+          "right": 1148,
+          "bottom": 184,
+          "left": 277
+        },
+        "core": {
+          "x": 277,
+          "y": 196,
+          "width": 429,
+          "height": 175,
+          "top": 196,
+          "right": 706,
+          "bottom": 371,
+          "left": 277
+        },
+        "visuals": {
+          "x": 277,
+          "y": 383,
+          "width": 429,
+          "height": 239,
+          "top": 383,
+          "right": 706,
+          "bottom": 622,
+          "left": 277
+        },
+        "workspace": {
+          "x": 277,
+          "y": 634,
+          "width": 429,
+          "height": 119,
+          "top": 634,
+          "right": 706,
+          "bottom": 753,
+          "left": 277
+        },
+        "engine": {
+          "x": 718,
+          "y": 196,
+          "width": 430,
+          "height": 476,
+          "top": 196,
+          "right": 1148,
+          "bottom": 672,
+          "left": 718
+        },
+        "autoplay": {
+          "x": 277,
+          "y": 765,
+          "width": 871,
+          "height": 268,
+          "top": 765,
+          "right": 1148,
+          "bottom": 1033,
+          "left": 277
+        },
+        "footer": {
+          "x": 277,
+          "y": 1045,
+          "width": 871,
+          "height": 32,
+          "top": 1045,
+          "right": 1148,
+          "bottom": 1077,
+          "left": 277
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "after": {
+      "width": 1440,
+      "pageHeight": 1146,
+      "panels": {
+        "header": {
+          "x": 284,
+          "y": 40,
+          "width": 872,
+          "height": 77,
+          "top": 40,
+          "right": 1156,
+          "bottom": 117,
+          "left": 284
+        },
+        "connection": {
+          "x": 284,
+          "y": 141,
+          "width": 872,
+          "height": 43,
+          "top": 141,
+          "right": 1156,
+          "bottom": 184,
+          "left": 284
+        },
+        "core": {
+          "x": 284,
+          "y": 196,
+          "width": 430,
+          "height": 175,
+          "top": 196,
+          "right": 714,
+          "bottom": 371,
+          "left": 284
+        },
+        "visuals": {
+          "x": 284,
+          "y": 383,
+          "width": 430,
+          "height": 239,
+          "top": 383,
+          "right": 714,
+          "bottom": 622,
+          "left": 284
+        },
+        "workspace": {
+          "x": 284,
+          "y": 634,
+          "width": 430,
+          "height": 119,
+          "top": 634,
+          "right": 714,
+          "bottom": 753,
+          "left": 284
+        },
+        "engine": {
+          "x": 726,
+          "y": 196,
+          "width": 430,
+          "height": 476,
+          "top": 196,
+          "right": 1156,
+          "bottom": 672,
+          "left": 726
+        },
+        "autoplay": {
+          "x": 284,
+          "y": 765,
+          "width": 872,
+          "height": 268,
+          "top": 765,
+          "right": 1156,
+          "bottom": 1033,
+          "left": 284
+        },
+        "footer": {
+          "x": 284,
+          "y": 1045,
+          "width": 872,
+          "height": 32,
+          "top": 1045,
+          "right": 1156,
+          "bottom": 1077,
+          "left": 284
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "heightDelta": 0,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P3",
+    "width": 1440,
+    "before": {
+      "width": 1440,
+      "pageHeight": 1146,
+      "panels": {
+        "header": {
+          "x": 277,
+          "y": 40,
+          "width": 871,
+          "height": 77,
+          "top": 40,
+          "right": 1148,
+          "bottom": 117,
+          "left": 277
+        },
+        "connection": {
+          "x": 277,
+          "y": 141,
+          "width": 871,
+          "height": 43,
+          "top": 141,
+          "right": 1148,
+          "bottom": 184,
+          "left": 277
+        },
+        "core": {
+          "x": 277,
+          "y": 196,
+          "width": 429,
+          "height": 175,
+          "top": 196,
+          "right": 706,
+          "bottom": 371,
+          "left": 277
+        },
+        "visuals": {
+          "x": 277,
+          "y": 383,
+          "width": 429,
+          "height": 239,
+          "top": 383,
+          "right": 706,
+          "bottom": 622,
+          "left": 277
+        },
+        "workspace": {
+          "x": 277,
+          "y": 634,
+          "width": 429,
+          "height": 119,
+          "top": 634,
+          "right": 706,
+          "bottom": 753,
+          "left": 277
+        },
+        "engine": {
+          "x": 718,
+          "y": 196,
+          "width": 430,
+          "height": 476,
+          "top": 196,
+          "right": 1148,
+          "bottom": 672,
+          "left": 718
+        },
+        "autoplay": {
+          "x": 277,
+          "y": 765,
+          "width": 871,
+          "height": 268,
+          "top": 765,
+          "right": 1148,
+          "bottom": 1033,
+          "left": 277
+        },
+        "footer": {
+          "x": 277,
+          "y": 1045,
+          "width": 871,
+          "height": 32,
+          "top": 1045,
+          "right": 1148,
+          "bottom": 1077,
+          "left": 277
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "after": {
+      "width": 1440,
+      "pageHeight": 1146,
+      "panels": {
+        "header": {
+          "x": 284,
+          "y": 40,
+          "width": 872,
+          "height": 77,
+          "top": 40,
+          "right": 1156,
+          "bottom": 117,
+          "left": 284
+        },
+        "connection": {
+          "x": 284,
+          "y": 141,
+          "width": 872,
+          "height": 43,
+          "top": 141,
+          "right": 1156,
+          "bottom": 184,
+          "left": 284
+        },
+        "core": {
+          "x": 284,
+          "y": 196,
+          "width": 430,
+          "height": 175,
+          "top": 196,
+          "right": 714,
+          "bottom": 371,
+          "left": 284
+        },
+        "visuals": {
+          "x": 284,
+          "y": 383,
+          "width": 430,
+          "height": 239,
+          "top": 383,
+          "right": 714,
+          "bottom": 622,
+          "left": 284
+        },
+        "workspace": {
+          "x": 284,
+          "y": 634,
+          "width": 430,
+          "height": 119,
+          "top": 634,
+          "right": 714,
+          "bottom": 753,
+          "left": 284
+        },
+        "engine": {
+          "x": 726,
+          "y": 196,
+          "width": 430,
+          "height": 476,
+          "top": 196,
+          "right": 1156,
+          "bottom": 672,
+          "left": 726
+        },
+        "autoplay": {
+          "x": 284,
+          "y": 765,
+          "width": 872,
+          "height": 268,
+          "top": 765,
+          "right": 1156,
+          "bottom": 1033,
+          "left": 284
+        },
+        "footer": {
+          "x": 284,
+          "y": 1045,
+          "width": 872,
+          "height": 32,
+          "top": 1045,
+          "right": 1156,
+          "bottom": 1077,
+          "left": 284
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "heightDelta": 0,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P4",
+    "width": 1440,
+    "before": {
+      "width": 1440,
+      "pageHeight": 1146,
+      "panels": {
+        "header": {
+          "x": 277,
+          "y": 40,
+          "width": 871,
+          "height": 77,
+          "top": 40,
+          "right": 1148,
+          "bottom": 117,
+          "left": 277
+        },
+        "connection": {
+          "x": 277,
+          "y": 141,
+          "width": 871,
+          "height": 43,
+          "top": 141,
+          "right": 1148,
+          "bottom": 184,
+          "left": 277
+        },
+        "core": {
+          "x": 277,
+          "y": 196,
+          "width": 429,
+          "height": 175,
+          "top": 196,
+          "right": 706,
+          "bottom": 371,
+          "left": 277
+        },
+        "visuals": {
+          "x": 277,
+          "y": 383,
+          "width": 429,
+          "height": 239,
+          "top": 383,
+          "right": 706,
+          "bottom": 622,
+          "left": 277
+        },
+        "workspace": {
+          "x": 277,
+          "y": 634,
+          "width": 429,
+          "height": 119,
+          "top": 634,
+          "right": 706,
+          "bottom": 753,
+          "left": 277
+        },
+        "engine": {
+          "x": 718,
+          "y": 196,
+          "width": 430,
+          "height": 476,
+          "top": 196,
+          "right": 1148,
+          "bottom": 672,
+          "left": 718
+        },
+        "autoplay": {
+          "x": 277,
+          "y": 765,
+          "width": 871,
+          "height": 268,
+          "top": 765,
+          "right": 1148,
+          "bottom": 1033,
+          "left": 277
+        },
+        "footer": {
+          "x": 277,
+          "y": 1045,
+          "width": 871,
+          "height": 32,
+          "top": 1045,
+          "right": 1148,
+          "bottom": 1077,
+          "left": 277
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "after": {
+      "width": 1440,
+      "pageHeight": 1095,
+      "panels": {
+        "header": {
+          "x": 284,
+          "y": 40,
+          "width": 872,
+          "height": 77,
+          "top": 40,
+          "right": 1156,
+          "bottom": 117,
+          "left": 284
+        },
+        "connection": {
+          "x": 284,
+          "y": 141,
+          "width": 872,
+          "height": 43,
+          "top": 141,
+          "right": 1156,
+          "bottom": 184,
+          "left": 284
+        },
+        "core": {
+          "x": 284,
+          "y": 196,
+          "width": 430,
+          "height": 175,
+          "top": 196,
+          "right": 714,
+          "bottom": 371,
+          "left": 284
+        },
+        "visuals": {
+          "x": 284,
+          "y": 383,
+          "width": 430,
+          "height": 239,
+          "top": 383,
+          "right": 714,
+          "bottom": 622,
+          "left": 284
+        },
+        "workspace": {
+          "x": 284,
+          "y": 634,
+          "width": 430,
+          "height": 119,
+          "top": 634,
+          "right": 714,
+          "bottom": 753,
+          "left": 284
+        },
+        "engine": {
+          "x": 726,
+          "y": 196,
+          "width": 430,
+          "height": 476,
+          "top": 196,
+          "right": 1156,
+          "bottom": 672,
+          "left": 726
+        },
+        "autoplay": {
+          "x": 284,
+          "y": 765,
+          "width": 872,
+          "height": 217,
+          "top": 765,
+          "right": 1156,
+          "bottom": 982,
+          "left": 284
+        },
+        "footer": {
+          "x": 284,
+          "y": 994,
+          "width": 872,
+          "height": 32,
+          "top": 994,
+          "right": 1156,
+          "bottom": 1026,
+          "left": 284
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "heightDelta": -51,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P5",
+    "width": 1440,
+    "before": {
+      "width": 1440,
+      "pageHeight": 1146,
+      "panels": {
+        "header": {
+          "x": 277,
+          "y": 40,
+          "width": 871,
+          "height": 77,
+          "top": 40,
+          "right": 1148,
+          "bottom": 117,
+          "left": 277
+        },
+        "connection": {
+          "x": 277,
+          "y": 141,
+          "width": 871,
+          "height": 43,
+          "top": 141,
+          "right": 1148,
+          "bottom": 184,
+          "left": 277
+        },
+        "core": {
+          "x": 277,
+          "y": 196,
+          "width": 429,
+          "height": 175,
+          "top": 196,
+          "right": 706,
+          "bottom": 371,
+          "left": 277
+        },
+        "visuals": {
+          "x": 277,
+          "y": 383,
+          "width": 429,
+          "height": 239,
+          "top": 383,
+          "right": 706,
+          "bottom": 622,
+          "left": 277
+        },
+        "workspace": {
+          "x": 277,
+          "y": 634,
+          "width": 429,
+          "height": 119,
+          "top": 634,
+          "right": 706,
+          "bottom": 753,
+          "left": 277
+        },
+        "engine": {
+          "x": 718,
+          "y": 196,
+          "width": 430,
+          "height": 476,
+          "top": 196,
+          "right": 1148,
+          "bottom": 672,
+          "left": 718
+        },
+        "autoplay": {
+          "x": 277,
+          "y": 765,
+          "width": 871,
+          "height": 268,
+          "top": 765,
+          "right": 1148,
+          "bottom": 1033,
+          "left": 277
+        },
+        "footer": {
+          "x": 277,
+          "y": 1045,
+          "width": 871,
+          "height": 32,
+          "top": 1045,
+          "right": 1148,
+          "bottom": 1077,
+          "left": 277
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "after": {
+      "width": 1440,
+      "pageHeight": 1138,
+      "panels": {
+        "header": {
+          "x": 284,
+          "y": 40,
+          "width": 872,
+          "height": 77,
+          "top": 40,
+          "right": 1156,
+          "bottom": 117,
+          "left": 284
+        },
+        "connection": {
+          "x": 284,
+          "y": 141,
+          "width": 872,
+          "height": 43,
+          "top": 141,
+          "right": 1156,
+          "bottom": 184,
+          "left": 284
+        },
+        "core": {
+          "x": 284,
+          "y": 196,
+          "width": 430,
+          "height": 175,
+          "top": 196,
+          "right": 714,
+          "bottom": 371,
+          "left": 284
+        },
+        "visuals": {
+          "x": 284,
+          "y": 383,
+          "width": 430,
+          "height": 239,
+          "top": 383,
+          "right": 714,
+          "bottom": 622,
+          "left": 284
+        },
+        "workspace": {
+          "x": 284,
+          "y": 634,
+          "width": 430,
+          "height": 119,
+          "top": 634,
+          "right": 714,
+          "bottom": 753,
+          "left": 284
+        },
+        "engine": {
+          "x": 726,
+          "y": 196,
+          "width": 430,
+          "height": 476,
+          "top": 196,
+          "right": 1156,
+          "bottom": 672,
+          "left": 726
+        },
+        "autoplay": {
+          "x": 284,
+          "y": 765,
+          "width": 872,
+          "height": 260,
+          "top": 765,
+          "right": 1156,
+          "bottom": 1025,
+          "left": 284
+        },
+        "footer": {
+          "x": 284,
+          "y": 1037,
+          "width": 872,
+          "height": 32,
+          "top": 1037,
+          "right": 1156,
+          "bottom": 1069,
+          "left": 284
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "heightDelta": -8,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P6",
+    "width": 1440,
+    "before": {
+      "width": 1440,
+      "pageHeight": 1146,
+      "panels": {
+        "header": {
+          "x": 277,
+          "y": 40,
+          "width": 871,
+          "height": 77,
+          "top": 40,
+          "right": 1148,
+          "bottom": 117,
+          "left": 277
+        },
+        "connection": {
+          "x": 277,
+          "y": 141,
+          "width": 871,
+          "height": 43,
+          "top": 141,
+          "right": 1148,
+          "bottom": 184,
+          "left": 277
+        },
+        "core": {
+          "x": 277,
+          "y": 196,
+          "width": 429,
+          "height": 175,
+          "top": 196,
+          "right": 706,
+          "bottom": 371,
+          "left": 277
+        },
+        "visuals": {
+          "x": 277,
+          "y": 383,
+          "width": 429,
+          "height": 239,
+          "top": 383,
+          "right": 706,
+          "bottom": 622,
+          "left": 277
+        },
+        "workspace": {
+          "x": 277,
+          "y": 634,
+          "width": 429,
+          "height": 119,
+          "top": 634,
+          "right": 706,
+          "bottom": 753,
+          "left": 277
+        },
+        "engine": {
+          "x": 718,
+          "y": 196,
+          "width": 430,
+          "height": 476,
+          "top": 196,
+          "right": 1148,
+          "bottom": 672,
+          "left": 718
+        },
+        "autoplay": {
+          "x": 277,
+          "y": 765,
+          "width": 871,
+          "height": 268,
+          "top": 765,
+          "right": 1148,
+          "bottom": 1033,
+          "left": 277
+        },
+        "footer": {
+          "x": 277,
+          "y": 1045,
+          "width": 871,
+          "height": 32,
+          "top": 1045,
+          "right": 1148,
+          "bottom": 1077,
+          "left": 277
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "after": {
+      "width": 1440,
+      "pageHeight": 1117,
+      "panels": {
+        "header": {
+          "x": 284,
+          "y": 40,
+          "width": 872,
+          "height": 77,
+          "top": 40,
+          "right": 1156,
+          "bottom": 117,
+          "left": 284
+        },
+        "connection": {
+          "x": 284,
+          "y": 141,
+          "width": 872,
+          "height": 43,
+          "top": 141,
+          "right": 1156,
+          "bottom": 184,
+          "left": 284
+        },
+        "core": {
+          "x": 284,
+          "y": 196,
+          "width": 430,
+          "height": 175,
+          "top": 196,
+          "right": 714,
+          "bottom": 371,
+          "left": 284
+        },
+        "visuals": {
+          "x": 284,
+          "y": 383,
+          "width": 430,
+          "height": 239,
+          "top": 383,
+          "right": 714,
+          "bottom": 622,
+          "left": 284
+        },
+        "workspace": {
+          "x": 284,
+          "y": 634,
+          "width": 430,
+          "height": 119,
+          "top": 634,
+          "right": 714,
+          "bottom": 753,
+          "left": 284
+        },
+        "engine": {
+          "x": 726,
+          "y": 196,
+          "width": 430,
+          "height": 476,
+          "top": 196,
+          "right": 1156,
+          "bottom": 672,
+          "left": 726
+        },
+        "autoplay": {
+          "x": 284,
+          "y": 765,
+          "width": 872,
+          "height": 268,
+          "top": 765,
+          "right": 1156,
+          "bottom": 1033,
+          "left": 284
+        },
+        "footer": {
+          "x": 284,
+          "y": 1045,
+          "width": 872,
+          "height": 32,
+          "top": 1045,
+          "right": 1156,
+          "bottom": 1077,
+          "left": 284
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "heightDelta": -29,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P7",
+    "width": 1440,
+    "before": {
+      "width": 1440,
+      "pageHeight": 1146,
+      "panels": {
+        "header": {
+          "x": 277,
+          "y": 40,
+          "width": 871,
+          "height": 77,
+          "top": 40,
+          "right": 1148,
+          "bottom": 117,
+          "left": 277
+        },
+        "connection": {
+          "x": 277,
+          "y": 141,
+          "width": 871,
+          "height": 43,
+          "top": 141,
+          "right": 1148,
+          "bottom": 184,
+          "left": 277
+        },
+        "core": {
+          "x": 277,
+          "y": 196,
+          "width": 429,
+          "height": 175,
+          "top": 196,
+          "right": 706,
+          "bottom": 371,
+          "left": 277
+        },
+        "visuals": {
+          "x": 277,
+          "y": 383,
+          "width": 429,
+          "height": 239,
+          "top": 383,
+          "right": 706,
+          "bottom": 622,
+          "left": 277
+        },
+        "workspace": {
+          "x": 277,
+          "y": 634,
+          "width": 429,
+          "height": 119,
+          "top": 634,
+          "right": 706,
+          "bottom": 753,
+          "left": 277
+        },
+        "engine": {
+          "x": 718,
+          "y": 196,
+          "width": 430,
+          "height": 476,
+          "top": 196,
+          "right": 1148,
+          "bottom": 672,
+          "left": 718
+        },
+        "autoplay": {
+          "x": 277,
+          "y": 765,
+          "width": 871,
+          "height": 268,
+          "top": 765,
+          "right": 1148,
+          "bottom": 1033,
+          "left": 277
+        },
+        "footer": {
+          "x": 277,
+          "y": 1045,
+          "width": 871,
+          "height": 32,
+          "top": 1045,
+          "right": 1148,
+          "bottom": 1077,
+          "left": 277
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "after": {
+      "width": 1440,
+      "pageHeight": 1079,
+      "panels": {
+        "header": {
+          "x": 284,
+          "y": 40,
+          "width": 872,
+          "height": 77,
+          "top": 40,
+          "right": 1156,
+          "bottom": 117,
+          "left": 284
+        },
+        "connection": {
+          "x": 284,
+          "y": 141,
+          "width": 872,
+          "height": 43,
+          "top": 141,
+          "right": 1156,
+          "bottom": 184,
+          "left": 284
+        },
+        "core": {
+          "x": 284,
+          "y": 196,
+          "width": 430,
+          "height": 175,
+          "top": 196,
+          "right": 714,
+          "bottom": 371,
+          "left": 284
+        },
+        "visuals": {
+          "x": 284,
+          "y": 383,
+          "width": 430,
+          "height": 303,
+          "top": 383,
+          "right": 714,
+          "bottom": 686,
+          "left": 284
+        },
+        "engine": {
+          "x": 726,
+          "y": 196,
+          "width": 430,
+          "height": 476,
+          "top": 196,
+          "right": 1156,
+          "bottom": 672,
+          "left": 726
+        },
+        "autoplay": {
+          "x": 284,
+          "y": 698,
+          "width": 872,
+          "height": 268,
+          "top": 698,
+          "right": 1156,
+          "bottom": 966,
+          "left": 284
+        },
+        "footer": {
+          "x": 284,
+          "y": 978,
+          "width": 872,
+          "height": 32,
+          "top": 978,
+          "right": 1156,
+          "bottom": 1010,
+          "left": 284
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 14
+    },
+    "heightDelta": -67,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P8",
+    "width": 1440,
+    "before": {
+      "width": 1440,
+      "pageHeight": 1146,
+      "panels": {
+        "header": {
+          "x": 277,
+          "y": 40,
+          "width": 871,
+          "height": 77,
+          "top": 40,
+          "right": 1148,
+          "bottom": 117,
+          "left": 277
+        },
+        "connection": {
+          "x": 277,
+          "y": 141,
+          "width": 871,
+          "height": 43,
+          "top": 141,
+          "right": 1148,
+          "bottom": 184,
+          "left": 277
+        },
+        "core": {
+          "x": 277,
+          "y": 196,
+          "width": 429,
+          "height": 175,
+          "top": 196,
+          "right": 706,
+          "bottom": 371,
+          "left": 277
+        },
+        "visuals": {
+          "x": 277,
+          "y": 383,
+          "width": 429,
+          "height": 239,
+          "top": 383,
+          "right": 706,
+          "bottom": 622,
+          "left": 277
+        },
+        "workspace": {
+          "x": 277,
+          "y": 634,
+          "width": 429,
+          "height": 119,
+          "top": 634,
+          "right": 706,
+          "bottom": 753,
+          "left": 277
+        },
+        "engine": {
+          "x": 718,
+          "y": 196,
+          "width": 430,
+          "height": 476,
+          "top": 196,
+          "right": 1148,
+          "bottom": 672,
+          "left": 718
+        },
+        "autoplay": {
+          "x": 277,
+          "y": 765,
+          "width": 871,
+          "height": 268,
+          "top": 765,
+          "right": 1148,
+          "bottom": 1033,
+          "left": 277
+        },
+        "footer": {
+          "x": 277,
+          "y": 1045,
+          "width": 871,
+          "height": 32,
+          "top": 1045,
+          "right": 1148,
+          "bottom": 1077,
+          "left": 277
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "after": {
+      "width": 1440,
+      "pageHeight": 1146,
+      "panels": {
+        "header": {
+          "x": 284,
+          "y": 40,
+          "width": 872,
+          "height": 77,
+          "top": 40,
+          "right": 1156,
+          "bottom": 117,
+          "left": 284
+        },
+        "connection": {
+          "x": 284,
+          "y": 141,
+          "width": 872,
+          "height": 43,
+          "top": 141,
+          "right": 1156,
+          "bottom": 184,
+          "left": 284
+        },
+        "core": {
+          "x": 284,
+          "y": 196,
+          "width": 430,
+          "height": 175,
+          "top": 196,
+          "right": 714,
+          "bottom": 371,
+          "left": 284
+        },
+        "visuals": {
+          "x": 284,
+          "y": 383,
+          "width": 430,
+          "height": 239,
+          "top": 383,
+          "right": 714,
+          "bottom": 622,
+          "left": 284
+        },
+        "workspace": {
+          "x": 284,
+          "y": 634,
+          "width": 430,
+          "height": 119,
+          "top": 634,
+          "right": 714,
+          "bottom": 753,
+          "left": 284
+        },
+        "engine": {
+          "x": 726,
+          "y": 196,
+          "width": 430,
+          "height": 452,
+          "top": 196,
+          "right": 1156,
+          "bottom": 648,
+          "left": 726
+        },
+        "autoplay": {
+          "x": 284,
+          "y": 765,
+          "width": 872,
+          "height": 268,
+          "top": 765,
+          "right": 1156,
+          "bottom": 1033,
+          "left": 284
+        },
+        "footer": {
+          "x": 284,
+          "y": 1045,
+          "width": 872,
+          "height": 32,
+          "top": 1045,
+          "right": 1156,
+          "bottom": 1077,
+          "left": 284
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 8,
+        "sliderToLabels": 8,
+        "trackCenterToLabels": 16
+      },
+      "bottomDelta": 105
+    },
+    "heightDelta": 0,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P9",
+    "width": 1440,
+    "before": {
+      "width": 1440,
+      "pageHeight": 1146,
+      "panels": {
+        "header": {
+          "x": 277,
+          "y": 40,
+          "width": 871,
+          "height": 77,
+          "top": 40,
+          "right": 1148,
+          "bottom": 117,
+          "left": 277
+        },
+        "connection": {
+          "x": 277,
+          "y": 141,
+          "width": 871,
+          "height": 43,
+          "top": 141,
+          "right": 1148,
+          "bottom": 184,
+          "left": 277
+        },
+        "core": {
+          "x": 277,
+          "y": 196,
+          "width": 429,
+          "height": 175,
+          "top": 196,
+          "right": 706,
+          "bottom": 371,
+          "left": 277
+        },
+        "visuals": {
+          "x": 277,
+          "y": 383,
+          "width": 429,
+          "height": 239,
+          "top": 383,
+          "right": 706,
+          "bottom": 622,
+          "left": 277
+        },
+        "workspace": {
+          "x": 277,
+          "y": 634,
+          "width": 429,
+          "height": 119,
+          "top": 634,
+          "right": 706,
+          "bottom": 753,
+          "left": 277
+        },
+        "engine": {
+          "x": 718,
+          "y": 196,
+          "width": 430,
+          "height": 476,
+          "top": 196,
+          "right": 1148,
+          "bottom": 672,
+          "left": 718
+        },
+        "autoplay": {
+          "x": 277,
+          "y": 765,
+          "width": 871,
+          "height": 268,
+          "top": 765,
+          "right": 1148,
+          "bottom": 1033,
+          "left": 277
+        },
+        "footer": {
+          "x": 277,
+          "y": 1045,
+          "width": 871,
+          "height": 32,
+          "top": 1045,
+          "right": 1148,
+          "bottom": 1077,
+          "left": 277
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "after": {
+      "width": 1440,
+      "pageHeight": 1125,
+      "panels": {
+        "header": {
+          "x": 284,
+          "y": 40,
+          "width": 872,
+          "height": 56,
+          "top": 40,
+          "right": 1156,
+          "bottom": 96,
+          "left": 284
+        },
+        "connection": {
+          "x": 284,
+          "y": 120,
+          "width": 872,
+          "height": 43,
+          "top": 120,
+          "right": 1156,
+          "bottom": 163,
+          "left": 284
+        },
+        "core": {
+          "x": 284,
+          "y": 175,
+          "width": 430,
+          "height": 175,
+          "top": 175,
+          "right": 714,
+          "bottom": 350,
+          "left": 284
+        },
+        "visuals": {
+          "x": 284,
+          "y": 362,
+          "width": 430,
+          "height": 239,
+          "top": 362,
+          "right": 714,
+          "bottom": 601,
+          "left": 284
+        },
+        "workspace": {
+          "x": 284,
+          "y": 613,
+          "width": 430,
+          "height": 119,
+          "top": 613,
+          "right": 714,
+          "bottom": 732,
+          "left": 284
+        },
+        "engine": {
+          "x": 726,
+          "y": 175,
+          "width": 430,
+          "height": 476,
+          "top": 175,
+          "right": 1156,
+          "bottom": 651,
+          "left": 726
+        },
+        "autoplay": {
+          "x": 284,
+          "y": 744,
+          "width": 872,
+          "height": 268,
+          "top": 744,
+          "right": 1156,
+          "bottom": 1012,
+          "left": 284
+        },
+        "footer": {
+          "x": 284,
+          "y": 1024,
+          "width": 872,
+          "height": 32,
+          "top": 1024,
+          "right": 1156,
+          "bottom": 1056,
+          "left": 284
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "heightDelta": -21,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "E_stretch",
+    "width": 1440,
+    "before": {
+      "width": 1440,
+      "pageHeight": 1146,
+      "panels": {
+        "header": {
+          "x": 277,
+          "y": 40,
+          "width": 871,
+          "height": 77,
+          "top": 40,
+          "right": 1148,
+          "bottom": 117,
+          "left": 277
+        },
+        "connection": {
+          "x": 277,
+          "y": 141,
+          "width": 871,
+          "height": 43,
+          "top": 141,
+          "right": 1148,
+          "bottom": 184,
+          "left": 277
+        },
+        "core": {
+          "x": 277,
+          "y": 196,
+          "width": 429,
+          "height": 175,
+          "top": 196,
+          "right": 706,
+          "bottom": 371,
+          "left": 277
+        },
+        "visuals": {
+          "x": 277,
+          "y": 383,
+          "width": 429,
+          "height": 239,
+          "top": 383,
+          "right": 706,
+          "bottom": 622,
+          "left": 277
+        },
+        "workspace": {
+          "x": 277,
+          "y": 634,
+          "width": 429,
+          "height": 119,
+          "top": 634,
+          "right": 706,
+          "bottom": 753,
+          "left": 277
+        },
+        "engine": {
+          "x": 718,
+          "y": 196,
+          "width": 430,
+          "height": 476,
+          "top": 196,
+          "right": 1148,
+          "bottom": 672,
+          "left": 718
+        },
+        "autoplay": {
+          "x": 277,
+          "y": 765,
+          "width": 871,
+          "height": 268,
+          "top": 765,
+          "right": 1148,
+          "bottom": 1033,
+          "left": 277
+        },
+        "footer": {
+          "x": 277,
+          "y": 1045,
+          "width": 871,
+          "height": 32,
+          "top": 1045,
+          "right": 1148,
+          "bottom": 1077,
+          "left": 277
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "after": {
+      "width": 1440,
+      "pageHeight": 1146,
+      "panels": {
+        "header": {
+          "x": 284,
+          "y": 40,
+          "width": 872,
+          "height": 77,
+          "top": 40,
+          "right": 1156,
+          "bottom": 117,
+          "left": 284
+        },
+        "connection": {
+          "x": 284,
+          "y": 141,
+          "width": 872,
+          "height": 43,
+          "top": 141,
+          "right": 1156,
+          "bottom": 184,
+          "left": 284
+        },
+        "core": {
+          "x": 284,
+          "y": 196,
+          "width": 430,
+          "height": 175,
+          "top": 196,
+          "right": 714,
+          "bottom": 371,
+          "left": 284
+        },
+        "visuals": {
+          "x": 284,
+          "y": 383,
+          "width": 430,
+          "height": 239,
+          "top": 383,
+          "right": 714,
+          "bottom": 622,
+          "left": 284
+        },
+        "workspace": {
+          "x": 284,
+          "y": 634,
+          "width": 430,
+          "height": 119,
+          "top": 634,
+          "right": 714,
+          "bottom": 753,
+          "left": 284
+        },
+        "engine": {
+          "x": 726,
+          "y": 196,
+          "width": 430,
+          "height": 557,
+          "top": 196,
+          "right": 1156,
+          "bottom": 753,
+          "left": 726
+        },
+        "autoplay": {
+          "x": 284,
+          "y": 765,
+          "width": 872,
+          "height": 268,
+          "top": 765,
+          "right": 1156,
+          "bottom": 1033,
+          "left": 284
+        },
+        "footer": {
+          "x": 284,
+          "y": 1045,
+          "width": 872,
+          "height": 32,
+          "top": 1045,
+          "right": 1156,
+          "bottom": 1077,
+          "left": 284
+        }
+      },
+      "engineTail": 93,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 0
+    },
+    "heightDelta": 0,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "E_P7",
+    "width": 1440,
+    "before": {
+      "width": 1440,
+      "pageHeight": 1146,
+      "panels": {
+        "header": {
+          "x": 277,
+          "y": 40,
+          "width": 871,
+          "height": 77,
+          "top": 40,
+          "right": 1148,
+          "bottom": 117,
+          "left": 277
+        },
+        "connection": {
+          "x": 277,
+          "y": 141,
+          "width": 871,
+          "height": 43,
+          "top": 141,
+          "right": 1148,
+          "bottom": 184,
+          "left": 277
+        },
+        "core": {
+          "x": 277,
+          "y": 196,
+          "width": 429,
+          "height": 175,
+          "top": 196,
+          "right": 706,
+          "bottom": 371,
+          "left": 277
+        },
+        "visuals": {
+          "x": 277,
+          "y": 383,
+          "width": 429,
+          "height": 239,
+          "top": 383,
+          "right": 706,
+          "bottom": 622,
+          "left": 277
+        },
+        "workspace": {
+          "x": 277,
+          "y": 634,
+          "width": 429,
+          "height": 119,
+          "top": 634,
+          "right": 706,
+          "bottom": 753,
+          "left": 277
+        },
+        "engine": {
+          "x": 718,
+          "y": 196,
+          "width": 430,
+          "height": 476,
+          "top": 196,
+          "right": 1148,
+          "bottom": 672,
+          "left": 718
+        },
+        "autoplay": {
+          "x": 277,
+          "y": 765,
+          "width": 871,
+          "height": 268,
+          "top": 765,
+          "right": 1148,
+          "bottom": 1033,
+          "left": 277
+        },
+        "footer": {
+          "x": 277,
+          "y": 1045,
+          "width": 871,
+          "height": 32,
+          "top": 1045,
+          "right": 1148,
+          "bottom": 1077,
+          "left": 277
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 81
+    },
+    "after": {
+      "width": 1440,
+      "pageHeight": 1079,
+      "panels": {
+        "header": {
+          "x": 284,
+          "y": 40,
+          "width": 872,
+          "height": 77,
+          "top": 40,
+          "right": 1156,
+          "bottom": 117,
+          "left": 284
+        },
+        "connection": {
+          "x": 284,
+          "y": 141,
+          "width": 872,
+          "height": 43,
+          "top": 141,
+          "right": 1156,
+          "bottom": 184,
+          "left": 284
+        },
+        "core": {
+          "x": 284,
+          "y": 196,
+          "width": 430,
+          "height": 175,
+          "top": 196,
+          "right": 714,
+          "bottom": 371,
+          "left": 284
+        },
+        "visuals": {
+          "x": 284,
+          "y": 383,
+          "width": 430,
+          "height": 303,
+          "top": 383,
+          "right": 714,
+          "bottom": 686,
+          "left": 284
+        },
+        "engine": {
+          "x": 726,
+          "y": 196,
+          "width": 430,
+          "height": 490,
+          "top": 196,
+          "right": 1156,
+          "bottom": 686,
+          "left": 726
+        },
+        "autoplay": {
+          "x": 284,
+          "y": 698,
+          "width": 872,
+          "height": 268,
+          "top": 698,
+          "right": 1156,
+          "bottom": 966,
+          "left": 284
+        },
+        "footer": {
+          "x": 284,
+          "y": 978,
+          "width": 872,
+          "height": 32,
+          "top": 978,
+          "right": 1156,
+          "bottom": 1010,
+          "left": 284
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 0
+    },
+    "heightDelta": -67,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P7_SP",
+    "width": 1440,
+    "before": {
+      "width": 1440,
+      "pageHeight": 1146,
+      "panels": {
+        "header": {
+          "x": 277,
+          "y": 40,
+          "width": 871,
+          "height": 77,
+          "top": 40,
+          "right": 1148,
+          "bottom": 117,
+          "left": 277
+        },
+        "connection": {
+          "x": 277,
+          "y": 141,
+          "width": 871,
+          "height": 43,
+          "top": 141,
+          "right": 1148,
+          "bottom": 184,
+          "left": 277
+        },
+        "core": {
+          "x": 277,
+          "y": 196,
+          "width": 429,
+          "height": 175,
+          "top": 196,
+          "right": 706,
+          "bottom": 371,
+          "left": 277
+        },
+        "visuals": {
+          "x": 277,
+          "y": 383,
+          "width": 429,
+          "height": 239,
+          "top": 383,
+          "right": 706,
+          "bottom": 622,
+          "left": 277
+        },
+        "workspace": {
+          "x": 277,
+          "y": 634,
+          "width": 429,
+          "height": 119,
+          "top": 634,
+          "right": 706,
+          "bottom": 753,
+          "left": 277
+        },
+        "engine": {
+          "x": 718,
+          "y": 196,
+          "width": 430,
+          "height": 362,
+          "top": 196,
+          "right": 1148,
+          "bottom": 558,
+          "left": 718
+        },
+        "autoplay": {
+          "x": 277,
+          "y": 765,
+          "width": 871,
+          "height": 268,
+          "top": 765,
+          "right": 1148,
+          "bottom": 1033,
+          "left": 277
+        },
+        "footer": {
+          "x": 277,
+          "y": 1045,
+          "width": 871,
+          "height": 32,
+          "top": 1045,
+          "right": 1148,
+          "bottom": 1077,
+          "left": 277
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 195
+    },
+    "after": {
+      "width": 1440,
+      "pageHeight": 1079,
+      "panels": {
+        "header": {
+          "x": 284,
+          "y": 40,
+          "width": 872,
+          "height": 77,
+          "top": 40,
+          "right": 1156,
+          "bottom": 117,
+          "left": 284
+        },
+        "connection": {
+          "x": 284,
+          "y": 141,
+          "width": 872,
+          "height": 43,
+          "top": 141,
+          "right": 1156,
+          "bottom": 184,
+          "left": 284
+        },
+        "core": {
+          "x": 284,
+          "y": 196,
+          "width": 430,
+          "height": 175,
+          "top": 196,
+          "right": 714,
+          "bottom": 371,
+          "left": 284
+        },
+        "visuals": {
+          "x": 284,
+          "y": 383,
+          "width": 430,
+          "height": 303,
+          "top": 383,
+          "right": 714,
+          "bottom": 686,
+          "left": 284
+        },
+        "engine": {
+          "x": 726,
+          "y": 196,
+          "width": 430,
+          "height": 362,
+          "top": 196,
+          "right": 1156,
+          "bottom": 558,
+          "left": 726
+        },
+        "autoplay": {
+          "x": 284,
+          "y": 698,
+          "width": 872,
+          "height": 268,
+          "top": 698,
+          "right": 1156,
+          "bottom": 966,
+          "left": 284
+        },
+        "footer": {
+          "x": 284,
+          "y": 978,
+          "width": 872,
+          "height": 32,
+          "top": 978,
+          "right": 1156,
+          "bottom": 1010,
+          "left": 284
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 128
+    },
+    "heightDelta": -67,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "E_P7_SP",
+    "width": 1440,
+    "before": {
+      "width": 1440,
+      "pageHeight": 1146,
+      "panels": {
+        "header": {
+          "x": 277,
+          "y": 40,
+          "width": 871,
+          "height": 77,
+          "top": 40,
+          "right": 1148,
+          "bottom": 117,
+          "left": 277
+        },
+        "connection": {
+          "x": 277,
+          "y": 141,
+          "width": 871,
+          "height": 43,
+          "top": 141,
+          "right": 1148,
+          "bottom": 184,
+          "left": 277
+        },
+        "core": {
+          "x": 277,
+          "y": 196,
+          "width": 429,
+          "height": 175,
+          "top": 196,
+          "right": 706,
+          "bottom": 371,
+          "left": 277
+        },
+        "visuals": {
+          "x": 277,
+          "y": 383,
+          "width": 429,
+          "height": 239,
+          "top": 383,
+          "right": 706,
+          "bottom": 622,
+          "left": 277
+        },
+        "workspace": {
+          "x": 277,
+          "y": 634,
+          "width": 429,
+          "height": 119,
+          "top": 634,
+          "right": 706,
+          "bottom": 753,
+          "left": 277
+        },
+        "engine": {
+          "x": 718,
+          "y": 196,
+          "width": 430,
+          "height": 362,
+          "top": 196,
+          "right": 1148,
+          "bottom": 558,
+          "left": 718
+        },
+        "autoplay": {
+          "x": 277,
+          "y": 765,
+          "width": 871,
+          "height": 268,
+          "top": 765,
+          "right": 1148,
+          "bottom": 1033,
+          "left": 277
+        },
+        "footer": {
+          "x": 277,
+          "y": 1045,
+          "width": 871,
+          "height": 32,
+          "top": 1045,
+          "right": 1148,
+          "bottom": 1077,
+          "left": 277
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 195
+    },
+    "after": {
+      "width": 1440,
+      "pageHeight": 1079,
+      "panels": {
+        "header": {
+          "x": 284,
+          "y": 40,
+          "width": 872,
+          "height": 77,
+          "top": 40,
+          "right": 1156,
+          "bottom": 117,
+          "left": 284
+        },
+        "connection": {
+          "x": 284,
+          "y": 141,
+          "width": 872,
+          "height": 43,
+          "top": 141,
+          "right": 1156,
+          "bottom": 184,
+          "left": 284
+        },
+        "core": {
+          "x": 284,
+          "y": 196,
+          "width": 430,
+          "height": 175,
+          "top": 196,
+          "right": 714,
+          "bottom": 371,
+          "left": 284
+        },
+        "visuals": {
+          "x": 284,
+          "y": 383,
+          "width": 430,
+          "height": 303,
+          "top": 383,
+          "right": 714,
+          "bottom": 686,
+          "left": 284
+        },
+        "engine": {
+          "x": 726,
+          "y": 196,
+          "width": 430,
+          "height": 372,
+          "top": 196,
+          "right": 1156,
+          "bottom": 568,
+          "left": 726
+        },
+        "autoplay": {
+          "x": 284,
+          "y": 698,
+          "width": 872,
+          "height": 268,
+          "top": 698,
+          "right": 1156,
+          "bottom": 966,
+          "left": 284
+        },
+        "footer": {
+          "x": 284,
+          "y": 978,
+          "width": 872,
+          "height": 32,
+          "top": 978,
+          "right": 1156,
+          "bottom": 1010,
+          "left": 284
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": 118
+    },
+    "heightDelta": -67,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P1",
+    "width": 390,
+    "before": {
+      "width": 390,
+      "pageHeight": 1798,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 351,
+          "height": 105,
+          "top": 24,
+          "right": 363,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 351,
+          "height": 60,
+          "top": 153,
+          "right": 363,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 351,
+          "height": 175,
+          "top": 225,
+          "right": 363,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 900,
+          "width": 351,
+          "height": 239,
+          "top": 900,
+          "right": 363,
+          "bottom": 1139,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1151,
+          "width": 351,
+          "height": 119,
+          "top": 1151,
+          "right": 363,
+          "bottom": 1270,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 351,
+          "height": 476,
+          "top": 412,
+          "right": 363,
+          "bottom": 888,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1282,
+          "width": 351,
+          "height": 402,
+          "top": 1282,
+          "right": 363,
+          "bottom": 1684,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1696,
+          "width": 351,
+          "height": 32,
+          "top": 1696,
+          "right": 363,
+          "bottom": 1728,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "after": {
+      "width": 390,
+      "pageHeight": 1788,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 366,
+          "height": 121,
+          "top": 24,
+          "right": 378,
+          "bottom": 145,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 169,
+          "width": 366,
+          "height": 34,
+          "top": 169,
+          "right": 378,
+          "bottom": 203,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 215,
+          "width": 366,
+          "height": 175,
+          "top": 215,
+          "right": 378,
+          "bottom": 390,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 890,
+          "width": 366,
+          "height": 239,
+          "top": 890,
+          "right": 378,
+          "bottom": 1129,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1141,
+          "width": 366,
+          "height": 119,
+          "top": 1141,
+          "right": 378,
+          "bottom": 1260,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 402,
+          "width": 366,
+          "height": 476,
+          "top": 402,
+          "right": 378,
+          "bottom": 878,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1272,
+          "width": 366,
+          "height": 402,
+          "top": 1272,
+          "right": 378,
+          "bottom": 1674,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1686,
+          "width": 366,
+          "height": 32,
+          "top": 1686,
+          "right": 378,
+          "bottom": 1718,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "heightDelta": -10,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P2",
+    "width": 390,
+    "before": {
+      "width": 390,
+      "pageHeight": 1781,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 351,
+          "height": 105,
+          "top": 24,
+          "right": 363,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 351,
+          "height": 43,
+          "top": 153,
+          "right": 363,
+          "bottom": 196,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 208,
+          "width": 351,
+          "height": 175,
+          "top": 208,
+          "right": 363,
+          "bottom": 383,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 883,
+          "width": 351,
+          "height": 239,
+          "top": 883,
+          "right": 363,
+          "bottom": 1122,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1134,
+          "width": 351,
+          "height": 119,
+          "top": 1134,
+          "right": 363,
+          "bottom": 1253,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 395,
+          "width": 351,
+          "height": 476,
+          "top": 395,
+          "right": 363,
+          "bottom": 871,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1265,
+          "width": 351,
+          "height": 402,
+          "top": 1265,
+          "right": 363,
+          "bottom": 1667,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1679,
+          "width": 351,
+          "height": 32,
+          "top": 1679,
+          "right": 363,
+          "bottom": 1711,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "after": {
+      "width": 390,
+      "pageHeight": 1781,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 366,
+          "height": 105,
+          "top": 24,
+          "right": 378,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 366,
+          "height": 43,
+          "top": 153,
+          "right": 378,
+          "bottom": 196,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 208,
+          "width": 366,
+          "height": 175,
+          "top": 208,
+          "right": 378,
+          "bottom": 383,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 883,
+          "width": 366,
+          "height": 239,
+          "top": 883,
+          "right": 378,
+          "bottom": 1122,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1134,
+          "width": 366,
+          "height": 119,
+          "top": 1134,
+          "right": 378,
+          "bottom": 1253,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 395,
+          "width": 366,
+          "height": 476,
+          "top": 395,
+          "right": 378,
+          "bottom": 871,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1265,
+          "width": 366,
+          "height": 402,
+          "top": 1265,
+          "right": 378,
+          "bottom": 1667,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1679,
+          "width": 366,
+          "height": 32,
+          "top": 1679,
+          "right": 378,
+          "bottom": 1711,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "heightDelta": 0,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P3",
+    "width": 390,
+    "before": {
+      "width": 390,
+      "pageHeight": 1798,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 351,
+          "height": 105,
+          "top": 24,
+          "right": 363,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 351,
+          "height": 60,
+          "top": 153,
+          "right": 363,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 351,
+          "height": 175,
+          "top": 225,
+          "right": 363,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 900,
+          "width": 351,
+          "height": 239,
+          "top": 900,
+          "right": 363,
+          "bottom": 1139,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1151,
+          "width": 351,
+          "height": 119,
+          "top": 1151,
+          "right": 363,
+          "bottom": 1270,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 351,
+          "height": 476,
+          "top": 412,
+          "right": 363,
+          "bottom": 888,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1282,
+          "width": 351,
+          "height": 402,
+          "top": 1282,
+          "right": 363,
+          "bottom": 1684,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1696,
+          "width": 351,
+          "height": 32,
+          "top": 1696,
+          "right": 363,
+          "bottom": 1728,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "after": {
+      "width": 390,
+      "pageHeight": 1764,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 366,
+          "height": 105,
+          "top": 24,
+          "right": 378,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 366,
+          "height": 43,
+          "top": 153,
+          "right": 378,
+          "bottom": 196,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 208,
+          "width": 366,
+          "height": 175,
+          "top": 208,
+          "right": 378,
+          "bottom": 383,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 883,
+          "width": 366,
+          "height": 239,
+          "top": 883,
+          "right": 378,
+          "bottom": 1122,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1134,
+          "width": 366,
+          "height": 119,
+          "top": 1134,
+          "right": 378,
+          "bottom": 1253,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 395,
+          "width": 366,
+          "height": 476,
+          "top": 395,
+          "right": 378,
+          "bottom": 871,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1265,
+          "width": 366,
+          "height": 402,
+          "top": 1265,
+          "right": 378,
+          "bottom": 1667,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1679,
+          "width": 366,
+          "height": 32,
+          "top": 1679,
+          "right": 378,
+          "bottom": 1711,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "heightDelta": -34,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P4",
+    "width": 390,
+    "before": {
+      "width": 390,
+      "pageHeight": 1798,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 351,
+          "height": 105,
+          "top": 24,
+          "right": 363,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 351,
+          "height": 60,
+          "top": 153,
+          "right": 363,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 351,
+          "height": 175,
+          "top": 225,
+          "right": 363,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 900,
+          "width": 351,
+          "height": 239,
+          "top": 900,
+          "right": 363,
+          "bottom": 1139,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1151,
+          "width": 351,
+          "height": 119,
+          "top": 1151,
+          "right": 363,
+          "bottom": 1270,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 351,
+          "height": 476,
+          "top": 412,
+          "right": 363,
+          "bottom": 888,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1282,
+          "width": 351,
+          "height": 402,
+          "top": 1282,
+          "right": 363,
+          "bottom": 1684,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1696,
+          "width": 351,
+          "height": 32,
+          "top": 1696,
+          "right": 363,
+          "bottom": 1728,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "after": {
+      "width": 390,
+      "pageHeight": 1707,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 366,
+          "height": 105,
+          "top": 24,
+          "right": 378,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 366,
+          "height": 60,
+          "top": 153,
+          "right": 378,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 366,
+          "height": 175,
+          "top": 225,
+          "right": 378,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 900,
+          "width": 366,
+          "height": 239,
+          "top": 900,
+          "right": 378,
+          "bottom": 1139,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1151,
+          "width": 366,
+          "height": 119,
+          "top": 1151,
+          "right": 378,
+          "bottom": 1270,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 366,
+          "height": 476,
+          "top": 412,
+          "right": 378,
+          "bottom": 888,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1282,
+          "width": 366,
+          "height": 311,
+          "top": 1282,
+          "right": 378,
+          "bottom": 1593,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1605,
+          "width": 366,
+          "height": 32,
+          "top": 1605,
+          "right": 378,
+          "bottom": 1637,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "heightDelta": -91,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P5",
+    "width": 390,
+    "before": {
+      "width": 390,
+      "pageHeight": 1798,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 351,
+          "height": 105,
+          "top": 24,
+          "right": 363,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 351,
+          "height": 60,
+          "top": 153,
+          "right": 363,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 351,
+          "height": 175,
+          "top": 225,
+          "right": 363,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 900,
+          "width": 351,
+          "height": 239,
+          "top": 900,
+          "right": 363,
+          "bottom": 1139,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1151,
+          "width": 351,
+          "height": 119,
+          "top": 1151,
+          "right": 363,
+          "bottom": 1270,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 351,
+          "height": 476,
+          "top": 412,
+          "right": 363,
+          "bottom": 888,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1282,
+          "width": 351,
+          "height": 402,
+          "top": 1282,
+          "right": 363,
+          "bottom": 1684,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1696,
+          "width": 351,
+          "height": 32,
+          "top": 1696,
+          "right": 363,
+          "bottom": 1728,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "after": {
+      "width": 390,
+      "pageHeight": 1790,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 366,
+          "height": 105,
+          "top": 24,
+          "right": 378,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 366,
+          "height": 60,
+          "top": 153,
+          "right": 378,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 366,
+          "height": 175,
+          "top": 225,
+          "right": 378,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 900,
+          "width": 366,
+          "height": 239,
+          "top": 900,
+          "right": 378,
+          "bottom": 1139,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1151,
+          "width": 366,
+          "height": 119,
+          "top": 1151,
+          "right": 378,
+          "bottom": 1270,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 366,
+          "height": 476,
+          "top": 412,
+          "right": 378,
+          "bottom": 888,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1282,
+          "width": 366,
+          "height": 394,
+          "top": 1282,
+          "right": 378,
+          "bottom": 1676,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1688,
+          "width": 366,
+          "height": 32,
+          "top": 1688,
+          "right": 378,
+          "bottom": 1720,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "heightDelta": -8,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P6",
+    "width": 390,
+    "before": {
+      "width": 390,
+      "pageHeight": 1798,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 351,
+          "height": 105,
+          "top": 24,
+          "right": 363,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 351,
+          "height": 60,
+          "top": 153,
+          "right": 363,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 351,
+          "height": 175,
+          "top": 225,
+          "right": 363,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 900,
+          "width": 351,
+          "height": 239,
+          "top": 900,
+          "right": 363,
+          "bottom": 1139,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1151,
+          "width": 351,
+          "height": 119,
+          "top": 1151,
+          "right": 363,
+          "bottom": 1270,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 351,
+          "height": 476,
+          "top": 412,
+          "right": 363,
+          "bottom": 888,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1282,
+          "width": 351,
+          "height": 402,
+          "top": 1282,
+          "right": 363,
+          "bottom": 1684,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1696,
+          "width": 351,
+          "height": 32,
+          "top": 1696,
+          "right": 363,
+          "bottom": 1728,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "after": {
+      "width": 390,
+      "pageHeight": 1752,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 366,
+          "height": 105,
+          "top": 24,
+          "right": 378,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 366,
+          "height": 60,
+          "top": 153,
+          "right": 378,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 366,
+          "height": 175,
+          "top": 225,
+          "right": 378,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 900,
+          "width": 366,
+          "height": 239,
+          "top": 900,
+          "right": 378,
+          "bottom": 1139,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1151,
+          "width": 366,
+          "height": 119,
+          "top": 1151,
+          "right": 378,
+          "bottom": 1270,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 366,
+          "height": 476,
+          "top": 412,
+          "right": 378,
+          "bottom": 888,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1282,
+          "width": 366,
+          "height": 402,
+          "top": 1282,
+          "right": 378,
+          "bottom": 1684,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1696,
+          "width": 366,
+          "height": 32,
+          "top": 1696,
+          "right": 378,
+          "bottom": 1728,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "heightDelta": -46,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P7",
+    "width": 390,
+    "before": {
+      "width": 390,
+      "pageHeight": 1798,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 351,
+          "height": 105,
+          "top": 24,
+          "right": 363,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 351,
+          "height": 60,
+          "top": 153,
+          "right": 363,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 351,
+          "height": 175,
+          "top": 225,
+          "right": 363,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 900,
+          "width": 351,
+          "height": 239,
+          "top": 900,
+          "right": 363,
+          "bottom": 1139,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1151,
+          "width": 351,
+          "height": 119,
+          "top": 1151,
+          "right": 363,
+          "bottom": 1270,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 351,
+          "height": 476,
+          "top": 412,
+          "right": 363,
+          "bottom": 888,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1282,
+          "width": 351,
+          "height": 402,
+          "top": 1282,
+          "right": 363,
+          "bottom": 1684,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1696,
+          "width": 351,
+          "height": 32,
+          "top": 1696,
+          "right": 363,
+          "bottom": 1728,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "after": {
+      "width": 390,
+      "pageHeight": 1731,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 366,
+          "height": 105,
+          "top": 24,
+          "right": 378,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 366,
+          "height": 60,
+          "top": 153,
+          "right": 378,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 366,
+          "height": 175,
+          "top": 225,
+          "right": 378,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 900,
+          "width": 366,
+          "height": 303,
+          "top": 900,
+          "right": 378,
+          "bottom": 1203,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 366,
+          "height": 476,
+          "top": 412,
+          "right": 378,
+          "bottom": 888,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1215,
+          "width": 366,
+          "height": 402,
+          "top": 1215,
+          "right": 378,
+          "bottom": 1617,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1629,
+          "width": 366,
+          "height": 32,
+          "top": 1629,
+          "right": 378,
+          "bottom": 1661,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "heightDelta": -67,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P8",
+    "width": 390,
+    "before": {
+      "width": 390,
+      "pageHeight": 1798,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 351,
+          "height": 105,
+          "top": 24,
+          "right": 363,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 351,
+          "height": 60,
+          "top": 153,
+          "right": 363,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 351,
+          "height": 175,
+          "top": 225,
+          "right": 363,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 900,
+          "width": 351,
+          "height": 239,
+          "top": 900,
+          "right": 363,
+          "bottom": 1139,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1151,
+          "width": 351,
+          "height": 119,
+          "top": 1151,
+          "right": 363,
+          "bottom": 1270,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 351,
+          "height": 476,
+          "top": 412,
+          "right": 363,
+          "bottom": 888,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1282,
+          "width": 351,
+          "height": 402,
+          "top": 1282,
+          "right": 363,
+          "bottom": 1684,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1696,
+          "width": 351,
+          "height": 32,
+          "top": 1696,
+          "right": 363,
+          "bottom": 1728,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "after": {
+      "width": 390,
+      "pageHeight": 1774,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 366,
+          "height": 105,
+          "top": 24,
+          "right": 378,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 366,
+          "height": 60,
+          "top": 153,
+          "right": 378,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 366,
+          "height": 175,
+          "top": 225,
+          "right": 378,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 876,
+          "width": 366,
+          "height": 239,
+          "top": 876,
+          "right": 378,
+          "bottom": 1115,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1127,
+          "width": 366,
+          "height": 119,
+          "top": 1127,
+          "right": 378,
+          "bottom": 1246,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 366,
+          "height": 452,
+          "top": 412,
+          "right": 378,
+          "bottom": 864,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1258,
+          "width": 366,
+          "height": 402,
+          "top": 1258,
+          "right": 378,
+          "bottom": 1660,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1672,
+          "width": 366,
+          "height": 32,
+          "top": 1672,
+          "right": 378,
+          "bottom": 1704,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 8,
+        "sliderToLabels": 8,
+        "trackCenterToLabels": 16
+      },
+      "bottomDelta": null
+    },
+    "heightDelta": -24,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P9",
+    "width": 390,
+    "before": {
+      "width": 390,
+      "pageHeight": 1798,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 351,
+          "height": 105,
+          "top": 24,
+          "right": 363,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 351,
+          "height": 60,
+          "top": 153,
+          "right": 363,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 351,
+          "height": 175,
+          "top": 225,
+          "right": 363,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 900,
+          "width": 351,
+          "height": 239,
+          "top": 900,
+          "right": 363,
+          "bottom": 1139,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1151,
+          "width": 351,
+          "height": 119,
+          "top": 1151,
+          "right": 363,
+          "bottom": 1270,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 351,
+          "height": 476,
+          "top": 412,
+          "right": 363,
+          "bottom": 888,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1282,
+          "width": 351,
+          "height": 402,
+          "top": 1282,
+          "right": 363,
+          "bottom": 1684,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1696,
+          "width": 351,
+          "height": 32,
+          "top": 1696,
+          "right": 363,
+          "bottom": 1728,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "after": {
+      "width": 390,
+      "pageHeight": 1777,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 366,
+          "height": 84,
+          "top": 24,
+          "right": 378,
+          "bottom": 108,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 132,
+          "width": 366,
+          "height": 60,
+          "top": 132,
+          "right": 378,
+          "bottom": 192,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 204,
+          "width": 366,
+          "height": 175,
+          "top": 204,
+          "right": 378,
+          "bottom": 379,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 879,
+          "width": 366,
+          "height": 239,
+          "top": 879,
+          "right": 378,
+          "bottom": 1118,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1130,
+          "width": 366,
+          "height": 119,
+          "top": 1130,
+          "right": 378,
+          "bottom": 1249,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 391,
+          "width": 366,
+          "height": 476,
+          "top": 391,
+          "right": 378,
+          "bottom": 867,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1261,
+          "width": 366,
+          "height": 402,
+          "top": 1261,
+          "right": 378,
+          "bottom": 1663,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1675,
+          "width": 366,
+          "height": 32,
+          "top": 1675,
+          "right": 378,
+          "bottom": 1707,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "heightDelta": -21,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "E_stretch",
+    "width": 390,
+    "before": {
+      "width": 390,
+      "pageHeight": 1798,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 351,
+          "height": 105,
+          "top": 24,
+          "right": 363,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 351,
+          "height": 60,
+          "top": 153,
+          "right": 363,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 351,
+          "height": 175,
+          "top": 225,
+          "right": 363,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 900,
+          "width": 351,
+          "height": 239,
+          "top": 900,
+          "right": 363,
+          "bottom": 1139,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1151,
+          "width": 351,
+          "height": 119,
+          "top": 1151,
+          "right": 363,
+          "bottom": 1270,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 351,
+          "height": 476,
+          "top": 412,
+          "right": 363,
+          "bottom": 888,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1282,
+          "width": 351,
+          "height": 402,
+          "top": 1282,
+          "right": 363,
+          "bottom": 1684,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1696,
+          "width": 351,
+          "height": 32,
+          "top": 1696,
+          "right": 363,
+          "bottom": 1728,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "after": {
+      "width": 390,
+      "pageHeight": 1798,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 366,
+          "height": 105,
+          "top": 24,
+          "right": 378,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 366,
+          "height": 60,
+          "top": 153,
+          "right": 378,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 366,
+          "height": 175,
+          "top": 225,
+          "right": 378,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 900,
+          "width": 366,
+          "height": 239,
+          "top": 900,
+          "right": 378,
+          "bottom": 1139,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1151,
+          "width": 366,
+          "height": 119,
+          "top": 1151,
+          "right": 378,
+          "bottom": 1270,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 366,
+          "height": 476,
+          "top": 412,
+          "right": 378,
+          "bottom": 888,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1282,
+          "width": 366,
+          "height": 402,
+          "top": 1282,
+          "right": 378,
+          "bottom": 1684,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1696,
+          "width": 366,
+          "height": 32,
+          "top": 1696,
+          "right": 378,
+          "bottom": 1728,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "heightDelta": 0,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "E_P7",
+    "width": 390,
+    "before": {
+      "width": 390,
+      "pageHeight": 1798,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 351,
+          "height": 105,
+          "top": 24,
+          "right": 363,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 351,
+          "height": 60,
+          "top": 153,
+          "right": 363,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 351,
+          "height": 175,
+          "top": 225,
+          "right": 363,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 900,
+          "width": 351,
+          "height": 239,
+          "top": 900,
+          "right": 363,
+          "bottom": 1139,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1151,
+          "width": 351,
+          "height": 119,
+          "top": 1151,
+          "right": 363,
+          "bottom": 1270,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 351,
+          "height": 476,
+          "top": 412,
+          "right": 363,
+          "bottom": 888,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1282,
+          "width": 351,
+          "height": 402,
+          "top": 1282,
+          "right": 363,
+          "bottom": 1684,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1696,
+          "width": 351,
+          "height": 32,
+          "top": 1696,
+          "right": 363,
+          "bottom": 1728,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "after": {
+      "width": 390,
+      "pageHeight": 1745,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 366,
+          "height": 105,
+          "top": 24,
+          "right": 378,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 366,
+          "height": 60,
+          "top": 153,
+          "right": 378,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 366,
+          "height": 175,
+          "top": 225,
+          "right": 378,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 914,
+          "width": 366,
+          "height": 303,
+          "top": 914,
+          "right": 378,
+          "bottom": 1217,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 366,
+          "height": 490,
+          "top": 412,
+          "right": 378,
+          "bottom": 902,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1229,
+          "width": 366,
+          "height": 402,
+          "top": 1229,
+          "right": 378,
+          "bottom": 1631,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1643,
+          "width": 366,
+          "height": 32,
+          "top": 1643,
+          "right": 378,
+          "bottom": 1675,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "heightDelta": -53,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "P7_SP",
+    "width": 390,
+    "before": {
+      "width": 390,
+      "pageHeight": 1684,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 351,
+          "height": 105,
+          "top": 24,
+          "right": 363,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 351,
+          "height": 60,
+          "top": 153,
+          "right": 363,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 351,
+          "height": 175,
+          "top": 225,
+          "right": 363,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 786,
+          "width": 351,
+          "height": 239,
+          "top": 786,
+          "right": 363,
+          "bottom": 1025,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1037,
+          "width": 351,
+          "height": 119,
+          "top": 1037,
+          "right": 363,
+          "bottom": 1156,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 351,
+          "height": 362,
+          "top": 412,
+          "right": 363,
+          "bottom": 774,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1168,
+          "width": 351,
+          "height": 402,
+          "top": 1168,
+          "right": 363,
+          "bottom": 1570,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1582,
+          "width": 351,
+          "height": 32,
+          "top": 1582,
+          "right": 363,
+          "bottom": 1614,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "after": {
+      "width": 390,
+      "pageHeight": 1617,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 366,
+          "height": 105,
+          "top": 24,
+          "right": 378,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 366,
+          "height": 60,
+          "top": 153,
+          "right": 378,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 366,
+          "height": 175,
+          "top": 225,
+          "right": 378,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 786,
+          "width": 366,
+          "height": 303,
+          "top": 786,
+          "right": 378,
+          "bottom": 1089,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 366,
+          "height": 362,
+          "top": 412,
+          "right": 378,
+          "bottom": 774,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1101,
+          "width": 366,
+          "height": 402,
+          "top": 1101,
+          "right": 378,
+          "bottom": 1503,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1515,
+          "width": 366,
+          "height": 32,
+          "top": 1515,
+          "right": 378,
+          "bottom": 1547,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "heightDelta": -67,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  },
+  {
+    "name": "E_P7_SP",
+    "width": 390,
+    "before": {
+      "width": 390,
+      "pageHeight": 1684,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 351,
+          "height": 105,
+          "top": 24,
+          "right": 363,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 351,
+          "height": 60,
+          "top": 153,
+          "right": 363,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 351,
+          "height": 175,
+          "top": 225,
+          "right": 363,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 786,
+          "width": 351,
+          "height": 239,
+          "top": 786,
+          "right": 363,
+          "bottom": 1025,
+          "left": 12
+        },
+        "workspace": {
+          "x": 12,
+          "y": 1037,
+          "width": 351,
+          "height": 119,
+          "top": 1037,
+          "right": 363,
+          "bottom": 1156,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 351,
+          "height": 362,
+          "top": 412,
+          "right": 363,
+          "bottom": 774,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1168,
+          "width": 351,
+          "height": 402,
+          "top": 1168,
+          "right": 363,
+          "bottom": 1570,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1582,
+          "width": 351,
+          "height": 32,
+          "top": 1582,
+          "right": 363,
+          "bottom": 1614,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "after": {
+      "width": 390,
+      "pageHeight": 1627,
+      "panels": {
+        "header": {
+          "x": 12,
+          "y": 24,
+          "width": 366,
+          "height": 105,
+          "top": 24,
+          "right": 378,
+          "bottom": 129,
+          "left": 12
+        },
+        "connection": {
+          "x": 12,
+          "y": 153,
+          "width": 366,
+          "height": 60,
+          "top": 153,
+          "right": 378,
+          "bottom": 213,
+          "left": 12
+        },
+        "core": {
+          "x": 12,
+          "y": 225,
+          "width": 366,
+          "height": 175,
+          "top": 225,
+          "right": 378,
+          "bottom": 400,
+          "left": 12
+        },
+        "visuals": {
+          "x": 12,
+          "y": 796,
+          "width": 366,
+          "height": 303,
+          "top": 796,
+          "right": 378,
+          "bottom": 1099,
+          "left": 12
+        },
+        "engine": {
+          "x": 12,
+          "y": 412,
+          "width": 366,
+          "height": 372,
+          "top": 412,
+          "right": 378,
+          "bottom": 784,
+          "left": 12
+        },
+        "autoplay": {
+          "x": 12,
+          "y": 1111,
+          "width": 366,
+          "height": 402,
+          "top": 1111,
+          "right": 378,
+          "bottom": 1513,
+          "left": 12
+        },
+        "footer": {
+          "x": 12,
+          "y": 1525,
+          "width": 366,
+          "height": 32,
+          "top": 1525,
+          "right": 378,
+          "bottom": 1557,
+          "left": 12
+        }
+      },
+      "engineTail": 12,
+      "slider": {
+        "headingToSlider": 20,
+        "sliderToLabels": 20,
+        "trackCenterToLabels": 28
+      },
+      "bottomDelta": null
+    },
+    "heightDelta": -57,
+    "scope": "Isolated DOM preview only; no production files or actual user preferences changed"
+  }
+]
