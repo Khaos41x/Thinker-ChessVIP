@@ -127,12 +127,12 @@ async function evaluate(client, expression) {
     await evaluate(board, `scrollTo(0,0)`);
     const cleanScreenshot=await board.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
     fs.writeFileSync(path.join(root,'tests','artifacts','clean-view-hidden.png'),Buffer.from(cleanScreenshot.data,'base64'));
-    await waitFor(() => evaluate(panel, `document.getElementById('banner-display-state').textContent==='Hidden by Clean View'`));
+    await waitFor(() => evaluate(panel, `!document.getElementById('banner-display-state')&&document.querySelector('[data-key="banner"]').getAttribute('aria-checked')==='true'`));
     assert.equal((await (await fetch(base+'/config/load')).json()).banner,true,'Clean View changed the Banner preference');
     await evaluate(panel, `document.querySelector('[data-key="ghostMode"]').click()`);
     await waitFor(() => evaluate(board, `!document.documentElement.classList.contains('tc-clean-view')&&getComputedStyle(document.getElementById('thinker-chess-banner')).display==='flex'`));
     await evaluate(board, `document.querySelectorAll('[data-fixture-clean]').forEach(n=>n.remove())`);
-    await waitFor(() => evaluate(panel, `document.getElementById('banner-display-state').textContent==='Visible on Chess.com'`));
+    await waitFor(() => evaluate(panel, `!document.getElementById('banner-display-state')&&document.querySelector('[data-key="banner"]').getAttribute('aria-checked')==='true'`));
     const restoredBox=await evaluate(board, `(() => {const r=document.getElementById('thinker-chess-banner').getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height,scale:1};})()`);
     const restoredScreenshot=await board.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:restoredBox});
     fs.writeFileSync(path.join(root,'tests','artifacts','banner-restored-from-clean-view.png'),Buffer.from(restoredScreenshot.data,'base64'));

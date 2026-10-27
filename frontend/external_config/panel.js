@@ -304,13 +304,6 @@
       setText(byId('userscript-update'), status.userscriptUpdateRequired ? 'Update userscript now' : 'Install / update userscript');
       if (!versionAccepted) { reserveVersionLine(); versionAccepted = true; }
       renderSession(status.sessionConnected ? status.sessionProjection : null);
-      const bannerLabels = {
-        visible: 'Visible on Chess.com', disabled: 'Disabled', 'ghost-mode': 'Hidden by Clean View',
-        'board-unavailable': 'Waiting for board', 'sidebar-unavailable': 'Waiting for side panel',
-        'route-not-supported': 'Not shown on this page', 'insufficient-space-or-height': 'Not enough room (96 px minimum)',
-        'awaiting-layout': 'Updating position…', disconnected: 'Waiting for Chess.com',
-      };
-      setText(byId('banner-display-state'), config?.ghostMode ? bannerLabels['ghost-mode'] : config?.banner === false ? bannerLabels.disabled : bannerLabels[status.bannerState] || 'Waiting for display status');
     } catch (_) {
       if (connectionHealth.failure()) {
         renderSession(null);
@@ -345,17 +338,8 @@
       toggle.addEventListener('click', () => queue({ [key]: toggle.getAttribute('aria-checked') !== 'true' }));
       const copy = document.createElement('div');
       copy.append(caption);
-      if (key === 'banner') {
-        const detail = document.createElement('small');
-        detail.id = 'banner-display-state';
-        detail.className = 'control-detail';
-        detail.textContent = 'Waiting for display status';
-        row.setAttribute('aria-describedby', detail.id);
-        row._detail = detail;
-      }
       row.append(copy, toggle);
       host.append(row);
-      if (row._detail) { host.append(row._detail); delete row._detail; }
     });
   });
 

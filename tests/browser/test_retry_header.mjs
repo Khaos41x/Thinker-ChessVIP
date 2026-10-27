@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {resolve,join} from 'node:path';
 import {createServer} from 'node:net';
 const root=resolve(import.meta.dirname,'../..'),before=process.argv.includes('--before');
-const output=join(root,'_bmad-output/implementation-artifacts/retry-header',before?'before':'after');await mkdir(output,{recursive:true});
+const output=join(root,'_bmad-output/implementation-artifacts/retry-header',process.argv.includes('--banner-only')?'banner':before?'before':'after');await mkdir(output,{recursive:true});
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 const port=()=>new Promise(r=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>r(p));});});
 const serverPort=await port(),debugPort=await port(),base=`http://127.0.0.1:${serverPort}`;
@@ -28,16 +28,18 @@ try{
  await waitFor(async()=> (await fetch(base+'/config/load')).ok);await waitFor(async()=> (await fetch(`http://127.0.0.1:${debugPort}/json/list`)).ok);
  const tab=(await(await fetch(`http://127.0.0.1:${debugPort}/json/list`)).json()).find(t=>t.type==='page');client=await connect(tab.webSocketDebuggerUrl);await client.send('Page.enable');await client.send('Runtime.enable');await client.send('Network.enable');await client.send('Emulation.setFocusEmulationEnabled',{enabled:true});
  client.on('Runtime.exceptionThrown',e=>exceptions.push(e));client.on('Runtime.consoleAPICalled',e=>messages.push(e));let fault=false,count=0;await client.send('Fetch.enable',{patterns:[{urlPattern:'*config/engines*'},{urlPattern:'*eval-bar/engines*'}]});client.on('Fetch.requestPaused',e=>{count++;client.send(fault?'Fetch.failRequest':'Fetch.continueRequest',{requestId:e.requestId,...(fault?{errorReason:'ConnectionRefused'}:{})}).catch(()=>{});});
- for(const surface of ['config','console']){
+ for(const surface of (process.argv.includes('--banner-only')?['config']:['config','console'])){
   const status=surface==='config'?'#analysis-engine-state':'.tc-analysis-status',retry=surface==='config'?'#engine-retry':'.tc-analysis-notice button';
   await fetch(base+'/qa/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({connected:true})});
   await client.send('Page.navigate',{url:base+(surface==='config'?'/config':'/tests/fixtures/userscript_bootstrap.html?delay=20')});await waitFor(()=>value(`document.querySelector('${status}')?.textContent==='Ready'`));
   const widths=surface==='config'?[1440,1280,1024,768,390]:[1086,1280,1440,1920,1033,800];
   for(const width of widths)for(const banner of [false,true]){
    await fetch(base+'/config/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({banner})});await pause(2200);await client.send('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});await pause(200);
-   results.push({surface,width,banner,...await value('('+geometry.toString()+')()')});
+   const current={surface,width,banner,...await value('('+geometry.toString()+')()')};results.push(current);
+   if(!before&&surface==='config'){assert.equal(await value("document.querySelector('#banner-display-state')"),null);assert(current.rows.every(r=>r.height===40&&r.delta===0));const original=JSON.parse(await readFile(join(output,'../before/measurements.json'),'utf8')).results.find(r=>r.surface===surface&&r.width===width&&r.banner===banner);assert.equal(current.panels.find(p=>p.id==='visuals').rect.height,original.panels.find(p=>p.id==='visuals').rect.height-24);}
    if(surface==='config'&&[1440,1024,390].includes(width)&&!banner)await client.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true}).then(r=>writeFile(join(output,`config-${width}-online.png`),Buffer.from(r.data,'base64')));
   }
+  if(process.argv.includes('--banner-only'))continue;
   await client.send('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
   fault=true;await waitFor(()=>value(`['Connection Lost','Error'].includes(document.querySelector('${status}')?.textContent)`));
   await value(`window.qaTimeline=[];new MutationObserver(()=>qaTimeline.push({at:performance.now(),text:document.querySelector('${status}').textContent})).observe(document.querySelector('${status}'),{subtree:true,childList:true});window.qaStart=performance.now();document.querySelector('${retry}').focus();document.querySelector('${retry}').click();`);
