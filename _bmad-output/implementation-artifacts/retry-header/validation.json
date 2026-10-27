@@ -1,0 +1,189 @@
+{
+  "cases": [
+    {
+      "surface": "config",
+      "width": 1440,
+      "banner": false,
+      "colorsEqual": true,
+      "consoleRectsEqual": false,
+      "configPanelTopEqual": true
+    },
+    {
+      "surface": "config",
+      "width": 1440,
+      "banner": true,
+      "colorsEqual": true,
+      "consoleRectsEqual": false,
+      "configPanelTopEqual": true
+    },
+    {
+      "surface": "config",
+      "width": 1280,
+      "banner": false,
+      "colorsEqual": true,
+      "consoleRectsEqual": false,
+      "configPanelTopEqual": true
+    },
+    {
+      "surface": "config",
+      "width": 1280,
+      "banner": true,
+      "colorsEqual": true,
+      "consoleRectsEqual": false,
+      "configPanelTopEqual": true
+    },
+    {
+      "surface": "config",
+      "width": 1024,
+      "banner": false,
+      "colorsEqual": true,
+      "consoleRectsEqual": false,
+      "configPanelTopEqual": true
+    },
+    {
+      "surface": "config",
+      "width": 1024,
+      "banner": true,
+      "colorsEqual": true,
+      "consoleRectsEqual": false,
+      "configPanelTopEqual": true
+    },
+    {
+      "surface": "config",
+      "width": 768,
+      "banner": false,
+      "colorsEqual": true,
+      "consoleRectsEqual": false,
+      "configPanelTopEqual": true
+    },
+    {
+      "surface": "config",
+      "width": 768,
+      "banner": true,
+      "colorsEqual": true,
+      "consoleRectsEqual": false,
+      "configPanelTopEqual": true
+    },
+    {
+      "surface": "config",
+      "width": 390,
+      "banner": false,
+      "colorsEqual": true,
+      "consoleRectsEqual": false,
+      "configPanelTopEqual": true
+    },
+    {
+      "surface": "config",
+      "width": 390,
+      "banner": true,
+      "colorsEqual": true,
+      "consoleRectsEqual": false,
+      "configPanelTopEqual": true
+    },
+    {
+      "surface": "console",
+      "width": 1086,
+      "banner": false,
+      "colorsEqual": true,
+      "consoleRectsEqual": true,
+      "configPanelTopEqual": false
+    },
+    {
+      "surface": "console",
+      "width": 1086,
+      "banner": true,
+      "colorsEqual": true,
+      "consoleRectsEqual": true,
+      "configPanelTopEqual": false
+    },
+    {
+      "surface": "console",
+      "width": 1280,
+      "banner": false,
+      "colorsEqual": true,
+      "consoleRectsEqual": true,
+      "configPanelTopEqual": false
+    },
+    {
+      "surface": "console",
+      "width": 1280,
+      "banner": true,
+      "colorsEqual": true,
+      "consoleRectsEqual": true,
+      "configPanelTopEqual": false
+    },
+    {
+      "surface": "console",
+      "width": 1440,
+      "banner": false,
+      "colorsEqual": true,
+      "consoleRectsEqual": true,
+      "configPanelTopEqual": false
+    },
+    {
+      "surface": "console",
+      "width": 1440,
+      "banner": true,
+      "colorsEqual": true,
+      "consoleRectsEqual": true,
+      "configPanelTopEqual": false
+    },
+    {
+      "surface": "console",
+      "width": 1920,
+      "banner": false,
+      "colorsEqual": true,
+      "consoleRectsEqual": true,
+      "configPanelTopEqual": false
+    },
+    {
+      "surface": "console",
+      "width": 1920,
+      "banner": true,
+      "colorsEqual": true,
+      "consoleRectsEqual": true,
+      "configPanelTopEqual": false
+    },
+    {
+      "surface": "console",
+      "width": 1033,
+      "banner": false,
+      "colorsEqual": true,
+      "consoleRectsEqual": true,
+      "configPanelTopEqual": false
+    },
+    {
+      "surface": "console",
+      "width": 1033,
+      "banner": true,
+      "colorsEqual": true,
+      "consoleRectsEqual": true,
+      "configPanelTopEqual": false
+    },
+    {
+      "surface": "console",
+      "width": 800,
+      "banner": false,
+      "colorsEqual": true,
+      "consoleRectsEqual": true,
+      "configPanelTopEqual": false
+    },
+    {
+      "surface": "console",
+      "width": 800,
+      "banner": true,
+      "colorsEqual": true,
+      "consoleRectsEqual": true,
+      "configPanelTopEqual": false
+    }
+  ],
+  "consoleCases": 12,
+  "configCases": 10,
+  "headerStates": 15,
+  "statusStableSeconds": 60,
+  "statusMutations": 0,
+  "statusCLS": 0,
+  "liveConfigHTTP": 200,
+  "liveHealth": "ok",
+  "release": "2026-10-27.1"
+}

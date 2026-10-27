@@ -1,0 +1,579 @@
+diff --git a/frontend/eval_bar/engine-selection.js b/frontend/eval_bar/engine-selection.js
+index 41c8f59..5652637 100644
+--- a/frontend/eval_bar/engine-selection.js
++++ b/frontend/eval_bar/engine-selection.js
+@@ -5,6 +5,7 @@
+     let pending = false;
+     const {text, prop, health} = root.ThinkerStatus;
+     const connection = health();
++    const actionFeedback = root.ThinkerStatus.interaction();
+     let reconnectTimer = null;
+     let interactive = false;
+     const document = root.document;
+@@ -33,9 +34,10 @@
+       });
+     }
+     async function refresh(force = false, initialize = false) {
+-      if (force && pending && !selecting) { interactive = true; render(); return; }
++      if (force && actionFeedback.active()) return;
++      if (force && pending && !selecting) { actionFeedback.begin(mounted?.querySelector("button"), mounted?.querySelector("select")); interactive = true; render(); return; }
+       if (pending || selecting || document?.hidden || (!force && !connection.due())) return;
+-      if (force) { connection.reset(); interactive = true; }
++      if (force) { actionFeedback.begin(mounted?.querySelector("button"), mounted?.querySelector("select")); connection.reset(); interactive = true; }
+       pending = true;
+       render();
+       const epoch = selectionEpoch;
+@@ -53,16 +55,21 @@
+       } catch (cause) {
+         if (epoch !== selectionEpoch) return;
+         if (cause.data?.engines) state = cause.data;
+-        if (connection.failure()) error = String(cause.message || cause);
++        const confirmed = connection.failure();
++        if (interactive || confirmed) error = String(cause.message || cause);
+       }
+       finally {
+-        pending = false; interactive = false; render();
++        if (interactive) await actionFeedback.wait();
++        pending = false;
++        const userRequest = interactive; interactive = false;
++        if (userRequest && !selecting) actionFeedback.finish(render, mounted?.querySelector("button"), mounted?.querySelector("select")); else render();
+         clearTimeout(reconnectTimer);
+         if (connection.snapshot().failures && !document?.hidden) reconnectTimer = setTimeout(() => refresh(), connection.delay());
+       }
+     }
+     async function selectPreference(engineId) {
+-      if (selecting || !state) return;
++      if (selecting || actionFeedback.active() || !state) return;
++      actionFeedback.begin(mounted?.querySelector("button"), mounted?.querySelector("select"));
+       attemptedEngineId = engineId;
+       savedUntil = 0;
+       if (feedbackTimer !== null) { clearTimeout(feedbackTimer); feedbackTimer = null; }
+@@ -72,13 +79,14 @@
+         if (!result.ok || result.selectedEngineId !== engineId) throw new Error('Preference was not acknowledged');
+         state = result;
+         attemptedEngineId = null;
++        await actionFeedback.wait();
+         savedUntil = performance.now() + 1500;
+         if (feedbackTimer !== null) clearTimeout(feedbackTimer);
+         feedbackTimer = setTimeout(() => { savedUntil = 0; feedbackTimer = null; render(); }, 1500);
+       } catch (cause) {
+         if (cause.data?.engines) state = cause.data;
+         error = String(cause.message || cause);
+-      } finally { selecting = false; render(); }
++      } finally { await actionFeedback.wait(); selecting = false; actionFeedback.finish(render, mounted?.querySelector("button"), mounted?.querySelector("select")); }
+     }
+     function render() {
+       const host = options.getHost?.();
+@@ -94,6 +102,7 @@
+         const message = doc.createElement('p'); message.id = 'tc-analysis-message'; message.setAttribute('role', 'status');
+         const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry';
+         retry.addEventListener('click', () => {
++          if (actionFeedback.active() || selecting) return;
+           let operation;
+           if (attemptedEngineId && state?.engines?.find(engine => engine.id === attemptedEngineId)?.installed) operation = selectPreference(attemptedEngineId);
+           else { attemptedEngineId = null; operation = refresh(true); }
+@@ -102,7 +111,7 @@
+         });
+         select.addEventListener('change', () => selectPreference(select.value));
+         const stateLine = doc.createElement('span'); stateLine.className = 'tc-analysis-state';
+-        const feedback = doc.createElement('span'); feedback.className = 'tc-analysis-feedback'; feedback.setAttribute('aria-live', 'polite');
++        const feedback = doc.createElement('span'); feedback.className = 'tc-analysis-feedback'; feedback.setAttribute('aria-live', 'off');
+         const notice = doc.createElement('div'); notice.className = 'tc-analysis-notice';
+         notice.append(message, retry);
+         stateLine.append(status, feedback); heading.append(label, stateLine); mounted.append(heading, select, notice);
+@@ -110,6 +119,7 @@
+         if (caption) caption.after(mounted); else parent.prepend(mounted);
+         root.ThinkerStatus.reserve(status, ['Initializing','Switching','Unavailable','Active','Ready','Error'], 10);
+       }
++      actionFeedback.bind(mounted, mounted.querySelector(".tc-analysis-status"), mounted.querySelector("p"));
+       const select = mounted.querySelector('select');
+       const selected = state?.engines?.find(engine => engine.id === state.selectedEngineId);
+       if (state?.engines && select.options.length !== state.engines.length) {
+@@ -121,13 +131,13 @@
+       }
+       if (!selecting && state) prop(select, 'value', state.selectedEngineId);
+       prop(select, 'disabled', selecting || Boolean(error) || !state);
+-      text(mounted.querySelector('.tc-analysis-status'), selecting ? 'Switching' : interactive || pending && !state ? 'Initializing' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing');
+-      root.ThinkerStatus.attr(mounted.querySelector('.tc-analysis-status'), 'data-error', Boolean(error || selected?.initializationError));
++      text(mounted.querySelector('.tc-analysis-status'), actionFeedback.active() || interactive || pending && !state ? 'Initializing' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing');
++      root.ThinkerStatus.attr(mounted.querySelector('.tc-analysis-status'), 'data-error', !actionFeedback.active() && Boolean(error || selected?.initializationError));
+       const hint = error || selected?.initializationError || (selected ? [selected.description?.split(' · ')[0], selected.name].filter(Boolean).join(' · ') : 'Checking installed engines…');
+       text(mounted.querySelector('p'), hint);
+       prop(mounted.querySelector('p'), 'title', hint);
+       text(mounted.querySelector('.tc-analysis-feedback'), performance.now() < savedUntil ? 'Preference saved.' : '');
+-      prop(mounted.querySelector('button'), 'hidden', !error);
++      prop(mounted.querySelector('button'), 'hidden', !error && !interactive);
+       prop(mounted.querySelector('button'), 'disabled', interactive || selecting);
+       root.ThinkerEnginePicker?.enhance(select);
+     }
+diff --git a/frontend/external_config/panel.js b/frontend/external_config/panel.js
+index 3def292..a8789a8 100644
+--- a/frontend/external_config/panel.js
++++ b/frontend/external_config/panel.js
+@@ -22,6 +22,8 @@
+     const height=Math.round(clone.getBoundingClientRect().height);clone.remove();
+     line.style.height=height+'px';node.style.height=height+'px';node.style.webkitLineClamp=String(Math.max(1,Math.round(height/17)));
+   }
++  const engineFeedback = globalThis.ThinkerStatus.interaction();
++  engineFeedback.bind(document.querySelector(".analysis-engine"), byId("analysis-engine-state"), byId("analysis-engine-message"));
+   let engineInteractive = false;
+   let registryTimer = null;
+   let registryRetryRequested = false;
+@@ -87,13 +89,13 @@
+       prop(option, 'disabled', engine ? !engine.installed : false);
+     }
+     const active = selected?.runtimeReady && engineRegistry?.analysisContextAuthorized;
+-    const state = engineSwitching ? 'Switching' : engineInteractive || engineRefreshing && !engineRegistry ? 'Initializing' : engineError ? (!engineOnline && engineRegistry ? 'Connection Lost' : 'Error') : !selected ? 'Initializing' : !selected.installed ? 'Unavailable' : selected.initializationError ? 'Error' : active ? 'Active' : 'Ready';
++    const state = engineFeedback.active() || engineInteractive || engineRefreshing && !engineRegistry ? 'Initializing' : engineError ? (!engineOnline && engineRegistry ? 'Connection Lost' : 'Error') : !selected ? 'Initializing' : !selected.installed ? 'Unavailable' : selected.initializationError ? 'Error' : active ? 'Active' : 'Ready';
+     setText(byId('analysis-engine-state'), state);
+     attr(byId('analysis-engine-state'), 'data-error', state === 'Error' || state === 'Connection Lost');
+     setText(byId('analysis-engine-message'), engineError || (engineSwitching ? 'Saving engine preference…' : selected?.initializationError || (active ? 'Running in an authorized analysis context.' : selected ? `${selected.description || 'Preference saved.'} Analysis starts only in an authorized context.` : 'Checking installed engines…')));
+     attr(byId('analysis-engine-message'), 'data-error', Boolean(engineError || selected?.initializationError));
+     prop(byId('analysis-engine-message'), 'title', byId('analysis-engine-message').textContent);
+-    prop(byId('engine-retry'), 'hidden', !engineError && !selected?.initializationError);
++    prop(byId('engine-retry'), 'hidden', !engineError && !selected?.initializationError && !engineInteractive);
+     prop(byId('engine-retry'), 'disabled', engineInteractive || engineSwitching);
+     if (byId('analysis-engine-details')) setText(byId('analysis-engine-details'), selected ? JSON.stringify(selected, null, 2) : '');
+     setText(byId('execution-state'), `Analysis: ${!engineOnline ? 'unavailable' : engineRegistry?.analysisRunning ? 'running' : 'inactive'}`);
+@@ -107,7 +109,9 @@
+   }
+ 
+   async function refreshEngines(clearError = false) {
+-    if (clearError) { registryRetryRequested = true; registryHealth.reset(); engineInteractive = true; }
++    if (clearError && engineFeedback.active()) return;
++    if (clearError && (engineSwitching || document.hidden)) return;
++    if (clearError) { engineFeedback.begin(byId('engine-retry'), byId('analysis-engine')); registryRetryRequested = true; registryHealth.reset(); engineInteractive = true; }
+     if (engineRefreshing) { if (clearError) renderEngine(); return; }
+     if (engineSwitching || document.hidden || !clearError && !registryHealth.due()) return;
+     clearTimeout(registryTimer);
+@@ -120,14 +124,14 @@
+       if (!engineSwitching && version === engineRequestVersion) {
+         engineRegistry = engines; engineOnline = true; registryHealth.success();
+         if (clearError || registryRetryRequested || !engineError?.startsWith('Could not save')) engineError = null;
+-        renderEngine();
+       }
+-    } catch (error) { if (!engineSwitching && version === engineRequestVersion) { if (registryHealth.failure()) registryFailure(error); } }
+-    finally { engineRefreshing = false; engineInteractive = false; registryRetryRequested = false; renderEngine(); if (!document.hidden) registryTimer = setTimeout(refreshEngines, registryHealth.delay()); }
++    } catch (error) { if (!engineSwitching && version === engineRequestVersion) { const confirmed = registryHealth.failure(); if (engineInteractive || confirmed) registryFailure(error); } }
++    finally { if (engineInteractive) await engineFeedback.wait(); engineRefreshing = false; const userRequest = engineInteractive; engineInteractive = false; registryRetryRequested = false; if (userRequest && !engineSwitching) engineFeedback.finish(renderEngine, byId('engine-retry'), byId('analysis-engine')); else renderEngine(); if (!document.hidden) registryTimer = setTimeout(refreshEngines, registryHealth.delay()); }
+   }
+ 
+   byId('analysis-engine').addEventListener('change', async event => {
+-    if (engineSwitching || !engineRegistry) return;
++    if (engineSwitching || engineFeedback.active() || !engineRegistry) return;
++    engineFeedback.begin(byId('engine-retry'), byId('analysis-engine'));
+     const engineId = event.target.value;
+     engineSwitching = true; engineError = null; engineRequestVersion++;
+     renderEngine();
+@@ -140,7 +144,7 @@
+       if (error.data?.engines) engineRegistry = error.data;
+       engineError = `Could not save engine preference: ${error.message}. Previous saved preference retained.`;
+       if (!error.status) engineOnline = false;
+-    } finally { engineSwitching = false; renderEngine(); refreshEngines(); }
++    } finally { await engineFeedback.wait(); engineSwitching = false; engineFeedback.finish(renderEngine, byId('engine-retry'), byId('analysis-engine')); refreshEngines(); }
+   });
+   byId('engine-retry').addEventListener('click', () => refreshEngines(true));
+ 
+diff --git a/frontend/external_config/status-runtime.js b/frontend/external_config/status-runtime.js
+index 9d1b526..c625c89 100644
+--- a/frontend/external_config/status-runtime.js
++++ b/frontend/external_config/status-runtime.js
+@@ -9,6 +9,51 @@
+     context.font = node.ownerDocument.defaultView.getComputedStyle(node).font;
+     node.style.minWidth = Math.ceil(Math.max(...values.map(value=>context.measureText(value).width)) + extra) + 'px';
+   }
++  function interaction() {
++    let started = null, returnFocus = false, bound = null, status = null, live = null, animation = null;
++    function bind(region, indicator, message) {
++      if (!region || bound === region) return;
++      bound = region; status = indicator;
++      attr(status, 'aria-live', 'off');
++      attr(message, 'aria-live', 'off');
++      live = region.ownerDocument.createElement('span');
++      live.setAttribute('aria-live', 'polite');
++      live.setAttribute('aria-atomic', 'true');
++      live.style.cssText = 'position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0';
++      region.append(live);
++      attr(region, 'aria-busy', started !== null);
++    }
++    return Object.freeze({
++      bind,
++      active() { return started !== null; },
++      begin(button, select) {
++        if (started !== null) return false;
++        started = performance.now();
++        const active = (button || select)?.ownerDocument.activeElement;
++        returnFocus = Boolean(active && (active === button || active === select || active.id === select?.id + '-picker'));
++        animation?.cancel(); animation = null;
++        text(live, '');
++        attr(bound, 'aria-busy', true);
++        return true;
++      },
++      async wait() {
++        while (started !== null && performance.now() - started < 700) await new Promise(resolve => setTimeout(resolve, Math.max(1, Math.ceil(700 - (performance.now() - started)))));
++      },
++      finish(render, button, select) {
++        if (started === null) { render(); return; }
++        started = null;
++        render();
++        attr(bound, 'aria-busy', false);
++        text(live, status?.textContent || '');
++        if (status?.animate && !status.ownerDocument.defaultView.matchMedia('(prefers-reduced-motion: reduce)').matches) animation = status.animate([{opacity:0},{opacity:1}], {duration:180, easing:'ease-out'});
++        if (returnFocus && (!bound || [button,select,bound.ownerDocument.body].includes(bound.ownerDocument.activeElement) || bound.ownerDocument.activeElement.id === select?.id + '-picker')) queueMicrotask(() => {
++          const target = button && !button.hidden && !button.disabled ? button : select?.ownerDocument.getElementById(select.id + '-picker') || select;
++          target?.focus({preventScroll:true});
++        });
++        returnFocus = false;
++      }
++    });
++  }
+   function health({now = Date.now, interval = 2000} = {}) {
+     let failures = 0, lastSuccess = now(), nextAt = 0;
+     return Object.freeze({
+@@ -20,5 +65,5 @@
+       snapshot() { return {failures, lastSuccess, nextAt}; }
+     });
+   }
+-  root.ThinkerStatus = Object.freeze({text, prop, attr, health, reserve});
++  root.ThinkerStatus = Object.freeze({text, prop, attr, health, reserve, interaction});
+ })(globalThis);
+diff --git a/script.js b/script.js
+index 1afa2c6..bd810ca 100644
+--- a/script.js
++++ b/script.js
+@@ -1,7 +1,7 @@
+ // ==UserScript==
+ // @name         TC172
+ // @namespace    http://tampermonkey.net/
+-// @version      2026-10-26.6
++// @version      2026-10-27.1
+ // @downloadURL  http://127.0.0.1:5050/thinker-chess.user.js
+ // @updateURL    http://127.0.0.1:5050/thinker-chess.meta.js
+ // @description  Chess Bot com Servidor Local
+@@ -144,6 +144,51 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+     context.font = node.ownerDocument.defaultView.getComputedStyle(node).font;
+     node.style.minWidth = Math.ceil(Math.max(...values.map(value=>context.measureText(value).width)) + extra) + 'px';
+   }
++  function interaction() {
++    let started = null, returnFocus = false, bound = null, status = null, live = null, animation = null;
++    function bind(region, indicator, message) {
++      if (!region || bound === region) return;
++      bound = region; status = indicator;
++      attr(status, 'aria-live', 'off');
++      attr(message, 'aria-live', 'off');
++      live = region.ownerDocument.createElement('span');
++      live.setAttribute('aria-live', 'polite');
++      live.setAttribute('aria-atomic', 'true');
++      live.style.cssText = 'position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0';
++      region.append(live);
++      attr(region, 'aria-busy', started !== null);
++    }
++    return Object.freeze({
++      bind,
++      active() { return started !== null; },
++      begin(button, select) {
++        if (started !== null) return false;
++        started = performance.now();
++        const active = (button || select)?.ownerDocument.activeElement;
++        returnFocus = Boolean(active && (active === button || active === select || active.id === select?.id + '-picker'));
++        animation?.cancel(); animation = null;
++        text(live, '');
++        attr(bound, 'aria-busy', true);
++        return true;
++      },
++      async wait() {
++        while (started !== null && performance.now() - started < 700) await new Promise(resolve => setTimeout(resolve, Math.max(1, Math.ceil(700 - (performance.now() - started)))));
++      },
++      finish(render, button, select) {
++        if (started === null) { render(); return; }
++        started = null;
++        render();
++        attr(bound, 'aria-busy', false);
++        text(live, status?.textContent || '');
++        if (status?.animate && !status.ownerDocument.defaultView.matchMedia('(prefers-reduced-motion: reduce)').matches) animation = status.animate([{opacity:0},{opacity:1}], {duration:180, easing:'ease-out'});
++        if (returnFocus && (!bound || [button,select,bound.ownerDocument.body].includes(bound.ownerDocument.activeElement) || bound.ownerDocument.activeElement.id === select?.id + '-picker')) queueMicrotask(() => {
++          const target = button && !button.hidden && !button.disabled ? button : select?.ownerDocument.getElementById(select.id + '-picker') || select;
++          target?.focus({preventScroll:true});
++        });
++        returnFocus = false;
++      }
++    });
++  }
+   function health({now = Date.now, interval = 2000} = {}) {
+     let failures = 0, lastSuccess = now(), nextAt = 0;
+     return Object.freeze({
+@@ -155,7 +200,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+       snapshot() { return {failures, lastSuccess, nextAt}; }
+     });
+   }
+-  root.ThinkerStatus = Object.freeze({text, prop, attr, health, reserve});
++  root.ThinkerStatus = Object.freeze({text, prop, attr, health, reserve, interaction});
+ })(globalThis);
+ (function(root){
+   'use strict';
+@@ -302,6 +347,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+     let pending = false;
+     const {text, prop, health} = root.ThinkerStatus;
+     const connection = health();
++    const actionFeedback = root.ThinkerStatus.interaction();
+     let reconnectTimer = null;
+     let interactive = false;
+     const document = root.document;
+@@ -330,9 +376,10 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+       });
+     }
+     async function refresh(force = false, initialize = false) {
+-      if (force && pending && !selecting) { interactive = true; render(); return; }
++      if (force && actionFeedback.active()) return;
++      if (force && pending && !selecting) { actionFeedback.begin(mounted?.querySelector("button"), mounted?.querySelector("select")); interactive = true; render(); return; }
+       if (pending || selecting || document?.hidden || (!force && !connection.due())) return;
+-      if (force) { connection.reset(); interactive = true; }
++      if (force) { actionFeedback.begin(mounted?.querySelector("button"), mounted?.querySelector("select")); connection.reset(); interactive = true; }
+       pending = true;
+       render();
+       const epoch = selectionEpoch;
+@@ -350,16 +397,21 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+       } catch (cause) {
+         if (epoch !== selectionEpoch) return;
+         if (cause.data?.engines) state = cause.data;
+-        if (connection.failure()) error = String(cause.message || cause);
++        const confirmed = connection.failure();
++        if (interactive || confirmed) error = String(cause.message || cause);
+       }
+       finally {
+-        pending = false; interactive = false; render();
++        if (interactive) await actionFeedback.wait();
++        pending = false;
++        const userRequest = interactive; interactive = false;
++        if (userRequest && !selecting) actionFeedback.finish(render, mounted?.querySelector("button"), mounted?.querySelector("select")); else render();
+         clearTimeout(reconnectTimer);
+         if (connection.snapshot().failures && !document?.hidden) reconnectTimer = setTimeout(() => refresh(), connection.delay());
+       }
+     }
+     async function selectPreference(engineId) {
+-      if (selecting || !state) return;
++      if (selecting || actionFeedback.active() || !state) return;
++      actionFeedback.begin(mounted?.querySelector("button"), mounted?.querySelector("select"));
+       attemptedEngineId = engineId;
+       savedUntil = 0;
+       if (feedbackTimer !== null) { clearTimeout(feedbackTimer); feedbackTimer = null; }
+@@ -369,13 +421,14 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+         if (!result.ok || result.selectedEngineId !== engineId) throw new Error('Preference was not acknowledged');
+         state = result;
+         attemptedEngineId = null;
++        await actionFeedback.wait();
+         savedUntil = performance.now() + 1500;
+         if (feedbackTimer !== null) clearTimeout(feedbackTimer);
+         feedbackTimer = setTimeout(() => { savedUntil = 0; feedbackTimer = null; render(); }, 1500);
+       } catch (cause) {
+         if (cause.data?.engines) state = cause.data;
+         error = String(cause.message || cause);
+-      } finally { selecting = false; render(); }
++      } finally { await actionFeedback.wait(); selecting = false; actionFeedback.finish(render, mounted?.querySelector("button"), mounted?.querySelector("select")); }
+     }
+     function render() {
+       const host = options.getHost?.();
+@@ -391,6 +444,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+         const message = doc.createElement('p'); message.id = 'tc-analysis-message'; message.setAttribute('role', 'status');
+         const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = 'Retry';
+         retry.addEventListener('click', () => {
++          if (actionFeedback.active() || selecting) return;
+           let operation;
+           if (attemptedEngineId && state?.engines?.find(engine => engine.id === attemptedEngineId)?.installed) operation = selectPreference(attemptedEngineId);
+           else { attemptedEngineId = null; operation = refresh(true); }
+@@ -399,7 +453,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+         });
+         select.addEventListener('change', () => selectPreference(select.value));
+         const stateLine = doc.createElement('span'); stateLine.className = 'tc-analysis-state';
+-        const feedback = doc.createElement('span'); feedback.className = 'tc-analysis-feedback'; feedback.setAttribute('aria-live', 'polite');
++        const feedback = doc.createElement('span'); feedback.className = 'tc-analysis-feedback'; feedback.setAttribute('aria-live', 'off');
+         const notice = doc.createElement('div'); notice.className = 'tc-analysis-notice';
+         notice.append(message, retry);
+         stateLine.append(status, feedback); heading.append(label, stateLine); mounted.append(heading, select, notice);
+@@ -407,6 +461,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+         if (caption) caption.after(mounted); else parent.prepend(mounted);
+         root.ThinkerStatus.reserve(status, ['Initializing','Switching','Unavailable','Active','Ready','Error'], 10);
+       }
++      actionFeedback.bind(mounted, mounted.querySelector(".tc-analysis-status"), mounted.querySelector("p"));
+       const select = mounted.querySelector('select');
+       const selected = state?.engines?.find(engine => engine.id === state.selectedEngineId);
+       if (state?.engines && select.options.length !== state.engines.length) {
+@@ -418,13 +473,13 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+       }
+       if (!selecting && state) prop(select, 'value', state.selectedEngineId);
+       prop(select, 'disabled', selecting || Boolean(error) || !state);
+-      text(mounted.querySelector('.tc-analysis-status'), selecting ? 'Switching' : interactive || pending && !state ? 'Initializing' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing');
+-      root.ThinkerStatus.attr(mounted.querySelector('.tc-analysis-status'), 'data-error', Boolean(error || selected?.initializationError));
++      text(mounted.querySelector('.tc-analysis-status'), actionFeedback.active() || interactive || pending && !state ? 'Initializing' : error ? 'Error' : selected?.initializationError ? 'Error' : selected ? selected.installed ? selected.runtimeReady && allowed() ? 'Active' : 'Ready' : 'Unavailable' : 'Initializing');
++      root.ThinkerStatus.attr(mounted.querySelector('.tc-analysis-status'), 'data-error', !actionFeedback.active() && Boolean(error || selected?.initializationError));
+       const hint = error || selected?.initializationError || (selected ? [selected.description?.split(' · ')[0], selected.name].filter(Boolean).join(' · ') : 'Checking installed engines…');
+       text(mounted.querySelector('p'), hint);
+       prop(mounted.querySelector('p'), 'title', hint);
+       text(mounted.querySelector('.tc-analysis-feedback'), performance.now() < savedUntil ? 'Preference saved.' : '');
+-      prop(mounted.querySelector('button'), 'hidden', !error);
++      prop(mounted.querySelector('button'), 'hidden', !error && !interactive);
+       prop(mounted.querySelector('button'), 'disabled', interactive || selecting);
+       root.ThinkerEnginePicker?.enhance(select);
+     }
+@@ -8303,7 +8358,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
+ })();
+ 
+ /* THINKER_SESSION_CONTROL_GENERATED_START */
+-globalThis.ThinkerClientVersion="2026-10-26.6";
++globalThis.ThinkerClientVersion="2026-10-27.1";
+ globalThis.ThinkerSessionControlReady=(async()=>{
+ (function(root){
+ "use strict";
+diff --git a/tests/browser/test_retry_baseline.mjs b/tests/browser/test_retry_baseline.mjs
+new file mode 100644
+index 0000000..3838d9d
+--- /dev/null
++++ b/tests/browser/test_retry_baseline.mjs
+@@ -0,0 +1,37 @@
++import {execFileSync} from 'node:child_process';
++import assert from 'node:assert/strict';
++import {spawn} from 'node:child_process';
++import {mkdtemp,mkdir,writeFile,readFile,rm} from 'node:fs/promises';
++import {tmpdir} from 'node:os';
++import {resolve,join} from 'node:path';
++import {createServer} from 'node:net';
++const root=resolve(import.meta.dirname,'../..'),before=process.argv.includes('--before');
++const output=join(root,'_bmad-output/implementation-artifacts/retry-header','baseline-timing');await mkdir(output,{recursive:true});
++const pause=ms=>new Promise(r=>setTimeout(r,ms));
++const port=()=>new Promise(r=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>r(p));});});
++const serverPort=await port(),debugPort=await port(),base=`http://127.0.0.1:${serverPort}`;
++const profile=await mkdtemp(join(tmpdir(),'thinker-config-entry-'));
++const preference=join(profile,'preferences.json');
++const server=spawn('python',['tests/clean_config_fixture.py',String(serverPort),'--preferences',preference],{cwd:root,stdio:'ignore',windowsHide:true});
++const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--disable-gpu','--no-first-run','--disable-background-timer-throttling',`--remote-debugging-port=${debugPort}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
++let client;const messages=[],exceptions=[],network=[];
++async function waitFor(test){for(let i=0;i<240;i++){try{if(await test())return;}catch{}await pause(100);}throw Error('Timeout');}
++async function connect(url){const socket=new WebSocket(url),pending=new Map(),handlers=new Map();let id=0;socket.addEventListener('message',e=>{const m=JSON.parse(e.data);handlers.get(m.method)?.(m.params);const p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(Error(m.error.message)):p.resolve(m.result);}});await new Promise(r=>socket.addEventListener('open',r,{once:true}));return{socket,on:(m,f)=>handlers.set(m,f),send:(method,params={})=>new Promise((resolve,reject)=>{pending.set(++id,{resolve,reject});socket.send(JSON.stringify({id,method,params}));})};}
++async function value(expression){const r=await client.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;}
++const reports=[];
++try{
++ await waitFor(async()=> (await fetch(base+'/config/load')).ok);await waitFor(async()=> (await fetch(`http://127.0.0.1:${debugPort}/json/list`)).ok);
++ const tab=(await(await fetch(`http://127.0.0.1:${debugPort}/json/list`)).json()).find(t=>t.type==='page');client=await connect(tab.webSocketDebuggerUrl);await client.send('Page.enable');await client.send('Runtime.enable');await client.send('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
++ const files={'/config':'frontend/external_config/index.html','/config/assets/panel.js':'frontend/external_config/panel.js','/config/assets/panel.css':'frontend/external_config/panel.css','/config/assets/status-runtime.js':'frontend/external_config/status-runtime.js','/script.js':'script.js'};
++ const baseline=Object.fromEntries(Object.entries(files).map(([url,path])=>[url,execFileSync('git',['show','cbee05a:'+path],{cwd:root,maxBuffer:2000000}).toString('base64')]));
++ let fault=false;await client.send('Fetch.enable',{patterns:[{urlPattern:base+'/config'},{urlPattern:'*config/assets/*'},{urlPattern:'*/script.js*'},{urlPattern:'*engines*'},{urlPattern:base+'/config/load'},{urlPattern:base+'/config/status'}]});client.on('Fetch.requestPaused',e=>{const path=new URL(e.request.url).pathname;if(baseline[path])client.send('Fetch.fulfillRequest',{requestId:e.requestId,responseCode:200,responseHeaders:[{name:'Content-Type',value:path==='/config'?'text/html':path.endsWith('css')?'text/css':'application/javascript'}],body:baseline[path]}).catch(()=>{});else client.send(fault?'Fetch.failRequest':'Fetch.continueRequest',{requestId:e.requestId,...(fault?{errorReason:'ConnectionRefused'}:{})}).catch(()=>{});});
++ for(const surface of ['config','console']){
++  fault=false;const status=surface==='config'?'#analysis-engine-state':'.tc-analysis-status',retry=surface==='config'?'#engine-retry':'.tc-analysis-notice button';
++  await client.send('Page.navigate',{url:base+(surface==='config'?'/config':'/tests/fixtures/userscript_bootstrap.html?delay=20')});await waitFor(()=>value(`document.querySelector('${status}')?.textContent==='Ready'`));
++  if(surface==='config')for(const width of [1440,1024,390]){await client.send('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});await pause(100);await client.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true}).then(r=>writeFile(join(output,`config-${width}-online.png`),Buffer.from(r.data,'base64')));}
++  fault=true;await waitFor(()=>value(`['Error','Connection Lost'].includes(document.querySelector('${status}').textContent)`));
++  if(surface==='config'){await waitFor(()=>value("document.querySelector('#connection').textContent==='Local server offline'"));for(const width of [1440,1024,390]){await client.send('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});await pause(100);await client.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true}).then(r=>writeFile(join(output,`config-${width}-offline.png`),Buffer.from(r.data,'base64')));}await client.send('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});}
++  for(const state of ['offline','online']){fault=state==='offline';await value(`(()=>{window.baselineEvents=[];window.baselineObserver?.disconnect();window.baselineStart=performance.now();const n=document.querySelector('${status}');window.baselineObserver=new MutationObserver(()=>baselineEvents.push({at:performance.now()-baselineStart,text:n.textContent}));baselineObserver.observe(n,{childList:true});document.querySelector('${retry}').click();})()`);await pause(700);reports.push({surface,state,events:await value('baselineEvents')});}
++ }
++ await writeFile(join(output,'report.json'),JSON.stringify({commit:'cbee05a',reports},null,2));console.log('PASS baseline offline and online Retry timing captured from original source');
++}finally{client?.socket.close();chrome.kill();server.kill();await pause(500);await rm(profile,{recursive:true,force:true,maxRetries:6,retryDelay:200});}
+diff --git a/tests/browser/test_retry_header.mjs b/tests/browser/test_retry_header.mjs
+new file mode 100644
+index 0000000..55e54e8
+--- /dev/null
++++ b/tests/browser/test_retry_header.mjs
+@@ -0,0 +1,49 @@
++import assert from 'node:assert/strict';
++import {spawn} from 'node:child_process';
++import {mkdtemp,mkdir,writeFile,readFile,rm} from 'node:fs/promises';
++import {tmpdir} from 'node:os';
++import {resolve,join} from 'node:path';
++import {createServer} from 'node:net';
++const root=resolve(import.meta.dirname,'../..'),before=process.argv.includes('--before');
++const output=join(root,'_bmad-output/implementation-artifacts/retry-header',before?'before':'after');await mkdir(output,{recursive:true});
++const pause=ms=>new Promise(r=>setTimeout(r,ms));
++const port=()=>new Promise(r=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>r(p));});});
++const serverPort=await port(),debugPort=await port(),base=`http://127.0.0.1:${serverPort}`;
++const profile=await mkdtemp(join(tmpdir(),'thinker-config-entry-'));
++const preference=join(profile,'preferences.json');
++const server=spawn('python',['tests/clean_config_fixture.py',String(serverPort),'--preferences',preference],{cwd:root,stdio:'ignore',windowsHide:true});
++const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--disable-gpu','--no-first-run','--disable-background-timer-throttling',`--remote-debugging-port=${debugPort}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
++let client;const messages=[],exceptions=[],network=[];
++async function waitFor(test){for(let i=0;i<240;i++){try{if(await test())return;}catch{}await pause(100);}throw Error('Timeout');}
++async function connect(url){const socket=new WebSocket(url),pending=new Map(),handlers=new Map();let id=0;socket.addEventListener('message',e=>{const m=JSON.parse(e.data);handlers.get(m.method)?.(m.params);const p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(Error(m.error.message)):p.resolve(m.result);}});await new Promise(r=>socket.addEventListener('open',r,{once:true}));return{socket,on:(m,f)=>handlers.set(m,f),send:(method,params={})=>new Promise((resolve,reject)=>{pending.set(++id,{resolve,reject});socket.send(JSON.stringify({id,method,params}));})};}
++async function value(expression){const r=await client.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;}
++const results=[];
++const geometry=()=>{
++ const rect=n=>n.getBoundingClientRect().toJSON();
++ const all=[...document.querySelectorAll('#panels>.panel,.kb-console-module,#oi-zone2,.kb-console-caption,.tc-scout-title')];
++ const rows=[...document.querySelectorAll('.control-row')].map(n=>{const c=n.querySelector('button,input'),label=n.querySelector('label,span'),r=rect(n),v=rect(c),l=rect(label);return{key:c.dataset.key,height:r.height,y:r.y,labelCenter:l.y+l.height/2,controlCenter:v.y+v.height/2,center:r.y+r.height/2,delta:v.y+v.height/2-r.y-r.height/2,paddingAbove:v.y-r.y,paddingBelow:r.bottom-v.bottom};});
++ return{panels:all.map(n=>({id:n.id,cls:n.className,rect:rect(n)})),rows,header:document.querySelector('.page-header')?{eyebrow:rect(document.querySelector('.eyebrow')),title:rect(document.querySelector('h1')),connection:rect(document.querySelector('.connection')),status:rect(document.querySelector('.connection-status')),notice:rect(document.querySelector('.connection-status .notice')),version:rect(document.querySelector('#client-build-state').parentElement),panelsTop:rect(document.querySelector('#panels')).top,topPadding:getComputedStyle(document.querySelector('main')).paddingTop}:null,overflow:document.documentElement.scrollWidth>innerWidth,colors:[...document.querySelectorAll('button,input,select,.tc-analysis-status,#analysis-engine-state')].map(n=>{const s=getComputedStyle(n);return{id:n.id,key:n.dataset.key,cls:String(n.className),color:s.color,background:s.backgroundColor,border:s.borderColor}})};
++};
++try{
++ await waitFor(async()=> (await fetch(base+'/config/load')).ok);await waitFor(async()=> (await fetch(`http://127.0.0.1:${debugPort}/json/list`)).ok);
++ const tab=(await(await fetch(`http://127.0.0.1:${debugPort}/json/list`)).json()).find(t=>t.type==='page');client=await connect(tab.webSocketDebuggerUrl);await client.send('Page.enable');await client.send('Runtime.enable');await client.send('Network.enable');await client.send('Emulation.setFocusEmulationEnabled',{enabled:true});
++ client.on('Runtime.exceptionThrown',e=>exceptions.push(e));client.on('Runtime.consoleAPICalled',e=>messages.push(e));let fault=false,count=0;await client.send('Fetch.enable',{patterns:[{urlPattern:'*config/engines*'},{urlPattern:'*eval-bar/engines*'}]});client.on('Fetch.requestPaused',e=>{count++;client.send(fault?'Fetch.failRequest':'Fetch.continueRequest',{requestId:e.requestId,...(fault?{errorReason:'ConnectionRefused'}:{})}).catch(()=>{});});
++ for(const surface of ['config','console']){
++  const status=surface==='config'?'#analysis-engine-state':'.tc-analysis-status',retry=surface==='config'?'#engine-retry':'.tc-analysis-notice button';
++  await fetch(base+'/qa/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({connected:true})});
++  await client.send('Page.navigate',{url:base+(surface==='config'?'/config':'/tests/fixtures/userscript_bootstrap.html?delay=20')});await waitFor(()=>value(`document.querySelector('${status}')?.textContent==='Ready'`));
++  const widths=surface==='config'?[1440,1280,1024,768,390]:[1086,1280,1440,1920,1033,800];
++  for(const width of widths)for(const banner of [false,true]){
++   await fetch(base+'/config/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({banner})});await pause(2200);await client.send('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});await pause(200);
++   results.push({surface,width,banner,...await value('('+geometry.toString()+')()')});
++   if(surface==='config'&&[1440,1024,390].includes(width)&&!banner)await client.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true}).then(r=>writeFile(join(output,`config-${width}-online.png`),Buffer.from(r.data,'base64')));
++  }
++  await client.send('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
++  fault=true;await waitFor(()=>value(`['Connection Lost','Error'].includes(document.querySelector('${status}')?.textContent)`));
++  await value(`window.qaTimeline=[];new MutationObserver(()=>qaTimeline.push({at:performance.now(),text:document.querySelector('${status}').textContent})).observe(document.querySelector('${status}'),{subtree:true,childList:true});window.qaStart=performance.now();document.querySelector('${retry}').focus();document.querySelector('${retry}').click();`);
++  const start=Date.now();for(const ms of [0,150,400,700,1000]){await pause(Math.max(0,ms-(Date.now()-start)));await client.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}).then(r=>writeFile(join(output,`${surface}-retry-${ms}.png`),Buffer.from(r.data,'base64')));}
++  await pause(200);const timeline=await value(`({start:qaStart,events:qaTimeline.map(e=>({...e,at:e.at-qaStart})),state:document.querySelector('${status}').textContent,animations:document.querySelector('${status}').getAnimations().length})`);results.push({surface,retryOffline:timeline});
++  fault=false;await value(`document.querySelector('${retry}').click()`);await waitFor(()=>value(`document.querySelector('${status}')?.textContent==='Ready'`));
++ }
++ await writeFile(join(output,'measurements.json'),JSON.stringify({results,messages,exceptions},null,2));assert.deepEqual(messages,[]);assert.deepEqual(exceptions,[]);console.log('PASS capture retry/header baseline '+results.length+' cases');
++}finally{client?.socket.close();chrome.kill();server.kill();await pause(500);await rm(profile,{recursive:true,force:true,maxRetries:6,retryDelay:200});}
+diff --git a/tests/browser/test_retry_interaction.mjs b/tests/browser/test_retry_interaction.mjs
+new file mode 100644
+index 0000000..e13a7c5
+--- /dev/null
++++ b/tests/browser/test_retry_interaction.mjs
+@@ -0,0 +1,49 @@
++import assert from 'node:assert/strict';
++import {spawn} from 'node:child_process';
++import {mkdtemp,mkdir,writeFile,readFile,rm} from 'node:fs/promises';
++import {tmpdir} from 'node:os';
++import {resolve,join} from 'node:path';
++import {createServer} from 'node:net';
++const root=resolve(import.meta.dirname,'../..'),before=process.argv.includes('--before');
++const output=join(root,'_bmad-output/implementation-artifacts/retry-header','interaction');await mkdir(output,{recursive:true});
++const pause=ms=>new Promise(r=>setTimeout(r,ms));
++const port=()=>new Promise(r=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>r(p));});});
++const serverPort=await port(),debugPort=await port(),base=`http://127.0.0.1:${serverPort}`;
++const profile=await mkdtemp(join(tmpdir(),'thinker-config-entry-'));
++const preference=join(profile,'preferences.json');
++const server=spawn('python',['tests/clean_config_fixture.py',String(serverPort),'--preferences',preference],{cwd:root,stdio:'ignore',windowsHide:true});
++const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--disable-gpu','--no-first-run','--disable-background-timer-throttling',`--remote-debugging-port=${debugPort}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
++let client;const messages=[],exceptions=[],network=[];
++async function waitFor(test){for(let i=0;i<240;i++){try{if(await test())return;}catch{}await pause(100);}throw Error('Timeout');}
++async function connect(url){const socket=new WebSocket(url),pending=new Map(),handlers=new Map();let id=0;socket.addEventListener('message',e=>{const m=JSON.parse(e.data);handlers.get(m.method)?.(m.params);const p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(Error(m.error.message)):p.resolve(m.result);}});await new Promise(r=>socket.addEventListener('open',r,{once:true}));return{socket,on:(m,f)=>handlers.set(m,f),send:(method,params={})=>new Promise((resolve,reject)=>{pending.set(++id,{resolve,reject});socket.send(JSON.stringify({id,method,params}));})};}
++async function value(expression){const r=await client.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;}
++const reports=[];
++try {
++ await waitFor(async()=> (await fetch(base+'/config/load')).ok);await waitFor(async()=> (await fetch(`http://127.0.0.1:${debugPort}/json/list`)).ok);
++ const tab=(await(await fetch(`http://127.0.0.1:${debugPort}/json/list`)).json()).find(t=>t.type==='page');client=await connect(tab.webSocketDebuggerUrl);await client.send('Page.enable');await client.send('Runtime.enable');await client.send('Network.enable');await client.send('Emulation.setFocusEmulationEnabled',{enabled:true});
++ client.on('Runtime.exceptionThrown',e=>exceptions.push(e));client.on('Runtime.consoleAPICalled',e=>messages.push(e));let fault=false,delay=0,count=0,posts=0;
++ await client.send('Fetch.enable',{patterns:[{urlPattern:'*config/engines*'},{urlPattern:'*eval-bar/engines*'}]});client.on('Fetch.requestPaused',e=>{count++;if(e.request.method==='POST')posts++;const fail=fault;setTimeout(()=>client.send(fail?'Fetch.failRequest':'Fetch.continueRequest',{requestId:e.requestId,...(fail?{errorReason:'ConnectionRefused'}:{})}).catch(()=>{}),delay);});
++ for(const surface of ['config','console']) {
++  fault=false;delay=0;
++  await client.send('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
++  const status=surface==='config'?'#analysis-engine-state':'.tc-analysis-status',retry=surface==='config'?'#engine-retry':'.tc-analysis-notice button',select=surface==='config'?'#analysis-engine':'#tc-analysis-engine';
++  await client.send('Page.navigate',{url:base+(surface==='config'?'/config':'/tests/fixtures/userscript_bootstrap.html?delay=20')});await waitFor(()=>value(`document.querySelector('${status}')?.textContent==='Ready'`));
++  fault=true;await waitFor(()=>value(`['Error','Connection Lost'].includes(document.querySelector('${status}').textContent)`));
++  for(const scenario of ['offline','reduced','online','switch','slow-switch','failed-switch']) {
++   const reduced=scenario==='reduced';fault=['offline','reduced','failed-switch'].includes(scenario);delay=scenario==='slow-switch'?1000:0;
++   await client.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:reduced?'reduce':'no-preference'}]});
++   await value(`(()=>{window.qa={events:[],announcements:[],shifts:[],cls:0,start:performance.now()};const n=document.querySelector('${status}');window.qaObserver?.disconnect();window.qaObserver=new MutationObserver(()=>qa.events.push({at:performance.now()-qa.start,text:n.textContent}));qaObserver.observe(n,{childList:true,subtree:true});const region=n.closest('.analysis-engine,.tc-analysis-selector');const live=[...region.querySelectorAll('[aria-live="polite"]')].at(-1);window.qaLiveObserver?.disconnect();window.qaLiveObserver=new MutationObserver(()=>{if(live.textContent)qa.announcements.push(live.textContent)});qaLiveObserver.observe(live,{childList:true,subtree:true});window.qaPerf?.disconnect();window.qaPerf=new PerformanceObserver(l=>{for(const e of l.getEntries())if(!e.hadRecentInput){qa.cls+=e.value;qa.shifts.push({value:e.value,sources:e.sources.map(s=>({id:s.node?.id,cls:s.node?.className,previous:s.previousRect.toJSON(),current:s.currentRect.toJSON()}))})}});qaPerf.observe({type:'layout-shift'});})()`);
++   const initialCount=count,initialPosts=posts;
++   await value(`(()=>{const n=document.querySelector('${retry}');${scenario.includes('switch')?`const s=document.querySelector('${select}');document.getElementById(s.id+'-picker').focus({preventScroll:true});s.value=s.value==='komodo-14.1'?'stockfish-19-1mb':'komodo-14.1';s.dispatchEvent(new Event('change',{bubbles:true}));`:`n.focus({preventScroll:true});for(let i=0;i<6;i++)n.click();`}})()`);
++   await pause(80);assert.equal(await value(`document.querySelector('${status}').textContent`),'Initializing');
++   await pause(680);const during=await value(`({text:document.querySelector('${status}').textContent,animations:document.querySelector('${status}').getAnimations().map(a=>a.effect.getTiming().duration),busy:document.querySelector('${status}').closest('.analysis-engine,.tc-analysis-selector').getAttribute('aria-busy')})`);
++   await waitFor(()=>value(`document.querySelector('${status}').textContent!=='Initializing'`));await pause(220);
++   const r=await value(`({...qa,final:document.querySelector('${status}').textContent,animations:document.querySelector('${status}').getAnimations().length,focus:document.activeElement.id||(document.activeElement.tagName==='BUTTON'?document.activeElement.textContent:document.activeElement.tagName),disabled:document.querySelector('${retry}').disabled})`);
++   const final=r.events.find(e=>e.text!=='Initializing');const init=r.events.find(e=>e.text==='Initializing');assert(final&&init);assert(final.at-init.at>=699,JSON.stringify(r));assert.equal(r.animations,0);assert.equal(r.cls,0,JSON.stringify({surface,scenario,r}));assert.equal(r.announcements.length,1,JSON.stringify({surface,scenario,r}));assert.equal(scenario.includes('switch')?posts-initialPosts:count-initialCount,1,JSON.stringify({surface,scenario,r,count,initialCount,posts,initialPosts}));assert.equal(r.disabled,false);if(reduced)assert.deepEqual(during.animations,[]);else if(scenario!=='slow-switch')assert.deepEqual(during.animations,[180]);
++   if(!scenario.includes('switch')||scenario==='failed-switch')assert(r.focus===(fault?(surface==='config'?'engine-retry':'Retry'):select.slice(1)+'-picker'),r.focus);
++   reports.push({surface,scenario,during,requests:count-initialCount,...r});
++  }
++  delay=0;fault=false;
++ }
++ assert.deepEqual(messages,[]);assert.deepEqual(exceptions,[]);await writeFile(join(output,'report.json'),JSON.stringify({reports,messages,exceptions},null,2));console.log('PASS explicit Retry/selection minimum700ms,180ms fade,reduced motion,single attempt/final announcement,focus,CLS0');
++} finally {client?.socket.close();chrome.kill();server.kill();await pause(500);await rm(profile,{recursive:true,force:true,maxRetries:6,retryDelay:200});}

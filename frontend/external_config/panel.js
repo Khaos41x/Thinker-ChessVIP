@@ -13,14 +13,33 @@
   globalThis.ThinkerStatus.reserve(byId('execution-state'), ['Analysis: unavailable','Analysis: running','Analysis: inactive']);
   globalThis.ThinkerStatus.reserve(byId('analysis-engine-state'), ['Initializing','Switching','Connection Lost','Unavailable','Active','Ready','Error'], 10);
   const connectionHealth = health(), registryHealth = health();
-  let versionAccepted = false;
+  let buildStatus = null, buildKey = null;
   function reserveVersionLine() {
-    const node = byId('client-build-state'), line = node.parentElement, clone = line.cloneNode(true);
-    Object.assign(clone.style,{position:'fixed',visibility:'hidden',width:line.clientWidth+'px',height:'auto',minHeight:'0',margin:'0'});
-    for (const child of clone.children) child.style.cssText='display:inline;width:auto;height:auto;white-space:normal;overflow:visible;vertical-align:baseline;-webkit-line-clamp:unset';
-    document.body.append(clone);
-    const height=Math.round(clone.getBoundingClientRect().height);clone.remove();
-    line.style.height=height+'px';node.style.height=height+'px';node.style.webkitLineClamp=String(Math.max(1,Math.round(height/17)));
+    const node = byId('client-build-state'), line = node.parentElement;
+    const main = document.querySelector('main');
+    let inset;
+    if (line.hidden) inset = 25;
+    else {
+      const clone = document.createElement('p'); clone.className = 'hint';
+      Object.assign(clone.style,{position:'fixed',visibility:'hidden',width:line.clientWidth+'px',height:'auto',margin:'0'});
+      clone.append(document.createTextNode(node.textContent + ' · ' + byId('userscript-update').textContent));
+      document.body.append(clone);
+      const previous = Math.round(clone.getBoundingClientRect().height); clone.remove();
+      inset = previous - Math.round(line.getBoundingClientRect().height);
+    }
+    const value = inset + 'px';
+    if (main.style.getPropertyValue('--version-inset') !== value) main.style.setProperty('--version-inset', value);
+  }
+  function renderBuild(status) {
+    buildStatus = status;
+    const key = JSON.stringify([status.serverVersion,status.userscriptConnected,status.userscriptUpdateRequired,status.userscriptVersion]);
+    if (key === buildKey) return;
+    buildKey = key;
+    setText(byId('client-build-state'), !status.serverVersion ? 'Restart the local server to verify the installed userscript.' : !status.userscriptConnected ? `Local version ${status.serverVersion} · Reload Chess.com after updating the userscript.` : status.userscriptUpdateRequired ? `Userscript update required · local version ${status.serverVersion}, browser ${status.userscriptVersion || 'not verified'}.` : `Userscript ${status.userscriptVersion} · up to date`);
+    prop(byId('client-build-state'), 'title', byId('client-build-state').textContent);
+    setText(byId('userscript-update'), status.userscriptUpdateRequired ? 'Update userscript now' : 'Install / update userscript');
+    prop(byId('client-build-state').parentElement, 'hidden', Boolean(status.serverVersion && status.userscriptConnected && !status.userscriptUpdateRequired));
+    reserveVersionLine();
   }
   const engineFeedback = globalThis.ThinkerStatus.interaction();
   engineFeedback.bind(document.querySelector(".analysis-engine"), byId("analysis-engine-state"), byId("analysis-engine-message"));
@@ -299,15 +318,13 @@
       attr(document.querySelector('.connection'), 'data-state', 'synced');
       setText(byId('connection'), 'Local server connected');
       setText(byId('userscript-connection'), status.userscriptConnected ? 'Chess.com: connected' : 'Chess.com: disconnected');
-      setText(byId('client-build-state'), !status.serverVersion ? 'Restart the local server to verify the installed userscript.' : !status.userscriptConnected ? `Local version ${status.serverVersion} · Reload Chess.com after updating the userscript.` : status.userscriptUpdateRequired ? `Userscript update required · local version ${status.serverVersion}, browser ${status.userscriptVersion || 'not verified'}.` : `Userscript ${status.userscriptVersion} · up to date`);
-      prop(byId('client-build-state'), 'title', byId('client-build-state').textContent);
-      setText(byId('userscript-update'), status.userscriptUpdateRequired ? 'Update userscript now' : 'Install / update userscript');
-      if (!versionAccepted) { reserveVersionLine(); versionAccepted = true; }
+      renderBuild(status);
       renderSession(status.sessionConnected ? status.sessionProjection : null);
     } catch (_) {
       if (connectionHealth.failure()) {
         renderSession(null);
         setText(byId('userscript-connection'), 'Chess.com: connection unknown');
+        if (buildStatus) renderBuild({...buildStatus,userscriptConnected:false});
         attr(document.querySelector('.connection'), 'data-state', 'offline');
         setText(byId('connection'), 'Local server offline');
         message('Cannot reach the local server. Check that it is running.', true);

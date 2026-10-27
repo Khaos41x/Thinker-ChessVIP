@@ -1,0 +1,171 @@
+surface,width,banner,panel,before_x,after_x,before_y,after_y,before_width,after_width,before_height,after_height
+config,1440,False,core,277,277,196,196,429,429,175,175
+config,1440,False,engine,718,718,196,196,430,430,476,476
+config,1440,False,visuals,277,277,383,383,429,429,239,215
+config,1440,False,workspace,277,277,634,610,429,429,119,119
+config,1440,False,autoplay,277,277,765,741,871,871,268,268
+config,1440,True,core,277,284,196,196,429,430,175,175
+config,1440,True,engine,718,726,196,196,430,430,476,476
+config,1440,True,visuals,277,284,383,383,429,430,239,215
+config,1440,True,workspace,277,284,634,610,429,430,119,119
+config,1440,True,autoplay,277,284,765,741,871,872,268,268
+config,1280,False,core,197,197,196,196,429,429,175,175
+config,1280,False,engine,638,638,196,196,430,430,476,476
+config,1280,False,visuals,197,197,383,383,429,429,239,215
+config,1280,False,workspace,197,197,634,610,429,429,119,119
+config,1280,False,autoplay,197,197,765,741,871,871,268,268
+config,1280,True,core,197,197,196,196,429,429,175,175
+config,1280,True,engine,638,638,196,196,430,430,476,476
+config,1280,True,visuals,197,197,383,383,429,429,239,215
+config,1280,True,workspace,197,197,634,610,429,429,119,119
+config,1280,True,autoplay,197,197,765,741,871,871,268,268
+config,1024,False,core,69,69,196,196,429,429,175,175
+config,1024,False,engine,510,510,196,196,430,430,476,476
+config,1024,False,visuals,69,69,383,383,429,429,239,215
+config,1024,False,workspace,69,69,634,610,429,429,119,119
+config,1024,False,autoplay,69,69,765,741,871,871,268,268
+config,1024,True,core,69,76,196,196,429,430,175,175
+config,1024,True,engine,510,518,196,196,430,430,476,476
+config,1024,True,visuals,69,76,383,383,429,430,239,215
+config,1024,True,workspace,69,76,634,610,429,430,119,119
+config,1024,True,autoplay,69,76,765,741,871,872,268,268
+config,768,False,core,24,24,196,196,705,705,175,175
+config,768,False,engine,24,24,383,383,705,705,476,476
+config,768,False,visuals,24,24,871,871,705,705,239,215
+config,768,False,workspace,24,24,1122,1098,705,705,119,119
+config,768,False,autoplay,24,24,1253,1229,705,705,268,268
+config,768,True,core,24,24,196,196,705,705,175,175
+config,768,True,engine,24,24,383,383,705,705,476,476
+config,768,True,visuals,24,24,871,871,705,705,239,215
+config,768,True,workspace,24,24,1122,1098,705,705,119,119
+config,768,True,autoplay,24,24,1253,1229,705,705,268,268
+config,390,False,core,12,12,208,208,351,351,175,175
+config,390,False,engine,12,12,395,395,351,351,476,476
+config,390,False,visuals,12,12,883,883,351,351,239,215
+config,390,False,workspace,12,12,1134,1110,351,351,119,119
+config,390,False,autoplay,12,12,1265,1241,351,351,402,402
+config,390,True,core,12,12,208,208,351,366,175,175
+config,390,True,engine,12,12,395,395,351,366,476,476
+config,390,True,visuals,12,12,883,883,351,366,239,215
+config,390,True,workspace,12,12,1134,1110,351,366,119,119
+config,390,True,autoplay,12,12,1265,1241,351,366,402,402
+console,1086,False,kb-console-module kb-core-module,38,38,1012,1012,345,345,171,171
+console,1086,False,kb-console-caption,51,51,1025,1025,319,319,25,25
+console,1086,False,kb-console-module kb-visuals-module,38,38,1195,1195,345,345,211,211
+console,1086,False,kb-console-caption,51,51,1208,1208,319,319,25,25
+console,1086,False,kb-console-module kb-engine-module,395,395,1012,1012,359,359,394,394
+console,1086,False,kb-console-caption,408,408,1025,1025,333,333,25,25
+console,1086,False,kb-session-panel,38,38,1418,1418,716,716,252,252
+console,1086,False,kb-auto-play-title,51,51,1431,1431,690,690,25,25
+console,1086,False,oi-zone2,766,766,1012,1012,282,282,658,658
+console,1086,False,tc-scout-title,779,779,1025,1025,256,256,25,25
+console,1086,True,kb-console-module kb-core-module,38,38,1012,1012,345,345,171,171
+console,1086,True,kb-console-caption,51,51,1025,1025,319,319,25,25
+console,1086,True,kb-console-module kb-visuals-module,38,38,1195,1195,345,345,211,211
+console,1086,True,kb-console-caption,51,51,1208,1208,319,319,25,25
+console,1086,True,kb-console-module kb-engine-module,395,395,1012,1012,359,359,394,394
+console,1086,True,kb-console-caption,408,408,1025,1025,333,333,25,25
+console,1086,True,kb-session-panel,38,38,1418,1418,716,716,252,252
+console,1086,True,kb-auto-play-title,51,51,1431,1431,690,690,25,25
+console,1086,True,oi-zone2,766,766,1012,1012,282,282,658,658
+console,1086,True,tc-scout-title,779,779,1025,1025,256,256,25,25
+console,1280,False,kb-console-module kb-core-module,135,135,1012,1012,345,345,171,171
+console,1280,False,kb-console-caption,148,148,1025,1025,319,319,25,25
+console,1280,False,kb-console-module kb-visuals-module,135,135,1195,1195,345,345,211,211
+console,1280,False,kb-console-caption,148,148,1208,1208,319,319,25,25
+console,1280,False,kb-console-module kb-engine-module,492,492,1012,1012,345,345,394,394
+console,1280,False,kb-console-caption,505,505,1025,1025,319,319,25,25
+console,1280,False,kb-session-panel,135,135,1418,1418,702,702,252,252
+console,1280,False,kb-auto-play-title,148,148,1431,1431,676,676,25,25
+console,1280,False,oi-zone2,849,849,1012,1012,296,296,658,658
+console,1280,False,tc-scout-title,862,862,1025,1025,270,270,25,25
+console,1280,True,kb-console-module kb-core-module,135,135,1012,1012,345,345,171,171
+console,1280,True,kb-console-caption,148,148,1025,1025,319,319,25,25
+console,1280,True,kb-console-module kb-visuals-module,135,135,1195,1195,345,345,211,211
+console,1280,True,kb-console-caption,148,148,1208,1208,319,319,25,25
+console,1280,True,kb-console-module kb-engine-module,492,492,1012,1012,345,345,394,394
+console,1280,True,kb-console-caption,505,505,1025,1025,319,319,25,25
+console,1280,True,kb-session-panel,135,135,1418,1418,702,702,252,252
+console,1280,True,kb-auto-play-title,148,148,1431,1431,676,676,25,25
+console,1280,True,oi-zone2,849,849,1012,1012,296,296,658,658
+console,1280,True,tc-scout-title,862,862,1025,1025,270,270,25,25
+console,1440,False,kb-console-module kb-core-module,215,215,1012,1012,345,345,171,171
+console,1440,False,kb-console-caption,228,228,1025,1025,319,319,25,25
+console,1440,False,kb-console-module kb-visuals-module,215,215,1195,1195,345,345,211,211
+console,1440,False,kb-console-caption,228,228,1208,1208,319,319,25,25
+console,1440,False,kb-console-module kb-engine-module,572,572,1012,1012,345,345,394,394
+console,1440,False,kb-console-caption,585,585,1025,1025,319,319,25,25
+console,1440,False,kb-session-panel,215,215,1418,1418,702,702,252,252
+console,1440,False,kb-auto-play-title,228,228,1431,1431,676,676,25,25
+console,1440,False,oi-zone2,929,929,1012,1012,296,296,658,658
+console,1440,False,tc-scout-title,942,942,1025,1025,270,270,25,25
+console,1440,True,kb-console-module kb-core-module,215,215,1012,1012,345,345,171,171
+console,1440,True,kb-console-caption,228,228,1025,1025,319,319,25,25
+console,1440,True,kb-console-module kb-visuals-module,215,215,1195,1195,345,345,211,211
+console,1440,True,kb-console-caption,228,228,1208,1208,319,319,25,25
+console,1440,True,kb-console-module kb-engine-module,572,572,1012,1012,345,345,394,394
+console,1440,True,kb-console-caption,585,585,1025,1025,319,319,25,25
+console,1440,True,kb-session-panel,215,215,1418,1418,702,702,252,252
+console,1440,True,kb-auto-play-title,228,228,1431,1431,676,676,25,25
+console,1440,True,oi-zone2,929,929,1012,1012,296,296,658,658
+console,1440,True,tc-scout-title,942,942,1025,1025,270,270,25,25
+console,1920,False,kb-console-module kb-core-module,455,455,1012,1012,345,345,171,171
+console,1920,False,kb-console-caption,468,468,1025,1025,319,319,25,25
+console,1920,False,kb-console-module kb-visuals-module,455,455,1195,1195,345,345,211,211
+console,1920,False,kb-console-caption,468,468,1208,1208,319,319,25,25
+console,1920,False,kb-console-module kb-engine-module,812,812,1012,1012,345,345,394,394
+console,1920,False,kb-console-caption,825,825,1025,1025,319,319,25,25
+console,1920,False,kb-session-panel,455,455,1418,1418,702,702,252,252
+console,1920,False,kb-auto-play-title,468,468,1431,1431,676,676,25,25
+console,1920,False,oi-zone2,1169,1169,1012,1012,296,296,658,658
+console,1920,False,tc-scout-title,1182,1182,1025,1025,270,270,25,25
+console,1920,True,kb-console-module kb-core-module,455,455,1012,1012,345,345,171,171
+console,1920,True,kb-console-caption,468,468,1025,1025,319,319,25,25
+console,1920,True,kb-console-module kb-visuals-module,455,455,1195,1195,345,345,211,211
+console,1920,True,kb-console-caption,468,468,1208,1208,319,319,25,25
+console,1920,True,kb-console-module kb-engine-module,812,812,1012,1012,345,345,394,394
+console,1920,True,kb-console-caption,825,825,1025,1025,319,319,25,25
+console,1920,True,kb-session-panel,455,455,1418,1418,702,702,252,252
+console,1920,True,kb-auto-play-title,468,468,1431,1431,676,676,25,25
+console,1920,True,oi-zone2,1169,1169,1012,1012,296,296,658,658
+console,1920,True,tc-scout-title,1182,1182,1025,1025,270,270,25,25
+console,1033,False,kb-console-module kb-core-module,12,12,1124,1124,1009,1009,171,171
+console,1033,False,kb-console-caption,25,25,1137,1137,983,983,25,25
+console,1033,False,kb-console-module kb-visuals-module,12,12,1307,1307,1009,1009,211,211
+console,1033,False,kb-console-caption,25,25,1320,1320,983,983,25,25
+console,1033,False,kb-console-module kb-engine-module,12,12,1530,1530,1009,1009,394,394
+console,1033,False,kb-console-caption,25,25,1543,1543,983,983,25,25
+console,1033,False,kb-session-panel,12,12,1936,1936,1009,1009,252,252
+console,1033,False,kb-auto-play-title,25,25,1949,1949,983,983,25,25
+console,1033,False,oi-zone2,12,12,2200,2200,1009,1009,115,115
+console,1033,False,tc-scout-title,25,25,2213,2213,983,983,25,25
+console,1033,True,kb-console-module kb-core-module,12,12,1124,1124,1009,1009,171,171
+console,1033,True,kb-console-caption,25,25,1137,1137,983,983,25,25
+console,1033,True,kb-console-module kb-visuals-module,12,12,1307,1307,1009,1009,211,211
+console,1033,True,kb-console-caption,25,25,1320,1320,983,983,25,25
+console,1033,True,kb-console-module kb-engine-module,12,12,1530,1530,1009,1009,394,394
+console,1033,True,kb-console-caption,25,25,1543,1543,983,983,25,25
+console,1033,True,kb-session-panel,12,12,1936,1936,1009,1009,252,252
+console,1033,True,kb-auto-play-title,25,25,1949,1949,983,983,25,25
+console,1033,True,oi-zone2,12,12,2200,2200,1009,1009,115,115
+console,1033,True,tc-scout-title,25,25,2213,2213,983,983,25,25
+console,800,False,kb-console-module kb-core-module,12,12,1124,1124,776,776,171,171
+console,800,False,kb-console-caption,25,25,1137,1137,750,750,25,25
+console,800,False,kb-console-module kb-visuals-module,12,12,1307,1307,776,776,211,211
+console,800,False,kb-console-caption,25,25,1320,1320,750,750,25,25
+console,800,False,kb-console-module kb-engine-module,12,12,1530,1530,776,776,394,394
+console,800,False,kb-console-caption,25,25,1543,1543,750,750,25,25
+console,800,False,kb-session-panel,12,12,1936,1936,776,776,252,252
+console,800,False,kb-auto-play-title,25,25,1949,1949,750,750,25,25
+console,800,False,oi-zone2,12,12,2200,2200,776,776,115,115
+console,800,False,tc-scout-title,25,25,2213,2213,750,750,25,25
+console,800,True,kb-console-module kb-core-module,12,12,1124,1124,776,776,171,171
+console,800,True,kb-console-caption,25,25,1137,1137,750,750,25,25
+console,800,True,kb-console-module kb-visuals-module,12,12,1307,1307,776,776,211,211
+console,800,True,kb-console-caption,25,25,1320,1320,750,750,25,25
+console,800,True,kb-console-module kb-engine-module,12,12,1530,1530,776,776,394,394
+console,800,True,kb-console-caption,25,25,1543,1543,750,750,25,25
+console,800,True,kb-session-panel,12,12,1936,1936,776,776,252,252
+console,800,True,kb-auto-play-title,25,25,1949,1949,750,750,25,25
+console,800,True,oi-zone2,12,12,2200,2200,776,776,115,115
+console,800,True,tc-scout-title,25,25,2213,2213,750,750,25,25

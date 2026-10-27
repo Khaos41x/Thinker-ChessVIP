@@ -37,6 +37,7 @@ try{
    await fetch(base+'/config/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({banner})});await pause(2200);await client.send('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});await pause(200);
    const current={surface,width,banner,...await value('('+geometry.toString()+')()')};results.push(current);
    if(!before&&surface==='config'){assert.equal(await value("document.querySelector('#banner-display-state')"),null);assert(current.rows.every(r=>r.height===40&&r.delta===0));const original=JSON.parse(await readFile(join(output,'../before/measurements.json'),'utf8')).results.find(r=>r.surface===surface&&r.width===width&&r.banner===banner);assert.equal(current.panels.find(p=>p.id==='visuals').rect.height,original.panels.find(p=>p.id==='visuals').rect.height-24);}
+   if(!before){const original=JSON.parse(await readFile(join(output,'../before/measurements.json'),'utf8')).results.find(r=>r.surface===surface&&r.width===width&&r.banner===banner);assert.deepEqual(current.colors,original.colors);if(surface==='console')assert.deepEqual(current.panels,original.panels);else assert.equal(current.header.panelsTop,original.header.panelsTop);}
    if(surface==='config'&&[1440,1024,390].includes(width)&&!banner)await client.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true}).then(r=>writeFile(join(output,`config-${width}-online.png`),Buffer.from(r.data,'base64')));
   }
   if(process.argv.includes('--banner-only'))continue;

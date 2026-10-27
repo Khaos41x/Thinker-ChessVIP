@@ -2,9 +2,9 @@
 title: Retry rhythm, Banner hint removal and current-version header cleanup
 type: bugfix
 created: 2026-10-27
-status: in-progress
+status: done
 baseline_commit: cbee05a
-review_loop_iteration: 0
+review_loop_iteration: 1
 context: []
 ---
 
@@ -37,15 +37,39 @@ Preserve all existing copy except expressly authorized removals. No new visible 
 - tests/browser/test_retry_header.mjs: real Flask/isolated Chromium geometry, timing and screenshots.
 
 ## Tasks & Acceptance
-- [ ] Shared explicit-action minimum, final fade, reduced-motion, focus and single announcement.
-- [ ] Keep background health/backoff and zero mutation contract.
-- [ ] Remove Banner hint creation/update and dangling description; preserve switch.
-- [ ] Hide only current userscript row; left-align remaining link; preserve panel top in current state.
-- [ ] Compare console rectangles/colors and Config rows across requested widths.
-- [ ] Capture before/after screenshots and Retry frame strip; report infeasible alignment constraints.
-- [ ] Three commits, one per item; deterministic generated userscript.
+- [x] Shared explicit-action minimum, final fade, reduced-motion, focus and single announcement.
+- [x] Keep background health/backoff and zero mutation contract.
+- [x] Remove Banner hint creation/update and dangling description; preserve switch.
+- [x] Hide only current userscript row; left-align remaining link; preserve panel top in current state.
+- [x] Compare console rectangles/colors and Config rows across requested widths.
+- [x] Capture before/after screenshots and Retry frame strip; report infeasible alignment constraints.
+- [x] Three commits, one per item; deterministic generated userscript.
 
 Given stable background polling, indicators never change for identical responses. Given a user action, Initializing stays visible>=700ms and only final status announces. Given Banner on/off, Config control row40px and center delta0; console geometry unaffected. Given current version row removal, first panel y equals baseline and final header gap12px.
 
 ## Verification
 Use real Flask fixture with actual frontend/userscript and Chromium CDP, plus existing60s status regression. Network faults are injected, never competitive gameplay. No authenticated Tampermonkey claim without direct verification. Browser-generated fetch refusal logs are distinguished from JS production messages. All new screenshots/results live under retry-header, preserving unrelated artifacts.
+
+## Review disposition
+Two independent reviewers identified focus lost after failed keyboard selection and completion stealing focus from another control. Both were fixed in the shared interaction helper and validated with failed-selection tests. Alignment and narrow update guidance constraints were reported with previews, not silently compensated. Three local item commits; no push.
+
+## Suggested Review Order
+
+- Shared minimum duration, final fade, announcement and focus.
+  [status-runtime.js:12](../../frontend/external_config/status-runtime.js#L12)
+
+- Console explicit actions retain background polling behavior.
+  [engine-selection.js:36](../../frontend/eval_bar/engine-selection.js#L36)
+
+- Current-version visibility and header compensation.
+  [panel.js:33](../../frontend/external_config/panel.js#L33)
+
+- Banner switch keeps accessible name and persisted state.
+  [panel.js:339](../../frontend/external_config/panel.js#L339)
+
+- Retry timing, keyboard failure, reduced motion and CLS regressions.
+  [test_retry_interaction.mjs:20](../../tests/browser/test_retry_interaction.mjs#L20)
+
+- Responsive guidance and isolated proposal screenshots.
+  [test_header_states.mjs:26](../../tests/browser/test_header_states.mjs#L26)
+
