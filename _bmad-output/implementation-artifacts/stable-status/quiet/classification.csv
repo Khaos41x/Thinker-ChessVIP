@@ -1,0 +1,17 @@
+state,level,source,classification,messages,exceptions
+without-userscript,none,faithful GM relay / isolated product,no production console calls,0,0
+ready,none,faithful GM relay / isolated product,no production console calls,0,0
+#st-on,none,faithful GM relay / isolated product,no production console calls,0,0
+#st-off,none,faithful GM relay / isolated product,no production console calls,0,0
+#sp-on,none,faithful GM relay / isolated product,no production console calls,0,0
+#sp-off,none,faithful GM relay / isolated product,no production console calls,0,0
+arrow-color,none,faithful GM relay / isolated product,no production console calls,0,0
+engine-komodo-14.1,none,faithful GM relay / isolated product,no production console calls,0,0
+engine-stockfish-19-1mb,none,faithful GM relay / isolated product,no production console calls,0,0
+minimized-class-contract,none,faithful GM relay / isolated product,no production console calls,0,0
+hidden-visible,none,faithful GM relay / isolated product,no production console calls,0,0
+server-off/error,none,faithful GM relay / isolated product,no production console calls,0,0
+automatic-reconnected-pending-setting-saved,none,faithful GM relay / isolated product,no production console calls,0,0
+reload,none,faithful GM relay / isolated product,no production console calls,0,0
+config-ready,none,faithful GM relay / isolated product,no production console calls,0,0
+config-reload,none,faithful GM relay / isolated product,no production console calls,0,0

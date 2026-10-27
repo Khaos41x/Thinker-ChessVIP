@@ -1,0 +1,727 @@
+{
+  "passed": true,
+  "states": [
+    {
+      "state": "without-userscript",
+      "messages": 0,
+      "exceptions": 0
+    },
+    {
+      "state": "ready",
+      "messages": 0
+    },
+    {
+      "state": "#st-on",
+      "messages": 0
+    },
+    {
+      "state": "#st-off",
+      "messages": 0
+    },
+    {
+      "state": "#sp-on",
+      "messages": 0
+    },
+    {
+      "state": "#sp-off",
+      "messages": 0
+    },
+    {
+      "state": "arrow-color",
+      "messages": 0
+    },
+    {
+      "state": "engine-komodo-14.1",
+      "messages": 0
+    },
+    {
+      "state": "engine-stockfish-19-1mb",
+      "messages": 0
+    },
+    {
+      "state": "minimized-class-contract",
+      "messages": 0
+    },
+    {
+      "state": "hidden-visible",
+      "messages": 0
+    },
+    {
+      "state": "server-off/error",
+      "messages": 0,
+      "pollRequests": 21,
+      "backoff": true
+    },
+    {
+      "state": "automatic-reconnected-pending-setting-saved",
+      "messages": 0
+    },
+    {
+      "state": "reload",
+      "messages": 0
+    },
+    {
+      "state": "config-ready",
+      "messages": 0
+    },
+    {
+      "state": "config-reload",
+      "messages": 0
+    }
+  ],
+  "messages": [],
+  "browserMessages": [],
+  "exceptions": [],
+  "network": [],
+  "requests": [
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "at": 1793104178128,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104178132,
+      "channel": "workspace-sync",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104178143,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104178172,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/save",
+      "method": "POST",
+      "at": 1793104178181,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/save",
+      "method": "POST",
+      "at": 1793104178343,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/save",
+      "method": "POST",
+      "at": 1793104178518,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/save",
+      "method": "POST",
+      "at": 1793104178686,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/save",
+      "method": "POST",
+      "at": 1793104178853,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/eval-bar/engines/preference",
+      "method": "POST",
+      "at": 1793104179112,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104179205,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104179228,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/eval-bar/engines/preference",
+      "method": "POST",
+      "at": 1793104179240,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104180260,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104180265,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104181277,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104181282,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104181562,
+      "channel": "workspace-sync",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104182291,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104182295,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104183305,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104183311,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104183550,
+      "channel": "workspace-sync",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "at": 1793104183822,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104183823,
+      "channel": "workspace-sync",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104184321,
+      "channel": "session-relay",
+      "failed": true
+    },
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "at": 1793104185552,
+      "failed": true
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104186337,
+      "channel": "workspace-sync",
+      "failed": true
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104186339,
+      "channel": "session-relay",
+      "failed": true
+    },
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "at": 1793104187564,
+      "failed": true
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104190351,
+      "channel": "session-relay",
+      "failed": true
+    },
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "at": 1793104191579,
+      "failed": true
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104198366,
+      "channel": "session-relay",
+      "failed": true
+    },
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "at": 1793104199596,
+      "failed": true
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104214380,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104214386,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104215396,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104215401,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "at": 1793104215609,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104216410,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104216415,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104217428,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104217432,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "at": 1793104217551,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104218441,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104218446,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104219459,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104219464,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "at": 1793104219552,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104220472,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104220477,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104221486,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104221490,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "at": 1793104221548,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104222501,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104222505,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104223518,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104223523,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "at": 1793104223551,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104224532,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104224537,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104225550,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "at": 1793104225551,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104225554,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104226561,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104226567,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "at": 1793104227549,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104227577,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104227582,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104228383,
+      "channel": "workspace-sync",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104228388,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/save",
+      "method": "POST",
+      "at": 1793104228389,
+      "status": 409,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104228392,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104229412,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104229416,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "at": 1793104229550,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/save",
+      "method": "POST",
+      "at": 1793104230395,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104230403,
+      "channel": "workspace-sync",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104230426,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104230430,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/save",
+      "method": "POST",
+      "at": 1793104230468,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/eval-bar/engines",
+      "method": "GET",
+      "at": 1793104231145,
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104231147,
+      "channel": "workspace-sync",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/load",
+      "method": "GET",
+      "at": 1793104231155,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    },
+    {
+      "path": "/config/session/bridge",
+      "method": "POST",
+      "at": 1793104231168,
+      "channel": "session-relay",
+      "status": 200,
+      "failed": false
+    }
+  ],
+  "issues": [],
+  "thirdPartyMessages": [],
+  "scope": "Isolated Chromium; real Flask stopped/restarted; GM transport faithfully relayed outside page via CDP binding; no authenticated Tampermonkey or third-party ads loaded"
+}
