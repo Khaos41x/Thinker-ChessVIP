@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-27.1
+// @version      2026-10-27.2
 // @downloadURL  http://127.0.0.1:5050/thinker-chess.user.js
 // @updateURL    http://127.0.0.1:5050/thinker-chess.meta.js
 // @description  Chess Bot com Servidor Local
@@ -539,8 +539,8 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         @media(min-width:1034px) and (max-width:1086px) {
           #krypbot-container .kb-engine-timing .kb-delay-range { gap:2px; grid-template-columns:round(down,calc((100% - 3px - 2px - 2px)/2),1px) 3px minmax(0,1fr); }
           #krypbot-container .kb-engine-timing .kb-run-delay-controls { grid-template-columns:minmax(0,1fr) 158px; gap:var(--space-1); }
-          #krypbot-container .kb-engine-timing .kb-delay-input { grid-template-columns:minmax(0,1fr) 9px; }
-          #krypbot-container .kb-engine-timing .kb-delay-unit { width:9px; padding:0 2px 0 0; }
+          #krypbot-container .kb-engine-timing .kb-delay-input { grid-template-columns:minmax(0,1fr) 17px; }
+          #krypbot-container .kb-engine-timing .kb-delay-unit { width:17px; padding:0 10px 0 0; }
           #krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) { grid-template-columns:round(down,50%,1px) minmax(0,1fr); }
           #krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) label { padding:0 12px; }
         }
@@ -8358,7 +8358,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
 })();
 
 /* THINKER_SESSION_CONTROL_GENERATED_START */
-globalThis.ThinkerClientVersion="2026-10-27.1";
+globalThis.ThinkerClientVersion="2026-10-27.2";
 globalThis.ThinkerSessionControlReady=(async()=>{
 (function(root){
 "use strict";

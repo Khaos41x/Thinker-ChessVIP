@@ -1,0 +1,1771 @@
+{
+  "reports": [
+    {
+      "surface": "config",
+      "width": 1440,
+      "panels": [
+        {
+          "id": "core",
+          "cls": "panel",
+          "rect": {
+            "x": 277,
+            "y": 196,
+            "width": 429,
+            "height": 175,
+            "top": 196,
+            "right": 706,
+            "bottom": 371,
+            "left": 277
+          }
+        },
+        {
+          "id": "engine",
+          "cls": "panel",
+          "rect": {
+            "x": 718,
+            "y": 196,
+            "width": 430,
+            "height": 476,
+            "top": 196,
+            "right": 1148,
+            "bottom": 672,
+            "left": 718
+          }
+        },
+        {
+          "id": "visuals",
+          "cls": "panel",
+          "rect": {
+            "x": 277,
+            "y": 383,
+            "width": 429,
+            "height": 215,
+            "top": 383,
+            "right": 706,
+            "bottom": 598,
+            "left": 277
+          }
+        },
+        {
+          "id": "workspace",
+          "cls": "panel",
+          "rect": {
+            "x": 277,
+            "y": 610,
+            "width": 429,
+            "height": 119,
+            "top": 610,
+            "right": 706,
+            "bottom": 729,
+            "left": 277
+          }
+        },
+        {
+          "id": "autoplay",
+          "cls": "panel",
+          "rect": {
+            "x": 277,
+            "y": 741,
+            "width": 871,
+            "height": 268,
+            "top": 741,
+            "right": 1148,
+            "bottom": 1009,
+            "left": 277
+          }
+        }
+      ],
+      "units": [
+        {
+          "field": {
+            "x": 731,
+            "y": 494,
+            "width": 111,
+            "height": 32,
+            "top": 494,
+            "right": 842,
+            "bottom": 526,
+            "left": 731
+          },
+          "unit": {
+            "x": 824,
+            "y": 502,
+            "width": 17,
+            "height": 16,
+            "top": 502,
+            "right": 841,
+            "bottom": 518,
+            "left": 824
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 72,
+          "color": "rgb(185, 186, 179)"
+        },
+        {
+          "field": {
+            "x": 862,
+            "y": 494,
+            "width": 111,
+            "height": 32,
+            "top": 494,
+            "right": 973,
+            "bottom": 526,
+            "left": 862
+          },
+          "unit": {
+            "x": 955,
+            "y": 502,
+            "width": 17,
+            "height": 16,
+            "top": 502,
+            "right": 972,
+            "bottom": 518,
+            "left": 955
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 72,
+          "color": "rgb(185, 186, 179)"
+        }
+      ]
+    },
+    {
+      "surface": "config",
+      "width": 1280,
+      "panels": [
+        {
+          "id": "core",
+          "cls": "panel",
+          "rect": {
+            "x": 197,
+            "y": 196,
+            "width": 429,
+            "height": 175,
+            "top": 196,
+            "right": 626,
+            "bottom": 371,
+            "left": 197
+          }
+        },
+        {
+          "id": "engine",
+          "cls": "panel",
+          "rect": {
+            "x": 638,
+            "y": 196,
+            "width": 430,
+            "height": 476,
+            "top": 196,
+            "right": 1068,
+            "bottom": 672,
+            "left": 638
+          }
+        },
+        {
+          "id": "visuals",
+          "cls": "panel",
+          "rect": {
+            "x": 197,
+            "y": 383,
+            "width": 429,
+            "height": 215,
+            "top": 383,
+            "right": 626,
+            "bottom": 598,
+            "left": 197
+          }
+        },
+        {
+          "id": "workspace",
+          "cls": "panel",
+          "rect": {
+            "x": 197,
+            "y": 610,
+            "width": 429,
+            "height": 119,
+            "top": 610,
+            "right": 626,
+            "bottom": 729,
+            "left": 197
+          }
+        },
+        {
+          "id": "autoplay",
+          "cls": "panel",
+          "rect": {
+            "x": 197,
+            "y": 741,
+            "width": 871,
+            "height": 268,
+            "top": 741,
+            "right": 1068,
+            "bottom": 1009,
+            "left": 197
+          }
+        }
+      ],
+      "units": [
+        {
+          "field": {
+            "x": 651,
+            "y": 494,
+            "width": 111,
+            "height": 32,
+            "top": 494,
+            "right": 762,
+            "bottom": 526,
+            "left": 651
+          },
+          "unit": {
+            "x": 744,
+            "y": 502,
+            "width": 17,
+            "height": 16,
+            "top": 502,
+            "right": 761,
+            "bottom": 518,
+            "left": 744
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 72,
+          "color": "rgb(185, 186, 179)"
+        },
+        {
+          "field": {
+            "x": 782,
+            "y": 494,
+            "width": 111,
+            "height": 32,
+            "top": 494,
+            "right": 893,
+            "bottom": 526,
+            "left": 782
+          },
+          "unit": {
+            "x": 875,
+            "y": 502,
+            "width": 17,
+            "height": 16,
+            "top": 502,
+            "right": 892,
+            "bottom": 518,
+            "left": 875
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 72,
+          "color": "rgb(185, 186, 179)"
+        }
+      ]
+    },
+    {
+      "surface": "config",
+      "width": 1024,
+      "panels": [
+        {
+          "id": "core",
+          "cls": "panel",
+          "rect": {
+            "x": 69,
+            "y": 196,
+            "width": 429,
+            "height": 175,
+            "top": 196,
+            "right": 498,
+            "bottom": 371,
+            "left": 69
+          }
+        },
+        {
+          "id": "engine",
+          "cls": "panel",
+          "rect": {
+            "x": 510,
+            "y": 196,
+            "width": 430,
+            "height": 476,
+            "top": 196,
+            "right": 940,
+            "bottom": 672,
+            "left": 510
+          }
+        },
+        {
+          "id": "visuals",
+          "cls": "panel",
+          "rect": {
+            "x": 69,
+            "y": 383,
+            "width": 429,
+            "height": 215,
+            "top": 383,
+            "right": 498,
+            "bottom": 598,
+            "left": 69
+          }
+        },
+        {
+          "id": "workspace",
+          "cls": "panel",
+          "rect": {
+            "x": 69,
+            "y": 610,
+            "width": 429,
+            "height": 119,
+            "top": 610,
+            "right": 498,
+            "bottom": 729,
+            "left": 69
+          }
+        },
+        {
+          "id": "autoplay",
+          "cls": "panel",
+          "rect": {
+            "x": 69,
+            "y": 741,
+            "width": 871,
+            "height": 268,
+            "top": 741,
+            "right": 940,
+            "bottom": 1009,
+            "left": 69
+          }
+        }
+      ],
+      "units": [
+        {
+          "field": {
+            "x": 523,
+            "y": 494,
+            "width": 111,
+            "height": 32,
+            "top": 494,
+            "right": 634,
+            "bottom": 526,
+            "left": 523
+          },
+          "unit": {
+            "x": 616,
+            "y": 502,
+            "width": 17,
+            "height": 16,
+            "top": 502,
+            "right": 633,
+            "bottom": 518,
+            "left": 616
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 72,
+          "color": "rgb(185, 186, 179)"
+        },
+        {
+          "field": {
+            "x": 654,
+            "y": 494,
+            "width": 111,
+            "height": 32,
+            "top": 494,
+            "right": 765,
+            "bottom": 526,
+            "left": 654
+          },
+          "unit": {
+            "x": 747,
+            "y": 502,
+            "width": 17,
+            "height": 16,
+            "top": 502,
+            "right": 764,
+            "bottom": 518,
+            "left": 747
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 72,
+          "color": "rgb(185, 186, 179)"
+        }
+      ]
+    },
+    {
+      "surface": "config",
+      "width": 768,
+      "panels": [
+        {
+          "id": "core",
+          "cls": "panel",
+          "rect": {
+            "x": 24,
+            "y": 196,
+            "width": 705,
+            "height": 175,
+            "top": 196,
+            "right": 729,
+            "bottom": 371,
+            "left": 24
+          }
+        },
+        {
+          "id": "engine",
+          "cls": "panel",
+          "rect": {
+            "x": 24,
+            "y": 383,
+            "width": 705,
+            "height": 476,
+            "top": 383,
+            "right": 729,
+            "bottom": 859,
+            "left": 24
+          }
+        },
+        {
+          "id": "visuals",
+          "cls": "panel",
+          "rect": {
+            "x": 24,
+            "y": 871,
+            "width": 705,
+            "height": 215,
+            "top": 871,
+            "right": 729,
+            "bottom": 1086,
+            "left": 24
+          }
+        },
+        {
+          "id": "workspace",
+          "cls": "panel",
+          "rect": {
+            "x": 24,
+            "y": 1098,
+            "width": 705,
+            "height": 119,
+            "top": 1098,
+            "right": 729,
+            "bottom": 1217,
+            "left": 24
+          }
+        },
+        {
+          "id": "autoplay",
+          "cls": "panel",
+          "rect": {
+            "x": 24,
+            "y": 1229,
+            "width": 705,
+            "height": 268,
+            "top": 1229,
+            "right": 729,
+            "bottom": 1497,
+            "left": 24
+          }
+        }
+      ],
+      "units": [
+        {
+          "field": {
+            "x": 37,
+            "y": 681,
+            "width": 248,
+            "height": 32,
+            "top": 681,
+            "right": 285,
+            "bottom": 713,
+            "left": 37
+          },
+          "unit": {
+            "x": 267,
+            "y": 689,
+            "width": 17,
+            "height": 16,
+            "top": 689,
+            "right": 284,
+            "bottom": 705,
+            "left": 267
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 209,
+          "color": "rgb(185, 186, 179)"
+        },
+        {
+          "field": {
+            "x": 305,
+            "y": 681,
+            "width": 249,
+            "height": 32,
+            "top": 681,
+            "right": 554,
+            "bottom": 713,
+            "left": 305
+          },
+          "unit": {
+            "x": 536,
+            "y": 689,
+            "width": 17,
+            "height": 16,
+            "top": 689,
+            "right": 553,
+            "bottom": 705,
+            "left": 536
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 210,
+          "color": "rgb(185, 186, 179)"
+        }
+      ]
+    },
+    {
+      "surface": "config",
+      "width": 390,
+      "panels": [
+        {
+          "id": "core",
+          "cls": "panel",
+          "rect": {
+            "x": 12,
+            "y": 225,
+            "width": 351,
+            "height": 175,
+            "top": 225,
+            "right": 363,
+            "bottom": 400,
+            "left": 12
+          }
+        },
+        {
+          "id": "engine",
+          "cls": "panel",
+          "rect": {
+            "x": 12,
+            "y": 412,
+            "width": 351,
+            "height": 476,
+            "top": 412,
+            "right": 363,
+            "bottom": 888,
+            "left": 12
+          }
+        },
+        {
+          "id": "visuals",
+          "cls": "panel",
+          "rect": {
+            "x": 12,
+            "y": 900,
+            "width": 351,
+            "height": 215,
+            "top": 900,
+            "right": 363,
+            "bottom": 1115,
+            "left": 12
+          }
+        },
+        {
+          "id": "workspace",
+          "cls": "panel",
+          "rect": {
+            "x": 12,
+            "y": 1127,
+            "width": 351,
+            "height": 119,
+            "top": 1127,
+            "right": 363,
+            "bottom": 1246,
+            "left": 12
+          }
+        },
+        {
+          "id": "autoplay",
+          "cls": "panel",
+          "rect": {
+            "x": 12,
+            "y": 1258,
+            "width": 351,
+            "height": 402,
+            "top": 1258,
+            "right": 363,
+            "bottom": 1660,
+            "left": 12
+          }
+        }
+      ],
+      "units": [
+        {
+          "field": {
+            "x": 25,
+            "y": 710,
+            "width": 71,
+            "height": 32,
+            "top": 710,
+            "right": 96,
+            "bottom": 742,
+            "left": 25
+          },
+          "unit": {
+            "x": 78,
+            "y": 718,
+            "width": 17,
+            "height": 16,
+            "top": 718,
+            "right": 95,
+            "bottom": 734,
+            "left": 78
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 32,
+          "color": "rgb(185, 186, 179)"
+        },
+        {
+          "field": {
+            "x": 116,
+            "y": 710,
+            "width": 72,
+            "height": 32,
+            "top": 710,
+            "right": 188,
+            "bottom": 742,
+            "left": 116
+          },
+          "unit": {
+            "x": 170,
+            "y": 718,
+            "width": 17,
+            "height": 16,
+            "top": 718,
+            "right": 187,
+            "bottom": 734,
+            "left": 170
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 33,
+          "color": "rgb(185, 186, 179)"
+        }
+      ]
+    },
+    {
+      "surface": "console",
+      "width": 1086,
+      "panels": [
+        {
+          "id": "",
+          "cls": "kb-console-module kb-core-module",
+          "rect": {
+            "x": 38,
+            "y": 1012,
+            "width": 345,
+            "height": 171,
+            "top": 1012,
+            "right": 383,
+            "bottom": 1183,
+            "left": 38
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 51,
+            "y": 1025,
+            "width": 319,
+            "height": 25,
+            "top": 1025,
+            "right": 370,
+            "bottom": 1050,
+            "left": 51
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-module kb-visuals-module",
+          "rect": {
+            "x": 38,
+            "y": 1195,
+            "width": 345,
+            "height": 211,
+            "top": 1195,
+            "right": 383,
+            "bottom": 1406,
+            "left": 38
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 51,
+            "y": 1208,
+            "width": 319,
+            "height": 25,
+            "top": 1208,
+            "right": 370,
+            "bottom": 1233,
+            "left": 51
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-module kb-engine-module",
+          "rect": {
+            "x": 395,
+            "y": 1012,
+            "width": 359,
+            "height": 394,
+            "top": 1012,
+            "right": 754,
+            "bottom": 1406,
+            "left": 395
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 408,
+            "y": 1025,
+            "width": 333,
+            "height": 25,
+            "top": 1025,
+            "right": 741,
+            "bottom": 1050,
+            "left": 408
+          }
+        },
+        {
+          "id": "kb-session-panel",
+          "cls": "kb-session-panel kb-console-module kb-auto-play-module",
+          "rect": {
+            "x": 38,
+            "y": 1418,
+            "width": 716,
+            "height": 252,
+            "top": 1418,
+            "right": 754,
+            "bottom": 1670,
+            "left": 38
+          }
+        },
+        {
+          "id": "kb-auto-play-title",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 51,
+            "y": 1431,
+            "width": 690,
+            "height": 25,
+            "top": 1431,
+            "right": 741,
+            "bottom": 1456,
+            "left": 51
+          }
+        },
+        {
+          "id": "oi-zone2",
+          "cls": "tc-workspace-card kb-scout-module",
+          "rect": {
+            "x": 766,
+            "y": 1012,
+            "width": 282,
+            "height": 658,
+            "top": 1012,
+            "right": 1048,
+            "bottom": 1670,
+            "left": 766
+          }
+        }
+      ],
+      "units": [
+        {
+          "field": {
+            "x": 408,
+            "y": 1252,
+            "width": 75,
+            "height": 32,
+            "top": 1252,
+            "right": 483,
+            "bottom": 1284,
+            "left": 408
+          },
+          "unit": {
+            "x": 465,
+            "y": 1260,
+            "width": 17,
+            "height": 16,
+            "top": 1260,
+            "right": 482,
+            "bottom": 1276,
+            "left": 465
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 36,
+          "color": "rgb(140, 141, 135)"
+        },
+        {
+          "field": {
+            "x": 503,
+            "y": 1252,
+            "width": 76,
+            "height": 32,
+            "top": 1252,
+            "right": 579,
+            "bottom": 1284,
+            "left": 503
+          },
+          "unit": {
+            "x": 561,
+            "y": 1260,
+            "width": 17,
+            "height": 16,
+            "top": 1260,
+            "right": 578,
+            "bottom": 1276,
+            "left": 561
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 37,
+          "color": "rgb(140, 141, 135)"
+        }
+      ]
+    },
+    {
+      "surface": "console",
+      "width": 1280,
+      "panels": [
+        {
+          "id": "",
+          "cls": "kb-console-module kb-core-module",
+          "rect": {
+            "x": 135,
+            "y": 1012,
+            "width": 345,
+            "height": 171,
+            "top": 1012,
+            "right": 480,
+            "bottom": 1183,
+            "left": 135
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 148,
+            "y": 1025,
+            "width": 319,
+            "height": 25,
+            "top": 1025,
+            "right": 467,
+            "bottom": 1050,
+            "left": 148
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-module kb-visuals-module",
+          "rect": {
+            "x": 135,
+            "y": 1195,
+            "width": 345,
+            "height": 211,
+            "top": 1195,
+            "right": 480,
+            "bottom": 1406,
+            "left": 135
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 148,
+            "y": 1208,
+            "width": 319,
+            "height": 25,
+            "top": 1208,
+            "right": 467,
+            "bottom": 1233,
+            "left": 148
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-module kb-engine-module",
+          "rect": {
+            "x": 492,
+            "y": 1012,
+            "width": 345,
+            "height": 394,
+            "top": 1012,
+            "right": 837,
+            "bottom": 1406,
+            "left": 492
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 505,
+            "y": 1025,
+            "width": 319,
+            "height": 25,
+            "top": 1025,
+            "right": 824,
+            "bottom": 1050,
+            "left": 505
+          }
+        },
+        {
+          "id": "kb-session-panel",
+          "cls": "kb-session-panel kb-console-module kb-auto-play-module",
+          "rect": {
+            "x": 135,
+            "y": 1418,
+            "width": 702,
+            "height": 252,
+            "top": 1418,
+            "right": 837,
+            "bottom": 1670,
+            "left": 135
+          }
+        },
+        {
+          "id": "kb-auto-play-title",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 148,
+            "y": 1431,
+            "width": 676,
+            "height": 25,
+            "top": 1431,
+            "right": 824,
+            "bottom": 1456,
+            "left": 148
+          }
+        },
+        {
+          "id": "oi-zone2",
+          "cls": "tc-workspace-card kb-scout-module",
+          "rect": {
+            "x": 849,
+            "y": 1012,
+            "width": 296,
+            "height": 658,
+            "top": 1012,
+            "right": 1145,
+            "bottom": 1670,
+            "left": 849
+          }
+        }
+      ],
+      "units": [
+        {
+          "field": {
+            "x": 505,
+            "y": 1252,
+            "width": 80,
+            "height": 32,
+            "top": 1252,
+            "right": 585,
+            "bottom": 1284,
+            "left": 505
+          },
+          "unit": {
+            "x": 560,
+            "y": 1260,
+            "width": 24,
+            "height": 16,
+            "top": 1260,
+            "right": 584,
+            "bottom": 1276,
+            "left": 560
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 34,
+          "color": "rgb(140, 141, 135)"
+        },
+        {
+          "field": {
+            "x": 612,
+            "y": 1252,
+            "width": 80,
+            "height": 32,
+            "top": 1252,
+            "right": 692,
+            "bottom": 1284,
+            "left": 612
+          },
+          "unit": {
+            "x": 667,
+            "y": 1260,
+            "width": 24,
+            "height": 16,
+            "top": 1260,
+            "right": 691,
+            "bottom": 1276,
+            "left": 667
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 34,
+          "color": "rgb(140, 141, 135)"
+        }
+      ]
+    },
+    {
+      "surface": "console",
+      "width": 1440,
+      "panels": [
+        {
+          "id": "",
+          "cls": "kb-console-module kb-core-module",
+          "rect": {
+            "x": 215,
+            "y": 1012,
+            "width": 345,
+            "height": 171,
+            "top": 1012,
+            "right": 560,
+            "bottom": 1183,
+            "left": 215
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 228,
+            "y": 1025,
+            "width": 319,
+            "height": 25,
+            "top": 1025,
+            "right": 547,
+            "bottom": 1050,
+            "left": 228
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-module kb-visuals-module",
+          "rect": {
+            "x": 215,
+            "y": 1195,
+            "width": 345,
+            "height": 211,
+            "top": 1195,
+            "right": 560,
+            "bottom": 1406,
+            "left": 215
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 228,
+            "y": 1208,
+            "width": 319,
+            "height": 25,
+            "top": 1208,
+            "right": 547,
+            "bottom": 1233,
+            "left": 228
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-module kb-engine-module",
+          "rect": {
+            "x": 572,
+            "y": 1012,
+            "width": 345,
+            "height": 394,
+            "top": 1012,
+            "right": 917,
+            "bottom": 1406,
+            "left": 572
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 585,
+            "y": 1025,
+            "width": 319,
+            "height": 25,
+            "top": 1025,
+            "right": 904,
+            "bottom": 1050,
+            "left": 585
+          }
+        },
+        {
+          "id": "kb-session-panel",
+          "cls": "kb-session-panel kb-console-module kb-auto-play-module",
+          "rect": {
+            "x": 215,
+            "y": 1418,
+            "width": 702,
+            "height": 252,
+            "top": 1418,
+            "right": 917,
+            "bottom": 1670,
+            "left": 215
+          }
+        },
+        {
+          "id": "kb-auto-play-title",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 228,
+            "y": 1431,
+            "width": 676,
+            "height": 25,
+            "top": 1431,
+            "right": 904,
+            "bottom": 1456,
+            "left": 228
+          }
+        },
+        {
+          "id": "oi-zone2",
+          "cls": "tc-workspace-card kb-scout-module",
+          "rect": {
+            "x": 929,
+            "y": 1012,
+            "width": 296,
+            "height": 658,
+            "top": 1012,
+            "right": 1225,
+            "bottom": 1670,
+            "left": 929
+          }
+        }
+      ],
+      "units": [
+        {
+          "field": {
+            "x": 585,
+            "y": 1252,
+            "width": 80,
+            "height": 32,
+            "top": 1252,
+            "right": 665,
+            "bottom": 1284,
+            "left": 585
+          },
+          "unit": {
+            "x": 640,
+            "y": 1260,
+            "width": 24,
+            "height": 16,
+            "top": 1260,
+            "right": 664,
+            "bottom": 1276,
+            "left": 640
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 34,
+          "color": "rgb(140, 141, 135)"
+        },
+        {
+          "field": {
+            "x": 692,
+            "y": 1252,
+            "width": 80,
+            "height": 32,
+            "top": 1252,
+            "right": 772,
+            "bottom": 1284,
+            "left": 692
+          },
+          "unit": {
+            "x": 747,
+            "y": 1260,
+            "width": 24,
+            "height": 16,
+            "top": 1260,
+            "right": 771,
+            "bottom": 1276,
+            "left": 747
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 34,
+          "color": "rgb(140, 141, 135)"
+        }
+      ]
+    },
+    {
+      "surface": "console",
+      "width": 1920,
+      "panels": [
+        {
+          "id": "",
+          "cls": "kb-console-module kb-core-module",
+          "rect": {
+            "x": 455,
+            "y": 1012,
+            "width": 345,
+            "height": 171,
+            "top": 1012,
+            "right": 800,
+            "bottom": 1183,
+            "left": 455
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 468,
+            "y": 1025,
+            "width": 319,
+            "height": 25,
+            "top": 1025,
+            "right": 787,
+            "bottom": 1050,
+            "left": 468
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-module kb-visuals-module",
+          "rect": {
+            "x": 455,
+            "y": 1195,
+            "width": 345,
+            "height": 211,
+            "top": 1195,
+            "right": 800,
+            "bottom": 1406,
+            "left": 455
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 468,
+            "y": 1208,
+            "width": 319,
+            "height": 25,
+            "top": 1208,
+            "right": 787,
+            "bottom": 1233,
+            "left": 468
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-module kb-engine-module",
+          "rect": {
+            "x": 812,
+            "y": 1012,
+            "width": 345,
+            "height": 394,
+            "top": 1012,
+            "right": 1157,
+            "bottom": 1406,
+            "left": 812
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 825,
+            "y": 1025,
+            "width": 319,
+            "height": 25,
+            "top": 1025,
+            "right": 1144,
+            "bottom": 1050,
+            "left": 825
+          }
+        },
+        {
+          "id": "kb-session-panel",
+          "cls": "kb-session-panel kb-console-module kb-auto-play-module",
+          "rect": {
+            "x": 455,
+            "y": 1418,
+            "width": 702,
+            "height": 252,
+            "top": 1418,
+            "right": 1157,
+            "bottom": 1670,
+            "left": 455
+          }
+        },
+        {
+          "id": "kb-auto-play-title",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 468,
+            "y": 1431,
+            "width": 676,
+            "height": 25,
+            "top": 1431,
+            "right": 1144,
+            "bottom": 1456,
+            "left": 468
+          }
+        },
+        {
+          "id": "oi-zone2",
+          "cls": "tc-workspace-card kb-scout-module",
+          "rect": {
+            "x": 1169,
+            "y": 1012,
+            "width": 296,
+            "height": 658,
+            "top": 1012,
+            "right": 1465,
+            "bottom": 1670,
+            "left": 1169
+          }
+        }
+      ],
+      "units": [
+        {
+          "field": {
+            "x": 825,
+            "y": 1252,
+            "width": 80,
+            "height": 32,
+            "top": 1252,
+            "right": 905,
+            "bottom": 1284,
+            "left": 825
+          },
+          "unit": {
+            "x": 880,
+            "y": 1260,
+            "width": 24,
+            "height": 16,
+            "top": 1260,
+            "right": 904,
+            "bottom": 1276,
+            "left": 880
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 34,
+          "color": "rgb(140, 141, 135)"
+        },
+        {
+          "field": {
+            "x": 932,
+            "y": 1252,
+            "width": 80,
+            "height": 32,
+            "top": 1252,
+            "right": 1012,
+            "bottom": 1284,
+            "left": 932
+          },
+          "unit": {
+            "x": 987,
+            "y": 1260,
+            "width": 24,
+            "height": 16,
+            "top": 1260,
+            "right": 1011,
+            "bottom": 1276,
+            "left": 987
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 34,
+          "color": "rgb(140, 141, 135)"
+        }
+      ]
+    },
+    {
+      "surface": "console",
+      "width": 1033,
+      "panels": [
+        {
+          "id": "",
+          "cls": "kb-console-module kb-core-module",
+          "rect": {
+            "x": 12,
+            "y": 1124,
+            "width": 1009,
+            "height": 171,
+            "top": 1124,
+            "right": 1021,
+            "bottom": 1295,
+            "left": 12
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 25,
+            "y": 1137,
+            "width": 983,
+            "height": 25,
+            "top": 1137,
+            "right": 1008,
+            "bottom": 1162,
+            "left": 25
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-module kb-visuals-module",
+          "rect": {
+            "x": 12,
+            "y": 1307,
+            "width": 1009,
+            "height": 211,
+            "top": 1307,
+            "right": 1021,
+            "bottom": 1518,
+            "left": 12
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 25,
+            "y": 1320,
+            "width": 983,
+            "height": 25,
+            "top": 1320,
+            "right": 1008,
+            "bottom": 1345,
+            "left": 25
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-module kb-engine-module",
+          "rect": {
+            "x": 12,
+            "y": 1530,
+            "width": 1009,
+            "height": 394,
+            "top": 1530,
+            "right": 1021,
+            "bottom": 1924,
+            "left": 12
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 25,
+            "y": 1543,
+            "width": 983,
+            "height": 25,
+            "top": 1543,
+            "right": 1008,
+            "bottom": 1568,
+            "left": 25
+          }
+        },
+        {
+          "id": "kb-session-panel",
+          "cls": "kb-session-panel kb-console-module kb-auto-play-module",
+          "rect": {
+            "x": 12,
+            "y": 1936,
+            "width": 1009,
+            "height": 252,
+            "top": 1936,
+            "right": 1021,
+            "bottom": 2188,
+            "left": 12
+          }
+        },
+        {
+          "id": "kb-auto-play-title",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 25,
+            "y": 1949,
+            "width": 983,
+            "height": 25,
+            "top": 1949,
+            "right": 1008,
+            "bottom": 1974,
+            "left": 25
+          }
+        },
+        {
+          "id": "oi-zone2",
+          "cls": "tc-workspace-card kb-scout-module",
+          "rect": {
+            "x": 12,
+            "y": 2200,
+            "width": 1009,
+            "height": 115,
+            "top": 2200,
+            "right": 1021,
+            "bottom": 2315,
+            "left": 12
+          }
+        }
+      ],
+      "units": [
+        {
+          "field": {
+            "x": 25,
+            "y": 1770,
+            "width": 412,
+            "height": 32,
+            "top": 1770,
+            "right": 437,
+            "bottom": 1802,
+            "left": 25
+          },
+          "unit": {
+            "x": 412,
+            "y": 1778,
+            "width": 24,
+            "height": 16,
+            "top": 1778,
+            "right": 436,
+            "bottom": 1794,
+            "left": 412
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 366,
+          "color": "rgb(140, 141, 135)"
+        },
+        {
+          "field": {
+            "x": 464,
+            "y": 1770,
+            "width": 412,
+            "height": 32,
+            "top": 1770,
+            "right": 876,
+            "bottom": 1802,
+            "left": 464
+          },
+          "unit": {
+            "x": 851,
+            "y": 1778,
+            "width": 24,
+            "height": 16,
+            "top": 1778,
+            "right": 875,
+            "bottom": 1794,
+            "left": 851
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 366,
+          "color": "rgb(140, 141, 135)"
+        }
+      ]
+    },
+    {
+      "surface": "console",
+      "width": 800,
+      "panels": [
+        {
+          "id": "",
+          "cls": "kb-console-module kb-core-module",
+          "rect": {
+            "x": 12,
+            "y": 1124,
+            "width": 776,
+            "height": 171,
+            "top": 1124,
+            "right": 788,
+            "bottom": 1295,
+            "left": 12
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 25,
+            "y": 1137,
+            "width": 750,
+            "height": 25,
+            "top": 1137,
+            "right": 775,
+            "bottom": 1162,
+            "left": 25
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-module kb-visuals-module",
+          "rect": {
+            "x": 12,
+            "y": 1307,
+            "width": 776,
+            "height": 211,
+            "top": 1307,
+            "right": 788,
+            "bottom": 1518,
+            "left": 12
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 25,
+            "y": 1320,
+            "width": 750,
+            "height": 25,
+            "top": 1320,
+            "right": 775,
+            "bottom": 1345,
+            "left": 25
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-module kb-engine-module",
+          "rect": {
+            "x": 12,
+            "y": 1530,
+            "width": 776,
+            "height": 394,
+            "top": 1530,
+            "right": 788,
+            "bottom": 1924,
+            "left": 12
+          }
+        },
+        {
+          "id": "",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 25,
+            "y": 1543,
+            "width": 750,
+            "height": 25,
+            "top": 1543,
+            "right": 775,
+            "bottom": 1568,
+            "left": 25
+          }
+        },
+        {
+          "id": "kb-session-panel",
+          "cls": "kb-session-panel kb-console-module kb-auto-play-module",
+          "rect": {
+            "x": 12,
+            "y": 1936,
+            "width": 776,
+            "height": 252,
+            "top": 1936,
+            "right": 788,
+            "bottom": 2188,
+            "left": 12
+          }
+        },
+        {
+          "id": "kb-auto-play-title",
+          "cls": "kb-console-caption",
+          "rect": {
+            "x": 25,
+            "y": 1949,
+            "width": 750,
+            "height": 25,
+            "top": 1949,
+            "right": 775,
+            "bottom": 1974,
+            "left": 25
+          }
+        },
+        {
+          "id": "oi-zone2",
+          "cls": "tc-workspace-card kb-scout-module",
+          "rect": {
+            "x": 12,
+            "y": 2200,
+            "width": 776,
+            "height": 115,
+            "top": 2200,
+            "right": 788,
+            "bottom": 2315,
+            "left": 12
+          }
+        }
+      ],
+      "units": [
+        {
+          "field": {
+            "x": 25,
+            "y": 1770,
+            "width": 295,
+            "height": 32,
+            "top": 1770,
+            "right": 320,
+            "bottom": 1802,
+            "left": 25
+          },
+          "unit": {
+            "x": 295,
+            "y": 1778,
+            "width": 24,
+            "height": 16,
+            "top": 1778,
+            "right": 319,
+            "bottom": 1794,
+            "left": 295
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 249,
+          "color": "rgb(140, 141, 135)"
+        },
+        {
+          "field": {
+            "x": 347,
+            "y": 1770,
+            "width": 296,
+            "height": 32,
+            "top": 1770,
+            "right": 643,
+            "bottom": 1802,
+            "left": 347
+          },
+          "unit": {
+            "x": 618,
+            "y": 1778,
+            "width": 24,
+            "height": 16,
+            "top": 1778,
+            "right": 642,
+            "bottom": 1794,
+            "left": 618
+          },
+          "rightInset": 11,
+          "textWidth": 19.462890625,
+          "textSpace": 250,
+          "color": "rgb(140, 141, 135)"
+        }
+      ]
+    }
+  ],
+  "exceptions": []
+}
