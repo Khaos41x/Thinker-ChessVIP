@@ -7,7 +7,7 @@ const {createServer} = require('node:net');
 const root = path.resolve(__dirname, '..');
 const baseline = process.argv.includes('--baseline');
 const source = baseline ? spawnSync('git',['show','9709e22:script.js'],{cwd:root,encoding:'utf8'}).stdout : fs.readFileSync(path.join(root, 'script.js'), 'utf8');
-const out = path.join(root, '_bmad-output/implementation-artifacts/arrow-recovery',baseline?'before':'after');
+const out = process.env.TC_ARROW_PIPELINE_ARTIFACT_DIR || path.join(root, '_bmad-output/implementation-artifacts/arrow-recovery',baseline?'before':'after');
 fs.mkdirSync(out, {recursive:true});
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const port = () => new Promise(resolve => { const server=createServer();server.listen(0,'127.0.0.1',()=>{const value=server.address().port;server.close(()=>resolve(value));}); });

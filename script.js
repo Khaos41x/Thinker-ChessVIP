@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-27.2
+// @version      2026-10-29.1
 // @downloadURL  http://127.0.0.1:5050/thinker-chess.user.js
 // @updateURL    http://127.0.0.1:5050/thinker-chess.meta.js
 // @description  Chess Bot com Servidor Local
@@ -278,10 +278,12 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       if (button.disabled !== select.disabled) button.disabled=select.disabled;
       if (!select.disabled && restoreOnReady) { restoreOnReady=false; if(doc.activeElement===doc.body||doc.activeElement===button) button.focus({preventScroll:true}); }
       attr(button,'aria-disabled',select.disabled); text(button,select.selectedOptions[0]?.textContent || '');
+      if (button.title !== button.textContent) button.title = button.textContent;
       const next=Array.from(select.options).map(o=>[o.value,o.textContent,o.disabled]).map(value=>JSON.stringify(value)).join('|');
       if (signature!==next) {
         signature=next; nodes=Array.from(select.options).map((option,index)=>{
-          const n=doc.createElement('div'); n.id=menu.id+'-'+index; n.setAttribute('role','option'); attr(n,'aria-disabled',option.disabled); text(n,option.textContent);
+          const n=doc.createElement('div'); n.id=menu.id+'-'+index; n.setAttribute('role','option'); attr(n,'aria-disabled',option.disabled); n.title=option.textContent;
+          const copy=doc.createElement('span');text(copy,option.textContent);styles(copy,{minWidth:'0',overflow:'hidden',textOverflow:'ellipsis'});n.append(copy);
           styles(n,{height:'32px',boxSizing:'border-box',display:'flex',alignItems:'center',padding:'0 12px',font:s.font,color:foreground,whiteSpace:'nowrap',cursor:option.disabled?'default':'pointer',outline:'none',boxShadow:'none',transition:'none',animation:'none'});
           style(n,'justifyContent','space-between');
           const check=doc.createElementNS('http://www.w3.org/2000/svg','svg');check.setAttribute('viewBox','0 0 16 16');check.setAttribute('aria-hidden','true');
@@ -292,7 +294,24 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         }); menu.replaceChildren(...nodes);
       }
       styles(menu,{backgroundColor:field,color:foreground,border:'1px solid '+border,borderRadius:s.borderRadius,font:s.font});
-      if (select.disabled) close(); else if(open) mark();
+      if (select.disabled) close(); else if(open) { position(); mark(); }
+    }
+    function position() {
+      const r=button.getBoundingClientRect(), viewport=win.visualViewport;
+      const left=viewport?.offsetLeft || 0, top=viewport?.offsetTop || 0;
+      const width=viewport?.width || doc.documentElement.clientWidth || win.innerWidth;
+      const height=viewport?.height || win.innerHeight;
+      if(open&&(r.bottom<=top||r.top>=top+height||r.right<=left||r.left>=left+width)){close();return;}
+      const room=Math.max(0,height-16);
+      const below=Math.min(room,Math.max(0,top+height-8-r.bottom-4)), above=Math.min(room,Math.max(0,r.top-4-top-8));
+      const wanted=Math.min(6,select.options.length)*32+2;
+      const down=below>=wanted || below>=above;
+      const available=Math.floor(down?below:above), menuHeight=Math.min(wanted,available);
+      const menuWidth=Math.min(Math.round(r.width),Math.max(0,Math.floor(width-16)));
+      style(menu,'width',menuWidth+'px');
+      style(menu,'maxHeight',Math.max(0,menuHeight)+'px');
+      style(menu,'left',Math.round(Math.max(left+8,Math.min(r.left,left+width-8-menuWidth)))+'px');
+      style(menu,'top',Math.round(Math.max(top+8,Math.min(down?r.bottom+4:r.top-4-menuHeight,top+height-8-menuHeight)))+'px');
     }
     function show() {
       sync(); if (select.disabled || !select.options.length) return;
@@ -300,9 +319,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       active=Array.from(select.options).findIndex(o=>o.value===select.value&&!o.disabled);
       if(active<0)active=Array.from(select.options).findIndex(o=>!o.disabled);
       if(active<0)return;
-      const r=button.getBoundingClientRect(), height=Math.min(6,select.options.length)*32+2;
-      style(menu,'width',Math.round(r.width)+'px'); style(menu,'left',Math.round(r.left)+'px');
-      style(menu,'top',Math.round(r.bottom+4+height<=win.innerHeight?r.bottom+4:Math.max(0,r.top-4-height))+'px');
+      position();
       if (menu.hasAttribute('popover')) menu.showPopover(); else menu.hidden=false;
       open=true;attr(button,'aria-expanded',true);mark();
     }
@@ -332,7 +349,8 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       }
     });
     listen(doc,'pointerdown',event=>{if(!button.contains(event.target)&&!menu.contains(event.target))close();},true);
-    listen(win,'resize',()=>{close();sync();}); listen(win,'scroll',event=>{if(!menu.contains(event.target))close();},true);
+    listen(win,'resize',sync); listen(win,'scroll',event=>{if(open&&!menu.contains(event.target)){const r=button.getBoundingClientRect();if(r.bottom<=0||r.top>=win.innerHeight)close();else position();}},true);
+    if(win.visualViewport){listen(win.visualViewport,'resize',sync);listen(win.visualViewport,'scroll',()=>{if(open)position();});}
     observer = new win.MutationObserver(sync); observer.observe(select,{childList:true,subtree:true,attributes:true,attributeFilter:['disabled']});
     resizeObserver = new win.ResizeObserver(sync); resizeObserver.observe(select);
     listen(select,'change',sync);
@@ -536,21 +554,6 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         #krypbot-container .kb-engine-timing:has(#auto-delay-section[style*="display: none"]) { display:none; }
         #krypbot-container .kb-engine-strength .kb-slider { display:block; margin:8px 0; }
         #krypbot-container .kb-engine-strength .kb-strength-limits { margin-top:0; }
-        @media(min-width:1034px) and (max-width:1086px) {
-          #krypbot-container .kb-engine-timing .kb-delay-range { gap:2px; grid-template-columns:round(down,calc((100% - 3px - 2px - 2px)/2),1px) 3px minmax(0,1fr); }
-          #krypbot-container .kb-engine-timing .kb-run-delay-controls { grid-template-columns:minmax(0,1fr) 158px; gap:var(--space-1); }
-          #krypbot-container .kb-engine-timing .kb-delay-input { grid-template-columns:minmax(0,1fr) 17px; }
-          #krypbot-container .kb-engine-timing .kb-delay-unit { width:17px; padding:0 10px 0 0; }
-          #krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) { grid-template-columns:round(down,50%,1px) minmax(0,1fr); }
-          #krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) label { padding:0 12px; }
-        }
-        @media(width:1086px) {
-          #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-console-grid { grid-template-columns:345px 359px 282px; }
-          #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-engine-timing .kb-delay-range { grid-template-columns:round(down,calc((100% - 20px)/2),1px) 8px minmax(0,1fr); gap:6px; }
-          #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-engine-timing .kb-delay-separator { width:8px; line-height:16px; text-align:center; }
-          #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-auto-play-module .kb-session-fields,
-          #oi-wrapper[data-layout-mode="desktop"] #krypbot-container .kb-auto-play-module .kb-session-actions { grid-template-columns:repeat(2,round(up,calc((100% - 24px)/4),1px)) repeat(2,round(down,calc((100% - 24px)/4),1px)); }
-        }
         #krypbot-container .kb-auto-play-module .kb-session-fields,
         #krypbot-container .kb-auto-play-module .kb-session-actions { grid-template-columns:repeat(3,round(down,calc((100% - 24px)/4),1px)) minmax(0,1fr); }
         #krypbot-container .kb-auto-play-module .kb-session-secondary-actions { display:contents; }
@@ -677,6 +680,38 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     }, true);
   }
   root.ThinkerFocusFinish = Object.freeze({css, bind});
+})(globalThis);
+(function(root){
+  'use strict';
+  const css = `
+    #krypbot-container .kb-engine-module { container-type:inline-size; container-name:tc-engine; }
+    #krypbot-container .kb-auto-play-module { container-type:inline-size; container-name:tc-autoplay; }
+    #krypbot-container .kb-engine-timing .kb-run-delay-controls { grid-template-columns:minmax(0,1fr) 158px; gap:4px; }
+    #krypbot-container .kb-engine-timing .kb-delay-range { grid-template-columns:round(down,calc((100% - 20px)/2),1px) 8px minmax(0,1fr); gap:6px; }
+    #krypbot-container .kb-engine-timing .kb-delay-input { grid-template-columns:minmax(0,1fr) 17px; }
+    #krypbot-container .kb-engine-timing .kb-delay-unit { width:17px; padding:0 10px 0 0; }
+    #krypbot-container .kb-engine-timing .kb-delay-separator { width:8px; line-height:16px; text-align:center; }
+    #krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) { grid-template-columns:round(down,50%,1px) minmax(0,1fr); }
+    #krypbot-container .kb-engine-timing .kb-run-delay-card .kb-radio-group.kb-timing-mode:has(input[name="delayMode"]) label { padding:0 12px; }
+    @container tc-engine (width < 310px) {
+      #krypbot-container .kb-engine-timing .kb-run-delay-controls { grid-template-columns:minmax(0,1fr); gap:8px; }
+    }
+    @container tc-autoplay (width < 540px) {
+      #krypbot-container .kb-auto-play-module .kb-session-fields,
+      #krypbot-container .kb-auto-play-module .kb-session-actions { grid-template-columns:round(down,calc((100% - 8px)/2),1px) minmax(0,1fr); }
+      #krypbot-container #kb-session-start { grid-column:1/-1; }
+      #krypbot-container #kb-session-stop,
+      #krypbot-container .kb-auto-play-module #kb-session-export { grid-column:auto; }
+      #krypbot-container .kb-auto-play-module .kb-session-status { grid-template-columns:max-content minmax(0,1fr); }
+    }
+  `;
+  function localPoint(node, left, top) {
+    const doc = node.ownerDocument, win = doc.defaultView, parent = node.offsetParent;
+    if (!parent || parent === doc.body && win.getComputedStyle(parent).position === 'static') return {left, top};
+    const rect = parent.getBoundingClientRect();
+    return {left:left - rect.left - win.scrollX - parent.clientLeft + parent.scrollLeft, top:top - rect.top - win.scrollY - parent.clientTop + parent.scrollTop};
+  }
+  root.ThinkerResponsive = Object.freeze({css, localPoint});
 })(globalThis);
 /* THINKER_ANALYSIS_ENGINE_GENERATED_END */
 
@@ -5846,7 +5881,17 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     updateThinkerMountDiagnostics();
   }
 
+/* THINKER_LAYOUT_UI_CLEANUP_START */
+  let thinkerLayoutDisposer = null;
+  let thinkerBannerLoadTarget = null;
+  let thinkerBannerLoadHandler = null;
   function cleanupThinkerUiLifecycle({ removeMenu = false } = {}) {
+    if (thinkerBannerLoadTarget && thinkerBannerLoadHandler) thinkerBannerLoadTarget.removeEventListener("load", thinkerBannerLoadHandler);
+    thinkerBannerLoadTarget = null; thinkerBannerLoadHandler = null;
+    thinkerLayoutDisposer?.();
+    thinkerLayoutDisposer = null;
+    if (thinkerUiReconcileTimer !== null) clearInterval(thinkerUiReconcileTimer);
+    thinkerUiReconcileTimer = null;
     setThinkerPageScrollbarHidden(false);
     if (thinkerBannerFrame !== null && typeof cancelAnimationFrame === "function") cancelAnimationFrame(thinkerBannerFrame);
     if (thinkerWorkspaceFrame !== null && typeof cancelAnimationFrame === "function") cancelAnimationFrame(thinkerWorkspaceFrame);
@@ -5875,7 +5920,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       thinkerMenuNode = null;
     }
   }
-
+/* THINKER_LAYOUT_UI_CLEANUP_END */
   function failThinkerUiMount(error) {
     if (thinkerMountTimer !== null) clearInterval(thinkerMountTimer);
     thinkerMountTimer = null;
@@ -6172,6 +6217,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
     return Math.ceil(baseMargin + Math.max(0, safeTop - naturalDocumentTop));
   }
 
+/* THINKER_LAYOUT_BANNER_POSITION_START */
   function positionThinkerBannerShell() {
     const banner = document.getElementById("thinker-chess-banner");
     if (!banner) return;
@@ -6200,22 +6246,28 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       banner.style.display = "none";
       return;
     }
-    banner.style.left = layout.left + "px";
+    banner.style.display = "flex";
+    const point = globalThis.ThinkerResponsive?.localPoint(banner, layout.left, layout.top) || layout;
+    banner.style.left = point.left + "px";
     banner.style.right = "auto";
-    banner.style.top = layout.top + "px";
+    banner.style.top = point.top + "px";
     banner.style.width = layout.width + "px";
     banner.style.height = layout.height + "px";
     const artwork = banner.querySelector("img");
     if (artwork?.naturalWidth) {
       artwork.style.maxWidth = Math.floor(
-        artwork.naturalWidth / Math.max(1, window.devicePixelRatio || 1),
+        artwork.naturalWidth,
       ) + "px";
     } else {
-      artwork?.addEventListener("load", scheduleThinkerBannerPosition, { once: true });
+      if (artwork && artwork !== thinkerBannerLoadTarget) {
+        if (thinkerBannerLoadTarget && thinkerBannerLoadHandler) thinkerBannerLoadTarget.removeEventListener("load", thinkerBannerLoadHandler);
+        thinkerBannerLoadTarget = artwork;
+        thinkerBannerLoadHandler = () => { thinkerBannerLoadTarget = null; thinkerBannerLoadHandler = null; scheduleThinkerBannerPosition(); };
+        artwork.addEventListener("load", thinkerBannerLoadHandler, {once:true});
+      }
     }
-    banner.style.display = "flex";
   }
-
+/* THINKER_LAYOUT_BANNER_POSITION_END */
   function createMenu() {
     if (thinkerUiBound) return;
     $ = $ || resolveThinkerJQuery();
@@ -7099,6 +7151,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
           #krypbot-container .kb-toggle-thumb,
           #kb-session-toast { transition:none !important; }
         }
+        ${globalThis.ThinkerResponsive.css}
       </style>
     `;
 
@@ -7384,6 +7437,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         thinkerMountTimer = null;
         ensureGhostRecoveryControl();
 
+/* THINKER_LAYOUT_WORKSPACE_LAYOUT_START */
         function updateWorkspaceLayout() {
           const wrapper = document.getElementById("oi-wrapper");
           if (!wrapper || !document.body) return;
@@ -7397,21 +7451,25 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
             boardRect?.bottom || 0,
             getThinkerRect(sidebar)?.bottom || 0,
           ) + window.scrollY;
-          const wrapperWidth = Math.min(1034, Math.max(0, window.innerWidth));
-          wrapper.style.setProperty("width", wrapperWidth + "px", "important");
-          const measuredWrapperWidth = Math.round(wrapper.getBoundingClientRect().width);
-          wrapper.dataset.layoutMode = measuredWrapperWidth >= 1034 ? "desktop" : "stacked";
+          const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
+          const wrapperWidth = Math.min(1034, Math.max(0, Math.floor(viewportWidth)));
+          if (wrapper.style.width !== wrapperWidth + "px") wrapper.style.setProperty("width", wrapperWidth + "px", "important");
+          const measuredWrapperWidth = wrapper.clientWidth;
+          const mode = measuredWrapperWidth >= 1034 ? "desktop" : "stacked";
+          if (wrapper.dataset.layoutMode !== mode) wrapper.dataset.layoutMode = mode;
           const workspaceGap = wrapper.dataset.layoutMode === "desktop" ? 0 : THINKER_WORKSPACE_GAP_PX;
           const safeTop = Math.max(window.innerHeight, gameplayDocumentBottom) + workspaceGap;
           syncTimingModeGeometry(thinkerMenuNode);
-          const safeLeft = Math.round(window.scrollX + Math.max(0, (window.innerWidth - measuredWrapperWidth) / 2));
-          wrapper.style.setProperty("top", Math.ceil(safeTop) + "px", "important");
-          wrapper.style.setProperty("left", safeLeft + "px", "important");
+          const safeLeft = Math.round(window.scrollX + Math.max(0, (viewportWidth - measuredWrapperWidth) / 2));
+          const point = globalThis.ThinkerResponsive.localPoint(wrapper, safeLeft, Math.ceil(safeTop));
+          if (wrapper.style.top !== point.top + "px") wrapper.style.setProperty("top", point.top + "px", "important");
+          if (wrapper.style.left !== point.left + "px") wrapper.style.setProperty("left", point.left + "px", "important");
         }
         scheduleThinkerWorkspaceLayout = () => {
           if (thinkerWorkspaceFrame !== null) return;
           thinkerWorkspaceFrame = requestAnimationFrame(() => {
             thinkerWorkspaceFrame = null;
+            refreshLayoutTargets();
             updateWorkspaceLayout();
           });
         };
@@ -7420,43 +7478,64 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
           scheduleThinkerWorkspaceLayout();
         };
         window.addEventListener("resize", thinkerResizeHandler, { passive: true });
-        const observeBannerVisibility = () => {
-          document.querySelectorAll("wc-chess-board, chess-board, wc-board, #board-single, .board, .chess-board, [class*='board-component'], #board-layout-main, .board-layout-main, .play-controller-component, .board-layout-sidebar, .layout-board-sidebar, #board-layout-sidebar, [data-cy*='sidebar'], [data-test-element*='sidebar'], [class*='game-panel'], aside, [role='complementary']").forEach((node) => {
+/* THINKER_LAYOUT_WORKSPACE_LAYOUT_END */
+/* THINKER_LAYOUT_LAYOUT_OBSERVERS_START */
+        thinkerLayoutDisposer?.();
+        const tracked = new Set();
+        const ownLayoutNode = node => node?.nodeType === 1 && Boolean(node.closest?.("#oi-wrapper,#thinker-chess-banner,.tc-engine-options,.myarrow,.myhigh,.thinker-eval-v2-overlay"));
+        const refreshLayoutTargets = () => {
+          const next = new Set([document.getElementById("oi-wrapper")]);
+          const candidates = document.querySelectorAll("wc-chess-board, chess-board, #board-single, .board, .chess-board, [class*='board-component'], .play-controller-component, .board-layout-sidebar, .layout-board-sidebar, #board-layout-sidebar, [data-cy*='sidebar'], [data-test-element*='sidebar'], [class*='game-panel'], aside, [role='complementary']");
+          for (const node of [...candidates, getThinkerBannerSidebar()]) {
+            if (!node || ownLayoutNode(node) || isExcludedThinkerSidebarCandidate(node)) continue;
             for (let current = node; current && current !== document.body && current !== document.documentElement; current = current.parentElement) {
-              thinkerBannerLayoutObserver.observe(current, { attributes: true, attributeFilter: ["class", "style", "hidden", "aria-hidden"] });
+              if (!ownLayoutNode(current)) { next.add(current); }
             }
-          });
+          }
+          next.delete(null);
+          if (next.size === tracked.size && [...next].every(node => tracked.has(node))) return;
+          thinkerBannerResizeObserver?.disconnect();
+          thinkerBannerLayoutObserver.disconnect();
+          thinkerBannerLayoutObserver.observe(document.body, { childList: true, subtree: true });
+          thinkerBannerLayoutObserver.observe(document.documentElement, {attributes:true,attributeFilter:["class","style"]});
+          for (const node of next) if (!ownLayoutNode(node)) thinkerBannerLayoutObserver.observe(node, {attributes:true,attributeFilter:["class","style","hidden","aria-hidden"]});
+          tracked.clear();
+          for (const node of next) { tracked.add(node); thinkerBannerResizeObserver?.observe(node); }
         };
-        thinkerBannerLayoutObserver = new MutationObserver(() => {
-          observeBannerVisibility();
-          scheduleThinkerWorkspaceLayout();
-          const currentSidebar = getThinkerBannerSidebar();
-          const sidebarChanged = currentSidebar !== thinkerObservedBannerSidebar;
-          const banner = document.getElementById("thinker-chess-banner");
-          if (!shouldShowThinkerBanner()) {
-            if (banner) banner.style.display = "none";
-            return;
-          }
-          if (thinkerBannerResizeObserver) {
-            const currentBoard = document.querySelector("wc-chess-board, chess-board, #board-single, .board, .chess-board, [class*='board-component']");
-            if (currentBoard) thinkerBannerResizeObserver.observe(currentBoard);
-          }
-          if (sidebarChanged || banner?.style.display === "none") scheduleThinkerBannerPosition();
+        thinkerBannerLayoutObserver = new MutationObserver(records => {
+          if (!records.some(record => !ownLayoutNode(record.target))) return;
+          thinkerResizeHandler();
         });
-        thinkerBannerLayoutObserver.observe(document.body, {
-          childList: true,
-          subtree: true,
-        });
-        observeBannerVisibility();
-        if (typeof ResizeObserver === "function") {
-          thinkerBannerResizeObserver = new ResizeObserver(() => {
-            scheduleThinkerBannerPosition();
-            scheduleThinkerWorkspaceLayout();
-          });
-        }
+        if (typeof ResizeObserver === "function") thinkerBannerResizeObserver = new ResizeObserver(thinkerResizeHandler);
+        thinkerBannerLayoutObserver.observe(document.body, { childList: true, subtree: true });
+        thinkerBannerLayoutObserver.observe(document.documentElement, {attributes:true,attributeFilter:["class","style"]});
+        refreshLayoutTargets();
+        const onVisibleLayout = () => { if (!document.hidden) thinkerResizeHandler(); };
+        document.addEventListener("visibilitychange", onVisibleLayout);
+        window.addEventListener("scroll", thinkerResizeHandler, {capture:true,passive:true});
+        const viewport = window.visualViewport;
+        viewport?.addEventListener("resize", thinkerResizeHandler, {passive:true});
+        viewport?.addEventListener("scroll", thinkerResizeHandler, {passive:true});
+        let densityQuery;
+        const onDensityChange = () => { watchDensity(); thinkerResizeHandler(); };
+        const watchDensity = () => {
+          densityQuery?.removeEventListener("change", onDensityChange);
+          densityQuery = window.matchMedia?.(`(resolution: ${window.devicePixelRatio || 1}dppx)`);
+          densityQuery?.addEventListener("change", onDensityChange, {once:true});
+        };
+        watchDensity();
+        const activeLayoutHandler = thinkerResizeHandler;
+        thinkerLayoutDisposer = () => {
+          window.removeEventListener("scroll", activeLayoutHandler, true);
+          document.removeEventListener("visibilitychange", onVisibleLayout);
+          viewport?.removeEventListener("resize", activeLayoutHandler);
+          viewport?.removeEventListener("scroll", activeLayoutHandler);
+          densityQuery?.removeEventListener("change", onDensityChange);
+          tracked.clear();
+        };
         scheduleThinkerBannerPosition();
         scheduleThinkerWorkspaceLayout();
-
+/* THINKER_LAYOUT_LAYOUT_OBSERVERS_END */
         OpponentIntel.ensureScoutWrapper();
         scheduleThinkerWorkspaceLayout();
         OpponentIntel.startObserver();
@@ -8358,7 +8437,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
 })();
 
 /* THINKER_SESSION_CONTROL_GENERATED_START */
-globalThis.ThinkerClientVersion="2026-10-27.2";
+globalThis.ThinkerClientVersion="2026-10-29.1";
 globalThis.ThinkerSessionControlReady=(async()=>{
 (function(root){
 "use strict";

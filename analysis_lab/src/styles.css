@@ -26,8 +26,8 @@
 
 * { box-sizing: border-box; }
 .visually-hidden { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
-html { min-width: 320px; background: #161512; }
-body { margin: 0; min-width: 320px; min-height: 100vh; background: radial-gradient(circle at 44% -20%, #4b4945 0, #312f2c 35rem, var(--background) 70rem); }
+html { min-width: 0; background: #161512; }
+body { margin: 0; min-width: 0; min-height: 100vh; background: radial-gradient(circle at 44% -20%, #4b4945 0, #312f2c 35rem, var(--background) 70rem); }
 button, input, select, textarea { font: inherit; }
 button { color: inherit; }
 button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid rgba(129, 182, 76, .68); outline-offset: 2px; }
@@ -167,4 +167,12 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+}
+
+.analysis-column,.settings-grid label { min-width:0; }
+.import-dialog { max-height:calc(100dvh - 28px); overflow:auto; }
+@media(max-width:360px) {
+  .topbar { gap:8px; }
+  .topbar-actions { flex-wrap:wrap; justify-content:flex-end; }
+  .dialog-header,.dialog-actions { flex-wrap:wrap; }
 }

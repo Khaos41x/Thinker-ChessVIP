@@ -1,0 +1,344 @@
+{
+  "scope": "Synthetic host and public game archive fixtures; actual source renderer; no real game/session manipulated",
+  "reports": [
+    {
+      "phase": "before",
+      "first": {
+        "width": 1034,
+        "left": 203,
+        "top": 900
+      },
+      "last": {
+        "width": 1034,
+        "left": 203,
+        "top": 900
+      },
+      "widths": [
+        {
+          "width": 1086,
+          "pageOverflow": false,
+          "hud": {
+            "x": 234.84375,
+            "y": 24,
+            "width": 144.5625,
+            "height": 26,
+            "top": 24,
+            "right": 379.40625,
+            "bottom": 50,
+            "left": 234.84375
+          },
+          "board": {
+            "x": 132.59375,
+            "y": 64,
+            "width": 557.40625,
+            "height": 557.40625,
+            "top": 64,
+            "right": 690,
+            "bottom": 621.40625,
+            "left": 132.59375
+          },
+          "scout": {
+            "x": 766,
+            "y": 732,
+            "width": 282,
+            "height": 658,
+            "top": 732,
+            "right": 1048,
+            "bottom": 1390,
+            "left": 766
+          },
+          "scoutOverflow": false,
+          "openings": 4,
+          "engine": "stockfish-19-1mb"
+        },
+        {
+          "width": 1440,
+          "pageOverflow": false,
+          "hud": {
+            "x": 270.25,
+            "y": 24,
+            "width": 144.5625,
+            "height": 26,
+            "top": 24,
+            "right": 414.8125,
+            "bottom": 50,
+            "left": 270.25
+          },
+          "board": {
+            "x": 168,
+            "y": 64,
+            "width": 640,
+            "height": 640,
+            "top": 64,
+            "right": 808,
+            "bottom": 704,
+            "left": 168
+          },
+          "scout": {
+            "x": 929,
+            "y": 732,
+            "width": 296,
+            "height": 658,
+            "top": 732,
+            "right": 1225,
+            "bottom": 1390,
+            "left": 929
+          },
+          "scoutOverflow": false,
+          "openings": 4,
+          "engine": "stockfish-19-1mb"
+        },
+        {
+          "width": 780,
+          "pageOverflow": false,
+          "hud": {
+            "x": 192.25,
+            "y": 12,
+            "width": 144.5625,
+            "height": 26,
+            "top": 12,
+            "right": 336.8125,
+            "bottom": 38,
+            "left": 192.25
+          },
+          "board": {
+            "x": 90,
+            "y": 52,
+            "width": 678,
+            "height": 678,
+            "top": 52,
+            "right": 768,
+            "bottom": 730,
+            "left": 90
+          },
+          "scout": {
+            "x": 12,
+            "y": 1930,
+            "width": 756,
+            "height": 541,
+            "top": 1930,
+            "right": 768,
+            "bottom": 2471,
+            "left": 12
+          },
+          "scoutOverflow": false,
+          "openings": 4,
+          "engine": "stockfish-19-1mb"
+        },
+        {
+          "width": 500,
+          "pageOverflow": false,
+          "hud": {
+            "x": 164.25,
+            "y": 12,
+            "width": 144.5625,
+            "height": 26,
+            "top": 12,
+            "right": 308.8125,
+            "bottom": 38,
+            "left": 164.25
+          },
+          "board": {
+            "x": 62,
+            "y": 52,
+            "width": 426,
+            "height": 426,
+            "top": 52,
+            "right": 488,
+            "bottom": 478,
+            "left": 62
+          },
+          "scout": {
+            "x": 12,
+            "y": 2058,
+            "width": 476,
+            "height": 541,
+            "top": 2058,
+            "right": 488,
+            "bottom": 2599,
+            "left": 12
+          },
+          "scoutOverflow": false,
+          "openings": 4,
+          "engine": "stockfish-19-1mb"
+        }
+      ],
+      "positioned": {
+        "workspaceLeft": 233,
+        "expectedLeft": 203,
+        "bannerLeft": 1255,
+        "expectedBannerLeft": 1225
+      }
+    },
+    {
+      "phase": "after",
+      "first": {
+        "width": 1034,
+        "left": 203,
+        "top": 900
+      },
+      "last": {
+        "width": 1034,
+        "left": 203,
+        "top": 900
+      },
+      "widths": [
+        {
+          "width": 1086,
+          "pageOverflow": false,
+          "hud": {
+            "x": 234.84375,
+            "y": 24,
+            "width": 144.5625,
+            "height": 26,
+            "top": 24,
+            "right": 379.40625,
+            "bottom": 50,
+            "left": 234.84375
+          },
+          "board": {
+            "x": 132.59375,
+            "y": 64,
+            "width": 557.40625,
+            "height": 557.40625,
+            "top": 64,
+            "right": 690,
+            "bottom": 621.40625,
+            "left": 132.59375
+          },
+          "scout": {
+            "x": 752,
+            "y": 732,
+            "width": 296,
+            "height": 658,
+            "top": 732,
+            "right": 1048,
+            "bottom": 1390,
+            "left": 752
+          },
+          "scoutOverflow": false,
+          "openings": 4,
+          "engine": "stockfish-19-1mb"
+        },
+        {
+          "width": 1440,
+          "pageOverflow": false,
+          "hud": {
+            "x": 270.25,
+            "y": 24,
+            "width": 144.5625,
+            "height": 26,
+            "top": 24,
+            "right": 414.8125,
+            "bottom": 50,
+            "left": 270.25
+          },
+          "board": {
+            "x": 168,
+            "y": 64,
+            "width": 640,
+            "height": 640,
+            "top": 64,
+            "right": 808,
+            "bottom": 704,
+            "left": 168
+          },
+          "scout": {
+            "x": 929,
+            "y": 732,
+            "width": 296,
+            "height": 658,
+            "top": 732,
+            "right": 1225,
+            "bottom": 1390,
+            "left": 929
+          },
+          "scoutOverflow": false,
+          "openings": 4,
+          "engine": "stockfish-19-1mb"
+        },
+        {
+          "width": 780,
+          "pageOverflow": false,
+          "hud": {
+            "x": 192.25,
+            "y": 12,
+            "width": 144.5625,
+            "height": 26,
+            "top": 12,
+            "right": 336.8125,
+            "bottom": 38,
+            "left": 192.25
+          },
+          "board": {
+            "x": 90,
+            "y": 52,
+            "width": 678,
+            "height": 678,
+            "top": 52,
+            "right": 768,
+            "bottom": 730,
+            "left": 90
+          },
+          "scout": {
+            "x": 12,
+            "y": 1930,
+            "width": 756,
+            "height": 541,
+            "top": 1930,
+            "right": 768,
+            "bottom": 2471,
+            "left": 12
+          },
+          "scoutOverflow": false,
+          "openings": 4,
+          "engine": "stockfish-19-1mb"
+        },
+        {
+          "width": 500,
+          "pageOverflow": false,
+          "hud": {
+            "x": 164.25,
+            "y": 12,
+            "width": 144.5625,
+            "height": 26,
+            "top": 12,
+            "right": 308.8125,
+            "bottom": 38,
+            "left": 164.25
+          },
+          "board": {
+            "x": 62,
+            "y": 52,
+            "width": 426,
+            "height": 426,
+            "top": 52,
+            "right": 488,
+            "bottom": 478,
+            "left": 62
+          },
+          "scout": {
+            "x": 12,
+            "y": 2082,
+            "width": 476,
+            "height": 541,
+            "top": 2082,
+            "right": 488,
+            "bottom": 2623,
+            "left": 12
+          },
+          "scoutOverflow": false,
+          "openings": 4,
+          "engine": "stockfish-19-1mb"
+        }
+      ],
+      "positioned": {
+        "workspaceLeft": 203,
+        "expectedLeft": 203,
+        "bannerLeft": 1225,
+        "expectedBannerLeft": 1225
+      }
+    }
+  ],
+  "errors": []
+}

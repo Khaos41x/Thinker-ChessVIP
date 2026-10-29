@@ -237,7 +237,7 @@ try {
     obsoleteEventsRejected: continuity.finalSnapshot.staleResultCount,
     aborts: continuity.finalSnapshot.abortCount,
   };
-  const evidenceDirectory = join(repositoryRoot, '_bmad-output', 'implementation-artifacts', 'autoplay-field-eval-anchor');
+  const evidenceDirectory = process.env.TC_EVAL_ARTIFACT_DIR || join(repositoryRoot, '_bmad-output', 'implementation-artifacts', 'autoplay-field-eval-anchor');
   await mkdir(evidenceDirectory, { recursive: true });
   await writeFile(join(evidenceDirectory, 'scroll-validation.json'), JSON.stringify({
     fixture: 'Chromium deterministic analysis fixture; not authenticated Chess.com',
@@ -379,6 +379,7 @@ try {
     && polish.final.targetFraction === polish.final.presentation.selected.fraction
     && polish.final.roots === 1
     && polish.rootsAfterDestroy === 0;
+  await writeFile(join(evidenceDirectory,'report.json'),JSON.stringify({...result,passes:{continuity:continuityPasses,visual:visualPasses,polish:polishPasses}},null,2));
   if (
     !behavior.domPreserved || !behavior.singleRootAfterRepeatedStart
     || !behavior.overlayAligned || !behavior.parentPreservedAfterDestroy

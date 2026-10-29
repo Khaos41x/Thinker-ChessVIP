@@ -10,10 +10,10 @@
     body { min-height:100svh; display:grid; place-items:center; padding:calc(2 * var(--space)); }
     .status-card { width:min(100%,var(--status-max-width)); max-width:var(--status-max-width); margin:0; padding:calc(2 * var(--space)); display:grid; justify-items:center; gap:var(--space); border:1px solid var(--border); border-radius:var(--radius); background:var(--panel); color:#deded9; }
     .status-card img { display:block; width:70px; height:140px; object-fit:contain; }
-    .status-card h1 { width:100%; margin:0; font-size:28px; line-height:36px; text-align:center; }
+    .status-card h1 { overflow-wrap:anywhere; width:100%; margin:0; font-size:28px; line-height:36px; text-align:center; }
     .status { display:grid; grid-template-columns:8px 40px; align-items:center; width:56px; gap:8px; font-size:12px; line-height:18px; color:var(--muted); }
     .status::before { content:""; width:8px; height:8px; border-radius:50%; background:var(--accent); }
-    .status-card .compact-button { display:flex; align-items:center; justify-content:center; width:160px; height:32px; margin:0; padding:0 12px; font-size:11px; line-height:16px; text-decoration:none; }
+    .status-card .compact-button { display:flex; align-items:center; justify-content:center; width:160px; max-width:100%; min-height:32px; height:auto; text-align:center; margin:0; padding:0 12px; font-size:11px; line-height:16px; text-decoration:none; }
     .status-card a:focus { outline:none; box-shadow:none; }
     .status-card a:focus-visible { border-color:#a0a19b; }
     .status-card a:hover { filter:brightness(1.08); }

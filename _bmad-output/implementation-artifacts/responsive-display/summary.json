@@ -1,0 +1,870 @@
+{
+  "release": "2026-10-29.1",
+  "browser": "Chrome 156.0.8078.48 / Windows",
+  "before_cases": 281,
+  "before_issues": [
+    {
+      "surface": "console",
+      "issue": "stale-banner-after-sidebar-translation"
+    },
+    {
+      "surface": "console",
+      "zoom": 1.75,
+      "width": 780,
+      "height": 520,
+      "issue": "panel-clips:kb-session-panel:kb-session-panel kb-console-module kb-auto-play-module"
+    },
+    {
+      "surface": "console",
+      "zoom": 2,
+      "width": 780,
+      "height": 520,
+      "issue": "panel-clips:kb-session-panel:kb-session-panel kb-console-module kb-auto-play-module"
+    },
+    {
+      "surface": "console",
+      "zoom": 2,
+      "width": 780,
+      "height": 520,
+      "issue": "page-overflow"
+    }
+  ],
+  "after_cases": 361,
+  "after_issues": [],
+  "after_exceptions": [],
+  "dynamic": {
+    "method": "Native Chrome settings UI setDefaultZoom in separate temporary profile; app document is never reloaded during sequence",
+    "density": 1,
+    "densityIsSimulation": false,
+    "reports": [
+      {
+        "surface": "config",
+        "zoom": 1,
+        "width": 764,
+        "height": 485,
+        "dpr": 1,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": true,
+        "menu": {
+          "x": 37,
+          "y": 262,
+          "width": 675,
+          "height": 98,
+          "top": 262,
+          "right": 712,
+          "bottom": 360,
+          "left": 37
+        },
+        "overflow": false
+      },
+      {
+        "surface": "config",
+        "zoom": 1.25,
+        "width": 611,
+        "height": 388,
+        "dpr": 1.25,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": true,
+        "menu": {
+          "x": 25,
+          "y": 273,
+          "width": 550,
+          "height": 97.5999984741211,
+          "top": 273,
+          "right": 575,
+          "bottom": 370.5999984741211,
+          "left": 25
+        },
+        "overflow": false
+      },
+      {
+        "surface": "config",
+        "zoom": 2,
+        "width": 382,
+        "height": 242,
+        "dpr": 2,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": true,
+        "menu": {
+          "x": 25,
+          "y": 94,
+          "width": 325,
+          "height": 98,
+          "top": 94,
+          "right": 350,
+          "bottom": 192,
+          "left": 25
+        },
+        "overflow": false
+      },
+      {
+        "surface": "config",
+        "zoom": 0.67,
+        "width": 1140,
+        "height": 723,
+        "dpr": 0.6700000166893005,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": false,
+        "menu": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overflow": false
+      },
+      {
+        "surface": "config",
+        "zoom": 1.75,
+        "width": 436,
+        "height": 277,
+        "dpr": 1.75,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": false,
+        "menu": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overflow": false
+      },
+      {
+        "surface": "config",
+        "zoom": 1,
+        "width": 764,
+        "height": 485,
+        "dpr": 1,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": true,
+        "menu": {
+          "x": 37,
+          "y": 131,
+          "width": 675,
+          "height": 98,
+          "top": 131,
+          "right": 712,
+          "bottom": 229,
+          "left": 37
+        },
+        "overflow": false
+      },
+      {
+        "case": "200-same-size-resize-events",
+        "surface": "config",
+        "panelMutations": 0
+      },
+      {
+        "surface": "console",
+        "zoom": 1,
+        "width": 764,
+        "height": 485,
+        "dpr": 1,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": true,
+        "menu": {
+          "x": 25,
+          "y": 262,
+          "width": 714,
+          "height": 98,
+          "top": 262,
+          "right": 739,
+          "bottom": 360,
+          "left": 25
+        },
+        "bannerImage": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overflow": false
+      },
+      {
+        "surface": "console",
+        "zoom": 1.25,
+        "width": 611,
+        "height": 388,
+        "dpr": 1.25,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": false,
+        "menu": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "bannerImage": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overflow": false
+      },
+      {
+        "case": "notification-presentation-only",
+        "rect": {
+          "x": 10,
+          "y": 50,
+          "width": 300,
+          "height": 52,
+          "top": 50,
+          "right": 310,
+          "bottom": 102,
+          "left": 10
+        },
+        "width": 320,
+        "height": 120
+      },
+      {
+        "surface": "console",
+        "zoom": 2,
+        "width": 382,
+        "height": 242,
+        "dpr": 2,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": false,
+        "menu": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "bannerImage": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overflow": false
+      },
+      {
+        "surface": "console",
+        "zoom": 0.67,
+        "width": 1140,
+        "height": 723,
+        "dpr": 0.6700000166893005,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": false,
+        "menu": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "bannerImage": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overflow": false
+      },
+      {
+        "surface": "console",
+        "zoom": 1.75,
+        "width": 436,
+        "height": 277,
+        "dpr": 1.75,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": false,
+        "menu": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "bannerImage": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overflow": false
+      },
+      {
+        "surface": "console",
+        "zoom": 1,
+        "width": 764,
+        "height": 485,
+        "dpr": 1,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": false,
+        "menu": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "bannerImage": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overflow": false
+      },
+      {
+        "case": "hidden-sidebar-appears-banner-off",
+        "workspace": 1224,
+        "sidebar": 1224,
+        "bannerHidden": true
+      },
+      {
+        "case": "200-same-size-resize-events",
+        "surface": "console",
+        "panelMutations": 0
+      }
+    ],
+    "errors": []
+  },
+  "density_simulation": {
+    "method": "Native Chrome settings UI setDefaultZoom in separate temporary profile; app document is never reloaded during sequence",
+    "density": 1.5,
+    "densityIsSimulation": true,
+    "reports": [
+      {
+        "surface": "config",
+        "zoom": 1,
+        "width": 498,
+        "height": 285,
+        "dpr": 1.5,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": true,
+        "menu": {
+          "x": 25,
+          "y": 163,
+          "width": 433,
+          "height": 97.33333587646484,
+          "top": 163,
+          "right": 458,
+          "bottom": 260.33333587646484,
+          "left": 25
+        },
+        "overflow": false
+      },
+      {
+        "surface": "config",
+        "zoom": 1.25,
+        "width": 398,
+        "height": 228,
+        "dpr": 1.875,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": true,
+        "menu": {
+          "x": 25.000001907348633,
+          "y": 24.000001907348633,
+          "width": 337.0000305175781,
+          "height": 97.0666732788086,
+          "top": 24.000001907348633,
+          "right": 362.00003242492676,
+          "bottom": 121.06667518615723,
+          "left": 25.000001907348633
+        },
+        "overflow": false
+      },
+      {
+        "surface": "config",
+        "zoom": 2,
+        "width": 249,
+        "height": 142,
+        "dpr": 3,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": false,
+        "menu": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overflow": false
+      },
+      {
+        "surface": "config",
+        "zoom": 0.67,
+        "width": 743,
+        "height": 426,
+        "dpr": 1.0049999952316284,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": true,
+        "menu": {
+          "x": 36.9869384765625,
+          "y": 18.998756408691406,
+          "width": 645.98876953125,
+          "height": 97.97885131835938,
+          "top": 18.998756408691406,
+          "right": 682.9757080078125,
+          "bottom": 116.97760772705078,
+          "left": 36.9869384765625
+        },
+        "overflow": false
+      },
+      {
+        "surface": "config",
+        "zoom": 1.75,
+        "width": 284,
+        "height": 163,
+        "dpr": 2.625,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": false,
+        "menu": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overflow": false
+      },
+      {
+        "surface": "config",
+        "zoom": 1,
+        "width": 498,
+        "height": 285,
+        "dpr": 1.5,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": true,
+        "menu": {
+          "x": 25,
+          "y": 75,
+          "width": 433,
+          "height": 97.33333587646484,
+          "top": 75,
+          "right": 458,
+          "bottom": 172.33333587646484,
+          "left": 25
+        },
+        "overflow": false
+      },
+      {
+        "surface": "console",
+        "zoom": 1,
+        "width": 498,
+        "height": 285,
+        "dpr": 1.5,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": true,
+        "menu": {
+          "x": 25,
+          "y": 163,
+          "width": 449,
+          "height": 97.33333587646484,
+          "top": 163,
+          "right": 474,
+          "bottom": 260.33333587646484,
+          "left": 25
+        },
+        "bannerImage": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overflow": false
+      },
+      {
+        "surface": "console",
+        "zoom": 1.25,
+        "width": 398,
+        "height": 228,
+        "dpr": 1.875,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": false,
+        "menu": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "bannerImage": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overflow": false
+      },
+      {
+        "surface": "console",
+        "zoom": 2,
+        "width": 249,
+        "height": 142,
+        "dpr": 3,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": false,
+        "menu": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "bannerImage": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overflow": false
+      },
+      {
+        "surface": "console",
+        "zoom": 0.67,
+        "width": 743,
+        "height": 426,
+        "dpr": 1.0049999952316284,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": false,
+        "menu": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "bannerImage": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overflow": false
+      },
+      {
+        "surface": "console",
+        "zoom": 1.75,
+        "width": 284,
+        "height": 163,
+        "dpr": 2.625,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": false,
+        "menu": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "bannerImage": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overflow": false
+      },
+      {
+        "surface": "console",
+        "zoom": 1,
+        "width": 498,
+        "height": 285,
+        "dpr": 1.5,
+        "pinch": 1,
+        "selection": "komodo-14.1",
+        "sameRoot": true,
+        "sameNavigation": true,
+        "menuOpen": false,
+        "menu": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "bannerImage": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overflow": false
+      }
+    ],
+    "errors": []
+  },
+  "artwork_density": {
+    "method": "Native browser zoom200%, OS scale150% simulated with isolated Chrome flag; actual multi-monitor hardware not tested",
+    "reports": [
+      {
+        "phase": "before",
+        "dpr": 3,
+        "innerWidth": 1440,
+        "innerHeight": 900,
+        "pinch": 1,
+        "art": {
+          "x": 1257,
+          "y": 212,
+          "width": 46,
+          "height": 92,
+          "top": 212,
+          "right": 1303,
+          "bottom": 304,
+          "left": 1257
+        },
+        "card": {
+          "x": 1195,
+          "y": 24,
+          "width": 170,
+          "height": 500,
+          "top": 24,
+          "right": 1365,
+          "bottom": 524,
+          "left": 1195
+        }
+      },
+      {
+        "phase": "after",
+        "dpr": 3,
+        "innerWidth": 1440,
+        "innerHeight": 900,
+        "pinch": 1,
+        "art": {
+          "x": 1245,
+          "y": 188,
+          "width": 70,
+          "height": 140,
+          "top": 188,
+          "right": 1315,
+          "bottom": 328,
+          "left": 1245
+        },
+        "card": {
+          "x": 1195,
+          "y": 24,
+          "width": 170,
+          "height": 500,
+          "top": 24,
+          "right": 1365,
+          "bottom": 524,
+          "left": 1195
+        }
+      }
+    ]
+  },
+  "status_60s": {
+    "seconds": 60,
+    "results": [
+      {
+        "surface": "config",
+        "records": [],
+        "cls": 0,
+        "recreated": [],
+        "selectors": [
+          "#connection",
+          "#userscript-connection",
+          "#execution-state",
+          "#client-build-state",
+          "#analysis-engine-state",
+          "#analysis-engine-message",
+          "#engine-retry",
+          "#save-state",
+          "#kb-session-phase",
+          "#kb-session-ttl",
+          "#kb-session-observed",
+          "#kb-session-raw",
+          "#session-availability",
+          ".tc-engine-picker"
+        ]
+      },
+      {
+        "surface": "console",
+        "records": [],
+        "cls": 0,
+        "recreated": [],
+        "selectors": [
+          "#kb-session-phase",
+          "#kb-session-ttl",
+          "#kb-session-observed",
+          "#kb-session-raw",
+          ".tc-analysis-status",
+          "#tc-analysis-message",
+          ".tc-analysis-feedback",
+          ".tc-analysis-notice button",
+          ".tc-engine-picker"
+        ]
+      }
+    ],
+    "exceptions": []
+  },
+  "eval_bar_passes": {
+    "continuity": true,
+    "visual": true,
+    "polish": true
+  },
+  "recommendation_cases": 256,
+  "limits": [
+    "No authenticated Chess.com/Tampermonkey run",
+    "No physical multi-monitor hardware; scale150% was simulated",
+    "Native browser color-picker popup is OS-managed",
+    "Baseline Lab CSV measured board/page overflow; final CSV additionally measures all three actual side panels"
+  ]
+}

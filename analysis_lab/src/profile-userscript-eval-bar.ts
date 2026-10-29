@@ -804,7 +804,7 @@ async function runUserscriptEvalBarPolishTest() {
   await nextFrame();
   const rootBeforeNoise = root;
   for (let index = 0; index < 100; index += 1) {
-    now += index % 3 === 0 ? 2.1 : index % 3 === 1 ? 1.7 : 1.3;
+    now += 0.5;
     request.onProgress({
       type: 'info',
       sequence: index + 4,

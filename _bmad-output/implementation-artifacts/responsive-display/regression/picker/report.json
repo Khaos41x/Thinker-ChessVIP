@@ -1,0 +1,653 @@
+{
+  "version": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/156.0.8078.48",
+    "revision": "@d0c02bfad08ec92a6ffcf989e53cd995e6381a4c",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "jsVersion": "15.6.75.19"
+  },
+  "support": {
+    "baseSelect": true,
+    "popover": true
+  },
+  "results": [
+    {
+      "surface": "config",
+      "width": 1440,
+      "box": {
+        "x": 731,
+        "y": 306,
+        "width": 404,
+        "height": 98,
+        "top": 306,
+        "right": 1135,
+        "bottom": 404,
+        "left": 731
+      },
+      "select": {
+        "x": 731,
+        "y": 270,
+        "width": 404,
+        "height": 32,
+        "top": 270,
+        "right": 1135,
+        "bottom": 302,
+        "left": 731
+      },
+      "color": "rgb(29, 29, 27)",
+      "inputColor": "rgb(29, 29, 27)",
+      "options": [
+        {
+          "height": 32,
+          "font": "13px",
+          "padding": "12px",
+          "color": "rgb(242, 242, 238)",
+          "background": "rgb(58, 58, 54)"
+        },
+        {
+          "height": 32,
+          "font": "13px",
+          "padding": "12px",
+          "color": "rgb(242, 242, 238)",
+          "background": "rgb(29, 29, 27)"
+        },
+        {
+          "height": 32,
+          "font": "13px",
+          "padding": "12px",
+          "color": "rgb(242, 242, 238)",
+          "background": "rgb(29, 29, 27)"
+        }
+      ],
+      "scroll": false,
+      "topLayer": true,
+      "animations": 0,
+      "overflow": false
+    },
+    {
+      "surface": "config",
+      "width": 1280,
+      "box": {
+        "x": 651,
+        "y": 306,
+        "width": 404,
+        "height": 98,
+        "top": 306,
+        "right": 1055,
+        "bottom": 404,
+        "left": 651
+      },
+      "select": {
+        "x": 651,
+        "y": 270,
+        "width": 404,
+        "height": 32,
+        "top": 270,
+        "right": 1055,
+        "bottom": 302,
+        "left": 651
+      },
+      "color": "rgb(29, 29, 27)",
+      "inputColor": "rgb(29, 29, 27)",
+      "options": [
+        {
+          "height": 32,
+          "font": "13px",
+          "padding": "12px",
+          "color": "rgb(242, 242, 238)",
+          "background": "rgb(58, 58, 54)"
+        },
+        {
+          "height": 32,
+          "font": "13px",
+          "padding": "12px",
+          "color": "rgb(242, 242, 238)",
+          "background": "rgb(29, 29, 27)"
+        },
+        {
+          "height": 32,
+          "font": "13px",
+          "padding": "12px",
+          "color": "rgb(242, 242, 238)",
+          "background": "rgb(29, 29, 27)"
+        }
+      ],
+      "scroll": false,
+      "topLayer": true,
+      "animations": 0,
+      "overflow": false
+    },
+    {
+      "surface": "config",
+      "width": 1024,
+      "box": {
+        "x": 523,
+        "y": 306,
+        "width": 404,
+        "height": 98,
+        "top": 306,
+        "right": 927,
+        "bottom": 404,
+        "left": 523
+      },
+      "select": {
+        "x": 523,
+        "y": 270,
+        "width": 404,
+        "height": 32,
+        "top": 270,
+        "right": 927,
+        "bottom": 302,
+        "left": 523
+      },
+      "color": "rgb(29, 29, 27)",
+      "inputColor": "rgb(29, 29, 27)",
+      "options": [
+        {
+          "height": 32,
+          "font": "13px",
+          "padding": "12px",
+          "color": "rgb(242, 242, 238)",
+          "background": "rgb(58, 58, 54)"
+        },
+        {
+          "height": 32,
+          "font": "13px",
+          "padding": "12px",
+          "color": "rgb(242, 242, 238)",
+          "background": "rgb(29, 29, 27)"
+        },
+        {
+          "height": 32,
+          "font": "13px",
+          "padding": "12px",
+          "color": "rgb(242, 242, 238)",
+          "background": "rgb(29, 29, 27)"
+        }
+      ],
+      "scroll": false,
+      "topLayer": true,
+      "animations": 0,
+      "overflow": false
+    },
+    {
+      "surface": "config",
+      "width": 768,
+      "box": {
+        "x": 37,
+        "y": 493,
+        "width": 679,
+        "height": 98,
+        "top": 493,
+        "right": 716,
+        "bottom": 591,
+        "left": 37
+      },
+      "select": {
+        "x": 37,
+        "y": 457,
+        "width": 679,
+        "height": 32,
+        "top": 457,
+        "right": 716,
+        "bottom": 489,
+        "left": 37
+      },
+      "color": "rgb(29, 29, 27)",
+      "inputColor": "rgb(29, 29, 27)",
+      "options": [
+        {
+          "height": 32,
+          "font": "13px",
+          "padding": "12px",
+          "color": "rgb(242, 242, 238)",
+          "background": "rgb(58, 58, 54)"
+        },
+        {
+          "height": 32,
+          "font": "13px",
+          "padding": "12px",
+          "color": "rgb(242, 242, 238)",
+          "background": "rgb(29, 29, 27)"
+        },
+        {
+          "height": 32,
+          "font": "13px",
+          "padding": "12px",
+          "color": "rgb(242, 242, 238)",
+          "background": "rgb(29, 29, 27)"
+        }
+      ],
+      "scroll": false,
+      "topLayer": true,
+      "animations": 0,
+      "overflow": false
+    },
+    {
+      "surface": "config",
+      "width": 390,
+      "box": {
+        "x": 25,
+        "y": 520,
+        "width": 325,
+        "height": 98,
+        "top": 520,
+        "right": 350,
+        "bottom": 618,
+        "left": 25
+      },
+      "select": {
+        "x": 25,
+        "y": 484,
+        "width": 325,
+        "height": 32,
+        "top": 484,
+        "right": 350,
+        "bottom": 516,
+        "left": 25
+      },
+      "color": "rgb(29, 29, 27)",
+      "inputColor": "rgb(29, 29, 27)",
+      "options": [
+        {
+          "height": 32,
+          "font": "13px",
+          "padding": "12px",
+          "color": "rgb(242, 242, 238)",
+          "background": "rgb(58, 58, 54)"
+        },
+        {
+          "height": 32,
+          "font": "13px",
+          "padding": "12px",
+          "color": "rgb(242, 242, 238)",
+          "background": "rgb(29, 29, 27)"
+        },
+        {
+          "height": 32,
+          "font": "13px",
+          "padding": "12px",
+          "color": "rgb(242, 242, 238)",
+          "background": "rgb(29, 29, 27)"
+        }
+      ],
+      "scroll": false,
+      "topLayer": true,
+      "animations": 0,
+      "overflow": false
+    },
+    {
+      "surface": "config",
+      "flip": {
+        "control": {
+          "x": 12,
+          "y": 960,
+          "width": 320,
+          "height": 32,
+          "top": 960,
+          "right": 332,
+          "bottom": 992,
+          "left": 12
+        },
+        "menu": {
+          "x": 12,
+          "y": 858,
+          "width": 320,
+          "height": 98,
+          "top": 858,
+          "right": 332,
+          "bottom": 956,
+          "left": 12
+        },
+        "boundaryHarness": true
+      }
+    },
+    {
+      "surface": "console",
+      "width": 1086,
+      "box": {
+        "x": 408,
+        "y": 520,
+        "width": 319,
+        "height": 98,
+        "top": 520,
+        "right": 727,
+        "bottom": 618,
+        "left": 408
+      },
+      "select": {
+        "x": 408,
+        "y": 484,
+        "width": 319,
+        "height": 32,
+        "top": 484,
+        "right": 727,
+        "bottom": 516,
+        "left": 408
+      },
+      "color": "rgb(29, 29, 27)",
+      "inputColor": "rgb(29, 29, 27)",
+      "options": [
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(29, 29, 27)"
+        },
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(29, 29, 27)"
+        },
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(58, 58, 54)"
+        }
+      ],
+      "scroll": false,
+      "topLayer": true,
+      "animations": 0,
+      "overflow": true
+    },
+    {
+      "surface": "console",
+      "width": 1280,
+      "box": {
+        "x": 505,
+        "y": 520,
+        "width": 319,
+        "height": 98,
+        "top": 520,
+        "right": 824,
+        "bottom": 618,
+        "left": 505
+      },
+      "select": {
+        "x": 505,
+        "y": 484,
+        "width": 319,
+        "height": 32,
+        "top": 484,
+        "right": 824,
+        "bottom": 516,
+        "left": 505
+      },
+      "color": "rgb(29, 29, 27)",
+      "inputColor": "rgb(29, 29, 27)",
+      "options": [
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(29, 29, 27)"
+        },
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(29, 29, 27)"
+        },
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(58, 58, 54)"
+        }
+      ],
+      "scroll": false,
+      "topLayer": true,
+      "animations": 0,
+      "overflow": true
+    },
+    {
+      "surface": "console",
+      "width": 1440,
+      "box": {
+        "x": 585,
+        "y": 520,
+        "width": 319,
+        "height": 98,
+        "top": 520,
+        "right": 904,
+        "bottom": 618,
+        "left": 585
+      },
+      "select": {
+        "x": 585,
+        "y": 484,
+        "width": 319,
+        "height": 32,
+        "top": 484,
+        "right": 904,
+        "bottom": 516,
+        "left": 585
+      },
+      "color": "rgb(29, 29, 27)",
+      "inputColor": "rgb(29, 29, 27)",
+      "options": [
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(29, 29, 27)"
+        },
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(29, 29, 27)"
+        },
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(58, 58, 54)"
+        }
+      ],
+      "scroll": false,
+      "topLayer": true,
+      "animations": 0,
+      "overflow": false
+    },
+    {
+      "surface": "console",
+      "width": 1920,
+      "box": {
+        "x": 825,
+        "y": 520,
+        "width": 319,
+        "height": 98,
+        "top": 520,
+        "right": 1144,
+        "bottom": 618,
+        "left": 825
+      },
+      "select": {
+        "x": 825,
+        "y": 484,
+        "width": 319,
+        "height": 32,
+        "top": 484,
+        "right": 1144,
+        "bottom": 516,
+        "left": 825
+      },
+      "color": "rgb(29, 29, 27)",
+      "inputColor": "rgb(29, 29, 27)",
+      "options": [
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(29, 29, 27)"
+        },
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(29, 29, 27)"
+        },
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(58, 58, 54)"
+        }
+      ],
+      "scroll": false,
+      "topLayer": true,
+      "animations": 0,
+      "overflow": false
+    },
+    {
+      "surface": "console",
+      "width": 1033,
+      "box": {
+        "x": 25,
+        "y": 520,
+        "width": 983,
+        "height": 98,
+        "top": 520,
+        "right": 1008,
+        "bottom": 618,
+        "left": 25
+      },
+      "select": {
+        "x": 25,
+        "y": 484,
+        "width": 983,
+        "height": 32,
+        "top": 484,
+        "right": 1008,
+        "bottom": 516,
+        "left": 25
+      },
+      "color": "rgb(29, 29, 27)",
+      "inputColor": "rgb(29, 29, 27)",
+      "options": [
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(29, 29, 27)"
+        },
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(29, 29, 27)"
+        },
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(58, 58, 54)"
+        }
+      ],
+      "scroll": false,
+      "topLayer": true,
+      "animations": 0,
+      "overflow": true
+    },
+    {
+      "surface": "console",
+      "width": 800,
+      "box": {
+        "x": 25,
+        "y": 636,
+        "width": 750,
+        "height": 98,
+        "top": 636,
+        "right": 775,
+        "bottom": 734,
+        "left": 25
+      },
+      "select": {
+        "x": 25,
+        "y": 600,
+        "width": 750,
+        "height": 32,
+        "top": 600,
+        "right": 775,
+        "bottom": 632,
+        "left": 25
+      },
+      "color": "rgb(29, 29, 27)",
+      "inputColor": "rgb(29, 29, 27)",
+      "options": [
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(29, 29, 27)"
+        },
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(29, 29, 27)"
+        },
+        {
+          "height": 32,
+          "font": "12px",
+          "padding": "12px",
+          "color": "rgb(236, 236, 232)",
+          "background": "rgb(58, 58, 54)"
+        }
+      ],
+      "scroll": false,
+      "topLayer": true,
+      "animations": 0,
+      "overflow": true
+    },
+    {
+      "surface": "console",
+      "flip": {
+        "control": {
+          "x": 12,
+          "y": 960,
+          "width": 320,
+          "height": 32,
+          "top": 960,
+          "right": 332,
+          "bottom": 992,
+          "left": 12
+        },
+        "menu": {
+          "x": 12,
+          "y": 858,
+          "width": 320,
+          "height": 98,
+          "top": 858,
+          "right": 332,
+          "bottom": 956,
+          "left": 12
+        },
+        "boundaryHarness": true
+      }
+    }
+  ],
+  "messages": [],
+  "exceptions": [],
+  "preview": false
+}

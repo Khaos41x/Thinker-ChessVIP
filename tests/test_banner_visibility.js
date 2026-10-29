@@ -61,6 +61,7 @@ const context = {
   console,
   cancelAnimationFrame() {},
   clearInterval() {},
+  readThinkerMoveAuthority: () => "fixture",
   isMasterEnabled: () => false,
   auto_move: false,
   thinkerMoveDiagnostic: { stage: "idle", status: null },
@@ -100,7 +101,7 @@ assert(banner.style.width === "164px", "banner did not fit the actual free colum
 assert(artwork.style.maxWidth === "1122px", "DPR 1 artwork cap is incorrect");
 window.devicePixelRatio = 2;
 context.position();
-assert(artwork.style.maxWidth === "561px", "DPR 2 artwork exceeded native physical resolution");
+assert(artwork.style.maxWidth === "1122px", "DPR changed the CSS artwork cap");
 window.devicePixelRatio = 1;
 
 context.setBannerEnabled(false);

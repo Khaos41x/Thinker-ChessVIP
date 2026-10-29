@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {resolve,join} from 'node:path';
 import {createServer} from 'node:net';
 const root=resolve(import.meta.dirname,'../..'),before=process.argv.includes('--before');
-const output=join(root,'_bmad-output/implementation-artifacts/stable-status/all-indicators');await mkdir(output,{recursive:true});
+const output=process.env.TC_STATUS_ARTIFACT_DIR||join(root,'_bmad-output/implementation-artifacts/stable-status/all-indicators');await mkdir(output,{recursive:true});
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 const port=()=>new Promise(r=>{const s=createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>r(p));});});
 const serverPort=await port(),debugPort=await port(),base=`http://127.0.0.1:${serverPort}`;

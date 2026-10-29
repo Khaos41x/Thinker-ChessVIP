@@ -1,0 +1,59 @@
+{
+  "method": "Native browser zoom200%, OS scale150% simulated with isolated Chrome flag; actual multi-monitor hardware not tested",
+  "reports": [
+    {
+      "phase": "before",
+      "dpr": 3,
+      "innerWidth": 1440,
+      "innerHeight": 900,
+      "pinch": 1,
+      "art": {
+        "x": 1257,
+        "y": 212,
+        "width": 46,
+        "height": 92,
+        "top": 212,
+        "right": 1303,
+        "bottom": 304,
+        "left": 1257
+      },
+      "card": {
+        "x": 1195,
+        "y": 24,
+        "width": 170,
+        "height": 500,
+        "top": 24,
+        "right": 1365,
+        "bottom": 524,
+        "left": 1195
+      }
+    },
+    {
+      "phase": "after",
+      "dpr": 3,
+      "innerWidth": 1440,
+      "innerHeight": 900,
+      "pinch": 1,
+      "art": {
+        "x": 1245,
+        "y": 188,
+        "width": 70,
+        "height": 140,
+        "top": 188,
+        "right": 1315,
+        "bottom": 328,
+        "left": 1245
+      },
+      "card": {
+        "x": 1195,
+        "y": 24,
+        "width": 170,
+        "height": 500,
+        "top": 24,
+        "right": 1365,
+        "bottom": 524,
+        "left": 1195
+      }
+    }
+  ]
+}

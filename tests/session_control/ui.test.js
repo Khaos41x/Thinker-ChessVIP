@@ -329,7 +329,7 @@ async function run() {
   assert(source.includes('class="tc-scout-skeleton" aria-hidden="true"'), "Scout loading state lost its translucent skeletons");
   assert(source.includes('retry.className = "tc-scout-retry"'), "Scout unavailable retry is not styled by the shared premium system");
   assert(source.includes('panel.querySelector(".tc-scout-empty")?.appendChild(retry)'), "Scout unavailable retry is outside the centered empty state");
-  assert(source.includes('const measuredWrapperWidth = Math.round(wrapper.getBoundingClientRect().width)') && source.includes('wrapper.dataset.layoutMode = measuredWrapperWidth >= 1034 ? "desktop" : "stacked"'), "workspace breakpoint is not based on measured injection-container width");
+  assert(source.includes('const measuredWrapperWidth = wrapper.clientWidth') && source.includes('const mode = measuredWrapperWidth >= 1034 ? "desktop" : "stacked"'), "workspace breakpoint is not based on measured injection-container width");
   assert(source.includes("width: 154px !important;\n          max-width: 154px !important"), "workspace launcher lost its compact branded width");
   assert(source.includes("setThinkerWorkspaceCollapsed(false)"), "workspace launcher does not restore the complete workspace");
   assert(!menu.includes('id="kb-minimize-toggle"') && !source.includes('<button class="tc-scout-close"'), "dismiss controls remain in the workspace markup");

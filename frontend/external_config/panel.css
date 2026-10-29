@@ -672,3 +672,16 @@ body[data-focus-input=keyboard] :is(button,input,select,a,[tabindex]):not([aria-
 #retry { font-size:11px; }
 
 #session-availability { margin:8px 0; }
+
+#engine .timing { container-type:inline-size; container-name:tc-config-timing; }
+@container tc-config-timing (width < 310px) {
+  #timing-fields { grid-template-columns:minmax(0,1fr); gap:8px; }
+}
+@media(max-width:620px) {
+  .session-summary { grid-template-columns:minmax(0,1fr); }
+}
+@media(max-width:360px) {
+  .field-heading { flex-wrap:wrap; gap:4px; }
+  .session-actions { grid-template-columns:minmax(0,1fr); }
+  .session-actions button:first-child { grid-column:auto; }
+}
