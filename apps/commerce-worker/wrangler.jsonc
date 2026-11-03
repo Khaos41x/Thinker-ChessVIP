@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "thinker-commerce-worker",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-29",
+  "account_id": "8f68b85a4f00eb47ef86df9e3fb2fa07",
+  "workers_dev": false,
+  "preview_urls": false,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "thinker-ops-db",
+      "database_id": "869bbb45-e469-4a1a-a240-db67bac6c632",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "observability": { "enabled": true, "head_sampling_rate": 0.1 }
+}

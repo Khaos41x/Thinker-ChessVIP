@@ -29,3 +29,12 @@ analysis-engine-preference.tmp
 external-config-preference.json
 external-config-preference.json.*.tmp
 external-config-preference.json.*.invalid
+
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+.wrangler/
+apps/*/dist/
+supabase/.temp/

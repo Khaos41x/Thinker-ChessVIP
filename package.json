@@ -1,0 +1,13 @@
+{
+  "name": "thinker-platform",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@11.25.0",
+  "engines": { "node": ">=22.12.0", "pnpm": ">=11 <12" },
+  "scripts": {
+    "typecheck": "pnpm -r typecheck",
+    "test": "python tests-platform/test_d1_schema.py",
+    "dev:commerce": "pnpm --filter @thinker/commerce-worker dev",
+    "db:local": "pnpm --filter @thinker/commerce-worker db:local"
+  }
+}
