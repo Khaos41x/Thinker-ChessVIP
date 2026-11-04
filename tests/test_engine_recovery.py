@@ -17,6 +17,11 @@ import app
 
 
 class EngineRecoveryTests(unittest.TestCase):
+    def setUp(self):
+        legacy = patch.object(app.calibration_runtime, "calibrator", None)
+        legacy.start()
+        self.addCleanup(legacy.stop)
+
     def test_getmove_v2_uses_calibrated_skill_and_budget(self):
         calibrator = Mock()
         calibrator.artifact.payload = SimpleNamespace(
@@ -52,28 +57,25 @@ class EngineRecoveryTests(unittest.TestCase):
         self.assertEqual(default_seconds, 0.5)
         self.assertEqual(capped_seconds, 0.5)
 
-    def test_getmove_keeps_legacy_response_shape_with_v2_parameters(self):
+    def test_getmove_calibrated_profile_bypasses_legacy_cache_and_book(self):
         board = chess.Board()
-        cache_key = f"{app.get_base_fen(board.fen())}_2300"
-        app.cache.pop(cache_key, None)
-        try:
-            with patch.object(app, "get_book", return_value=None), patch.object(
-                app, "resolve_getmove_engine_parameters", return_value=(17, 0.5)
-            ) as resolve, patch.object(
-                app, "play_with_recovery", return_value=chess.Move.from_uci("e2e4")
-            ) as play:
-                response = app.app.test_client().post(
-                    "/getMove",
-                    json={"fen": board.fen(), "elo": 2300, "time": 0.01},
+        cache_key = f"{app.get_base_fen(board.fen())}_1200"
+        profile = SimpleNamespace(profile_digest="test-profile", move_time_ms=500)
+        with patch.object(app, "cache", {cache_key: "a2a3"}), patch.object(
+            app, "resolve_getmove_calibrated_profile", return_value=profile
+        ), patch.object(app, "get_book") as book, patch.object(
+            app, "play_calibrated_getmove", return_value=chess.Move.from_uci("e2e4")
+        ) as play:
+            client = app.app.test_client()
+            for _ in range(2):
+                response = client.post(
+                    "/getMove", json={"fen": board.fen(), "elo": 1200, "time": 0.01},
                     headers=AUTH_HEADERS,
                 )
-            self.assertEqual(response.status_code, 200)
-            self.assertEqual(response.get_json(), ["e2e4"])
-            resolve.assert_called_once()
-            self.assertEqual(play.call_args.args[1], 17)
-            self.assertEqual(play.call_args.args[2].time, 0.5)
-        finally:
-            app.cache.pop(cache_key, None)
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.get_json(), ["e2e4"])
+            book.assert_not_called()
+            play.assert_called_once_with(board, profile)
 
     def test_eval_recovers_dead_engine(self):
         dead = Mock()

@@ -24,6 +24,8 @@ const output = message => process.stdout.write(`${JSON.stringify(message)}\n`);
 
 let engine;
 let engineName = ENGINE;
+let eloRange = null;
+let configuredElo = null;
 let active = null;
 let pending = null;
 let state = 'booting';
@@ -92,6 +94,8 @@ function startSearch(request) {
     lastPublishedAt: null,
     lastPublishedInfo: null,
     seq: 0,
+    stablePv: [],
+    finishing: false,
   };
   latestInfo = null;
   firstInfoMs = null;
@@ -99,6 +103,15 @@ function startSearch(request) {
   state = 'searching';
   const whiteToMove = request.fen.trim().split(/\s+/)[1] === 'w';
   active.whiteToMove = whiteToMove;
+  const elo = request.elo == null ? null : Math.min(eloRange.max, Math.max(eloRange.min, request.elo));
+  if (elo !== configuredElo) {
+    engine.uci(`setoption name UCI_AnalyseMode value ${elo === null}`);
+    engine.uci(`setoption name UCI_LimitStrength value ${elo !== null}`);
+    if (elo !== null) engine.uci(`setoption name UCI_Elo value ${elo}`);
+    engine.uci('ucinewgame');
+    configuredElo = elo;
+  }
+  active.effectiveElo = elo;
   engine.uci(`position fen ${request.fen}`);
   engine.uci(`go movetime ${request.movetime}`);
 }
@@ -162,6 +175,7 @@ function finishBestmove(line) {
       seq: completed.seq + 1,
       result: {
         ...latestInfo,
+        effectiveElo: completed.effectiveElo,
         bestmove: bestmove === '(none)' ? null : bestmove,
         engine: ENGINE,
         package: PACKAGE,
@@ -183,10 +197,33 @@ function finishBestmove(line) {
   } else if (shutdownRequested) shutdown();
 }
 
+function finishStableMove(text, info) {
+  if (!active.fast || active.effectiveElo !== null || active.finishing || info.bound) return;
+  const move = /\bpv ([a-h][1-8][a-h][1-8][qrbn]?)(?: |$)/.exec(text)?.[1];
+  const score = info.cp;
+  const samples = active.stablePv;
+  if (!move || !Number.isFinite(score)) {
+    samples.length = 0;
+    return;
+  }
+  if (samples.length && info.depth <= samples.at(-1).depth) return;
+  if (samples.length && info.depth !== samples.at(-1).depth + 1) samples.length = 0;
+  samples.push({ move, score, depth: info.depth });
+  if (samples.length > 4) samples.shift();
+  if (info.depth >= 16 && samples.length === 4 &&
+      samples.every(sample => sample.move === move && Math.abs(sample.score - score) <= 20) &&
+      performance.now() - active.startedAt >= 140) {
+    active.finishing = true;
+    engine.uci('stop');
+  }
+}
+
 function onLine(line) {
   const text = String(line).trim();
   if (process.env.THINKER_UCI_DEBUG) process.stderr.write(`${text}\n`);
   if (/NNUE evaluation using|Network replica/.test(text)) networkEvidence = text;
+  const eloOption = /^option name UCI_Elo type spin default \d+ min (\d+) max (\d+)$/i.exec(text);
+  if (eloOption) eloRange = { min: Number(eloOption[1]), max: Number(eloOption[2]) };
   if (text.startsWith('id name ')) engineName = text.slice(8);
   else if (text === 'uciok') {
     uciMs = performance.now() - startedAt;
@@ -206,6 +243,7 @@ function onLine(line) {
       if (firstInfoMs === null) firstInfoMs = performance.now() - active.startedAt;
       if (!latestInfo || parsed.depth >= latestInfo.depth) latestInfo = parsed;
       publishInfo();
+      finishStableMove(text, parsed);
     }
   } else if (text.startsWith('bestmove ')) finishBestmove(text);
 }
@@ -254,7 +292,12 @@ createInterface({ input: process.stdin, crlfDelay: Infinity }).on('line', line =
       output({ type: 'error', requestId, error: 'invalid evaluation request' });
       return;
     }
-    schedule({ requestId, fen, movetime: Math.trunc(movetime) });
+    const elo = message.elo ?? null;
+    if (elo !== null && (!eloRange || !Number.isInteger(elo))) {
+      output({ type: 'error', requestId, error: 'invalid or unsupported UCI Elo' });
+      return;
+    }
+    schedule({ requestId, fen, elo, fast: message.fast === true, movetime: Math.trunc(movetime) });
   } else if (message.type === 'cancel') {
     const requestId = String(message.requestId || '');
     if (pending?.requestId === requestId) {

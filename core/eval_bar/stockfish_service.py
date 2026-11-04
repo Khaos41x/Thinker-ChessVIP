@@ -132,7 +132,7 @@ class StockfishEvalBarService:
                 "stderr": list(self._stderr_tail[-10:]),
             }
 
-    def evaluate(self, fen, request_id, movetime_ms=8000, timeout_seconds=None):
+    def evaluate(self, fen, request_id, movetime_ms=8000, timeout_seconds=None, *, elo=None, fast=False):
         request_id = str(request_id)
         deadline_at = time.monotonic() + float(timeout_seconds or self.timeout_seconds)
         for attempt in range(2):
@@ -155,7 +155,8 @@ class StockfishEvalBarService:
             try:
                 try:
                     self._send(
-                        {"type": "evaluate", "requestId": request_id, "fen": fen, "movetime": int(movetime_ms)},
+                        {"type": "evaluate", "requestId": request_id, "fen": fen, "movetime": int(movetime_ms),
+                         **({"elo": elo} if elo is not None else {}), **({"fast": True} if fast else {})},
                         expected_process=process,
                     )
                 except StockfishEvalBarError:

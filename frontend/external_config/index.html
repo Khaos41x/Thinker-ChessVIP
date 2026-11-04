@@ -25,7 +25,7 @@
       <section class="panel" id="core"><h2>Core</h2><div data-controls="core"></div></section>
       <section class="panel" id="engine"><h2>Engine Control</h2>
         <div class="analysis-engine engine-group">
-          <div class="field-heading"><label for="analysis-engine">Analysis Engine</label><span id="analysis-engine-state" role="status">Initializing</span></div>
+          <div class="field-heading"><label for="analysis-engine" title="Selects the engine for moves. Evaluation Bar always uses Stockfish 19 · 1MB.">Analysis Engine</label><span id="analysis-engine-state" role="status">Initializing</span></div>
           <select id="analysis-engine" aria-describedby="analysis-engine-message" disabled>
             <option value="stockfish-19-1mb">Stockfish 19 · 1MB</option>
             <option value="stockfish-19-94mb">Stockfish 19 · 94MB</option>
@@ -34,7 +34,7 @@
           <div class="analysis-engine-notice"><p id="analysis-engine-message" class="hint" role="status" aria-live="polite">Checking installed engines…</p>
           <button id="engine-retry" class="compact-button" type="button" hidden>Retry</button></div>
         </div>
-        <div class="strength engine-group"><div class="field-heading"><label for="elo">Strength Level</label><output id="elo-value" for="elo">3200</output></div>
+        <div class="strength engine-group"><div class="field-heading"><label for="elo" title="Target strength for the selected move engine.">Strength Level</label><output id="elo-value" for="elo">3200</output></div>
           <input type="range" id="elo" data-key="elo" min="800" max="3200" step="100" value="3200" disabled>
           <div class="range-labels"><span>Min 800</span><span>Max 3200</span></div>
         </div>

@@ -96,7 +96,7 @@
         const doc = host.ownerDocument;
         mounted = doc.createElement('div'); mounted.className = 'tc-analysis-selector';
         const heading = doc.createElement('div'); heading.className = 'tc-analysis-heading';
-        const label = doc.createElement('label'); label.htmlFor = 'tc-analysis-engine'; label.textContent = 'Analysis Engine';
+        const label = doc.createElement('label'); label.htmlFor = 'tc-analysis-engine'; label.textContent = 'Analysis Engine'; label.title = 'Selects the engine for moves. Evaluation Bar always uses Stockfish 19 · 1MB.';
         const status = doc.createElement('span'); status.className = 'tc-analysis-status'; status.setAttribute('role', 'status');
         const select = doc.createElement('select'); select.id = 'tc-analysis-engine'; select.setAttribute('aria-describedby', 'tc-analysis-message');
         const message = doc.createElement('p'); message.id = 'tc-analysis-message'; message.setAttribute('role', 'status');

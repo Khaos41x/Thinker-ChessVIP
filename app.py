@@ -570,7 +570,32 @@ class KomodoSingleton:
                         Log.error(f"Nao foi possivel reiniciar Komodo: {restart_error}")
             return None
 
-    def play(self, board, limit, skill_level, allow_retry=True, deadline=None):
+    def _play_until_stable(self, board, limit):
+        started = time.monotonic()
+        samples = collections.deque(maxlen=4)
+        with self._engine.analysis(board, limit) as search:
+            for info in search:
+                pv = info.get("pv")
+                score = info.get("score")
+                depth = info.get("depth", 0)
+                if not pv or score is None or info.get("lowerbound") or info.get("upperbound"):
+                    continue
+                cp = score.pov(board.turn).score()
+                if cp is None or (samples and depth <= samples[-1][0]):
+                    continue
+                if samples and depth != samples[-1][0] + 1:
+                    samples.clear()
+                samples.append((depth, pv[0], cp))
+                if (
+                    depth >= 14 and len(samples) == 4 and time.monotonic() - started >= 0.14
+                    and all(move == pv[0] and abs(value - cp) <= 20 for _, move, value in samples)
+                ):
+                    search.stop()
+                    break
+            best = search.wait()
+            return chess.engine.PlayResult(best.move, best.ponder, search.info)
+
+    def play(self, board, limit, skill_level, allow_retry=True, deadline=None, fast=False):
         with self._lock:
             self._last_search_stats = {}
             self._last_search_error = None
@@ -584,7 +609,10 @@ class KomodoSingleton:
                             deadline,
                         )
                     result = self._bounded_engine_call(
-                        lambda: self._engine.play(board, limit, info=chess.engine.INFO_BASIC),
+                        lambda: (
+                            self._play_until_stable(board, limit)
+                            if fast else self._engine.play(board, limit, info=chess.engine.INFO_BASIC)
+                        ),
                         deadline,
                         reserved_time=limit.time or 0.0,
                     )
@@ -706,7 +734,10 @@ def build_calibration_runtime():
     rollout_policy = build_rollout_policy()
     mode = rollout_policy.mode
     default_artifact_path = Path(__file__).resolve().parent / "benchmark-runs" / "official-v1" / "stage3" / "calibration-artifact.json"
-    artifact_path = os.environ.get("THINKER_ELO_CALIBRATION_ARTIFACT", "").strip() or str(default_artifact_path)
+    bundled_artifact = Path(__file__).resolve().parent / "core" / "elo_calibration" / "komodo-14.1-sf19-500ms-v1.json"
+    artifact_path = os.environ.get("THINKER_ELO_CALIBRATION_ARTIFACT", "").strip() or str(
+        default_artifact_path if default_artifact_path.is_file() else bundled_artifact
+    )
     if not artifact_path:
         return CalibrationRuntime(
             None,
@@ -846,6 +877,77 @@ def play_with_recovery(board, skill_level, limit):
     return result.value
 
 
+_stockfish_move_lock = threading.Lock()
+_stockfish_move_runtime = None
+_STOCKFISH_MOVE_BUILDS = {
+    "stockfish-19-1mb": "sf_19_smallnet",
+    "stockfish-19-94mb": "sf_19",
+}
+
+
+def close_stockfish_move_runtime():
+    global _stockfish_move_runtime
+    with _stockfish_move_lock:
+        if _stockfish_move_runtime is not None:
+            _stockfish_move_runtime.close()
+            _stockfish_move_runtime = None
+
+
+atexit.register(close_stockfish_move_runtime)
+
+
+stockfish_move_cache = LRUCache(capacity=256)
+
+
+def play_stockfish_getmove(board, engine_id, elo, immediate=False):
+    global _stockfish_move_runtime
+    build = _STOCKFISH_MOVE_BUILDS[engine_id]
+    key = (engine_id, board.fen(), elo, immediate)
+    with _stockfish_move_lock:
+        result = stockfish_move_cache.get(key)
+        if result is None:
+            if _stockfish_move_runtime is None or _stockfish_move_runtime.BUILD != build:
+                if _stockfish_move_runtime is not None:
+                    _stockfish_move_runtime.close()
+                _stockfish_move_runtime = StockfishEvalBarService(build=build)
+            result = _stockfish_move_runtime.evaluate(
+                board.fen(), f"move:{time.monotonic_ns()}",
+                movetime_ms=900 if immediate and elo >= 3200 else 500,
+                elo=None if elo >= 3200 else elo, fast=immediate,
+            )
+            if chess.Move.from_uci(result["bestmove"]) in board.legal_moves:
+                stockfish_move_cache.put(key, result)
+    move = chess.Move.from_uci(result["bestmove"])
+    if move not in board.legal_moves:
+        raise StockfishEvalBarError("Stockfish returned an illegal move")
+    response = jsonify([move.uci()])
+    response.headers["X-Thinker-Move-Engine"] = engine_id
+    if result.get("effectiveElo") is not None:
+        response.headers["X-Thinker-Effective-Elo"] = str(result["effectiveElo"])
+    return response
+
+
+_KOMODO_IMMEDIATE_MAX_SECONDS = 0.7
+
+
+def play_calibrated_getmove(board, profile, fast=False):
+    seconds = _KOMODO_IMMEDIATE_MAX_SECONDS if fast else profile.move_time_ms / 1000.0
+
+    def search(adapter, deadline, token):
+        adapter.prepare_calibrated_selector(profile, token, deadline)
+        token.raise_if_cancelled()
+        return _legacy_search(lambda: adapter.komodo.play(
+            board, chess.engine.Limit(time=seconds), None,
+            allow_retry=False, deadline=deadline, fast=fast,
+        ))
+
+    return engine_coordinator.run(
+        EngineJob(request_id=f"calibrated-play-{next(_legacy_job_ids)}", kind="legacy-play"),
+        max(250, int((seconds + 1.0) * 1000)),
+        search,
+    ).value
+
+
 def analyse_with_recovery(board, limit, **kwargs):
     budget_ms = max(250, int(((limit.time or 1.0) + 1.0) * 1000))
     result = engine_coordinator.run(
@@ -893,7 +995,7 @@ def index():
 app.add_url_rule('/status/horse.webp', 'status_artwork', status_artwork)
 
 
-def resolve_getmove_engine_parameters(elo, time_limit, board, runtime_game_token=None):
+def resolve_getmove_calibrated_profile(elo, board, runtime_game_token=None):
     calibrator = calibration_runtime.calibrator
     if calibration_runtime.mode is CalibrationMode.ACTIVE and calibrator is not None:
         payload = calibrator.artifact.payload
@@ -901,7 +1003,7 @@ def resolve_getmove_engine_parameters(elo, time_limit, board, runtime_game_token
         maximum_elo = floor(float(payload.anchors[-1].rating))
         target_elo = max(minimum_elo, min(maximum_elo, elo))
         token = runtime_game_token if isinstance(runtime_game_token, str) and runtime_game_token.strip() else "legacy-getmove"
-        profile = calibrator.interpolate_uci_params(
+        return calibrator.interpolate_uci_params(
             CalibrationRequest(
                 target_elo=target_elo,
                 scale_id=payload.scale.scale_id,
@@ -910,6 +1012,12 @@ def resolve_getmove_engine_parameters(elo, time_limit, board, runtime_game_token
                 side=Side.WHITE if board.turn is chess.WHITE else Side.BLACK,
             )
         )
+    return None
+
+
+def resolve_getmove_engine_parameters(elo, time_limit, board, runtime_game_token=None):
+    profile = resolve_getmove_calibrated_profile(elo, board, runtime_game_token)
+    if profile is not None:
         return profile.applied_skill, profile.move_time_ms / 1000.0
     actual_time = 0.5 if time_limit <= 0 else max(0.05, min(0.5, time_limit))
     return engine_adapter.legacy_skill_for_elo(elo), actual_time
@@ -945,19 +1053,50 @@ def getmove():
         if not board.is_valid() or board.is_game_over():
             return jsonify([])
 
-        cache_key = f"{get_base_fen(board.fen())}_{elo}"
+        engine_id = data.get("engineId", "komodo-14.1")
+        if not isinstance(engine_id, str) or engine_id not in {*_STOCKFISH_MOVE_BUILDS, "komodo-14.1"}:
+            return jsonify({"error": "unsupported move engine"}), 400
+        immediate = data.get("immediate") is True
+        if immediate:
+            legal = list(board.legal_moves)
+            if len(legal) == 1:
+                response = jsonify([legal[0].uci()])
+                response.headers["X-Thinker-Move-Engine"] = engine_id
+                return response
+        if engine_id in _STOCKFISH_MOVE_BUILDS:
+            try:
+                return play_stockfish_getmove(board, engine_id, elo, immediate)
+            except (StockfishEvalBarError, KeyError, ValueError, TypeError) as error:
+                Log.warning(f"Move engine unavailable ({engine_id}): {error}")
+                return jsonify({"error": "selected move engine unavailable", "engineId": engine_id}), 503
+
+        if "engineId" in data:
+            close_stockfish_move_runtime()
+
+        def komodo_response(move):
+            response = jsonify([move])
+            response.headers["X-Thinker-Move-Engine"] = "komodo-14.1"
+            return response
+
+        runtime_game_token = data.get("runtimeGameToken") or data.get("gameId")
+        profile = resolve_getmove_calibrated_profile(elo, board, runtime_game_token)
+        fast = immediate and elo >= 3200 and profile is not None and profile.applied_skill == 25
+        cache_key = (
+            ("calibrated-komodo", board.fen(), profile.profile_digest, fast)
+            if profile is not None else f"{get_base_fen(board.fen())}_{elo}"
+        )
         cached_move = cache.get(cache_key)
         if cached_move:
             try:
                 if chess.Move.from_uci(cached_move) in board.legal_moves:
                     elapsed = (time.perf_counter() - start_time) * 1000
                     Log.move("[CACHE]", cached_move, elapsed)
-                    return jsonify([cached_move])
+                    return komodo_response(cached_move)
             except (ValueError, TypeError):
                 pass
             cache.pop(cache_key, None)
         
-        book_move = get_book(fen)
+        book_move = get_book(fen) if profile is None else None
         try:
             legal_book_move = book_move and chess.Move.from_uci(book_move) in board.legal_moves
         except (ValueError, TypeError):
@@ -966,26 +1105,24 @@ def getmove():
             cache[cache_key] = book_move
             elapsed = (time.perf_counter() - start_time) * 1000
             Log.move("[BOOK]", book_move, elapsed)
-            return jsonify([book_move])
+            return komodo_response(book_move)
         
-        runtime_game_token = data.get("runtimeGameToken") or data.get("gameId")
-        skill_level, actual_time = resolve_getmove_engine_parameters(
-            elo,
-            time_limit,
-            board,
-            runtime_game_token,
-        )
-        limit = chess.engine.Limit(time=actual_time)
-            
-        move_obj = play_with_recovery(board, skill_level, limit)
-        
+        if profile is not None:
+            actual_time = _KOMODO_IMMEDIATE_MAX_SECONDS if fast else profile.move_time_ms / 1000.0
+            move_obj = play_calibrated_getmove(board, profile, fast=True) if fast else play_calibrated_getmove(board, profile)
+        else:
+            skill_level, actual_time = resolve_getmove_engine_parameters(
+                elo, time_limit, board, runtime_game_token,
+            )
+            move_obj = play_with_recovery(board, skill_level, chess.engine.Limit(time=actual_time))
+
         if move_obj:
             move = move_obj.uci()
             cache[cache_key] = move
             
             elapsed = (time.perf_counter() - start_time) * 1000
             Log.move("[ENGINE]", move, elapsed, extra=f"tempo: {actual_time}s")
-            return jsonify([move])
+            return komodo_response(move)
         
         return jsonify([])
     except Exception as e:
@@ -1076,15 +1213,7 @@ def evaluate_eval_bar():
     if board.is_game_over():
         return jsonify({"error": "terminal position", **correlation}), 422
     try:
-        if "engineId" in data:
-            result = None
-            for item in analysis_engine_registry.evaluate_stream(fen, request_id, data["engineId"], data.get("selectionGeneration"), cache_context=data.get("cacheContext")):
-                if item["type"] == "result":
-                    result = {**item["result"], "engineId": item["engineId"], "selectionGeneration": item["selectionGeneration"]}
-            if result is None:
-                raise StockfishEvalBarError("Engine returned no result")
-        else:
-            result = stockfish_eval_bar.evaluate(fen, request_id)
+        result = stockfish_eval_bar.evaluate(fen, request_id)
         return jsonify({**result, **correlation})
     except StockfishEvalBarCancelled:
         return jsonify({"error": "evaluation superseded", **correlation}), 409
@@ -1127,17 +1256,11 @@ def stream_eval_bar():
     def encode_event(payload):
         return json.dumps(payload, separators=(",", ":")) + "\n"
 
-    selected_stream = "engineId" in data
-    if selected_stream:
-        base_event.update({"engineId": data["engineId"], "selectionGeneration": data.get("selectionGeneration")})
-
     def generate():
         sequence = 0
         terminal = False
         try:
-            stream = analysis_engine_registry.evaluate_stream(
-                fen, request_id, data["engineId"], data.get("selectionGeneration"), cache_context=data.get("cacheContext")
-            ) if selected_stream else stockfish_eval_bar.evaluate_stream(fen, request_id)
+            stream = stockfish_eval_bar.evaluate_stream(fen, request_id)
             for message in stream:
                 if not isinstance(message, dict):
                     raise StockfishEvalBarError("invalid Stockfish stream message")
@@ -1225,7 +1348,7 @@ def stream_eval_bar():
             })
         finally:
             if not terminal:
-                (analysis_engine_registry if selected_stream else stockfish_eval_bar).cancel(request_id)
+                stockfish_eval_bar.cancel(request_id)
 
     response = Response(generate(), mimetype="application/x-ndjson")
     response.headers["Cache-Control"] = "no-store, no-transform"

@@ -111,7 +111,7 @@
     const state = engineFeedback.active() || engineInteractive || engineRefreshing && !engineRegistry ? 'Initializing' : engineError ? (!engineOnline && engineRegistry ? 'Connection Lost' : 'Error') : !selected ? 'Initializing' : !selected.installed ? 'Unavailable' : selected.initializationError ? 'Error' : active ? 'Active' : 'Ready';
     setText(byId('analysis-engine-state'), state);
     attr(byId('analysis-engine-state'), 'data-error', state === 'Error' || state === 'Connection Lost');
-    setText(byId('analysis-engine-message'), engineError || (engineSwitching ? 'Saving engine preference…' : selected?.initializationError || (active ? 'Running in an authorized analysis context.' : selected ? `${selected.description || 'Preference saved.'} Analysis starts only in an authorized context.` : 'Checking installed engines…')));
+    setText(byId('analysis-engine-message'), engineError || (engineSwitching ? 'Saving engine preference…' : selected?.initializationError || (active ? 'Running with the selected engine.' : selected ? `${selected.description || 'Preference saved.'} Used for move selection.` : 'Checking installed engines…')));
     attr(byId('analysis-engine-message'), 'data-error', Boolean(engineError || selected?.initializationError));
     prop(byId('analysis-engine-message'), 'title', byId('analysis-engine-message').textContent);
     prop(byId('engine-retry'), 'hidden', !engineError && !selected?.initializationError && !engineInteractive);

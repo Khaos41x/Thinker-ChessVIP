@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TC172
 // @namespace    http://tampermonkey.net/
-// @version      2026-10-29.1
+// @version      2026-11-04.3
 // @downloadURL  http://127.0.0.1:5050/thinker-chess.user.js
 // @updateURL    http://127.0.0.1:5050/thinker-chess.meta.js
 // @description  Chess Bot com Servidor Local
@@ -456,7 +456,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         const doc = host.ownerDocument;
         mounted = doc.createElement('div'); mounted.className = 'tc-analysis-selector';
         const heading = doc.createElement('div'); heading.className = 'tc-analysis-heading';
-        const label = doc.createElement('label'); label.htmlFor = 'tc-analysis-engine'; label.textContent = 'Analysis Engine';
+        const label = doc.createElement('label'); label.htmlFor = 'tc-analysis-engine'; label.textContent = 'Analysis Engine'; label.title = 'Selects the engine for moves. Evaluation Bar always uses Stockfish 19 · 1MB.';
         const status = doc.createElement('span'); status.className = 'tc-analysis-status'; status.setAttribute('role', 'status');
         const select = doc.createElement('select'); select.id = 'tc-analysis-engine'; select.setAttribute('aria-describedby', 'tc-analysis-message');
         const message = doc.createElement('p'); message.id = 'tc-analysis-message'; message.setAttribute('role', 'status');
@@ -3708,7 +3708,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
   const analysisEngineSelection = globalThis.ThinkerAnalysisEngine.create({
     serverUrl: SERVER_URL,
     storage: localStorage,
-    authorize: evalBarAuthorization,
+    authorize: () => null,
     getHost: () => document.querySelector("#krypbot-container .kb-engine-module"),
     headers: engineRequestHeaders,
     request: options => GM_xmlhttpRequest(options),
@@ -3716,12 +3716,10 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
   });
 
   function getEvalBarCacheContext() {
-    if (evalBarAuthorization() === 'active-game') return `stockfish-19|@lichess-org/stockfish-web@0.5.0|sf_19_smallnet|nn-61e7af4bb97d.nnue:61e7af4bb97d|threads=3|hash=16|multipv=1|movetime=8000|white-pov|lichess-winning-chances-0.00368208-v1|${SERVER_URL}/eval-bar/stream`;
-    return analysisEngineSelection.cacheContext();
+    return `stockfish-19|@lichess-org/stockfish-web@0.5.0|sf_19_smallnet|nn-61e7af4bb97d.nnue:61e7af4bb97d|threads=3|hash=16|multipv=1|movetime=8000|white-pov|lichess-winning-chances-0.00368208-v1|${SERVER_URL}/eval-bar/stream`;
   }
 
   function requestEvalBarV2({ fen, generation, requestId, cacheContext, onProgress, onResult, onError }) {
-    const engineIdentity = analysisEngineSelection.requestIdentity();
     const transportRequestId = `eval-v2:${evalBarClientId}:${requestId}`;
     let settled = false;
     let handle = null;
@@ -3766,8 +3764,6 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         if (!line || settled) continue;
         const item = JSON.parse(line);
         const mismatches = [];
-        if (engineIdentity.engineId && item.engineId !== engineIdentity.engineId) mismatches.push("engineId");
-        if (engineIdentity.engineId && item.selectionGeneration !== engineIdentity.selectionGeneration) mismatches.push("selectionGeneration");
         if (item.requestId !== transportRequestId) mismatches.push("requestId");
         if (item.generation !== generation) mismatches.push("generation");
         if (item.cacheContext !== cacheContext) mismatches.push("cacheContext");
@@ -3798,7 +3794,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       method: "POST",
       url: SERVER_URL + "/eval-bar/stream",
       headers: engineRequestHeaders(),
-      data: JSON.stringify({ fen, requestId: transportRequestId, generation, cacheContext, context: evalBarAuthorization(), ...engineIdentity }),
+      data: JSON.stringify({ fen, requestId: transportRequestId, generation, cacheContext, context: evalBarAuthorization() }),
       timeout: 15000,
       responseType: "stream",
       onloadstart: function (resp) {
@@ -5408,6 +5404,8 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
   };
 
   let lastRecommendation = null;
+  let lastMoveEngineId = null;
+  const selectedMoveEngine = () => analysisEngineSelection.snapshot().state?.selectedEngineId || null;
 
   const create_div = (str1) => {
     try {
@@ -5525,10 +5523,22 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       }
 
       fen = game.getFEN();
+      const movePreference = analysisEngineSelection.snapshot().state;
+      const moveEngineId = movePreference?.selectedEngineId;
+      const movePreferenceRevision = movePreference?.preferenceRevision;
+      if (!moveEngineId) return;
+      if (moveEngineId !== lastMoveEngineId) {
+        lastMoveEngineId = moveEngineId;
+        lastRecommendation = null;
+        checkfen = "";
+        smartPacer.cancel();
+        $(".myhigh, .myarrow").remove();
+      }
       const requestFen = fen;
       const requestMode = gameMode;
       const requestRoute = window.location.href.split(/[?#]/)[0];
       const requestAutoMove = auto_move;
+      const immediateMove = autoDelayMode === "max";
       const requestPuzzleAutoMove = isPuzzleMode && puzzleAutoMove;
       const retryMove = () => {
         if (checkfen === requestFen) checkfen = "";
@@ -5538,9 +5548,10 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       const positionObservedAt = observeSmartPacingPosition(fen);
       let requestPlayingSide = null;
       const requestIsCurrent = () => {
-        if (!isMasterEnabled() || board.isConnected === false || resolveThinkerBoardGame(board) !== game ||
+        if (selectedMoveEngine() !== moveEngineId ||
+            analysisEngineSelection.snapshot().state?.preferenceRevision !== movePreferenceRevision || !isMasterEnabled() || board.isConnected === false || resolveThinkerBoardGame(board) !== game ||
             gameMode !== requestMode || window.location.href.split(/[?#]/)[0] !== requestRoute ||
-            game.getFEN() !== requestFen || auto_move !== requestAutoMove) return false;
+            game.getFEN() !== requestFen || auto_move !== requestAutoMove || (autoDelayMode === "max") !== immediateMove) return false;
         if (isPuzzleMode) return puzzleAutoMove === requestPuzzleAutoMove && (puzzleHint || puzzleAutoMove);
         const authority = readThinkerMoveAuthority(game, requestPlayingSide);
         if (!authority.allowed) thinkerMoveDiagnostic = { stage: authority.reason, status: null };
@@ -5580,7 +5591,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
           ? autoAdjust.getCurrentDifficulty()
           : chessBot.elo;
       const currentElo = isPuzzleMode ? legacyElo : sessionControlBridge.moveSelectionElo(legacyElo);
-      const cacheKey = fen + "_" + currentElo;
+      const cacheKey = moveEngineId + "_" + fen + "_" + currentElo;
       const currentCache = isPuzzleMode ? puzzleMoveCache : moveCache;
       const capturedSessionMove = !isPuzzleMode && sessionControlBridge.isActive() ? sessionControlBridge.captureMove(sessionControlBridge.effectiveAutoMove(auto_move)) : null;
       const effectiveAutoMove = sessionControlBridge.effectiveAutoMove(auto_move);
@@ -5591,7 +5602,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         expectedPlayingSide: requestPlayingSide,
         expectedMode: gameMode,
         useSmartPacing: smartPacingEnabled,
-        forceImmediate: !smartPacingEnabled && autoDelayMode === "max",
+        forceImmediate: immediateMove,
         positionObservedAt,
         clockValues,
         shouldExecute: () =>
@@ -5599,7 +5610,12 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         dispatchEffect: (effect) => capturedSessionMove ? sessionControlBridge.executeMove(capturedSessionMove, effect) : effect(),
       };
       const sessionV2Active = !isPuzzleMode && sessionControlBridge.isActive();
-      const v2Observation = !isPuzzleMode && (smartPacingV2Enabled || smartPacingV2ShadowEnabled || sessionV2Active)
+      if (sessionV2Active && moveEngineId !== "komodo-14.1") {
+        thinkerMoveDiagnostic = { stage: "session-engine-incompatible", status: null };
+        return;
+      }
+      const komodoPacing = moveEngineId === "komodo-14.1";
+      const v2Observation = !isPuzzleMode && komodoPacing && (sessionV2Active || !immediateMove && (smartPacingV2Enabled || smartPacingV2ShadowEnabled))
         ? beginSmartPacingV2Observation(fen, game)
         : null;
       if (v2Observation && smartPacingV2ShadowEnabled && !smartPacingV2Enabled && !sessionV2Active) {
@@ -5613,8 +5629,8 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
           });
       }
       const analysisPromise =
-        smartPacingEnabled &&
-        !smartPacingV2Enabled &&
+        smartPacingEnabled && !immediateMove &&
+        (!smartPacingV2Enabled || !komodoPacing) &&
         isAutoMove &&
         !isSmartPacerTimeTrouble(clockValues.userTime)
           ? requestSmartPacingAnalysis(fen)
@@ -5707,7 +5723,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
       can_interval = false;
 
       // Solicitar avaliacao para Eval Bar e Smart Pacing
-      requestEval(fen);
+      if (!immediateMove) requestEval(fen);
 
       chessBot.time = computeDelayValue(game);
       log(`Modo: ${gameMode} | Delay: ${chessBot.time}s | Elo: ${currentElo}`);
@@ -5721,6 +5737,8 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         data: JSON.stringify({
           fen: fen,
           elo: currentElo,
+          engineId: moveEngineId,
+          immediate: immediateMove,
           time: chessBot.time,
         }),
         onload: function (resp) {
@@ -5732,6 +5750,12 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
             }
             if (resp.status < 200 || resp.status >= 300) { retryMove(); return; }
             if (!requestIsCurrent()) { retryMove(); return; }
+            const servedEngine = /^x-thinker-move-engine:\s*([^\r\n]+)/im.exec(resp.responseHeaders || "")?.[1].trim();
+            if (servedEngine !== moveEngineId) {
+              thinkerMoveDiagnostic = { stage: "move-engine-mismatch", status: Number(resp.status) };
+              retryMove();
+              return;
+            }
             const data = JSON.parse(resp.responseText);
             if (Array.isArray(data) && /^[a-h][1-8][a-h][1-8][qrbn]?$/.test(data[0])) {
               const move = data[0];
@@ -7211,7 +7235,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
         </section>
 
         <section class="kb-strength-card" aria-labelledby="kb-strength-label">
-          <div class="kb-strength-head"><span id="kb-strength-label">Strength Level</span><span class="kb-strength-current">Current <strong id="kb-elo-val">3200</strong></span></div>
+          <div class="kb-strength-head"><span id="kb-strength-label" title="Target strength for the selected move engine.">Strength Level</span><span class="kb-strength-current">Current <strong id="kb-elo-val">3200</strong></span></div>
           <input id="kb-elo-slider" class="kb-slider" type="range" min="800" max="3200" step="100" value="3200" aria-labelledby="kb-strength-label">
           <div class="kb-strength-limits"><span>Min 800</span><span>Max 3200</span></div>
         </section>
@@ -7792,6 +7816,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
           });
           function sessionStartBlocker() {
             if (!isMasterEnabled()) return "BOT_DISABLED";
+            if (selectedMoveEngine() !== "komodo-14.1") return "Auto Play sessions require Komodo 14.1.";
             const draft = sessionControlPresenter.readDraft();
             try { sessionConfigFromDraft(draft); return null; } catch (error) { return error.message; }
           }
@@ -8437,7 +8462,7 @@ globalThis.ThinkerRatingTracker = ThinkerRatingTrackerBundle;
 })();
 
 /* THINKER_SESSION_CONTROL_GENERATED_START */
-globalThis.ThinkerClientVersion="2026-10-29.1";
+globalThis.ThinkerClientVersion="2026-11-04.3";
 globalThis.ThinkerSessionControlReady=(async()=>{
 (function(root){
 "use strict";
