@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-10-29",
   "account_id": "8f68b85a4f00eb47ef86df9e3fb2fa07",
-  "workers_dev": false,
+  "workers_dev": true,
   "preview_urls": false,
   "d1_databases": [
     {

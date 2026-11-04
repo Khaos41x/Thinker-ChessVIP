@@ -6,6 +6,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 MIGRATION = ROOT / "apps/commerce-worker/migrations/0001_commerce_foundation.sql"
 HARDENING = ROOT / "apps/commerce-worker/migrations/0002_integer_and_wallet_guards.sql"
+USAGE = ROOT / "apps/commerce-worker/migrations/0003_btc_pool_usage.sql"
 
 
 class CommerceSchemaTests(unittest.TestCase):
@@ -14,6 +15,7 @@ class CommerceSchemaTests(unittest.TestCase):
         self.db.execute("PRAGMA foreign_keys = ON")
         self.db.executescript(MIGRATION.read_text(encoding="utf-8"))
         self.db.executescript(HARDENING.read_text(encoding="utf-8"))
+        self.db.executescript(USAGE.read_text(encoding="utf-8"))
         self.db.executescript("""
             INSERT INTO staff_users VALUES ('sales', 'access-sales', 'sales@example.test', 'sales', 1, 1, 1, 1);
             INSERT INTO customers VALUES ('customer', 'customer@example.test', NULL, 1, 1);
@@ -152,8 +154,44 @@ class CommerceSchemaTests(unittest.TestCase):
         for table, required in module.REQUIRED.items():
             optional = module.OPTIONAL.get(table, '').split()
             expected = set(required.split() + optional)
+            if table == 'btc_pool':
+                expected.add('is_used')
             actual = {row[1] for row in self.db.execute(f'PRAGMA table_info({table})') if row[2] == 'INTEGER'}
             self.assertEqual(expected, actual, table)
+
+    def test_usage_default_and_allocation_follow_canonical_state(self):
+        self.assertEqual(self.db.execute("SELECT is_used FROM btc_pool WHERE id = 'address'").fetchone(), (0,))
+        info = {row[1]: row for row in self.db.execute('PRAGMA table_info(btc_pool)')}
+        self.assertEqual(info['is_used'][2:5], ('INTEGER', 1, '0'))
+        self.assign()
+        self.assertEqual(self.db.execute("SELECT is_used FROM btc_pool WHERE id = 'address'").fetchone(), (1,))
+        self.reject("UPDATE btc_pool SET is_used = 0 WHERE id = 'address'")
+        self.db.execute("UPDATE btc_pool SET state = 'retired' WHERE id = 'address'")
+        self.assertEqual(self.db.execute("SELECT is_used FROM btc_pool WHERE id = 'address'").fetchone(), (1,))
+        self.reject("UPDATE btc_pool SET state = 'available', order_id = NULL, assigned_at = NULL, is_used = 0 WHERE id = 'address'")
+
+    def test_usage_rejects_invalid_toggles_and_nonintegers(self):
+        for value in (1, 0.5, 2, None, 'used'):
+            with self.subTest(value=value):
+                self.reject("UPDATE btc_pool SET is_used = ? WHERE id = 'address'", (value,))
+        self.reject("INSERT INTO btc_pool (id, wallet_config_id, derivation_index, address, script_pubkey_hex, is_used, created_at) VALUES ('invalid', 'wallet', 1, 'invalid', 'invalid', 1, 1)")
+        self.reject("INSERT INTO btc_pool (id, wallet_config_id, derivation_index, address, script_pubkey_hex, is_used, created_at) VALUES ('invalid', 'wallet', 1, 'invalid', 'invalid', 0.5, 1)")
+
+    def test_usage_syncs_assigned_and_retired_inserts(self):
+        self.db.execute("INSERT INTO btc_pool (id, wallet_config_id, derivation_index, address, script_pubkey_hex, order_id, state, assigned_at, created_at) VALUES ('assigned', 'wallet', 1, 'assigned', 'assigned', 'order', 'assigned', 1, 1)")
+        self.db.execute("INSERT INTO btc_pool (id, wallet_config_id, derivation_index, address, script_pubkey_hex, state, created_at) VALUES ('retired', 'wallet', 2, 'retired', 'retired', 'retired', 1)")
+        self.assertEqual(self.db.execute("SELECT id, is_used FROM btc_pool WHERE id IN ('assigned', 'retired') ORDER BY id").fetchall(), [('assigned', 1), ('retired', 1)])
+        self.reject("UPDATE btc_pool SET state = 'available', is_used = 0 WHERE id = 'retired'")
+
+    def test_usage_backfills_preexisting_allocations(self):
+        legacy = sqlite3.connect(':memory:')
+        try:
+            legacy.execute("CREATE TABLE btc_pool (id TEXT PRIMARY KEY, state TEXT NOT NULL)")
+            legacy.executemany("INSERT INTO btc_pool VALUES (?, ?)", [('a', 'available'), ('b', 'assigned'), ('c', 'retired')])
+            legacy.executescript(USAGE.read_text(encoding='utf-8'))
+            self.assertEqual(legacy.execute('SELECT id, is_used FROM btc_pool ORDER BY id').fetchall(), [('a', 0), ('b', 1), ('c', 1)])
+        finally:
+            legacy.close()
 
 
 if __name__ == "__main__":

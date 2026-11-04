@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "node ../../scripts/platform-local.mjs dev",
     "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "build": "wrangler deploy --dry-run --outdir dist",
     "db:local": "node ../../scripts/platform-local.mjs migrate"
   },
