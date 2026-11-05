@@ -45,3 +45,5 @@ Protocol references: [Discord interaction overview](https://github.com/discord/d
 ## Initial rollout
 
 Migration `0004_discord_checkout_contexts.sql` was applied to remote D1. Worker version `d3f836ac-c6ec-43d9-bb78-1439f767bc97` was published. Production checks returned 200 from `/health`, 401 from an unauthenticated `/checkout`, and 503 from `/interactions` while the real Discord public key was still pending. The production pool remained at 20 addresses, 19 available; no live Discord contexts had been registered. The signed PING handshake must be completed in the Discord Portal after configuring the real public key.
+
+The real application public key was subsequently configured through the `DISCORD_PUBLIC_KEY` Worker secret. Production checks then returned 200 from `/health` and 401 from an unsigned `/interactions` request. Saving the endpoint in the Discord Portal is still required to verify a genuinely Discord-signed PING.
