@@ -2,14 +2,18 @@ import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.resolve("wrangler"));
 const { Miniflare, convertV4MiniflareOptions } = require("miniflare");
-const { transform } = require("esbuild");
+const { build } = require("esbuild");
 
 test("D1 checkout is authenticated, atomic, exclusive and idempotent", async (t) => {
-  const source = await readFile(new URL("../src/index.ts", import.meta.url), "utf8");
-  const { code } = await transform(source, { loader: "ts", format: "esm" });
+  const bundle = await build({
+    entryPoints: [fileURLToPath(new URL("../src/index.ts", import.meta.url))],
+    bundle: true, format: "esm", write: false, platform: "browser",
+  });
+  const code = bundle.outputFiles[0].text;
   const token = "local-fixture-token";
   const runtime = new Miniflare(convertV4MiniflareOptions({
     modules: true, script: code, compatibilityDate: "2026-10-29",
