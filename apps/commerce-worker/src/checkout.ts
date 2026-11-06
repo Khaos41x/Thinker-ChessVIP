@@ -3,6 +3,13 @@ export interface CheckoutEnv {
   DISCORD_CHECKOUT_TOKEN?: string;
 }
 
+export interface SalesCheckoutScope {
+  guildId: string;
+  channelId: string;
+  userId: string;
+  planKey: string;
+}
+
 interface CheckoutOrder {
   id: string;
   address: string | null;
@@ -23,6 +30,7 @@ const availableAddress = `
 
 export async function checkout(
   request: Request, env: CheckoutEnv, headers: HeadersInit, expectedBtcSats?: number,
+  salesScope?: SalesCheckoutScope,
 ): Promise<Response> {
   const json = (body: object, status: number) => new Response(JSON.stringify(body), { status, headers });
   if (!env.DISCORD_CHECKOUT_TOKEN) return json({ error: "checkout_unavailable" }, 503);
@@ -64,7 +72,19 @@ export async function checkout(
         WHERE t.id = ? AND t.status IN ('open', 'qualified', 'awaiting_payment')
           AND EXISTS (${availableAddress})
           AND NOT EXISTS (SELECT 1 FROM orders WHERE client_request_id = ?)
-      `).bind(orderId, expectedBtcSats ?? null, requestId, now, now, planVersionId, ticketId, requestId),
+          AND (? IS NULL OR EXISTS (
+            SELECT 1 FROM discord_staff_members dm
+            JOIN staff_users actor ON actor.id = dm.staff_user_id AND actor.active = 1
+            JOIN discord_ticket_channels dc ON dc.guild_id = dm.guild_id AND dc.active = 1
+            JOIN discord_checkout_plans dp ON dp.active = 1
+            WHERE dm.guild_id = ? AND dm.discord_user_id = ? AND dm.active = 1
+              AND dc.channel_id = ? AND dc.ticket_id = t.id
+              AND (actor.role = 'founder' OR actor.id = t.assigned_sales_id)
+              AND dp.plan_key = ? AND dp.plan_version_id = p.id AND dp.btc_due_sats = ?
+          ))
+      `).bind(orderId, expectedBtcSats ?? null, requestId, now, now, planVersionId, ticketId, requestId,
+        salesScope?.guildId ?? null, salesScope?.guildId ?? null, salesScope?.userId ?? null,
+        salesScope?.channelId ?? null, salesScope?.planKey ?? null, expectedBtcSats ?? null),
       env.DB.prepare(`
         UPDATE btc_pool
         SET is_used = 1, state = 'assigned', order_id = ?, assigned_at = ?

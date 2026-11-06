@@ -61,6 +61,93 @@ function assertPrivateReply(body) {
   assert.ok(body.data.content || body.data.embeds?.length);
 }
 
+test("sales slash commands enforce staff access, ticket ownership and atomic priced allocation", async (t) => {
+  const runtime = new Miniflare(convertV4MiniflareOptions({
+    modules: true, script: await bundleWorker(), compatibilityDate: "2026-10-29",
+    d1Databases: { DB: "slash-fixture" },
+    bindings: { DISCORD_PUBLIC_KEY: discordPublicKey, DISCORD_APPLICATION_ID: "823456789012345678", DISCORD_CHECKOUT_TOKEN: "fixture-token" },
+  }));
+  t.after(() => runtime.dispose());
+  const db = await runtime.getD1Database("DB");
+  const migrations = new URL("../migrations/", import.meta.url);
+  for (const name of (await readdir(migrations)).filter(name => name.endsWith(".sql")).sort()) {
+    const statements = (await readFile(new URL(name, migrations), "utf8")).trim().split(/;\s*\r?\n(?=\s*(?:CREATE|ALTER|UPDATE|INSERT)\s)/);
+    await db.batch(statements.map(sql => db.prepare(sql)));
+  }
+  await db.batch([
+    "INSERT INTO staff_users (id,access_subject,email,role,created_at,updated_at) VALUES ('sales','sales','sales@example.test','sales',1,1),('other','other','other@example.test','sales',1,1),('founder','founder','founder@example.test','founder',1,1)",
+    "INSERT INTO customers (id,email,created_at,updated_at) VALUES ('buyer','buyer@example.test',1,1)",
+    "INSERT INTO tickets (id,customer_id,assigned_sales_id,subject,created_at,updated_at) VALUES ('own','buyer','sales','Own',1,1),('other','buyer','other','Other',1,1)",
+    "INSERT INTO plan_versions (id,plan_code,version,billing_kind,term_days,price_minor,currency,activation_window_days,created_at) VALUES ('elite','ELITE',1,'one_time',30,1000,'USD',30,1),('starter','STARTER',1,'one_time',30,500,'USD',30,1)",
+    "INSERT INTO wallet_configs (id,network,script_type,account_path,descriptor_hash,xpub_secret_ref,active,created_at,updated_at) VALUES ('wallet','mainnet','p2wpkh','fixture','hash','fixture',1,1,1)",
+    "INSERT INTO btc_pool (id,wallet_config_id,derivation_index,address,script_pubkey_hex,created_at) VALUES ('a','wallet',0,'fixture-btc-a','00',1),('b','wallet',1,'fixture-btc-b','01',1)",
+    `INSERT INTO discord_staff_members (guild_id,discord_user_id,staff_user_id) VALUES ('723456789012345678','${userA}','sales'),('723456789012345678','${userB}','founder')`,
+    "INSERT INTO discord_ticket_channels (guild_id,channel_id,ticket_id) VALUES ('723456789012345678','923456789012345678','own'),('723456789012345678','923456789012345679','other')",
+    "INSERT INTO discord_checkout_plans (plan_key,plan_version_id,btc_due_sats) VALUES ('elite','elite',310000),('starter','starter',100000)",
+  ].map(sql => db.prepare(sql)));
+  const slash = (name, option, value, id = interactionA) => ({
+    type: 2, id, application_id: "823456789012345678", guild_id: "723456789012345678",
+    channel_id: "923456789012345678", member: { user: { id: userA } },
+    data: { type: 1, name, options: [{ type: 3, name: option, value }] },
+  });
+  const dispatch = async payload => {
+    const response = await runtime.dispatchFetch("https://commerce.test/interactions", signedRequest(payload));
+    return { status: response.status, body: await response.json() };
+  };
+  const count = () => db.prepare("SELECT COUNT(*) AS total FROM orders").first("total");
+  const demo = slash("demo", "url", "https://meet.google.com/abc-defg-hij");
+  const shield = (await dispatch(demo)).body;
+  assert.equal(shield.data.flags, 0);
+  assert.equal(shield.data.embeds[0].title, "🚨 SECURITY PROTOCOL - READ BEFORE THE DEMO");
+  assert.match(shield.data.embeds[0].description, /STRICTLY PROHIBITED/);
+  assert.match(shield.data.embeds[0].description, /@Miguel/);
+  assert.match(shield.data.embeds[0].description, /lifetime Elite License/);
+  assert.equal(shield.data.embeds[0].fields[0].value, demo.data.options[0].value);
+  assert.deepEqual(shield.data.allowed_mentions, { parse: [] });
+  for (const url of ["http://meet.google.com/abc-defg-hij", "https://meet.google.com.evil.test/abc-defg-hij", "https://evil.test/", "javascript:alert(1)"]) {
+    assertPrivateReply((await dispatch(slash("demo", "url", url))).body);
+  }
+  const unknown = structuredClone(demo);
+  unknown.member.user.id = "123456789012345679";
+  assertPrivateReply((await dispatch(unknown)).body);
+  const otherGuild = { ...demo, guild_id: "723456789012345679" };
+  assertPrivateReply((await dispatch(otherGuild)).body);
+  const wrongApp = { ...demo, application_id: "823456789012345679" };
+  assert.equal((await dispatch(wrongApp)).status, 401);
+  const checkout = slash("checkout", "plano", "elite");
+  for (const payload of [{ ...checkout, channel_id: "923456789012345679" },
+    { ...checkout, channel_id: "923456789012345680" }, slash("checkout", "plano", "pro"), slash("checkout", "plano", "free")]) {
+    assertPrivateReply((await dispatch(payload)).body);
+  }
+  assert.equal(await count(), 0);
+  const results = await Promise.all([dispatch(checkout), dispatch(checkout)]);
+  assert.deepEqual(results[0].body, results[1].body);
+  const invoice = results[0].body;
+  assert.equal(invoice.data.flags, 0);
+  assert.match(invoice.data.embeds[0].title, /^Order #[0-9a-f-]{36}$/);
+  assert.match(invoice.data.embeds[0].description, /0\.00310000 BTC/);
+  assert.match(invoice.data.embeds[0].description, /fixture-btc-a/);
+  assert.match(invoice.data.embeds[0].description, /Waiting for blockchain confirmation/);
+  assert.equal(await count(), 1);
+  assert.equal(await db.prepare("SELECT btc_due_sats FROM orders").first("btc_due_sats"), 310000);
+  await db.prepare("UPDATE discord_checkout_plans SET btc_due_sats=320000 WHERE plan_key='elite'").run();
+  assertPrivateReply((await dispatch(checkout)).body);
+  await db.prepare("UPDATE discord_checkout_plans SET btc_due_sats=310000 WHERE plan_key='elite'").run();
+  const founder = slash("checkout", "plano", "starter", interactionB);
+  founder.channel_id = "923456789012345679";
+  founder.member.user.id = userB;
+  const founderInvoice = (await dispatch(founder)).body;
+  assert.match(founderInvoice.data.embeds[0].description, /0\.00100000 BTC/);
+  assert.match(founderInvoice.data.embeds[0].description, /fixture-btc-b/);
+  const exhausted = slash("checkout", "plano", "elite", "523456789012345679");
+  assertPrivateReply((await dispatch(exhausted)).body);
+  assert.equal(await count(), 2);
+  assert.equal(await db.prepare("SELECT COUNT(*) AS total FROM btc_pool WHERE is_used=1").first("total"), 2);
+  assert.equal(await db.prepare("SELECT COUNT(*) AS total FROM orders WHERE payment_status <> 'unpaid'").first("total"), 0);
+  await db.prepare("UPDATE discord_staff_members SET active=0 WHERE discord_user_id=?").bind(userA).run();
+  assertPrivateReply((await dispatch(demo)).body);
+});
+
 test("Discord interactions verify signatures and isolate mapped checkouts", async (t) => {
   const code = await bundleWorker();
   const runtime = new Miniflare(convertV4MiniflareOptions({

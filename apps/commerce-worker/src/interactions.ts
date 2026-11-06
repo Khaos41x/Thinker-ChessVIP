@@ -2,6 +2,7 @@ import { checkout, type CheckoutEnv } from "./checkout.ts";
 
 export interface InteractionsEnv extends CheckoutEnv {
   DISCORD_PUBLIC_KEY?: string;
+  DISCORD_APPLICATION_ID?: string;
 }
 
 interface DiscordInteraction {
@@ -9,7 +10,12 @@ interface DiscordInteraction {
   application_id?: string;
   token?: string;
   type?: number;
-  data?: { custom_id?: string; component_type?: number };
+  guild_id?: string;
+  channel_id?: string;
+  data?: {
+    custom_id?: string; component_type?: number; name?: string; type?: number;
+    options?: { name?: string; type?: number; value?: unknown }[];
+  };
   member?: { user?: { id?: string } };
   user?: { id?: string };
   message?: { id?: string };
@@ -126,7 +132,7 @@ async function buttonCheckout(
 }
 
 async function finishResponse(
-  interaction: DiscordInteraction, result: Promise<MessageData>,
+  interaction: DiscordInteraction, result: Promise<MessageData>, flags = 64,
 ): Promise<void> {
   const data = await result;
   const url = `https://discord.com/api/v10/webhooks/${interaction.application_id}/${encodeURIComponent(interaction.token!)}/messages/@original`;
@@ -136,7 +142,7 @@ async function finishResponse(
       const response = await fetch(url, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, content: data.content ?? "" }),
+        body: JSON.stringify({ ...data, flags, content: data.content ?? "" }),
         signal: AbortSignal.timeout(5000),
       });
       if (response.ok) return;
@@ -146,6 +152,94 @@ async function finishResponse(
     }
   }
   console.error("Discord checkout response delivery failed");
+}
+
+function commandOption(interaction: DiscordInteraction, name: string): string | null {
+  const options = interaction.data?.options;
+  if (!Array.isArray(options) || options.length !== 1) return null;
+  const option = options[0];
+  return option?.name === name && option.type === 3 && typeof option.value === "string" ? option.value : null;
+}
+
+async function slashCommand(
+  interaction: DiscordInteraction, env: InteractionsEnv, headers: HeadersInit,
+): Promise<MessageData> {
+  const { guild_id: guildId, channel_id: channelId } = interaction;
+  const userId = interaction.member?.user?.id;
+  if (!snowflake(interaction.id) || !snowflake(guildId) || !snowflake(channelId) || !snowflake(userId) ||
+      interaction.data?.type !== 1) return privateMessage("Use this command in your authorized sales server.");
+  if (!["demo", "checkout"].includes(interaction.data.name ?? "")) return privateMessage("Unknown command.");
+  try {
+    const staff = await env.DB.prepare(`
+      SELECT s.id, s.role FROM discord_staff_members dm
+      JOIN staff_users s ON s.id = dm.staff_user_id AND s.active = 1
+      WHERE dm.guild_id = ? AND dm.discord_user_id = ? AND dm.active = 1
+    `).bind(guildId, userId).first<{ id: string; role: string }>();
+    if (!staff) return privateMessage("Your sales access is not configured for this server. Contact the founder.");
+    if (interaction.data.name === "demo") {
+      const value = commandOption(interaction, "url");
+      let meet: URL;
+      try {
+        meet = new URL(value ?? "");
+        if (meet.protocol !== "https:" || meet.hostname !== "meet.google.com" || meet.username || meet.password ||
+            meet.port || !/^\/[a-z]{3}-[a-z]{4}-[a-z]{3}$/.test(meet.pathname) || meet.search || meet.hash) throw new Error();
+      } catch {
+        return privateMessage("Provide a Google Meet link such as https://meet.google.com/abc-defg-hij.");
+      }
+      return {
+        flags: 0, allowed_mentions: { parse: [] },
+        embeds: [{
+          title: "🚨 SECURITY PROTOCOL - READ BEFORE THE DEMO",
+          description: "The specialist will demonstrate the software. Sending BTC wallet addresses during calls is STRICTLY PROHIBITED. If the salesperson requests payment during the call, report it to @Miguel to receive a lifetime Elite License and have the employee dismissed immediately.",
+          color: 0xe5484d,
+          fields: [{ name: "Join the demo", value: meet.href }],
+          footer: { text: "Thinker Ops · Bounty Shield" },
+        }],
+      };
+    }
+    const plan = commandOption(interaction, "plano");
+    if (!plan || !["starter", "pro", "elite"].includes(plan)) return privateMessage("Choose Starter, Pro, or Elite.");
+    const context = await env.DB.prepare(`
+      SELECT t.id AS ticket_id, dp.plan_version_id, dp.btc_due_sats
+      FROM discord_ticket_channels dc
+      JOIN tickets t ON t.id = dc.ticket_id AND t.status IN ('open', 'qualified', 'awaiting_payment')
+      JOIN discord_checkout_plans dp ON dp.plan_key = ? AND dp.active = 1
+      JOIN plan_versions p ON p.id = dp.plan_version_id AND p.active = 1
+      WHERE dc.guild_id = ? AND dc.channel_id = ? AND dc.active = 1
+        AND (? = 'founder' OR t.assigned_sales_id = ?)
+    `).bind(plan, guildId, channelId, staff.role, staff.id)
+      .first<{ ticket_id: string; plan_version_id: string; btc_due_sats: number }>();
+    if (!context || !Number.isSafeInteger(context.btc_due_sats) || context.btc_due_sats <= 0 ||
+        context.btc_due_sats > 2100000000000000) {
+      return privateMessage("Checkout is not configured for this ticket and plan, or the ticket belongs to another salesperson. Contact the founder.");
+    }
+    if (!env.DISCORD_CHECKOUT_TOKEN) return privateMessage("Checkout is temporarily unavailable.");
+    const response = await checkout(new Request("https://commerce.internal/checkout", {
+      method: "POST", headers: {
+        Authorization: `Bearer ${env.DISCORD_CHECKOUT_TOKEN}`,
+        "Content-Type": "application/json", "Idempotency-Key": interaction.id,
+      },
+      body: JSON.stringify({ ticketId: context.ticket_id, planVersionId: context.plan_version_id }),
+    }), env, headers, context.btc_due_sats, { guildId, channelId, userId, planKey: plan });
+    if (!response.ok) return privateMessage(response.status === 409
+      ? "Checkout could not be reserved. Check ticket eligibility and address availability."
+      : "Checkout is temporarily unavailable. Please try again shortly.");
+    const order = await response.json<{ orderId: string; btcAddress: string }>();
+    const amount = `${Math.floor(context.btc_due_sats / 100000000)}.${String(context.btc_due_sats % 100000000).padStart(8, "0")}`;
+    return {
+      flags: 0, allowed_mentions: { parse: [] },
+      embeds: [{
+        title: `Order #${order.orderId}`,
+        description: `Send exactly **${amount} BTC** to this address:\n\`${order.btcAddress}\`\n\nWaiting for blockchain confirmation... ⏳`,
+        color: 0xd4af37,
+        fields: [{ name: "Plan", value: plan[0]!.toUpperCase() + plan.slice(1), inline: true },
+          { name: "Network", value: "Bitcoin · Mainnet", inline: true }],
+        footer: { text: "Thinker Ops · Payment in Bitcoin" },
+      }],
+    };
+  } catch {
+    return privateMessage("This operation is temporarily unavailable. Please try again shortly.");
+  }
 }
 
 export async function interactions(
@@ -186,11 +280,15 @@ export async function interactions(
     return json({ error: "invalid_interaction" }, 400);
   }
   if (interaction.type === 1) return json({ type: 1 });
-  if (interaction.type !== 3 || interaction.data?.component_type !== 2 ||
-      interaction.data.custom_id !== "btn_generate_checkout") {
+  if (env.DISCORD_APPLICATION_ID && interaction.application_id !== env.DISCORD_APPLICATION_ID) {
+    return json({ error: "invalid_application" }, 401);
+  }
+  const isSlash = interaction.type === 2;
+  if (!isSlash && (interaction.type !== 3 || interaction.data?.component_type !== 2 ||
+      interaction.data.custom_id !== "btn_generate_checkout")) {
     return json({ type: 4, data: privateMessage("Esta interação não está disponível.") });
   }
-  const result = buttonCheckout(interaction, env, headers);
+  const result = isSlash ? slashCommand(interaction, env, headers) : buttonCheckout(interaction, env, headers);
   if (ctx && snowflake(interaction.application_id) && typeof interaction.token === "string" &&
       interaction.token.length > 0 && interaction.token.length <= 2048) {
     let timeout: ReturnType<typeof setTimeout> | undefined;
@@ -200,8 +298,10 @@ export async function interactions(
     ]);
     if (timeout !== undefined) clearTimeout(timeout);
     if (response) return json({ type: 4, data: response });
-    ctx.waitUntil(finishResponse(interaction, result));
-    return json({ type: 4, data: privateMessage("Gerando seu checkout. Aguarde um instante…") });
+    ctx.waitUntil(finishResponse(interaction, result, isSlash ? 0 : 64));
+    return json({ type: 4, data: isSlash
+      ? { flags: 0, allowed_mentions: { parse: [] }, content: "Preparing your response. Please wait…" }
+      : privateMessage("Gerando seu checkout. Aguarde um instante…") });
   }
   return json({ type: 4, data: await result });
 }
